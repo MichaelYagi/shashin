@@ -20,13 +20,27 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     let currentMetadata = null;
     let firstTime = true;
     let isFileDialogOpened = false;
-    const min = 20;
-    const max = 120;
-    const increments = max/min;
+    const min = 10; // min seconds
+    const max = 120; // max seconds
+    const segments = 6; // # of segments
+    const spacing = (max-min)/(segments-1);
     const hideTime = 5000;
     const playPauseHideTime = 3000;
     const fadeOutTime = 1000;
+    const pollTimeout = 100;
     let isActive = false;
+    $("#slideshowProgressContainer").css("transition", "width "+pollTimeout+"ms ease-in-out");
+    let startTime = Date.now();
+    let currentTime = Date.now();
+
+    function pollData() {
+        if (slideshowIsPaused === false) {
+            currentTime = Date.now();
+            let elapsedTime = currentTime - startTime;
+            const progress = elapsedTime / (slideshowIsElapsed * 1000) * 100;
+            $("#slideshowProgressContainer").css("width", progress + "%");
+        }
+    }
 
     const http = new Http("getAlbums");
     http.ajax("get", "/slideshowalbums").then(function (data) {
@@ -597,7 +611,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.idinterval")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+increments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
                 }
@@ -612,7 +626,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.exit")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+increments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
                 }
@@ -626,7 +640,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             options
         );
 
-        $("#slideshowIntervalSlide").val(slideshowIsElapsed/min);
+        $("#slideshowIntervalSlide").val(Math.floor(((slideshowIsElapsed-min)/spacing)+1));
 
         $("#showProgress").val('checked', slideshowProgress);
 
@@ -674,7 +688,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         });
 
         $("#slideshowIntervalSlide").on("change", function () {
-            slideshowIsElapsed = $(this).val() * min;
+            slideshowIsElapsed = Math.floor(min+($(this).val()-1) * spacing);
             changeSideshowInterval();
         });
 
@@ -689,22 +703,30 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         });
 
         $("#slideshowIntervalSlide").on("input", function () {
-            slideshowIsElapsed = $(this).val() * min;
+            slideshowIsElapsed = Math.floor(min+($(this).val()-1) * spacing);
             $("#intervalValue").text(slideshowIsElapsed);
         });
     }
 
     function changeSideshowInterval() {
         $("#intervalValue").text(slideshowIsElapsed);
-        $("#slideshowIntervalSlide").val(slideshowIsElapsed/min);
+        $("#slideshowIntervalSlide").val(Math.floor((slideshowIsElapsed-min)/spacing)+1);
 
         if (slideshowIsPaused === false) {
             clearInterval(slideshowIntervalId);
+
+            startTime = Date.now();
+            currentTime = Date.now();
+            let slideTimer = setInterval(pollData, pollTimeout);
             slideshowIntervalId = window.setInterval(function () {
                 if (slideshowIsPaused === false) {
                     slideshowCurrentIndex++;
                     getSlideshowImage(function () {
                         slideshowProceed = true;
+                        $("#slideshowProgressContainer").css("width","0");
+                        clearInterval(slideTimer);
+                        startTime = Date.now();
+                        slideTimer = setInterval(pollData, pollTimeout);
                     });
                 }
             }, (slideshowIsElapsed * 1000));
@@ -904,8 +926,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             if (e.key === "-" || e.code === "Minus" || e.which === 189 || e.keyCode === 189) {
                 const currElapsed = slideshowIsElapsed;
 
-                if ((currElapsed - min) >= min) {
-                    slideshowIsElapsed = currElapsed - min;
+                if ((currElapsed - spacing) >= min) {
+                    slideshowIsElapsed = currElapsed - spacing;
                     changeSideshowInterval();
 
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
@@ -936,8 +958,9 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             if (e.key === "=" || e.code === "Equal" || e.which === 187 || e.keyCode === 187) {
                 const currElapsed = slideshowIsElapsed;
 
-                if ((currElapsed + min) <= max) {
-                    slideshowIsElapsed = currElapsed + min;
+                if ((currElapsed + spacing) <= max) {
+                    slideshowIsElapsed = currElapsed + spacing;
+
                     changeSideshowInterval();
 
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
@@ -981,11 +1004,19 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
                     if (slideshowIsPaused === false) {
                         clearInterval(slideshowIntervalId);
+
+                        startTime = Date.now();
+                        currentTime = Date.now();
+                        let slideTimer = setInterval(pollData, pollTimeout);
                         slideshowIntervalId = window.setInterval(function () {
                             if (slideshowIsPaused === false) {
                                 slideshowCurrentIndex++;
                                 getSlideshowImage(function () {
                                     slideshowProceed = true;
+                                    $("#slideshowProgressContainer").css("width","0");
+                                    clearInterval(slideTimer);
+                                    startTime = Date.now();
+                                    slideTimer = setInterval(pollData, pollTimeout);
                                 });
                             }
                         }, (slideshowIsElapsed * fadeOutTime));
@@ -1049,11 +1080,19 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         if (slideshowIsPaused === false) {
             clearInterval(slideshowIntervalId);
+
+            startTime = Date.now();
+            currentTime = Date.now();
+            let slideTimer = setInterval(pollData, pollTimeout);
             slideshowIntervalId = window.setInterval(function () {
                 if (slideshowIsPaused === false) {
                     slideshowCurrentIndex++;
                     getSlideshowImage(function () {
                         slideshowProceed = true;
+                        $("#slideshowProgressContainer").css("width","0");
+                        clearInterval(slideTimer);
+                        startTime = Date.now();
+                        slideTimer = setInterval(pollData, pollTimeout);
                     });
                 }
             }, (slideshowIsElapsed * 1000));
@@ -1077,11 +1116,19 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         if (slideshowIsPaused === false) {
             clearInterval(slideshowIntervalId);
+
+            startTime = Date.now();
+            currentTime = Date.now();
+            let slideTimer = setInterval(pollData, pollTimeout);
             slideshowIntervalId = window.setInterval(function () {
                 if (slideshowIsPaused === false) {
                     slideshowCurrentIndex++;
                     getSlideshowImage(function () {
                         slideshowProceed = true;
+                        $("#slideshowProgressContainer").css("width","0");
+                        clearInterval(slideTimer);
+                        startTime = Date.now();
+                        slideTimer = setInterval(pollData, pollTimeout);
                     });
                 }
             }, (slideshowIsElapsed * 1000));
@@ -1118,11 +1165,19 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 });
                 if (slideshowIsPaused === false) {
                     clearInterval(slideshowIntervalId);
+
+                    startTime = Date.now();
+                    currentTime = Date.now();
+                    let slideTimer = setInterval(pollData, pollTimeout);
                     slideshowIntervalId = window.setInterval(function () {
                         if (slideshowIsPaused === false) {
                             slideshowCurrentIndex++;
                             getSlideshowImage(function () {
                                 slideshowProceed = true;
+                                $("#slideshowProgressContainer").css("width","0");
+                                clearInterval(slideTimer);
+                                startTime = Date.now();
+                                slideTimer = setInterval(pollData, pollTimeout);
                             });
                         }
                     }, (slideshowIsElapsed * 1000));
@@ -1248,11 +1303,18 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         firstTime = true;
 
+        startTime = Date.now();
+        currentTime = Date.now();
+        let slideTimer = setInterval(pollData, pollTimeout);
         slideshowIntervalId = window.setInterval(function () {
             if (slideshowIsPaused === false) {
                 slideshowCurrentIndex++;
                 getSlideshowImage(function () {
                     slideshowProceed = true;
+                    $("#slideshowProgressContainer").css("width","0");
+                    clearInterval(slideTimer);
+                    startTime = Date.now();
+                    slideTimer = setInterval(pollData, pollTimeout);
                 });
             }
         }, (slideshowIsElapsed * 1000));
