@@ -1,4 +1,4 @@
-function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale) {
+function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale, slideshowProgress) {
     let slideshowIntervalId;
     let slideshowStarted = false;
     let slideshowIsPaused = false;
@@ -596,6 +596,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.idinterval")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+increments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
@@ -610,6 +611,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.playpause")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.exit")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+increments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
@@ -625,6 +627,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         );
 
         $("#slideshowIntervalSlide").val(slideshowIsElapsed/min);
+
+        $("#showProgress").val('checked', slideshowProgress);
 
         if (typeof Castjs != "undefined" && cjsc !== null) {
             cjsc.on('available', () => {
@@ -674,6 +678,16 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             changeSideshowInterval();
         });
 
+        $("#showProgress").on("change", function () {
+            slideshowProgress = $("#showProgress").prop('checked');
+            if (slideshowProgress === true) {
+                $("#slideshowProgressContainer").css("display", "block");
+            } else {
+                $("#slideshowProgressContainer").css("display", "none");
+            }
+            changeShowProgress();
+        });
+
         $("#slideshowIntervalSlide").on("input", function () {
             slideshowIsElapsed = $(this).val() * min;
             $("#intervalValue").text(slideshowIsElapsed);
@@ -708,6 +722,22 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
         } else {
             shashin.printMessageToConsole("Slideshow interval failed request", {tag: "slideshow"});
+        }
+    }
+
+    function changeShowProgress() {
+        const http = new Http("show progress");
+        const json = {slideshowProgress: slideshowProgress};
+        const data = http.ajax("post", "/users/slideshowprogress", JSON.stringify(json));
+
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            if (data.status === "success") {
+                shashin.printMessageToConsole("Slideshow progress set: " + slideshowprogress + "s", {tag: "slideshow"});
+            } else {
+                shashin.printMessageToConsole("Slideshow progress failed to set", {tag: "slideshow"});
+            }
+        } else {
+            shashin.printMessageToConsole("Slideshow progress failed request", {tag: "slideshow"});
         }
     }
 
@@ -1186,12 +1216,19 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         }
     }
 
+    // Start slideshow
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
 
         isActive = true;
         tearDownVideo();
         createVideo();
+
+        if (slideshowProgress === true) {
+            $("#slideshowProgressContainer").css("display", "block");
+        } else {
+            $("#slideshowProgressContainer").css("display", "none");
+        }
 
         if (Util.isMobile()) {
             $("#shortcutAction").addClass("bi-hand-index").removeClass("bi-keyboard");

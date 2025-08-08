@@ -29,6 +29,8 @@ class User {
     @NotBlank
     private var notificationAlerts: Boolean? = true
     @NotBlank
+    private var slideshowProgress: Boolean? = false
+    @NotBlank
     private var slideshowInterval: Int? = 10
     @NotBlank
     private var language: String? = "en"
@@ -119,6 +121,14 @@ class User {
         this.authority = authority
     }
 
+    fun getSlideshowProgress(): Boolean? {
+        return this.slideshowProgress
+    }
+
+    fun setSlideshowProgress(slideshowProgress: Boolean?) {
+        this.slideshowProgress = slideshowProgress
+    }
+
     fun getIsAuthorized(): Boolean? {
         return this.isAuthorized
     }
@@ -195,6 +205,7 @@ class User {
         map["modifiedAt"] = this.modifiedAt
         map["slideshowInterval"] = this.slideshowInterval
         map["language"] = this.language
+        map["slideshowProgress"] = this.slideshowProgress
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
