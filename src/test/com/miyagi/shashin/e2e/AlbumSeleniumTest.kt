@@ -295,7 +295,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
         generateShareAlbumEl.click()
         this.logger.log(Level.INFO, "Shared album as admin.")
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Generate')]")))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("shareConfirmationModalTitle")))
 
         val shareConfirmation = this.driver!!.findElement(By.id("shareConfirmation"))
         shareConfirmation.click()
