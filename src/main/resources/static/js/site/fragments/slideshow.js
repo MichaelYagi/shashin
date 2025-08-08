@@ -610,6 +610,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.idinterval")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>p</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.toggleprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
@@ -985,6 +986,20 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                         }
                     );
                 }
+            }
+
+            // Show progress
+            if (e.key === "p" || e.code === "KeyP" || e.which === 80 || e.keyCode === 80) {
+                slideshowProgress = $("#showProgress").prop('checked');
+                if (slideshowProgress === true) {
+                    $("#showProgress").prop('checked', false);
+                    $("#slideshowProgressContainer").css("display", "none");
+
+                } else {
+                    $("#showProgress").prop('checked', true);
+                    $("#slideshowProgressContainer").css("display", "block");
+                }
+                changeShowProgress();
             }
 
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37 || e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
