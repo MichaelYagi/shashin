@@ -30,24 +30,24 @@
                                 <p class="card-text"><a th:href="'/album/'+${album.id}" th:style="'text-decoration: none !important;color: ' + ${currentUser.darkMode ? '#FFFFFF;' : '#000000;'}"><strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong></a></p>
 
                                 <span style="margin-top: auto;">
-                                    <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;" title="Comments">
+                                    <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;" th:title="#{main.pages.tooltip.albums.msg.comments}">
                                         <span th:id="'commentcount'+${album.id}"><th:block th:text="${albumsCommentsMap.containsKey(album.id) ? #lists.size(albumsCommentsMap.get(album.id)) : '0'}"></th:block></span>
                                         <span class="bi-chat-square position-relative">
                                         </span>
                                     </a>
                                     <th:block th:if="${album.albumPhotoCount > 0}">
                                         <form method="post" th:action="'/album/download/'+${album.id}" style="display: inline-block;white-space: nowrap;">
-                                            <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}" title="Download album photos"></button>
+                                            <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}" th:title="#{main.pages.tooltip.albums.msg.downloadalbum}"></button>
                                         </form>
                                     </th:block>
                                     <th:block th:if="${album.albumPhotoCount == 0}">
                                         &nbsp;
                                     </th:block>
                                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
-                                        <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil" title="Edit album"></span></a>
-                                        <th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}" th:title="${(album.shareUrl != null and album.shareUrl != '' ? 'Shared' : 'Share') + ' with other people'}"></span></a>
-                                        <span th:id="'userShare'+${album.id}" title="Shared with others users" th:style="${sharedAlbumsMap.containsKey(album.id) and (authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER') ? 'display: inline-block' : 'display: none'}"><th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<span class="bi-person-up text-muted"></span></span>
-                                        <th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<a href="#" th:id="'trash'+${album.id}" title="Delete album"><span class="bi-trash"></span></a>
+                                        <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil" th:title="#{main.pages.tooltip.albums.msg.edit}"></span></a>
+                                        <th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}" th:title="${(album.shareUrl != null and album.shareUrl != '' ? #{main.pages.tooltip.albums.msg.sharedpeople} : #{main.pages.tooltip.albums.msg.sharepeople})}"></span></a>
+                                        <span th:id="'userShare'+${album.id}" th:title="#{main.pages.tooltip.albums.msg.shared}" th:style="${sharedAlbumsMap.containsKey(album.id) and (authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER') ? 'display: inline-block' : 'display: none'}"><th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<span class="bi-person-up text-muted"></span></span>
+                                        <th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<a href="#" th:id="'trash'+${album.id}" th:title="#{main.pages.tooltip.albums.msg.delete}"><span class="bi-trash"></span></a>
                                     </th:block>
                                     <p class="card-text"><small class="text-muted" th:text="#{main.pages.albums.photo(${album.albumPhotoCount})} + (isMobile ? '' : '&nbsp;&nbsp;') + '&nbsp;&nbsp;' + #{main.pages.albums.video(${album.albumVideoCount})}"></small></p>
                                 </span>
@@ -103,9 +103,9 @@
                                 </div>
                             </div>
                             <div class="input-group">
-                                <button class="btn btn-secondary" id="generateLink" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate link"><span class="bi-arrow-clockwise"></span></button>
-                                <button class="btn btn-secondary" id="clearLink" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Clear link"><span class="bi-x"></span></button>
-                                <button class="btn btn-secondary" id="copyLink" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link" data-clipboard-text=""><span id="copyLinkIcon" class="bi-clipboard-plus"></span></button>
+                                <button class="btn btn-secondary" id="generateLink" type="button" data-bs-toggle="tooltip" data-bs-placement="top" th:title="#{main.pages.tooltip.share.msg.generate}"><span class="bi-arrow-clockwise"></span></button>
+                                <button class="btn btn-secondary" id="clearLink" type="button" data-bs-toggle="tooltip" data-bs-placement="top" th:title="#{main.pages.tooltip.share.msg.clear}"><span class="bi-x"></span></button>
+                                <button class="btn btn-secondary" id="copyLink" type="button" data-bs-toggle="tooltip" data-bs-placement="top" th:title="#{main.pages.tooltip.share.msg.copy}" data-clipboard-text=""><span id="copyLinkIcon" class="bi-clipboard-plus"></span></button>
                             </div>
                         </div>
                         <br>

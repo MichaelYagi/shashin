@@ -44,7 +44,7 @@
             const captureIcon = "bi-lightning";
 
             if (this.settings.videoThumbnail) {
-                const videoThumbnailMenuItem = '<button type="button" aria-label="Capture Video Poster" title="Capture Video Poster" id="captureThumbnail" class="'+captureIcon+' lg-icon" style="font-size: 1rem;display: none"></button>' +
+                const videoThumbnailMenuItem = '<button type="button" aria-label="Capture Video Poster" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.video.msg")+'" id="captureThumbnail" class="'+captureIcon+' lg-icon" style="font-size: 1rem;display: none"></button>' +
                     '<div class="spinner-border spinner-border-sm float-end mt-3 me-3" role="status" id="captureThumbnailSpinner"></div>';
 
                 this.core.$toolbar.append(videoThumbnailMenuItem);

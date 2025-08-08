@@ -71,7 +71,7 @@
         return n.prototype.init = function() {
             var e = "";
             if (cjs !== null && this.settings.castMedia) {
-                e = '<button type="button" aria-label="Cast Media" title="Cast Media" id="chromecasting" class="bi-cast lg-icon" style="font-size: 1rem;display: none;"></button>',
+                e = '<button type="button" aria-label="Cast Media" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.cast.msg")+'" id="chromecasting" class="bi-cast lg-icon" style="font-size: 1rem;display: none;"></button>',
                     this.core.$toolbar.append(e),
                     this.castMedia()
 

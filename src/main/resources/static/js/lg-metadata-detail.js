@@ -23,7 +23,7 @@
         return n.prototype.init = function() {
             var e = "";
             if (this.settings.metadataDetail) {
-                e = '<button type="button" id="metadataDetail" aria-label="View Photo Details" title="View Photo Details" class="bi-info-circle lg-icon" style="font-size: 1rem;"></button>',
+                e = '<button type="button" id="metadataDetail" aria-label="View Photo Details" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.metadata.msg")+'" class="bi-info-circle lg-icon" style="font-size: 1rem;"></button>',
                     this.core.$toolbar.append(e),
                     this.metadataDetail()
             }

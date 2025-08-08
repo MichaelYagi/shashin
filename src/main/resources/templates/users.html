@@ -43,17 +43,17 @@
                                 <td><span th:utext="'&lt;strong&gt;'+${user.username}+'&lt;/strong&gt;'"></span></td>
                                 <td>
                                     <th:block th:if="${user.authority == 'ROLE_SUPER'}">
-                                        <span class="bi-person-badge-fill" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" title="Currently a Super Admin."></span>
+                                        <span class="bi-person-badge-fill" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.super}"></span>
                                     </th:block>
                                     <th:block th:if="${user.authority == 'ROLE_ADMIN'}">
-                                        <span class="bi-person-badge" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" title="Currently an Admin."></span>
+                                        <span class="bi-person-badge" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.admin}"></span>
                                     </th:block>
                                     <th:block th:if="${user.authority == 'ROLE_USER'}">
-                                        <span class="bi-person" style="font-size: 1rem" data-bs-toggle="tooltip" data-bs-placement="right" title="Currently a User."></span>
+                                        <span class="bi-person" style="font-size: 1rem" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.user}"></span>
                                     </th:block>
                                 </td>
                                 <td>
-                                    <span class="bi-check" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" title="You are authorized"></span>
+                                    <span class="bi-check" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.authorized}"></span>
                                 </td>
                                 <td><span th:utext="'&lt;strong&gt;'+${user.createdAt}+'&lt;/strong&gt;'"></span></td>
                                 <td><span th:utext="'&lt;strong&gt;'+${user.modifiedAt}+'&lt;/strong&gt;'"></span></td>
@@ -74,23 +74,23 @@
                                 <td>
                                     <a href="#" th:id="${'permissiontoggle' + user.id}">
                                         <th:block th:if="${user.authority == 'ROLE_SUPER'}">
-                                            <span class="bi-person-badge-fill" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" title="Currently a Super Admin. Click to change role"></span>
+                                            <span class="bi-person-badge-fill" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.super}. #{main.pages.users.tooltip.role.change}"></span>
                                         </th:block>
                                         <th:block th:if="${user.authority == 'ROLE_ADMIN'}">
-                                            <span class="bi-person-badge" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" title="Currently an Admin. Click to change role"></span>
+                                            <span class="bi-person-badge" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.admin}. #{main.pages.users.tooltip.role.change}"></span>
                                         </th:block>
                                         <th:block th:if="${user.authority == 'ROLE_USER'}">
-                                            <span class="bi-person" style="font-size: 1rem" data-bs-toggle="tooltip" data-bs-placement="right" title="Currently a User. Click to change role"></span>
+                                            <span class="bi-person" style="font-size: 1rem" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.user}. #{main.pages.users.tooltip.role.change}"></span>
                                         </th:block>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="#" th:id="${'isauthorized' + user.id}">
                                         <th:block th:if="${user.isAuthorized}">
-                                            <span class="bi-check" style="font-size: 1rem;color: lightgreen;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Deauthorize ' + user.username}"></span>
+                                            <span class="bi-check" style="font-size: 1rem;color: lightgreen;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.deauthorize(${user.username})}"></span>
                                         </th:block>
                                         <th:block th:unless="${user.isAuthorized}">
-                                            <span class="bi-x" style="font-size: 1rem;color: lightsalmon;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Authorize ' + user.username}"></span>
+                                            <span class="bi-x" style="font-size: 1rem;color: lightsalmon;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.authorize(${user.username})}"></span>
                                         </th:block>
                                     </a>
                                 </td>
@@ -98,12 +98,12 @@
                                 <td><span th:text="${user.modifiedAt}"></span></td>
                                 <td>
                                     <a href="#" th:id="${'resetPassword' + user.id}">
-                                        <span class="bi-arrow-clockwise overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Reset password for ' + user.username}"></span>
+                                        <span class="bi-arrow-clockwise overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.resetpw(${user.username})}"></span>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="#" th:id="${'trash' + user.id}">
-                                        <span class="bi-trash overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Delete account for ' + user.username}"></span>
+                                        <span class="bi-trash overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.deleteaccount(${user.username})}"></span>
                                     </a>
                                 </td>
                             </tr>

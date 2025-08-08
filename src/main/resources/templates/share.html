@@ -20,9 +20,9 @@
                 </ul>
             </th:block>
             <span style="font-size: 1rem;display: none;background: none;border: none;" th:class="${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" id="albumNumberSelected"></span>&nbsp;&nbsp;&nbsp;
-            <button th:class="'bi-x-circle '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;display: none;background: none;border: none;" title="Cancel multi select" id="clearMultiSelect"></button>&nbsp;
+            <button th:class="'bi-x-circle '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;display: none;background: none;border: none;" th:title="#{main.pages.share.tooltip.cancelmulti}" id="clearMultiSelect"></button>&nbsp;
             <form id="downloadWrapper" method="post" th:action="${'/download/share/' + shareLink + '/album/' + albumId}" style="display: inline-block;white-space: nowrap;">
-                <button th:id="${'download' + albumId}" th:class="'bi-download '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;background: none;border: none;" type="submit" name="download" th:value="${albumId}" title="Download all photos"></button>
+                <button th:id="${'download' + albumId}" th:class="'bi-download '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;background: none;border: none;" type="submit" name="download" th:value="${albumId}" th:title="#{main.pages.tooltip.albums.msg.downloadalbum}"></button>
             </form>
         </div>
     </header>
