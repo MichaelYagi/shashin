@@ -340,10 +340,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.id as metadataId,m.type,m.path,m.thumbnail_path_small as thumbnailPathSmall,m.thumbnail_url_original as thumbnailUrlOriginal,rlp.recognition_label_id as recognitionLabelId,rl.name as recognitionLabelName FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id LEFT JOIN recognitionlabel rl ON rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rlp.id IN (SELECT rlp2.id FROM recognitionlabelphoto rlp2 WHERE rlp.recognition_label_id = rlp2.recognition_label_id LIMIT :trainingDataLimit) AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold ORDER BY rlp.recognition_label_id, RANDOM()",nativeQuery = true)
    fun findTrainingData(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("trainingDataLimit") trainingDataLimit: Int): MutableIterable<TrainingData>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width < original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width <= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaPortrait(@Param("type") type: String): Metadata?
 
-   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width > original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width >= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaLandscape(@Param("type") type: String): Metadata?
 
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
@@ -358,34 +358,34 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE file_name LIKE %:filename% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaAndFilter(@Param("filename") filename: String): Metadata?
 
-   @Query("SELECT * FROM metadata WHERE file_name LIKE %:filename% AND hidden = 0 AND original_image_width > original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE file_name LIKE %:filename% AND hidden = 0 AND original_image_width >= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaAndFilterLandscape(@Param("filename") filename: String): Metadata?
 
-   @Query("SELECT * FROM metadata WHERE file_name LIKE %:filename% AND hidden = 0 AND original_image_width < original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE file_name LIKE %:filename% AND hidden = 0 AND original_image_width <= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaAndFilterPortrait(@Param("filename") filename: String): Metadata?
 
-   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width < m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserPortrait(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width > m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserLandscape(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
 
    @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUser(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width > m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserAndAlbumLandscape(@Param("userId") userId: Int, @Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width < m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserAndAlbumPortrait(@Param("userId") userId: Int, @Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
    @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserAndAlbum(@Param("userId") userId: Int, @Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width > m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByAlbumLandscape(@Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width < m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByAlbumPortrait(@Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
    @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
@@ -394,10 +394,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaAndFilterByUser(@Param("userId") userId: Int, @Param("filename") filename: String): Metadata?
 
-   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 AND m.original_image_width > m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaAndFilterByUserLandscape(@Param("userId") userId: Int, @Param("filename") filename: String): Metadata?
 
-   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 AND m.original_image_width < m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaAndFilterByUserPortrait(@Param("userId") userId: Int, @Param("filename") filename: String): Metadata?
 
    @Query("SELECT COUNT(*) FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)
