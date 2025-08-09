@@ -555,6 +555,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.idinterval")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>[ ]</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>p</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.toggleprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
@@ -948,6 +949,26 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                             tag: "slide"
                         }
                     );
+                }
+            }
+
+            // Change orientation
+            if (e.key === "]" || e.code === "BracketRight" || e.which === 221 || e.keyCode === 221) {
+                const currOrientation = orientation;
+
+                if ((currOrientation + 1) <= 2) {
+                    orientation += 1;
+                    changeSideshowOrientation();
+                }
+            }
+
+            // Change orientation
+            if (e.key === "[" || e.code === "BracketLeft" || e.which === 219 || e.keyCode === 219) {
+                const currOrientation = orientation;
+
+                if ((currOrientation - 1) >= 0) {
+                    orientation -= 1;
+                    changeSideshowOrientation();
                 }
             }
 
