@@ -28,15 +28,36 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     const playPauseHideTime = 3000;
     const fadeOutTime = 1000;
     const pollTimeout = 100;
+    let slideTimer = null;
+    let elapsedBeforePause = 0;
     let isActive = false;
     $("#slideshowProgressContainer").css("transition", "width "+pollTimeout+"ms ease-in-out");
     let startTime = Date.now();
     let currentTime = Date.now();
 
+    function setupSlideshowInterval() {
+        clearInterval(slideshowIntervalId);
+        startTime = Date.now();
+        currentTime = Date.now();
+        slideTimer = setInterval(pollData, pollTimeout);
+        slideshowIntervalId = setInterval(() => {
+            if (!slideshowIsPaused) {
+                slideshowCurrentIndex++;
+                getSlideshowImage(() => {
+                    slideshowProceed = true;
+                    $("#slideshowProgressContainer").css("width", "0");
+                    clearInterval(slideTimer);
+                    startTime = Date.now();
+                    slideTimer = setInterval(pollData, pollTimeout);
+                });
+            }
+        }, slideshowIsElapsed * 1000);
+    }
+
     function pollData() {
         if (slideshowIsPaused === false) {
             currentTime = Date.now();
-            let elapsedTime = currentTime - startTime;
+            let elapsedTime = elapsedBeforePause + (currentTime - startTime);
             const progress = elapsedTime / (slideshowIsElapsed * 1000) * 100;
             $("#slideshowProgressContainer").css("width", progress + "%");
         }
@@ -233,79 +254,27 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                         "transform": "translate(-50%, -50%)"
                     });
 
-                    $("#prevSlide").css({
-                        "font-size": "4rem",
-                        "color": "#FFFFFF",
-                        "z-index": 99998,
-                        "position": "absolute",
-                        "top": "46%",
-                        "left": "2%"
-                    });
-
-                    $("#nextSlide").css({
-                        "font-size": "4rem",
-                        "color": "#FFFFFF",
-                        "z-index": 99998,
-                        "position": "absolute",
-                        "top": "46%",
-                        "right": "2%"
-                    });
-
-                    $("#closeAction").css({
-                        "font-size": "4rem",
-                        "color": "#FFFFFF",
-                        "z-index": 99998,
-                        "position": "absolute",
-                        "top": "5px",
-                        "right": "5px"
-                    });
-
-                    $("#shortcutAction").css({
-                        "font-size": "2rem",
-                        "color": "#FFFFFF",
-                        "z-index": 99998,
-                        "position": "absolute",
-                        "top": "22px",
-                        "right": "77px"
-                    });
-
-                    $("#infoAction").css({
-                        "font-size": "2rem",
-                        "color": "#FFFFFF",
-                        "z-index": 99998,
-                        "position": "absolute",
-                        "top": "23px",
-                        "right": "135px"
-                    });
-
-                    if (document.fullscreenEnabled) {
-                        $("#screenAction").css({
-                            "font-size": "2rem",
+                    function styleControl(id, fontSize, top, side, sideValue) {
+                        $(id).css({
+                            "font-size": fontSize,
                             "color": "#FFFFFF",
                             "z-index": 99998,
                             "position": "absolute",
-                            "top": "23px",
-                            "right": "193px"
+                            "top": top,
+                            [side]: sideValue
                         });
                     }
 
-                    $("#downloadAction").css({
-                        "font-size": "2rem",
-                        "color": "#FFFFFF",
-                        "z-index": 99998,
-                        "position": "absolute",
-                        "top": "23px",
-                        "right": "251px"
-                    });
-
-                    $("#slideSpinner").css({
-                        "font-size": "2rem",
-                        "color": "#FFFFFF",
-                        "z-index": 99998,
-                        "position": "absolute",
-                        "top": "23px",
-                        "left": "2%"
-                    });
+                    styleControl("#nextSlide", "4rem", "46%", "right", "2%");
+                    styleControl("#prevSlide", "4rem", "46%", "left", "2%");
+                    styleControl("#closeAction", "4rem", "5px", "right", "5px");
+                    styleControl("#shortcutAction", "2rem", "22px", "right", "77px");
+                    styleControl("#infoAction", "2rem", "23px", "right", "135px");
+                    styleControl("#downloadAction", "2rem", "23px", "right", "251px");
+                    styleControl("#slideSpinner", "2rem", "23px", "left", "2%");
+                    if (document.fullscreenEnabled) {
+                        styleControl("#screenAction", "2rem", "23px", "right", "193px");
+                    }
 
                     $("#mediaInfo").addClass("text-center");
                     $("#mediaInfo").css({
@@ -378,30 +347,14 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction,#downloadAction").on("mouseenter", function (e) {
         e.preventDefault();
 
-        if (nextTimer) {
-            clearTimeout(nextTimer);
-        }
-        if (prevTimer) {
-            clearTimeout(prevTimer);
-        }
-        if (closeTimer) {
-            clearTimeout(closeTimer);
-        }
-        if (shortcutTimer) {
-            clearTimeout(shortcutTimer);
-        }
+        [nextTimer, prevTimer, closeTimer, shortcutTimer, downloadTimer, infoTimer, slideshowMouseTimer].forEach(timer => {
+            if (timer) {
+                clearTimeout(timer);
+            }
+        });
+
         if (document.fullscreenEnabled && screenTimer) {
             clearTimeout(screenTimer);
-        }
-        if (downloadTimer) {
-            clearTimeout(downloadTimer);
-        }
-        if (infoTimer) {
-            clearTimeout(infoTimer);
-        }
-
-        if (slideshowMouseTimer) {
-            clearTimeout(slideshowMouseTimer);
         }
 
         if (slideshowCursorVisible === false) {
@@ -440,30 +393,14 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
     function showControls() {
         if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction,#downloadAction").is(":hidden")) {
-            if (nextTimer) {
-                clearTimeout(nextTimer);
-            }
-            if (prevTimer) {
-                clearTimeout(prevTimer);
-            }
-            if (closeTimer) {
-                clearTimeout(closeTimer);
-            }
-            if (screenTimer) {
-                clearTimeout(screenTimer);
-            }
-            if (downloadTimer) {
-                clearTimeout(downloadTimer);
-            }
-            if (shortcutTimer) {
-                clearTimeout(shortcutTimer);
-            }
-            if (infoTimer) {
-                clearTimeout(infoTimer);
-            }
+            [nextTimer, prevTimer, closeTimer, shortcutTimer, downloadTimer, infoTimer, slideshowMouseTimer].forEach(timer => {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+            });
 
-            if (slideshowMouseTimer) {
-                clearTimeout(slideshowMouseTimer);
+            if (document.fullscreenEnabled && screenTimer) {
+                clearTimeout(screenTimer);
             }
 
             if (slideshowCursorVisible === false) {
@@ -714,23 +651,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#slideshowIntervalSlide").val(Math.floor((slideshowIsElapsed-min)/spacing)+1);
 
         if (slideshowIsPaused === false) {
-            clearInterval(slideshowIntervalId);
-
-            startTime = Date.now();
-            currentTime = Date.now();
-            let slideTimer = setInterval(pollData, pollTimeout);
-            slideshowIntervalId = window.setInterval(function () {
-                if (slideshowIsPaused === false) {
-                    slideshowCurrentIndex++;
-                    getSlideshowImage(function () {
-                        slideshowProceed = true;
-                        $("#slideshowProgressContainer").css("width","0");
-                        clearInterval(slideTimer);
-                        startTime = Date.now();
-                        slideTimer = setInterval(pollData, pollTimeout);
-                    });
-                }
-            }, (slideshowIsElapsed * 1000));
+            setupSlideshowInterval();
         }
 
         const http = new Http("dark mode");
@@ -1018,23 +939,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     });
 
                     if (slideshowIsPaused === false) {
-                        clearInterval(slideshowIntervalId);
-
-                        startTime = Date.now();
-                        currentTime = Date.now();
-                        let slideTimer = setInterval(pollData, pollTimeout);
-                        slideshowIntervalId = window.setInterval(function () {
-                            if (slideshowIsPaused === false) {
-                                slideshowCurrentIndex++;
-                                getSlideshowImage(function () {
-                                    slideshowProceed = true;
-                                    $("#slideshowProgressContainer").css("width","0");
-                                    clearInterval(slideTimer);
-                                    startTime = Date.now();
-                                    slideTimer = setInterval(pollData, pollTimeout);
-                                });
-                            }
-                        }, (slideshowIsElapsed * fadeOutTime));
+                        setupSlideshowInterval();
                     }
                 } else {
                     return false;
@@ -1094,23 +999,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         });
 
         if (slideshowIsPaused === false) {
-            clearInterval(slideshowIntervalId);
-
-            startTime = Date.now();
-            currentTime = Date.now();
-            let slideTimer = setInterval(pollData, pollTimeout);
-            slideshowIntervalId = window.setInterval(function () {
-                if (slideshowIsPaused === false) {
-                    slideshowCurrentIndex++;
-                    getSlideshowImage(function () {
-                        slideshowProceed = true;
-                        $("#slideshowProgressContainer").css("width","0");
-                        clearInterval(slideTimer);
-                        startTime = Date.now();
-                        slideTimer = setInterval(pollData, pollTimeout);
-                    });
-                }
-            }, (slideshowIsElapsed * 1000));
+            setupSlideshowInterval();
         }
     });
 
@@ -1130,23 +1019,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         });
 
         if (slideshowIsPaused === false) {
-            clearInterval(slideshowIntervalId);
-
-            startTime = Date.now();
-            currentTime = Date.now();
-            let slideTimer = setInterval(pollData, pollTimeout);
-            slideshowIntervalId = window.setInterval(function () {
-                if (slideshowIsPaused === false) {
-                    slideshowCurrentIndex++;
-                    getSlideshowImage(function () {
-                        slideshowProceed = true;
-                        $("#slideshowProgressContainer").css("width","0");
-                        clearInterval(slideTimer);
-                        startTime = Date.now();
-                        slideTimer = setInterval(pollData, pollTimeout);
-                    });
-                }
-            }, (slideshowIsElapsed * 1000));
+            setupSlideshowInterval();
         }
     });
 
@@ -1179,23 +1052,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     slideshowProceed = true;
                 });
                 if (slideshowIsPaused === false) {
-                    clearInterval(slideshowIntervalId);
-
-                    startTime = Date.now();
-                    currentTime = Date.now();
-                    let slideTimer = setInterval(pollData, pollTimeout);
-                    slideshowIntervalId = window.setInterval(function () {
-                        if (slideshowIsPaused === false) {
-                            slideshowCurrentIndex++;
-                            getSlideshowImage(function () {
-                                slideshowProceed = true;
-                                $("#slideshowProgressContainer").css("width","0");
-                                clearInterval(slideTimer);
-                                startTime = Date.now();
-                                slideTimer = setInterval(pollData, pollTimeout);
-                            });
-                        }
-                    }, (slideshowIsElapsed * 1000));
+                    setupSlideshowInterval();
                 }
             }
         }
@@ -1263,9 +1120,19 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#playPause").stop(true, true);
 
         if (slideshowIsPaused === false) {
+            // Pause
             $("#mediaSrc").css("opacity", "0.3");
             $("#playPause").addClass("bi-play-circle").removeClass("bi-pause-circle");
             slideshowIsPaused = true;
+
+            // Save elapsed time
+            elapsedBeforePause += Date.now() - startTime;
+
+            clearInterval(slideshowIntervalId);
+            slideshowIntervalId = null;
+
+            clearInterval(slideTimer);
+            slideTimer = null;
 
             if (hideButton === true) {
                 $("#playPause").hide();
@@ -1273,9 +1140,39 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 $("#playPause").show();
             }
         } else {
+            // Resume
             $("#mediaSrc").css("opacity", "1");
             $("#playPause").addClass("bi-pause-circle").removeClass("bi-play-circle");
             slideshowIsPaused = false;
+
+            const remainingTime = (slideshowIsElapsed * 1000) - elapsedBeforePause;
+
+            startTime = Date.now();
+            slideTimer = setInterval(pollData, pollTimeout);
+
+            slideshowIntervalId = setTimeout(() => {
+                slideshowCurrentIndex++;
+                getSlideshowImage(() => {
+                    slideshowProceed = true;
+                    $("#slideshowProgressContainer").css("width", "0");
+                    elapsedBeforePause = 0;
+                    startTime = Date.now();
+                    slideTimer = setInterval(pollData, pollTimeout);
+                    slideshowIntervalId = setInterval(() => {
+                        if (!slideshowIsPaused) {
+                            slideshowCurrentIndex++;
+                            getSlideshowImage(() => {
+                                slideshowProceed = true;
+                                $("#slideshowProgressContainer").css("width", "0");
+                                clearInterval(slideTimer);
+                                elapsedBeforePause = 0;
+                                startTime = Date.now();
+                                slideTimer = setInterval(pollData, pollTimeout);
+                            });
+                        }
+                    }, slideshowIsElapsed * 1000);
+                });
+            }, remainingTime);
 
             if (hideButton === true) {
                 $("#playPause").hide();
@@ -1318,21 +1215,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         firstTime = true;
 
-        startTime = Date.now();
-        currentTime = Date.now();
-        let slideTimer = setInterval(pollData, pollTimeout);
-        slideshowIntervalId = window.setInterval(function () {
-            if (slideshowIsPaused === false) {
-                slideshowCurrentIndex++;
-                getSlideshowImage(function () {
-                    slideshowProceed = true;
-                    $("#slideshowProgressContainer").css("width","0");
-                    clearInterval(slideTimer);
-                    startTime = Date.now();
-                    slideTimer = setInterval(pollData, pollTimeout);
-                });
-            }
-        }, (slideshowIsElapsed * 1000));
+        setupSlideshowInterval();
 
         getSlideshowImage(function (loaded) {
             slideshowProceed = true;
