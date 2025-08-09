@@ -31,6 +31,8 @@ class User {
     @NotBlank
     private var slideshowProgress: Boolean? = false
     @NotBlank
+    private var slideshowOrientation: Int? = 0
+    @NotBlank
     private var slideshowInterval: Int? = 10
     @NotBlank
     private var language: String? = "en"
@@ -129,6 +131,14 @@ class User {
         this.slideshowProgress = slideshowProgress
     }
 
+    fun getSlideshowOrientation(): Int? {
+        return this.slideshowOrientation
+    }
+
+    fun setSlideshowOrientation(slideshowOrientation: Int?) {
+        this.slideshowOrientation = slideshowOrientation
+    }
+
     fun getIsAuthorized(): Boolean? {
         return this.isAuthorized
     }
@@ -206,6 +216,7 @@ class User {
         map["slideshowInterval"] = this.slideshowInterval
         map["language"] = this.language
         map["slideshowProgress"] = this.slideshowProgress
+        map["slideshowOrientation"] = this.slideshowOrientation
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
