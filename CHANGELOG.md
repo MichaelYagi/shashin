@@ -17,6 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Pause for slideshow
+
 ### Security
 
 ## [2.11.6] - 2025-08-07
