@@ -565,7 +565,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/metadata/type/{type}", "/random/metadata/type/{type}"], method = [(RequestMethod.GET)], produces = ["application/json"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam includeSlideAlbums: Optional<Boolean>): String {
+    fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam includeSlideAlbums: Optional<Boolean>, @RequestParam orientation: Optional<Int>): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
@@ -587,26 +587,62 @@ class MediaServiceController {
                 val slideshowObj = slideshowAlbumRepository.findFirstByUserId(currentUser.getId())
                 if (slideshowObj != null) {
                     slideshowAlbums = slideshowObj.getAlbums()!!.split(",").toTypedArray()
-                    //slideshowAlbums = slideshowAlbums.filter { it != "all" }.toTypedArray()
                 }
+            }
+
+            var orientationVal: Int? = null
+            if (orientation.isPresent && (orientation.get() == 1 || orientation.get() == 2)) {
+                orientationVal = orientation.get()
             }
 
             val randomMetadata =
                 (if (slideshowAlbums.contains("all") && (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER")) {
-                    metadataRepository.findRandomMetadataMedia(type)
+                    if (orientationVal == 1) { // landscape
+                        metadataRepository.findRandomMetadataMediaLandscape(type)
+                    } else if (orientationVal == 2) { // portrait
+                        metadataRepository.findRandomMetadataMediaPortrait(type)
+                    } else {
+                        metadataRepository.findRandomMetadataMedia(type)
+                    }
                 } else if (slideshowAlbums.contains("all") && currentUser.getAuthority()!! == "ROLE_USER") {
-                    metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), type)
+                    if (orientationVal == 1) { // landscape
+                        metadataRepository.findRandomAlbumMediaByUserLandscape(currentUser.getId(), type)
+                    } else if (orientationVal == 2) { // portrait
+                        metadataRepository.findRandomAlbumMediaByUserPortrait(currentUser.getId(), type)
+                    } else {
+                        metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), type)
+                    }
                 } else if (slideshowAlbums.isNotEmpty()) {
                     val randomIndex = (0..slideshowAlbums.lastIndex).random()
                     val albumId = slideshowAlbums[randomIndex]
                     if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                        metadataRepository.findRandomAlbumMediaByAlbum(albumId.toInt(), type)
+                        if (orientationVal == 1) {
+                            metadataRepository.findRandomAlbumMediaByAlbumLandscape(albumId.toInt(), type)
+                        } else if (orientationVal == 2) {
+                            metadataRepository.findRandomAlbumMediaByAlbumPortrait(albumId.toInt(), type)
+                        } else {
+                            metadataRepository.findRandomAlbumMediaByAlbum(albumId.toInt(), type)
+                        }
                     } else {
-                        metadataRepository.findRandomAlbumMediaByUserAndAlbum(
-                            currentUser.getId(),
-                            albumId.toInt(),
-                            type
-                        )
+                        if (orientationVal == 1) {
+                            metadataRepository.findRandomAlbumMediaByUserAndAlbumLandscape(
+                                currentUser.getId(),
+                                albumId.toInt(),
+                                type
+                            )
+                        } else if (orientationVal == 2) {
+                            metadataRepository.findRandomAlbumMediaByUserAndAlbumPortrait(
+                                currentUser.getId(),
+                                albumId.toInt(),
+                                type
+                            )
+                        } else {
+                            metadataRepository.findRandomAlbumMediaByUserAndAlbum(
+                                currentUser.getId(),
+                                albumId.toInt(),
+                                type
+                            )
+                        }
                     }
                 } else {
                     null

@@ -14,6 +14,7 @@
     shashin.darkMode = false;
     shashin.showNotifications = true;
     shashin.slideshowProgress = false;
+    shashin.slideshowOrientation = 0;
     shashin.showPlacename = false;
     shashin.autoplayVideo = false;
     shashin.lgSubHtmlTimeout = null;

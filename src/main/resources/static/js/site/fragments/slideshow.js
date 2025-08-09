@@ -1,4 +1,4 @@
-function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale, slideshowProgress) {
+function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale, slideshowProgress, orientation) {
     let slideshowIntervalId;
     let slideshowStarted = false;
     let slideshowIsPaused = false;
@@ -28,6 +28,11 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     const playPauseHideTime = 3000;
     const fadeOutTime = 1000;
     const pollTimeout = 100;
+    const orientationMap = {
+        0: shashin.getTranslatedValue("main.pages.slideshow.all"),
+        1: shashin.getTranslatedValue("main.pages.slideshow.landscape"),
+        2: shashin.getTranslatedValue("main.pages.slideshow.portrait")
+    };
     let slideTimer = null;
     let elapsedBeforePause = 0;
     let isActive = false;
@@ -178,7 +183,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 });
             } else {
                 shashin.printMessageToConsole("New random image", {tag: "slideshow"});
-                http.ajax("get", "/random/metadata/type/image?includeSlideAlbums=true").then(function (data) {
+                http.ajax("get", "/random/metadata/type/image?includeSlideAlbums=true&orientation="+orientation).then(function (data) {
                     processSlideData(data, "new", callback);
                 });
             }
@@ -552,6 +557,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.idinterval")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>p</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.toggleprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
@@ -567,6 +573,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.exit")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
@@ -582,6 +589,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         );
 
         $("#slideshowIntervalSlide").val(Math.floor(((slideshowIsElapsed-min)/spacing)+1));
+
+        $("#slideshowOrientationSlide").val(orientation+1);
 
         $("#showProgress").val('checked', slideshowProgress);
         $('#showProgress').prop('checked', slideshowProgress);
@@ -634,6 +643,21 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             changeSideshowInterval();
         });
 
+        $("#slideshowIntervalSlide").on("input", function () {
+            slideshowIsElapsed = Math.floor(min+($(this).val()-1) * spacing);
+            $("#intervalValue").text(slideshowIsElapsed);
+        });
+
+        $("#slideshowOrientationSlide").on("change", function () {
+            orientation = $(this).val()-1;
+            changeSideshowOrientation();
+        });
+
+        $("#slideshowOrientationSlide").on("input", function () {
+            orientation = $(this).val()-1;
+            $("#orientationValue").text(orientationMap[orientation]);
+        });
+
         $("#showProgress").on("change", function () {
             slideshowProgress = $("#showProgress").prop('checked');
             if (slideshowProgress === true) {
@@ -643,11 +667,25 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
             changeShowProgress();
         });
+    }
 
-        $("#slideshowIntervalSlide").on("input", function () {
-            slideshowIsElapsed = Math.floor(min+($(this).val()-1) * spacing);
-            $("#intervalValue").text(slideshowIsElapsed);
-        });
+    function changeSideshowOrientation() {
+        $("#orientationValue").text(orientationMap[orientation]);
+        $("#slideshowOrientationSlide").val(orientation+1);
+
+        const http = new Http("orientation");
+        const json = {slideshowOrientation: orientation};
+        const data = http.ajax("post", "/users/slideshoworientation", JSON.stringify(json));
+
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            if (data.status === "success") {
+                shashin.printMessageToConsole("Slideshow orientation set: " + orientationMap[orientation], {tag: "slideshow"});
+            } else {
+                shashin.printMessageToConsole("Slideshow orientation failed to set", {tag: "slideshow"});
+            }
+        } else {
+            shashin.printMessageToConsole("Slideshow orientation failed request", {tag: "slideshow"});
+        }
     }
 
     function changeSideshowInterval() {
@@ -658,7 +696,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             setupSlideshowInterval();
         }
 
-        const http = new Http("dark mode");
+        const http = new Http("slideshow interval");
         const json = {slideshowInterval: slideshowIsElapsed};
         const data = http.ajax("post", "/users/slideshowinterval", JSON.stringify(json));
 
