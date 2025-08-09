@@ -911,14 +911,14 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
             // Show progress
             if (e.key === "p" || e.code === "KeyP" || e.which === 80 || e.keyCode === 80) {
-                slideshowProgress = $("#showProgress").prop('checked');
                 if (slideshowProgress === true) {
                     $("#showProgress").prop('checked', false);
                     $("#slideshowProgressContainer").css("display", "none");
-
+                    slideshowProgress = false;
                 } else {
                     $("#showProgress").prop('checked', true);
                     $("#slideshowProgressContainer").css("display", "block");
+                    slideshowProgress = true;
                 }
                 changeShowProgress();
             }
