@@ -584,6 +584,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#slideshowIntervalSlide").val(Math.floor(((slideshowIsElapsed-min)/spacing)+1));
 
         $("#showProgress").val('checked', slideshowProgress);
+        $('#showProgress').prop('checked', slideshowProgress);
 
         if (typeof Castjs != "undefined" && cjsc !== null) {
             cjsc.on('available', () => {
@@ -915,11 +916,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             // Show progress
             if (e.key === "p" || e.code === "KeyP" || e.which === 80 || e.keyCode === 80) {
                 if (slideshowProgress === true) {
-                    $("#showProgress").prop('checked', false);
+                    $("#showProgress").val('checked', false);
+                    $('#showProgress').prop('checked', false);
                     $("#slideshowProgressContainer").css("display", "none");
                     slideshowProgress = false;
                 } else {
-                    $("#showProgress").prop('checked', true);
+                    $("#showProgress").val('checked', true);
+                    $('#showProgress').prop('checked', true);
                     $("#slideshowProgressContainer").css("display", "");
                     slideshowProgress = true;
                 }
