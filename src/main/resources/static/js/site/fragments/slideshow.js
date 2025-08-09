@@ -31,7 +31,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     let slideTimer = null;
     let elapsedBeforePause = 0;
     let isActive = false;
-    $("#slideshowProgressContainer").css("transition", "width "+pollTimeout+"ms ease-in-out");
+    $("#slideshowProgress").css("transition", "width "+pollTimeout+"ms ease-in-out");
+    $("#slideshowProgressContainer").css("z-index", 999999);
     let startTime = Date.now();
     let currentTime = Date.now();
 
@@ -45,7 +46,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 slideshowCurrentIndex++;
                 getSlideshowImage(() => {
                     slideshowProceed = true;
-                    $("#slideshowProgressContainer").css("width", "0");
+                    $("#slideshowProgress").css("width", "0");
+                    $("#slideshowProgressContainer").attr("aria-valuenow", "0");
                     clearInterval(slideTimer);
                     startTime = Date.now();
                     slideTimer = setInterval(pollData, pollTimeout);
@@ -58,8 +60,9 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         if (slideshowIsPaused === false) {
             currentTime = Date.now();
             let elapsedTime = elapsedBeforePause + (currentTime - startTime);
-            const progress = elapsedTime / (slideshowIsElapsed * 1000) * 100;
-            $("#slideshowProgressContainer").css("width", progress + "%");
+            const progress = Math.round(elapsedTime / (slideshowIsElapsed * 1000) * 100);
+            $("#slideshowProgress").css("width", progress + "%");
+            $("#slideshowProgressContainer").attr("aria-valuenow", progress);
         }
     }
 
@@ -633,7 +636,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#showProgress").on("change", function () {
             slideshowProgress = $("#showProgress").prop('checked');
             if (slideshowProgress === true) {
-                $("#slideshowProgressContainer").css("display", "block");
+                $("#slideshowProgressContainer").css("display", "");
             } else {
                 $("#slideshowProgressContainer").css("display", "none");
             }
@@ -917,7 +920,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     slideshowProgress = false;
                 } else {
                     $("#showProgress").prop('checked', true);
-                    $("#slideshowProgressContainer").css("display", "block");
+                    $("#slideshowProgressContainer").css("display", "");
                     slideshowProgress = true;
                 }
                 changeShowProgress();
@@ -1154,7 +1157,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 slideshowCurrentIndex++;
                 getSlideshowImage(() => {
                     slideshowProceed = true;
-                    $("#slideshowProgressContainer").css("width", "0");
+                    $("#slideshowProgress").css("width", "0");
+                    $("#slideshowProgressContainer").attr("aria-valuenow", "0");
                     elapsedBeforePause = 0;
                     startTime = Date.now();
                     slideTimer = setInterval(pollData, pollTimeout);
@@ -1163,7 +1167,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                             slideshowCurrentIndex++;
                             getSlideshowImage(() => {
                                 slideshowProceed = true;
-                                $("#slideshowProgressContainer").css("width", "0");
+                                $("#slideshowProgress").css("width", "0");
+                                $("#slideshowProgressContainer").attr("aria-valuenow", "0");
                                 clearInterval(slideTimer);
                                 elapsedBeforePause = 0;
                                 startTime = Date.now();
@@ -1192,7 +1197,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         createVideo();
 
         if (slideshowProgress === true) {
-            $("#slideshowProgressContainer").css("display", "block");
+            $("#slideshowProgressContainer").css("display", "");
         } else {
             $("#slideshowProgressContainer").css("display", "none");
         }
