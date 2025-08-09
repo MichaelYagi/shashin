@@ -959,6 +959,16 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 if ((currOrientation + 1) <= 2) {
                     orientation += 1;
                     changeSideshowOrientation();
+                    shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.pages.slideshow.orientation"),
+                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",orientationMap[orientation]),
+                        {
+                            icon: "bi-info-circle",
+                            autohide: true,
+                            placement:shashin.toast.placement.top.center,
+                            tag: "slide"
+                        }
+                    );
                 }
             }
 
@@ -969,6 +979,16 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 if ((currOrientation - 1) >= 0) {
                     orientation -= 1;
                     changeSideshowOrientation();
+                    shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.pages.slideshow.orientation"),
+                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",orientationMap[orientation]),
+                        {
+                            icon: "bi-info-circle",
+                            autohide: true,
+                            placement:shashin.toast.placement.top.center,
+                            tag: "slide"
+                        }
+                    );
                 }
             }
 
