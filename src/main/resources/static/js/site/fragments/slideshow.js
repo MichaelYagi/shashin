@@ -961,7 +961,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     changeSideshowOrientation();
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
                     shashin.showToastMessage(shashin.getTranslatedValue("main.pages.slideshow.orientation"),
-                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",orientationMap[orientation]),
+                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",orientationMap[orientation].toLowerCase()),
                         {
                             icon: "bi-info-circle",
                             autohide: true,
@@ -981,7 +981,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     changeSideshowOrientation();
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
                     shashin.showToastMessage(shashin.getTranslatedValue("main.pages.slideshow.orientation"),
-                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",orientationMap[orientation]),
+                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",orientationMap[orientation].toLowerCase()),
                         {
                             icon: "bi-info-circle",
                             autohide: true,
