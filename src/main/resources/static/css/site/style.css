@@ -3,6 +3,11 @@ body {
   position: relative;
 }
 
+.slideshow-fill {
+  object-fit: cover;
+  width: 100%;
+}
+
 .photo-thumbnail-image {
   max-width: 100%;
   overflow-x: hidden;
