@@ -500,9 +500,17 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             clearTimeout(slideshowMouseTimer);
         }
 
+        if (slideTimer) {
+            clearTimeout(slideTimer);
+        }
+
         showCursor();
         slideshowStarted = false;
         slideshowProceed = true;
+
+        $("#mediaSrc").css("opacity", "1");
+        $("#playPause").addClass("bi-pause-circle").removeClass("bi-play-circle");
+        slideshowIsPaused = false;
 
         shashin.closeToastMessages({tag: "slide"});
 
@@ -1062,6 +1070,9 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     if (slideshowIsPaused === false) {
                         setupSlideshowInterval();
                     }
+
+                    startTime = Date.now();
+                    currentTime = Date.now();
                 } else {
                     return false;
                 }
@@ -1122,6 +1133,9 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         if (slideshowIsPaused === false) {
             setupSlideshowInterval();
         }
+
+        startTime = Date.now();
+        currentTime = Date.now();
     });
 
     $("#nextSlideButton").on("click", function (e) {
@@ -1142,6 +1156,9 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         if (slideshowIsPaused === false) {
             setupSlideshowInterval();
         }
+
+        startTime = Date.now();
+        currentTime = Date.now();
     });
 
     Util.detectSwipe("#slideshowContainer", function (direction) {
@@ -1309,6 +1326,33 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     // Start slideshow
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
+
+        slideshowStarted = false;
+        slideshowIsPaused = false;
+        slideshowIsElapsed = slideshowInterval; // Seconds
+        slideshowCurrentIndex = 0;
+        slideshowMetadataIds = [];
+        slideshowMouseTimer = null;
+        closeTimer = null;
+        nextTimer = null;
+        prevTimer = null;
+        infoTimer = null;
+        shortcutTimer = null;
+        screenTimer = null;
+        downloadTimer = null;
+        slideshowCursorVisible = true;
+        slideshowProceed = true;
+        cjsc = null;
+        currentPhotoUrl = null;
+        currentMetadata = null;
+        firstTime = true;
+        isFileDialogOpened = false;
+        slideTimer = null;
+        elapsedBeforePause = 0;
+        $("#slideshowProgress").css("transition", "width "+pollTimeout+"ms ease-in-out");
+        $("#slideshowProgressContainer").css("z-index", 999999);
+        startTime = Date.now();
+        currentTime = Date.now();
 
         isActive = true;
         tearDownVideo();
