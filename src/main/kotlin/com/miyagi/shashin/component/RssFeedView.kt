@@ -65,8 +65,12 @@ class RssFeedView : AbstractRssFeedView() {
             }
         }
 
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
 
@@ -94,8 +98,12 @@ class RssFeedView : AbstractRssFeedView() {
         request: HttpServletRequest, response: HttpServletResponse
     ): List<Item> {
         val rssList = mutableListOf<Item>()
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
         val baseUrl = baseUrlBuilder.build().toUriString()

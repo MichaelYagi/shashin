@@ -576,8 +576,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
         val localeResolver = RequestContextUtils.getLocaleResolver(request)
         localeResolver?.setLocale(request, response, StringUtils.parseLocaleString(locale.toString()))
 
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
         val baseUrl = baseUrlBuilder.build().toUriString()
