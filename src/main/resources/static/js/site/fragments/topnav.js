@@ -2,9 +2,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
     shashin.autoplayVideo = autoplayVideo;
-    shashin.showNotifications = notificationAlerts;
-    shashin.slideshowProgress = slideshowProgress;
-    shashin.slideshowOrientation = orientation;
+    // Above used elsewhere - do not add to list
 
     // Avoids aria-hidden warnings
     document.addEventListener('hide.bs.modal', function (event) {
