@@ -485,8 +485,12 @@ class MediaServiceController {
         resp["shortPlaceName"] = ""
         resp["msg"] = ""
 
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
         val baseUrl = baseUrlBuilder.build().toUriString()
@@ -532,8 +536,12 @@ class MediaServiceController {
         resp["albumIds"] = mutableListOf<Int>()
         resp["msg"] = ""
 
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
         val baseUrl = baseUrlBuilder.build().toUriString()
@@ -574,8 +582,12 @@ class MediaServiceController {
         resp["albumIds"] = mutableListOf<Int>()
         resp["msg"] = ""
 
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
         val baseUrl = baseUrlBuilder.build().toUriString()

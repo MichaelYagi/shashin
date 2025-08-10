@@ -75,10 +75,15 @@ class AtomFeedView : AbstractAtomFeedView() {
 
         feed.subtitle = content
 
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
+
         var apiKey = ""
         if (model.containsKey("apiKey")) {
             apiKey = model["apiKey"] as String
@@ -105,8 +110,12 @@ class AtomFeedView : AbstractAtomFeedView() {
         val logger: Logger = Logger.getLogger(AtomFeedView::class.simpleName)
 
         val atomList = mutableListOf<Entry>()
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
         val baseUrl = baseUrlBuilder.build().toUriString()

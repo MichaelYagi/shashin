@@ -2676,8 +2676,12 @@ class TimelineController: BaseController() {
 
         response["shortPlaceName"] = null
 
+        var scheme = request.getHeader("X-Forwarded-Proto")
+        if (scheme == null) {
+            scheme = request.scheme // Fallback if not behind a proxy
+        }
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
+        if (scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
         response["baseUrl"] = baseUrlBuilder.build().toUriString()
@@ -2851,8 +2855,12 @@ class TimelineController: BaseController() {
 
         val metadataRecord = metadataRepository.findById(id)
         if (metadataRecord.isPresent) {
+            var scheme = request.getHeader("X-Forwarded-Proto")
+            if (scheme == null) {
+                scheme = request.scheme // Fallback if not behind a proxy
+            }
             var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-            if (request.scheme == "https") {
+            if (scheme == "https") {
                 baseUrlBuilder = baseUrlBuilder.scheme("https")
             }
             response["baseUrl"] = baseUrlBuilder.build().toUriString()

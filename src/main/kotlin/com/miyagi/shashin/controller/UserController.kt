@@ -228,8 +228,12 @@ class UserController {
         if (currentUserObj != null) {
             model["user"] = currentUserObj
 
+            var scheme = request.getHeader("X-Forwarded-Proto")
+            if (scheme == null) {
+                scheme = request.scheme // Fallback if not behind a proxy
+            }
             var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-            if (request.scheme == "https") {
+            if (scheme == "https") {
                 baseUrlBuilder = baseUrlBuilder.scheme("https")
             }
             val baseUrl = baseUrlBuilder.build().toUriString()
@@ -368,8 +372,12 @@ class UserController {
         if (currentUserObj != null) {
             model["user"] = currentUserObj
 
+            var scheme = request.getHeader("X-Forwarded-Proto")
+            if (scheme == null) {
+                scheme = request.scheme // Fallback if not behind a proxy
+            }
             var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-            if (request.scheme == "https") {
+            if (scheme == "https") {
                 baseUrlBuilder = baseUrlBuilder.scheme("https")
             }
             val baseUrl = baseUrlBuilder.build().toUriString()
@@ -427,8 +435,12 @@ class UserController {
                     request.session.setAttribute("CurrentUser", updatedUserObj.get())
                     model["currentUser"] = updatedUserObj.get()
 
+                    var scheme = request.getHeader("X-Forwarded-Proto")
+                    if (scheme == null) {
+                        scheme = request.scheme // Fallback if not behind a proxy
+                    }
                     var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-                    if (request.scheme == "https") {
+                    if (scheme == "https") {
                         baseUrlBuilder = baseUrlBuilder.scheme("https")
                     }
                     val baseUrl = baseUrlBuilder.build().toUriString()
