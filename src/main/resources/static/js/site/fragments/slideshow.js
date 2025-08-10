@@ -558,7 +558,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>[ ]</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.toggleorientation")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>p</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.toggleprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>f</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.togglefs")+"</div></div>" +
-                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFit'"+(fillScreen === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFill'"+(fillScreen === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
@@ -575,7 +575,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.playpause")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.exit")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
-                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFit'"+(fillScreen === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFill'"+(fillScreen === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
@@ -598,7 +598,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         $("#showProgress").val('checked', slideshowProgress);
 
-        $('#showFit').val('checked', fillScreen);
+        $('#showFill').val('checked', fillScreen);
 
         if (typeof Castjs != "undefined" && cjsc !== null) {
             cjsc.on('available', () => {
@@ -663,8 +663,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             changeShowProgress();
         });
 
-        $("#showFit").on("input", function () {
-            fillScreen = $("#showFit").prop('checked');
+        $("#showFill").on("input", function () {
+            fillScreen = $("#showFill").prop('checked');
             if (fillScreen === true) {
                 $("#mediaSrc").addClass("slideshow-fill");
             } else {
@@ -733,7 +733,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     }
 
     function changeFillScreen() {
-        const http = new Http("fit screen");
+        const http = new Http("fill screen");
         const json = {slideshowFillScreen: fillScreen};
         const data = http.ajax("post", "/users/slideshowfillscreen", JSON.stringify(json));
 
@@ -1028,17 +1028,17 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 changeShowProgress();
             }
 
-            // Show fit to screen
+            // Show fill to screen
             if (e.key === "f" || e.code === "KeyF" || e.which === 70 || e.keyCode === 70) {
                 if (fillScreen === true) {
                     $("#mediaSrc").removeClass("slideshow-fill");
-                    $("#showFit").val('checked', false);
-                    $('#showFit').prop('checked', false);
+                    $("#showFill").val('checked', false);
+                    $('#showFill').prop('checked', false);
                     fillScreen = false;
                 } else {
                     $("#mediaSrc").addClass("slideshow-fill");
-                    $("#showFit").val('checked', true);
-                    $('#showFit').prop('checked', true);
+                    $("#showFill").val('checked', true);
+                    $('#showFill').prop('checked', true);
                     fillScreen = true;
                 }
                 changeFillScreen();
