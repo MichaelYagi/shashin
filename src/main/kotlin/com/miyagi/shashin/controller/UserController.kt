@@ -776,21 +776,21 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/users/slideshowfitscreen"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/users/slideshowfillscreen"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun toggleSlideshowFitScreen(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
+    fun toggleSlideshowFillScreen(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
         resp["status"] = ApiResponse.FAIL.status
         resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
 
-        if (userMap.containsKey("slideshowFitScreen")) {
-            val slideshowFitScreen = userMap["slideshowFitScreen"].toBoolean()
+        if (userMap.containsKey("slideshowFillScreen")) {
+            val slideshowFillScreen = userMap["slideshowFillScreen"].toBoolean()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                currentUserObj.setSlideshowFitScreen(slideshowFitScreen)
+                currentUserObj.setSlideshowFillScreen(slideshowFillScreen)
                 userRepository?.save(currentUserObj)
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["msg"] = messageSource?.getMessage("main.updated", null, locale)

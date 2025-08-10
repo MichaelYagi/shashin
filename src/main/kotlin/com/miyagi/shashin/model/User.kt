@@ -37,7 +37,7 @@ class User {
     @NotBlank
     private var language: String? = "en"
     @NotBlank
-    private var slideshowFitScreen: Boolean? = false
+    private var slideshowFillScreen: Boolean? = false
     private var profile: String? = null
     private var authority: String? = null
     private var createdAt: String? = null
@@ -133,12 +133,12 @@ class User {
         this.slideshowProgress = slideshowProgress
     }
 
-    fun getSlideshowFitScreen(): Boolean? {
-        return this.slideshowFitScreen
+    fun getSlideshowFillScreen(): Boolean? {
+        return this.slideshowFillScreen
     }
 
-    fun setSlideshowFitScreen(slideshowFitScreen: Boolean?) {
-        this.slideshowFitScreen = slideshowFitScreen
+    fun setSlideshowFillScreen(slideshowFillScreen: Boolean?) {
+        this.slideshowFillScreen = slideshowFillScreen
     }
 
     fun getSlideshowOrientation(): Int? {
@@ -227,7 +227,7 @@ class User {
         map["language"] = this.language
         map["slideshowProgress"] = this.slideshowProgress
         map["slideshowOrientation"] = this.slideshowOrientation
-        map["slideshowFitScreen"] = this.slideshowFitScreen
+        map["slideshowFillScreen"] = this.slideshowFillScreen
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
