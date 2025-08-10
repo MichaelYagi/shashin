@@ -547,11 +547,11 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         let message = "";
         if (Util.isMobile() === false) {
             message = "<div class='container'>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>d</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.window")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.window")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>x</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.exit")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>"+shashin.getTranslatedValue("main.pages.slideshow.space")+"</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.playpause")+"</div></div>" +
                 "<span id='castKey' style='display: none;'><div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>c</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.startstop")+"</div></div></span>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.slideinfo")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>d</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.slideinfo")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.idinterval")+"</div></div>" +
@@ -840,7 +840,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
 
             // Show info
-            if (e.key === "i" || e.code === "KeyI" || e.which === 73 || e.keyCode === 73) {
+            if (e.key === "d" || e.code === "KeyD" || e.which === 68 || e.keyCode === 68) {
                 slideshowInfo();
             }
 
@@ -870,7 +870,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
 
             // Show key binding toast
-            if (e.key === "d" || e.code === "KeyD" || e.which === 68 || e.keyCode === 68) {
+            if (e.key === "i" || e.code === "KeyI" || e.which === 73 || e.keyCode === 73) {
                 if (shashin.hasToast(shashin.toast.placement.bottom.center,{tag: "slide"}) === false) {
                     showInstruction();
                 } else {
