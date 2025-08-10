@@ -645,12 +645,12 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         $("#slideshowIntervalSlide").on("input", function () {
             slideshowIsElapsed = Math.floor(min+($(this).val()-1) * spacing);
-            $("#intervalValue").text(slideshowIsElapsed);
+            changeSideshowInterval();
         });
 
         $("#slideshowOrientationSlide").on("input", function () {
             orientation = $(this).val()-1;
-            $("#orientationValue").text(orientationMap[orientation]);
+            changeSideshowOrientation();
         });
 
         $("#showProgress").on("input", function () {
