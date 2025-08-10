@@ -11,8 +11,9 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Progress bar option for slideshow
+- Show progress bar option for slideshow
 - Orientation option on slideshow
+- Fill to screen option on slideshow
 
 ### Changed
 ### Deprecated
