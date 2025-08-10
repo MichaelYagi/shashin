@@ -597,9 +597,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#slideshowOrientationSlide").val(orientation+1);
 
         $("#showProgress").val('checked', slideshowProgress);
-        $('#showProgress').prop('checked', slideshowProgress);
 
-        $('#showFit').prop('checked', fitMode);
+        $('#showFit').val('checked', fitMode);
 
         if (typeof Castjs != "undefined" && cjsc !== null) {
             cjsc.on('available', () => {
@@ -644,19 +643,9 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
         });
 
-        $("#slideshowIntervalSlide").on("change", function () {
-            slideshowIsElapsed = Math.floor(min+($(this).val()-1) * spacing);
-            changeSideshowInterval();
-        });
-
         $("#slideshowIntervalSlide").on("input", function () {
             slideshowIsElapsed = Math.floor(min+($(this).val()-1) * spacing);
             $("#intervalValue").text(slideshowIsElapsed);
-        });
-
-        $("#slideshowOrientationSlide").on("change", function () {
-            orientation = $(this).val()-1;
-            changeSideshowOrientation();
         });
 
         $("#slideshowOrientationSlide").on("input", function () {
@@ -664,7 +653,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             $("#orientationValue").text(orientationMap[orientation]);
         });
 
-        $("#showProgress").on("change", function () {
+        $("#showProgress").on("input", function () {
             slideshowProgress = $("#showProgress").prop('checked');
             if (slideshowProgress === true) {
                 $("#slideshowProgressContainer").css("display", "");
@@ -674,7 +663,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             changeShowProgress();
         });
 
-        $("#showFit").on("change", function () {
+        $("#showFit").on("input", function () {
             fitMode = $("#showFit").prop('checked');
             if (fitMode === true) {
                 $("#mediaSrc").addClass("slideshow-fill");

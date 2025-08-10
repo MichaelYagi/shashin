@@ -6,6 +6,7 @@ body {
 .slideshow-fill {
   object-fit: cover;
   width: 100%;
+  height: 100vh !important;
 }
 
 .photo-thumbnail-image {
