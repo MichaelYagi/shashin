@@ -1,4 +1,4 @@
-function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale, slideshowProgress, orientation) {
+function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale, slideshowProgress, orientation, fitScreen) {
     let slideshowIntervalId;
     let slideshowStarted = false;
     let slideshowIsPaused = false;
@@ -40,7 +40,6 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     $("#slideshowProgressContainer").css("z-index", 999999);
     let startTime = Date.now();
     let currentTime = Date.now();
-    let fitMode = false;
 
     function setupSlideshowInterval() {
         clearInterval(slideshowIntervalId);
@@ -558,7 +557,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.idinterval")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>[ ]</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.toggleorientation")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>p</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.toggleprogress")+"</div></div>" +
-                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFit'"+(fitMode === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>f</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.togglefs")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFit'"+(fitScreen === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
@@ -575,7 +575,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.playpause")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.exit")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
-                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFit'"+(fitMode === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFit'"+(fitScreen === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
@@ -598,7 +598,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         $("#showProgress").val('checked', slideshowProgress);
 
-        $('#showFit').val('checked', fitMode);
+        $('#showFit').val('checked', fitScreen);
 
         if (typeof Castjs != "undefined" && cjsc !== null) {
             cjsc.on('available', () => {
@@ -664,12 +664,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         });
 
         $("#showFit").on("input", function () {
-            fitMode = $("#showFit").prop('checked');
-            if (fitMode === true) {
+            fitScreen = $("#showFit").prop('checked');
+            if (fitScreen === true) {
                 $("#mediaSrc").addClass("slideshow-fill");
             } else {
                 $("#mediaSrc").removeClass("slideshow-fill");
             }
+            changeFitScreen();
         });
     }
 
@@ -728,6 +729,22 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
         } else {
             shashin.printMessageToConsole("Slideshow progress failed request", {tag: "slideshow"});
+        }
+    }
+
+    function changeFitScreen() {
+        const http = new Http("fit screen");
+        const json = {slideshowFitScreen: fitScreen};
+        const data = http.ajax("post", "/users/slideshowfitscreen", JSON.stringify(json));
+
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            if (data.status === "success") {
+                shashin.printMessageToConsole("Slideshow fit screen set: " + fitScreen + "s", {tag: "slideshow"});
+            } else {
+                shashin.printMessageToConsole("Slideshow fit screen failed to set", {tag: "slideshow"});
+            }
+        } else {
+            shashin.printMessageToConsole("Slideshow fit screen failed request", {tag: "slideshow"});
         }
     }
 
@@ -1013,13 +1030,18 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
             // Show fit to screen
             if (e.key === "f" || e.code === "KeyF" || e.which === 70 || e.keyCode === 70) {
-                if (fitMode === true) {
+                if (fitScreen === true) {
                     $("#mediaSrc").removeClass("slideshow-fill");
-                    fitMode = false;
+                    $("#showFit").val('checked', false);
+                    $('#showFit').prop('checked', false);
+                    fitScreen = false;
                 } else {
                     $("#mediaSrc").addClass("slideshow-fill");
-                    fitMode = true;
+                    $("#showFit").val('checked', true);
+                    $('#showFit').prop('checked', true);
+                    fitScreen = true;
                 }
+                changeFitScreen();
             }
 
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37 || e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
@@ -1317,6 +1339,12 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         firstTime = true;
 
         setupSlideshowInterval();
+
+        if (fitScreen === true) {
+            $("#mediaSrc").addClass("slideshow-fill");
+        } else {
+            $("#mediaSrc").removeClass("slideshow-fill");
+        }
 
         getSlideshowImage(function (loaded) {
             slideshowProceed = true;
