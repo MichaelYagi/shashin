@@ -210,11 +210,14 @@ class SettingsController {
             } else {
                 val threadFileContent = FileUtils.readThreadFile("shashinscan")
                 if (threadFileContent != null) {
-                    msg = messageSource?.getMessage("main.pages.scan.sip", null, locale)+" - "
+                    msg = messageSource?.getMessage("main.pages.scan.sip", null, locale)
                     if (shouldStop.get()) {
-                        msg = messageSource?.getMessage("main.pages.scan.cip", null, locale)+" - "
+                        msg = messageSource?.getMessage("main.pages.scan.cip", null, locale)
                     }
-                    msg += threadFileContent.replace("\\", "/")
+                    val threadText = threadFileContent.replace("\\", "/").trim();
+                    if (threadText.isNotEmpty()) {
+                        msg += " - $threadText"
+                    }
                 }
             }
         } else {
