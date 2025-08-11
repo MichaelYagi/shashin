@@ -1069,10 +1069,12 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
                     if (slideshowIsPaused === false) {
                         setupSlideshowInterval();
+                    } else {
+                        elapsedBeforePause = 0;
+                        currentTime = Date.now();
+                        $("#slideshowProgress").css("width", elapsedBeforePause.toString());
+                        $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
                     }
-
-                    startTime = Date.now();
-                    currentTime = Date.now();
                 } else {
                     return false;
                 }
@@ -1132,10 +1134,12 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         if (slideshowIsPaused === false) {
             setupSlideshowInterval();
+        } else {
+            elapsedBeforePause = 0;
+            currentTime = Date.now();
+            $("#slideshowProgress").css("width", elapsedBeforePause.toString());
+            $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
         }
-
-        startTime = Date.now();
-        currentTime = Date.now();
     });
 
     $("#nextSlideButton").on("click", function (e) {
@@ -1155,10 +1159,12 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         if (slideshowIsPaused === false) {
             setupSlideshowInterval();
+        } else {
+            elapsedBeforePause = 0;
+            currentTime = Date.now();
+            $("#slideshowProgress").css("width", elapsedBeforePause.toString());
+            $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
         }
-
-        startTime = Date.now();
-        currentTime = Date.now();
     });
 
     Util.detectSwipe("#slideshowContainer", function (direction) {
@@ -1191,6 +1197,11 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 });
                 if (slideshowIsPaused === false) {
                     setupSlideshowInterval();
+                } else {
+                    elapsedBeforePause = 0;
+                    currentTime = Date.now();
+                    $("#slideshowProgress").css("width", elapsedBeforePause.toString());
+                    $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
                 }
             }
         }
