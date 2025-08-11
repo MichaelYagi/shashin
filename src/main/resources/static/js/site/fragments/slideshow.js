@@ -71,6 +71,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         }
     }
 
+    function restartPoll() {
+        elapsedBeforePause = 0;
+        currentTime = Date.now();
+        $("#slideshowProgress").css("width", elapsedBeforePause.toString());
+        $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
+    }
+
     const http = new Http("getAlbums");
     http.ajax("get", "/slideshowalbums").then(function (data) {
         if (data.hasOwnProperty("albumsList") && data.hasOwnProperty("slideshowAlbum")  && data.slideshowAlbum.hasOwnProperty("albums") && data.slideshowAlbum.albums.length > 0) {
@@ -1070,10 +1077,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     if (slideshowIsPaused === false) {
                         setupSlideshowInterval();
                     } else {
-                        elapsedBeforePause = 0;
-                        currentTime = Date.now();
-                        $("#slideshowProgress").css("width", elapsedBeforePause.toString());
-                        $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
+                        restartPoll();
                     }
                 } else {
                     return false;
@@ -1135,10 +1139,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         if (slideshowIsPaused === false) {
             setupSlideshowInterval();
         } else {
-            elapsedBeforePause = 0;
-            currentTime = Date.now();
-            $("#slideshowProgress").css("width", elapsedBeforePause.toString());
-            $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
+            restartPoll();
         }
     });
 
@@ -1160,10 +1161,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         if (slideshowIsPaused === false) {
             setupSlideshowInterval();
         } else {
-            elapsedBeforePause = 0;
-            currentTime = Date.now();
-            $("#slideshowProgress").css("width", elapsedBeforePause.toString());
-            $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
+            restartPoll();
         }
     });
 
@@ -1198,10 +1196,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 if (slideshowIsPaused === false) {
                     setupSlideshowInterval();
                 } else {
-                    elapsedBeforePause = 0;
-                    currentTime = Date.now();
-                    $("#slideshowProgress").css("width", elapsedBeforePause.toString());
-                    $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
+                    restartPoll();
                 }
             }
         }
