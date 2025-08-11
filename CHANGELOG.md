@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Show progress bar option for slideshow
 - Orientation option on slideshow
 - Fill to screen option on slideshow
+- Query params to define orientation to RSS/ATOM feeds 
 
 ### Changed
 ### Deprecated
