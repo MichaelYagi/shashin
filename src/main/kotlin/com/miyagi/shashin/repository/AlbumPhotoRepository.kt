@@ -36,6 +36,10 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun findAllByAlbumId(@Param("albumId") albumId: Int): MutableIterable<AlbumPhoto?>?
     @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id IN :albumIds AND ap.metadata_id = m.id AND m.type LIKE '%image%' AND m.hidden = 0 ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
     fun findRandomImagesByAlbumIdsAndLimit(@Param("albumIds") albumIds: MutableList<Int>, @Param("limit") limit: Int): MutableIterable<Metadata>?
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id IN :albumIds AND ap.metadata_id = m.id AND m.type LIKE '%image%' AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+    fun findRandomImagesByAlbumIdsAndLimitLandscape(@Param("albumIds") albumIds: MutableList<Int>, @Param("limit") limit: Int): MutableIterable<Metadata>?
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id IN :albumIds AND ap.metadata_id = m.id AND m.type LIKE '%image%' AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+    fun findRandomImagesByAlbumIdsAndLimitPortrait(@Param("albumIds") albumIds: MutableList<Int>, @Param("limit") limit: Int): MutableIterable<Metadata>?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE '%image%' AND m.hidden = 0 ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
     fun findRandomImagesByAlbumIdAndLimit(@Param("albumId") albumId: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)

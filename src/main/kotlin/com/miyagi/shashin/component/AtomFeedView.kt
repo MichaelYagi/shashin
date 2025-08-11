@@ -109,6 +109,10 @@ class AtomFeedView : AbstractAtomFeedView() {
     ): List<Entry> {
         val logger: Logger = Logger.getLogger(AtomFeedView::class.simpleName)
 
+        val orientationStr = request.getParameter("orientation")
+        val allowedOrientations = setOf(0, 1)
+        val orientation = orientationStr?.toIntOrNull()?.takeIf { it in allowedOrientations } ?: 3
+
         val atomList = mutableListOf<Entry>()
         var scheme = request.getHeader("X-Forwarded-Proto")
         if (scheme == null) {
@@ -141,7 +145,13 @@ class AtomFeedView : AbstractAtomFeedView() {
                 var randomMetadata = mutableListOf<Metadata>()
 
                 if (albumsArray != null && albumsArray.contains("all") && (currentUser.getAuthority() == "ROLE_ADMIN" || currentUser.getAuthority() == "ROLE_SUPER")) {
-                    randomMetadata = metadataRepository?.findRandomMetadatasMedia("image", queryLimit) as MutableList<Metadata>
+                    randomMetadata = if (orientation == 0) {
+                        metadataRepository?.findRandomMetadatasMediaLandscape("image", queryLimit) as MutableList<Metadata>
+                    } else if (orientation == 1) {
+                        metadataRepository?.findRandomMetadatasMediaPortrait("image", queryLimit) as MutableList<Metadata>
+                    } else {
+                        metadataRepository?.findRandomMetadatasMedia("image", queryLimit) as MutableList<Metadata>
+                    }
                 } else {
                     val albumsIntArray = if (albumsArray != null && albumsArray.contains("all")) {
                         userAlbumRepository?.findAlbumIdsByUserId(currentUser.getId())
@@ -150,10 +160,22 @@ class AtomFeedView : AbstractAtomFeedView() {
                     }
 
                     if (albumsArray != null) {
-                        randomMetadata = albumPhotoRepository?.findRandomImagesByAlbumIdsAndLimit(
-                            albumsIntArray!!,
-                            queryLimit
-                        ) as MutableList<Metadata>
+                        if (orientation == 0) {
+                            randomMetadata = albumPhotoRepository?.findRandomImagesByAlbumIdsAndLimitLandscape(
+                                albumsIntArray!!,
+                                queryLimit
+                            ) as MutableList<Metadata>
+                        } else if (orientation == 1) {
+                            randomMetadata = albumPhotoRepository?.findRandomImagesByAlbumIdsAndLimitPortrait(
+                                albumsIntArray!!,
+                                queryLimit
+                            ) as MutableList<Metadata>
+                        } else {
+                            randomMetadata = albumPhotoRepository?.findRandomImagesByAlbumIdsAndLimit(
+                                albumsIntArray!!,
+                                queryLimit
+                            ) as MutableList<Metadata>
+                        }
                     }
                 }
 
