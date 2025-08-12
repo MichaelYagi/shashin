@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="slideshow()">
+
+<!--Slideshow Container-->
+<div id="slideshowContainer" class="imgbox" style="display: none;">
+    <span id="dummyVideoContainer" style="display: none;"></span>
+    <span type="button" id="mediaSrcContainer"><img class="centerFit" id="mediaSrc" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII"></span>
+    <span type="button" id="playPauseContainer"><span class="bi-pause-circle" id="playPause" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;"></span></span>
+    <span type="button" id="prevSlideButton"><span class="bi-arrow-left" id="prevSlide" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;"></span></span>
+    <span type="button" id="nextSlideButton"><span class="bi-arrow-right" id="nextSlide" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;"></span></span>
+    <span type="button" id="closeActionButton"><span class="bi-x" id="closeAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;"></span></span>
+    <span type="button" id="shortcutActionButton"><span class="" id="shortcutAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;"></span></span>
+    <span type="button" id="infoActionButton"><span class="bi-info-circle" id="infoAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;"></span></span>
+    <span type="button" id="screenActionButton"><span class="" id="screenAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;"></span></span>
+    <span type="button" id="downloadContainer"><span class="bi-download" id="downloadAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;"></span></span>
+    <div class="spinner-border" id="slideSpinner" role="status" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <span id="mediaInfo" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;position:fixed;left:50%;bottom:20px;transform: translate(-50%, -50%);margin: 0 auto;display:none;"></span>
+    <div id="slideshowProgressContainer" class="progress fixed-bottom mb-1" style="display: none; height: 5px;z-index: 999999;">
+        <div id="slideshowProgress" class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+    </div>
+</div>

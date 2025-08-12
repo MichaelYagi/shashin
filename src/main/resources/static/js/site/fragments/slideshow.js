@@ -243,6 +243,12 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 slideshowProceed = true;
                 firstTime = false;
 
+                if ($("#mediaInfo").is(":visible")) {
+                    $("#mediaInfo").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
+                        $("#mediaInfo").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
+                    });
+                }
+
                 $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
                     $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
 
