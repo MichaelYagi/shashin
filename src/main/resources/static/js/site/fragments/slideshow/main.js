@@ -99,7 +99,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     function pollData() {
         if (slideshow.slideshowIsPaused === false) {
             slideshow.currentTime = Date.now();
-            let elapsedTime = slideshow.elapsedBeforePause + (currentTime - slideshow.startTime);
+            let elapsedTime = slideshow.elapsedBeforePause + (slideshow.currentTime - slideshow.startTime);
             const progress = Math.round(elapsedTime / (slideshowInterval * 1000) * 100);
             $("#slideshowProgress").css("width", progress + "%");
             $("#slideshowProgressContainer").attr("aria-valuenow", progress);
