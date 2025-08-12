@@ -41,6 +41,105 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     let startTime = Date.now();
     let currentTime = Date.now();
 
+    // Start slideshow
+    $("#viewSlideshow").on("click", function (e) {
+        e.preventDefault();
+
+        slideshowStarted = false;
+        slideshowIsPaused = false;
+        slideshowIsElapsed = slideshowInterval; // Seconds
+        slideshowCurrentIndex = 0;
+        slideshowMetadataIds = [];
+        slideshowMouseTimer = null;
+        closeTimer = null;
+        nextTimer = null;
+        prevTimer = null;
+        infoTimer = null;
+        shortcutTimer = null;
+        screenTimer = null;
+        downloadTimer = null;
+        slideshowCursorVisible = true;
+        slideshowProceed = true;
+        cjsc = null;
+        currentPhotoUrl = null;
+        currentMetadata = null;
+        firstTime = true;
+        isFileDialogOpened = false;
+        slideTimer = null;
+        elapsedBeforePause = 0;
+        $("#slideshowProgress").css("transition", "width "+pollTimeout+"ms ease-in-out");
+        $("#slideshowProgressContainer").css("z-index", 999999);
+        startTime = Date.now();
+        currentTime = Date.now();
+
+        isActive = true;
+        tearDownVideo();
+        createVideo();
+
+        if (slideshowProgress === true) {
+            $("#slideshowProgressContainer").css("display", "");
+        } else {
+            $("#slideshowProgressContainer").css("display", "none");
+        }
+
+        if (Util.isMobile()) {
+            $("#shortcutAction").addClass("bi-hand-index").removeClass("bi-keyboard");
+        } else {
+            $("#shortcutAction").addClass("bi-keyboard").removeClass("bi-hand-index");
+        }
+
+        if (document.fullscreenEnabled) {
+            $("#screenAction").addClass("bi-fullscreen-exit").removeClass("bi-fullscreen");
+        }
+
+        document.body.style.overflow = 'hidden';
+
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        }
+
+        firstTime = true;
+
+        setupSlideshowInterval();
+
+        if (fillScreen === true) {
+            $("#mediaSrc").addClass("slideshow-fill");
+        } else {
+            $("#mediaSrc").removeClass("slideshow-fill");
+        }
+
+        getSlideshowImage(function (loaded) {
+            slideshowProceed = true;
+
+            if (loaded === true) {
+                $("#playPause").show();
+                $("#playPause").fadeOut(playPauseHideTime);
+
+                $("#slideshowContainer").css({
+                    "width": "101%",
+                    "height": "101%",
+                    "display": "block",
+                    "z-index": 9999,
+                    "background-color": "#000000",
+                    "line-height": 1,
+                    "overflow": "hidden"
+                });
+
+                if (Util.isMobile() === false) {
+                    $("#mediaInfo").css({
+                        "width": "50em" //($(window).width() + 1)
+                    });
+                }
+
+                $("#playPause").css("display", "block");
+
+                $("#mediaSrcContainer, #playPauseContainer, #prevSlideButton, #nextSlideButton, #closeActionButton, #shortcutActionButton, #infoActionButton, #screenActionButton, #downloadContainer").css("display", "block");
+
+                shashin.closeToastMessages({tags:["subhtml"]});
+            }
+        });
+    });
+
     function setupSlideshowInterval() {
         clearInterval(slideshowIntervalId);
         startTime = Date.now();
@@ -1334,105 +1433,6 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
         }
     }
-
-    // Start slideshow
-    $("#viewSlideshow").on("click", function (e) {
-        e.preventDefault();
-
-        slideshowStarted = false;
-        slideshowIsPaused = false;
-        slideshowIsElapsed = slideshowInterval; // Seconds
-        slideshowCurrentIndex = 0;
-        slideshowMetadataIds = [];
-        slideshowMouseTimer = null;
-        closeTimer = null;
-        nextTimer = null;
-        prevTimer = null;
-        infoTimer = null;
-        shortcutTimer = null;
-        screenTimer = null;
-        downloadTimer = null;
-        slideshowCursorVisible = true;
-        slideshowProceed = true;
-        cjsc = null;
-        currentPhotoUrl = null;
-        currentMetadata = null;
-        firstTime = true;
-        isFileDialogOpened = false;
-        slideTimer = null;
-        elapsedBeforePause = 0;
-        $("#slideshowProgress").css("transition", "width "+pollTimeout+"ms ease-in-out");
-        $("#slideshowProgressContainer").css("z-index", 999999);
-        startTime = Date.now();
-        currentTime = Date.now();
-
-        isActive = true;
-        tearDownVideo();
-        createVideo();
-
-        if (slideshowProgress === true) {
-            $("#slideshowProgressContainer").css("display", "");
-        } else {
-            $("#slideshowProgressContainer").css("display", "none");
-        }
-
-        if (Util.isMobile()) {
-            $("#shortcutAction").addClass("bi-hand-index").removeClass("bi-keyboard");
-        } else {
-            $("#shortcutAction").addClass("bi-keyboard").removeClass("bi-hand-index");
-        }
-
-        if (document.fullscreenEnabled) {
-            $("#screenAction").addClass("bi-fullscreen-exit").removeClass("bi-fullscreen");
-        }
-
-        document.body.style.overflow = 'hidden';
-
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        }
-
-        firstTime = true;
-
-        setupSlideshowInterval();
-
-        if (fillScreen === true) {
-            $("#mediaSrc").addClass("slideshow-fill");
-        } else {
-            $("#mediaSrc").removeClass("slideshow-fill");
-        }
-
-        getSlideshowImage(function (loaded) {
-            slideshowProceed = true;
-
-            if (loaded === true) {
-                $("#playPause").show();
-                $("#playPause").fadeOut(playPauseHideTime);
-
-                $("#slideshowContainer").css({
-                    "width": "101%",
-                    "height": "101%",
-                    "display": "block",
-                    "z-index": 9999,
-                    "background-color": "#000000",
-                    "line-height": 1,
-                    "overflow": "hidden"
-                });
-
-                if (Util.isMobile() === false) {
-                    $("#mediaInfo").css({
-                        "width": "50em" //($(window).width() + 1)
-                    });
-                }
-
-                $("#playPause").css("display", "block");
-
-                $("#mediaSrcContainer, #playPauseContainer, #prevSlideButton, #nextSlideButton, #closeActionButton, #shortcutActionButton, #infoActionButton, #screenActionButton, #downloadContainer").css("display", "block");
-
-                shashin.closeToastMessages({tags:["subhtml"]});
-            }
-        });
-    });
 
     // Use to keep screen awake
     function createVideo() {
