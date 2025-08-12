@@ -1,75 +1,14 @@
 function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale, slideshowProgress, orientation, fillScreen) {
-    let slideshowIntervalId;
-    let slideshowStarted = false;
-    let slideshowIsPaused = false;
-    let slideshowCurrentIndex = 0;
-    let slideshowMetadataIds = [];
-    let slideshowMouseTimer = null;
-    let closeTimer = null;
-    let nextTimer = null;
-    let prevTimer = null;
-    let infoTimer = null;
-    let shortcutTimer = null;
-    let screenTimer = null;
-    let downloadTimer = null;
-    let slideshowCursorVisible = true;
-    let slideshowProceed = true;
-    let cjsc = null;
-    let currentPhotoUrl = null;
-    let currentMetadata = null;
-    let firstTime = true;
-    let isFileDialogOpened = false;
-    const min = 10; // min seconds
-    const max = 120; // max seconds
-    const segments = 6; // # of segments
-    const spacing = (max-min)/(segments-1);
-    const hideTime = 5000;
-    const playPauseHideTime = 3000;
-    const fadeOutTime = 1000;
-    const pollTimeout = 100;
-    const orientationMap = {
-        0: shashin.getTranslatedValue("main.pages.slideshow.all"),
-        1: shashin.getTranslatedValue("main.pages.slideshow.landscape"),
-        2: shashin.getTranslatedValue("main.pages.slideshow.portrait")
-    };
-    let slideTimer = null;
-    let elapsedBeforePause = 0;
-    let isActive = false;
-    $("#slideshowProgress").css("transition", "width "+pollTimeout+"ms ease-in-out");
+    $("#slideshowProgress").css("transition", "width "+slideshow.const.pollTimeout+"ms ease-in-out");
     $("#slideshowProgressContainer").css("z-index", 999999);
 
     // Start slideshow
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
-
-        slideshowStarted = false;
-        slideshowIsPaused = false;
-        slideshowInterval = slideshowInterval; // Seconds
-        slideshowCurrentIndex = 0;
-        slideshowMetadataIds = [];
-        slideshowMouseTimer = null;
-        closeTimer = null;
-        nextTimer = null;
-        prevTimer = null;
-        infoTimer = null;
-        shortcutTimer = null;
-        screenTimer = null;
-        downloadTimer = null;
-        slideshowCursorVisible = true;
-        slideshowProceed = true;
-        cjsc = null;
-        currentPhotoUrl = null;
-        currentMetadata = null;
-        firstTime = true;
-        isFileDialogOpened = false;
-        slideTimer = null;
-        elapsedBeforePause = 0;
-        $("#slideshowProgress").css("transition", "width "+pollTimeout+"ms ease-in-out");
+        
+        $("#slideshowProgress").css("transition", "width "+slideshow.const.pollTimeout+"ms ease-in-out");
         $("#slideshowProgressContainer").css("z-index", 999999);
-        startTime = Date.now();
-        currentTime = Date.now();
 
-        isActive = true;
         tearDownVideo();
         createVideo();
 
@@ -95,7 +34,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             document.documentElement.requestFullscreen();
         }
 
-        firstTime = true;
+        slideshow.firstTime = true;
 
         setupSlideshowInterval();
 
@@ -106,11 +45,11 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         }
 
         getSlideshowImage(function (loaded) {
-            slideshowProceed = true;
+            slideshow.slideshowProceed = true;
 
             if (loaded === true) {
                 $("#playPause").show();
-                $("#playPause").fadeOut(playPauseHideTime);
+                $("#playPause").fadeOut(slideshow.const.playPauseHideTime);
 
                 $("#slideshowContainer").css({
                     "width": "101%",
@@ -138,29 +77,29 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     });
 
     function setupSlideshowInterval() {
-        clearInterval(slideshowIntervalId);
-        startTime = Date.now();
-        currentTime = Date.now();
-        slideTimer = setInterval(pollData, pollTimeout);
-        slideshowIntervalId = setInterval(() => {
-            if (!slideshowIsPaused) {
-                slideshowCurrentIndex++;
+        clearInterval(slideshow.slideshowIntervalId);
+        slideshow.startTime = Date.now();
+        slideshow.currentTime = Date.now();
+        slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
+        slideshow.slideshowIntervalId = setInterval(() => {
+            if (!slideshow.slideshowIsPaused) {
+                slideshow.slideshowCurrentIndex++;
                 getSlideshowImage(() => {
-                    slideshowProceed = true;
+                    slideshow.slideshowProceed = true;
                     $("#slideshowProgress").css("width", "0");
                     $("#slideshowProgressContainer").attr("aria-valuenow", "0");
-                    clearInterval(slideTimer);
-                    startTime = Date.now();
-                    slideTimer = setInterval(pollData, pollTimeout);
+                    clearInterval(slideshow.slideTimer);
+                    slideshow.startTime = Date.now();
+                    slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
                 });
             }
         }, slideshowInterval * 1000);
     }
 
     function pollData() {
-        if (slideshowIsPaused === false) {
-            currentTime = Date.now();
-            let elapsedTime = elapsedBeforePause + (currentTime - startTime);
+        if (slideshow.slideshowIsPaused === false) {
+            slideshow.currentTime = Date.now();
+            let elapsedTime = slideshow.elapsedBeforePause + (currentTime - slideshow.startTime);
             const progress = Math.round(elapsedTime / (slideshowInterval * 1000) * 100);
             $("#slideshowProgress").css("width", progress + "%");
             $("#slideshowProgressContainer").attr("aria-valuenow", progress);
@@ -168,10 +107,10 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     }
 
     function restartPoll() {
-        elapsedBeforePause = 0;
-        currentTime = Date.now();
-        $("#slideshowProgress").css("width", elapsedBeforePause.toString());
-        $("#slideshowProgressContainer").attr("aria-valuenow", elapsedBeforePause.toString());
+        slideshow.elapsedBeforePause = 0;
+        slideshow.currentTime = Date.now();
+        $("#slideshowProgress").css("width", slideshow.elapsedBeforePause.toString());
+        $("#slideshowProgressContainer").attr("aria-valuenow", slideshow.elapsedBeforePause.toString());
     }
 
     const http = new Http("getAlbums");
@@ -273,15 +212,15 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
 
-        shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex, {tag: "slideshow"});
-        shashin.printMessageToConsole("slideshowMetadataIds:", {tag: "slideshow"});
-        shashin.printMessageToConsole(slideshowMetadataIds, {tag: "slideshow"});
+        shashin.printMessageToConsole("slideshow.slideshowCurrentIndex: " + slideshow.slideshowCurrentIndex, {tag: "slideshow"});
+        shashin.printMessageToConsole("slideshow.slideshowMetadataIds:", {tag: "slideshow"});
+        shashin.printMessageToConsole(slideshow.slideshowMetadataIds, {tag: "slideshow"});
 
-        if (slideshowProceed === true) {
-            slideshowProceed = false;
-            if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
-                shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag: "slideshow"});
-                http.ajax("get", "/media/metadata/" + slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
+        if (slideshow.slideshowProceed === true) {
+            slideshow.slideshowProceed = false;
+            if (slideshow.slideshowMetadataIds.length > 0 && slideshow.slideshowCurrentIndex >= 0 && slideshow.slideshowCurrentIndex <= slideshow.slideshowMetadataIds.length - 1) {
+                shashin.printMessageToConsole("Looking up " + slideshow.slideshowMetadataIds[slideshow.slideshowCurrentIndex], {tag: "slideshow"});
+                http.ajax("get", "/media/metadata/" + slideshow.slideshowMetadataIds[slideshow.slideshowCurrentIndex]).then(function (data) {
                     processSlideData(data, "existing", callback);
                 });
             } else {
@@ -303,13 +242,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             $("#mediaSrc").css("display", "block");
             const photoUrl = data.baseUrl + "/api/v1/image/"+data.metadata.id;
 
-            currentPhotoUrl = photoUrl;
-            currentMetadata = data.metadata;
+            slideshow.currentPhotoUrl = photoUrl;
+            slideshow.currentMetadata = data.metadata;
 
             // const downloadUrl = "/api/v1/image/"+data.metadata.id+"/download";
             // $("#downloadActionButton").attr("href",downloadUrl);
 
-            if (cjsc !== null && cjsc.available && cjsc.connected) {
+            if (slideshow.cjsc !== null && slideshow.cjsc.available && slideshow.cjsc.connected) {
                 const cjscMetadata = {
                     title: data.metadata.title
                 };
@@ -317,36 +256,36 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 if (data.metadata.description !== null && data.metadata.description !== "") {
                     cjscMetadata.description = data.metadata.description;
                 }
-                cjsc.cast(photoUrl+".jpg", cjscMetadata);
+                slideshow.cjsc.cast(photoUrl+".jpg", cjscMetadata);
             }
 
             const tempImage = new Image();
 
             tempImage.onerror = function (error) {
                 shashin.printMessageToConsole("Error: " + error, {tag: "slideshow"});
-                slideshowProceed = true;
+                slideshow.slideshowProceed = true;
             };
 
-            if (firstTime === true) {
+            if (slideshow.firstTime === true) {
                 waitingScreen();
             }
 
             tempImage.onload = function () {
-                if (firstTime === true) {
+                if (slideshow.firstTime === true) {
                     showControls();
                 }
 
-                slideshowProceed = true;
-                firstTime = false;
+                slideshow.slideshowProceed = true;
+                slideshow.firstTime = false;
 
                 if ($("#mediaInfo").is(":visible")) {
-                    $("#mediaInfo").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
-                        $("#mediaInfo").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
+                    $("#mediaInfo").fadeOut((slideshow.slideshowStarted === false) ? 0 : 300, function () {
+                        $("#mediaInfo").attr("src", photoUrl).fadeIn((slideshow.slideshowStarted === false) ? 0 : 600);
                     });
                 }
 
-                $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
-                    $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
+                $("#mediaSrc").fadeOut((slideshow.slideshowStarted === false) ? 0 : 300, function () {
+                    $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshow.slideshowStarted === false) ? 0 : 600);
 
                     $("#playPause").css({
                         "font-size": "10rem",
@@ -410,13 +349,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     }
 
                     if (type === "new") {
-                        slideshowMetadataIds.push(data.metadata.id);
+                        slideshow.slideshowMetadataIds.push(data.metadata.id);
                     }
 
                     // Remove first if over query limit
-                    if (slideshowMetadataIds.length > queryLimit) {
-                        slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
-                        slideshowCurrentIndex--;
+                    if (slideshow.slideshowMetadataIds.length > queryLimit) {
+                        slideshow.slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
+                        slideshow.slideshowCurrentIndex--;
                     }
 
                     const takenDateString = data.metadata.year + "-" + data.metadata.month + "-" + data.metadata.day;
@@ -443,7 +382,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     }
                     $("#mediaInfo").html(description);
 
-                    slideshowStarted = true;
+                    slideshow.slideshowStarted = true;
 
                     if (callback !== undefined && typeof callback === 'function') {
                         callback(true);
@@ -464,17 +403,17 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction,#downloadAction").on("mouseenter", function (e) {
         e.preventDefault();
 
-        [nextTimer, prevTimer, closeTimer, shortcutTimer, downloadTimer, infoTimer, slideshowMouseTimer].forEach(timer => {
+        [slideshow.nextTimer, slideshow.prevTimer, slideshow.closeTimer, slideshow.shortcutTimer, slideshow.downloadTimer, slideshow.infoTimer, slideshow.slideshowMouseTimer].forEach(timer => {
             if (timer) {
                 clearTimeout(timer);
             }
         });
 
-        if (document.fullscreenEnabled && screenTimer) {
-            clearTimeout(screenTimer);
+        if (document.fullscreenEnabled && slideshow.screenTimer) {
+            clearTimeout(slideshow.screenTimer);
         }
 
-        if (slideshowCursorVisible === false) {
+        if (slideshow.slideshowCursorVisible === false) {
             showCursor();
         }
 
@@ -496,68 +435,68 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             let hovered = $("#slideshowContainer").find("#closeAction:hover,#infoAction:hover,#shortcutAction:hover,#nextSlide:hover,#prevSlide:hover,#screenAction:hover,#downloadAction:hover").length;
 
             if (hovered === 0) {
-                $("#infoAction").fadeOut(fadeOutTime);
-                $("#screenAction").fadeOut(fadeOutTime);
-                $("#downloadAction").fadeOut(fadeOutTime);
-                $("#shortcutAction").fadeOut(fadeOutTime);
-                $("#nextSlide").fadeOut(fadeOutTime);
-                $("#prevSlide").fadeOut(fadeOutTime);
-                $("#closeAction").fadeOut(fadeOutTime);
+                $("#infoAction").fadeOut(slideshow.const.fadeOutTime);
+                $("#screenAction").fadeOut(slideshow.const.fadeOutTime);
+                $("#downloadAction").fadeOut(slideshow.const.fadeOutTime);
+                $("#shortcutAction").fadeOut(slideshow.const.fadeOutTime);
+                $("#nextSlide").fadeOut(slideshow.const.fadeOutTime);
+                $("#prevSlide").fadeOut(slideshow.const.fadeOutTime);
+                $("#closeAction").fadeOut(slideshow.const.fadeOutTime);
             }
-        }, hideTime);
+        }, slideshow.const.hideTime);
 
     });
 
     function showControls() {
         if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction,#downloadAction").is(":hidden")) {
-            [nextTimer, prevTimer, closeTimer, shortcutTimer, downloadTimer, infoTimer, slideshowMouseTimer].forEach(timer => {
+            [slideshow.nextTimer, slideshow.prevTimer, slideshow.closeTimer, slideshow.shortcutTimer, slideshow.downloadTimer, slideshow.infoTimer, slideshow.slideshowMouseTimer].forEach(timer => {
                 if (timer) {
                     clearTimeout(timer);
                 }
             });
 
-            if (document.fullscreenEnabled && screenTimer) {
-                clearTimeout(screenTimer);
+            if (document.fullscreenEnabled && slideshow.screenTimer) {
+                clearTimeout(slideshow.screenTimer);
             }
 
-            if (slideshowCursorVisible === false) {
+            if (slideshow.slideshowCursorVisible === false) {
                 showCursor();
             }
 
-            if (isActive === true) {
-                slideshowMouseTimer = setTimeout(hideCursor, hideTime);
+            if (slideshow.isActive === true) {
+                slideshow.slideshowMouseTimer = setTimeout(hideCursor, slideshow.const.hideTime);
             }
 
             $("#infoAction").show();
-            infoTimer = setTimeout(function () {
-                $("#infoAction").fadeOut(fadeOutTime);
-            }, hideTime);
+            slideshow.infoTimer = setTimeout(function () {
+                $("#infoAction").fadeOut(slideshow.const.fadeOutTime);
+            }, slideshow.const.hideTime);
             if (document.fullscreenEnabled) {
                 $("#screenAction").show();
-                screenTimer = setTimeout(function () {
-                    $("#screenAction").fadeOut(fadeOutTime);
-                }, hideTime);
+                slideshow.screenTimer = setTimeout(function () {
+                    $("#screenAction").fadeOut(slideshow.const.fadeOutTime);
+                }, slideshow.const.hideTime);
             }
             $("#downloadAction").show();
-            downloadTimer = setTimeout(function () {
-                $("#downloadAction").fadeOut(fadeOutTime);
-            }, hideTime);
+            slideshow.downloadTimer = setTimeout(function () {
+                $("#downloadAction").fadeOut(slideshow.const.fadeOutTime);
+            }, slideshow.const.hideTime);
             $("#shortcutAction").show();
-            shortcutTimer = setTimeout(function () {
-                $("#shortcutAction").fadeOut(fadeOutTime);
-            }, hideTime);
+            slideshow.shortcutTimer = setTimeout(function () {
+                $("#shortcutAction").fadeOut(slideshow.const.fadeOutTime);
+            }, slideshow.const.hideTime);
             $("#nextSlide").show();
-            nextTimer = setTimeout(function () {
-                $("#nextSlide").fadeOut(fadeOutTime);
-            }, hideTime);
+            slideshow.nextTimer = setTimeout(function () {
+                $("#nextSlide").fadeOut(slideshow.const.fadeOutTime);
+            }, slideshow.const.hideTime);
             $("#prevSlide").show();
-            prevTimer = setTimeout(function () {
-                $("#prevSlide").fadeOut(fadeOutTime);
-            }, hideTime);
+            slideshow.prevTimer = setTimeout(function () {
+                $("#prevSlide").fadeOut(slideshow.const.fadeOutTime);
+            }, slideshow.const.hideTime);
             $("#closeAction").show();
-            closeTimer = setTimeout(function () {
-                $("#closeAction").fadeOut(fadeOutTime);
-            }, hideTime);
+            slideshow.closeTimer = setTimeout(function () {
+                $("#closeAction").fadeOut(slideshow.const.fadeOutTime);
+            }, slideshow.const.hideTime);
         }
     }
 
@@ -597,29 +536,29 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             "display": "none"
         });
 
-        slideshowCurrentIndex = 0;
-        slideshowMetadataIds = [];
+        slideshow.slideshowCurrentIndex = 0;
+        slideshow.slideshowMetadataIds = [];
 
-        if (slideshowIntervalId) {
-            clearInterval(slideshowIntervalId);
-            slideshowIntervalId = 0;
+        if (slideshow.slideshowIntervalId) {
+            clearInterval(slideshow.slideshowIntervalId);
+            slideshow.slideshowIntervalId = 0;
         }
 
-        if (slideshowMouseTimer) {
-            clearTimeout(slideshowMouseTimer);
+        if (slideshow.slideshowMouseTimer) {
+            clearTimeout(slideshow.slideshowMouseTimer);
         }
 
-        if (slideTimer) {
-            clearTimeout(slideTimer);
+        if (slideshow.slideTimer) {
+            clearTimeout(slideshow.slideTimer);
         }
 
         showCursor();
-        slideshowStarted = false;
-        slideshowProceed = true;
+        slideshow.slideshowStarted = false;
+        slideshow.slideshowProceed = true;
 
         $("#mediaSrc").css("opacity", "1");
         $("#playPause").addClass("bi-pause-circle").removeClass("bi-play-circle");
-        slideshowIsPaused = false;
+        slideshow.slideshowIsPaused = false;
 
         shashin.closeToastMessages({tag: "slide"});
 
@@ -647,13 +586,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             };
         }
 
-        if (typeof Castjs != "undefined" && cjsc === null) {
-            cjsc = new Castjs();
+        if (typeof Castjs != "undefined" && slideshow.cjsc === null) {
+            slideshow.cjsc = new Castjs();
         }
 
-        if (cjsc !== null) {
+        if (slideshow.cjsc !== null) {
             // Create
-            if (cjsc.state === "disconnected") {
+            if (slideshow.cjsc.state === "disconnected") {
                 options.headerSubtext = "<a href='#' id='toggleCast' style='display: none;'><span id='toggleCastIcon' class='bi-cast' style='font-size:1rem;color: lightgray;'></span></a>";
             } else {
                 options.headerSubtext = "<a href='#' id='toggleCast' style='display: none;'><span id='toggleCastIcon' class='bi-stop-circle' style='font-size:1rem;color: lightgray;'></span></a>";
@@ -677,8 +616,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>f</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.togglefs")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFill'"+(fillScreen === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowInterval+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + slideshow.const.orientationMap[orientation]+"</span></div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+slideshow.const.segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowInterval+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
                 }
@@ -694,8 +633,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showFill'"+(fillScreen === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.fill")+"</div></div>" +
                 "<div class='row mb-1'><div class='col-4 d-flex justify-content-center form-check form-switch'><input class='form-check-input' type='checkbox' role='switch' id='showProgress'"+(slideshowProgress === true ? ' checked' : '')+"></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.showprogress")+"</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + orientationMap[orientation]+"</span></div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowInterval+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowOrientationSlide'></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.orientation") + " - <span id='orientationValue'>" + slideshow.const.orientationMap[orientation]+"</span></div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='"+slideshow.const.segments+"' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowInterval+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
                 }
@@ -709,7 +648,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             options
         );
 
-        $("#slideshowIntervalSlide").val(Math.floor(((slideshowInterval-min)/spacing)+1));
+        $("#slideshowIntervalSlide").val(Math.floor(((slideshowInterval-slideshow.const.min)/slideshow.const.spacing)+1));
 
         $("#slideshowOrientationSlide").val(orientation+1);
 
@@ -717,8 +656,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         $('#showFill').val('checked', fillScreen);
 
-        if (typeof Castjs != "undefined" && cjsc !== null) {
-            cjsc.on('available', () => {
+        if (typeof Castjs != "undefined" && slideshow.cjsc !== null) {
+            slideshow.cjsc.on('available', () => {
                 $("#castKey").css({"display": "block"});
                 $("#toggleCast").css({"display": "block"});
             });
@@ -727,7 +666,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#slideshowAlbumNameData").on("click", function (e) {
             e.preventDefault();
 
-            if (slideshowIsPaused === false) {
+            if (slideshow.slideshowIsPaused === false) {
                 slideshowGalleryPlayPause();
             }
 
@@ -737,31 +676,31 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#toggleCast").on("click", function (e) {
             e.preventDefault();
 
-            if (cjsc !== null && cjsc.available) {
+            if (slideshow.cjsc !== null && slideshow.cjsc.available) {
                 if ($("#toggleCastIcon").hasClass('bi-cast')) {
-                    if (currentPhotoUrl !== null) {
+                    if (slideshow.currentPhotoUrl !== null) {
                         $("#toggleCastIcon").addClass('bi-stop-circle').removeClass('bi-cast');
                         let cjscMetadata = {};
-                        if (currentMetadata !== null) {
+                        if (slideshow.currentMetadata !== null) {
                             cjscMetadata = {
-                                title: currentMetadata.title
+                                title: slideshow.currentMetadata.title
                             };
 
-                            if (currentMetadata.description !== null && currentMetadata.description !== "") {
-                                cjscMetadata.description = currentMetadata.description;
+                            if (slideshow.currentMetadata.description !== null && slideshow.currentMetadata.description !== "") {
+                                cjscMetadata.description = slideshow.currentMetadata.description;
                             }
                         }
-                        cjsc.cast(currentPhotoUrl+".jpg", cjscMetadata);
+                        slideshow.cjsc.cast(slideshow.currentPhotoUrl+".jpg", cjscMetadata);
                     }
                 } else {
-                    cjsc.disconnect();
+                    slideshow.cjsc.disconnect();
                     $("#toggleCastIcon").addClass('bi-cast').removeClass('bi-stop-circle');
                 }
             }
         });
 
         $("#slideshowIntervalSlide").on("input", function () {
-            slideshowInterval = Math.floor(min+($(this).val()-1) * spacing);
+            slideshowInterval = Math.floor(slideshow.const.min+($(this).val()-1) * slideshow.const.spacing);
             changeSideshowInterval();
         });
 
@@ -792,7 +731,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     }
 
     function changeSideshowOrientation() {
-        $("#orientationValue").text(orientationMap[orientation]);
+        $("#orientationValue").text(slideshow.const.orientationMap[orientation]);
         $("#slideshowOrientationSlide").val(orientation+1);
 
         const http = new Http("orientation");
@@ -801,7 +740,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data.status === "success") {
-                shashin.printMessageToConsole("Slideshow orientation set: " + orientationMap[orientation], {tag: "slideshow"});
+                shashin.printMessageToConsole("Slideshow orientation set: " + slideshow.const.orientationMap[orientation], {tag: "slideshow"});
             } else {
                 shashin.printMessageToConsole("Slideshow orientation failed to set", {tag: "slideshow"});
             }
@@ -812,9 +751,9 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
     function changeSideshowInterval() {
         $("#intervalValue").text(slideshowInterval);
-        $("#slideshowIntervalSlide").val(Math.floor((slideshowInterval-min)/spacing)+1);
+        $("#slideshowIntervalSlide").val(Math.floor((slideshowInterval-slideshow.const.min)/slideshow.const.spacing)+1);
 
-        if (slideshowIsPaused === false) {
+        if (slideshow.slideshowIsPaused === false) {
             setupSlideshowInterval();
         }
 
@@ -867,15 +806,15 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
     function exitSlideshow() {
         $("#mediaSrc").css("opacity", "1");
-        slideshowStarted = false;
-        slideshowIsPaused = false;
-        slideshowCurrentIndex = 0;
-        slideshowMetadataIds = [];
-        slideshowCursorVisible = true;
-        slideshowProceed = true;
-        firstTime = true;
-        isFileDialogOpened = false;
-        isActive = false;
+        slideshow.slideshowStarted = false;
+        slideshow.slideshowIsPaused = false;
+        slideshow.slideshowCurrentIndex = 0;
+        slideshow.slideshowMetadataIds = [];
+        slideshow.slideshowCursorVisible = true;
+        slideshow.slideshowProceed = true;
+        slideshow.firstTime = true;
+        slideshow.isFileDialogOpened = false;
+        slideshow.isActive = false;
 
         $("#mediaInfo").css("display", "none");
         exitSlideshowGallery();
@@ -886,8 +825,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         shashin.closeToastMessages({tag: "slide"});
 
         // Disconnect from cast if connected
-        if (cjsc !== null && cjsc.available) {
-            cjsc.disconnect();
+        if (slideshow.cjsc !== null && slideshow.cjsc.available) {
+            slideshow.cjsc.disconnect();
         }
 
         if (document.fullscreenEnabled && document.fullscreenElement !== null && document.exitFullscreen) {
@@ -901,25 +840,25 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     $("#downloadContainer").on("click", function (e) {
         e.preventDefault();
 
-        if (currentMetadata !== null) {
-            if (slideshowIsPaused === false) {
+        if (slideshow.currentMetadata !== null) {
+            if (slideshow.slideshowIsPaused === false) {
                 slideshowGalleryPlayPause();
             }
 
-            const downloadUrl = "/api/v1/image/"+currentMetadata.id+"/download";
+            const downloadUrl = "/api/v1/image/"+slideshow.currentMetadata.id+"/download";
             const a = document.createElement('a');
             a.href = downloadUrl;
             a.download = downloadUrl.split('/').pop();
             document.body.appendChild(a);
             a.click();
-            isFileDialogOpened = true;
+            slideshow.isFileDialogOpened = true;
             document.body.removeChild(a);
         }
     });
 
     $(window).on('focus', function () {
-        if (isFileDialogOpened === true && slideshowIsPaused === false) {
-            isFileDialogOpened = false;
+        if (slideshow.isFileDialogOpened === true && slideshow.slideshowIsPaused === false) {
+            slideshow.isFileDialogOpened = false;
             slideshowGalleryPlayPause();
         }
     });
@@ -983,24 +922,24 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
             // Cast slideshow
             if (e.key === "c" || e.code === "KeyC" || e.which === 67 || e.keyCode === 67) {
-                if (cjsc !== null && cjsc.available) {
+                if (slideshow.cjsc !== null && slideshow.cjsc.available) {
                     if ($("#toggleCastIcon").hasClass('bi-cast')) {
-                        if (currentPhotoUrl !== null) {
+                        if (slideshow.currentPhotoUrl !== null) {
                             $("#toggleCastIcon").addClass('bi-stop-circle').removeClass('bi-cast');
                             let cjscMetadata = {};
-                            if (currentMetadata !== null) {
+                            if (slideshow.currentMetadata !== null) {
                                 cjscMetadata = {
-                                    title: currentMetadata.title
+                                    title: slideshow.currentMetadata.title
                                 };
 
-                                if (currentMetadata.description !== null && currentMetadata.description !== "") {
-                                    cjscMetadata.description = currentMetadata.description;
+                                if (slideshow.currentMetadata.description !== null && slideshow.currentMetadata.description !== "") {
+                                    cjscMetadata.description = slideshow.currentMetadata.description;
                                 }
                             }
-                            cjsc.cast(currentPhotoUrl+".jpg", cjscMetadata);
+                            slideshow.cjsc.cast(slideshow.currentPhotoUrl+".jpg", cjscMetadata);
                         }
                     } else {
-                        cjsc.disconnect();
+                        slideshow.cjsc.disconnect();
                         $("#toggleCastIcon").addClass('bi-cast').removeClass('bi-stop-circle');
                     }
                 }
@@ -1017,7 +956,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
             // Show album filter
             if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true) && (e.key === "a" || e.code === "KeyA" || e.which === 65 || e.keyCode === 65)) {
-                if (slideshowIsPaused === false) {
+                if (slideshow.slideshowIsPaused === false) {
                     slideshowGalleryPlayPause();
                 }
 
@@ -1028,8 +967,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             if (e.key === "-" || e.code === "Minus" || e.which === 189 || e.keyCode === 189) {
                 const currElapsed = slideshowInterval;
 
-                if ((currElapsed - spacing) >= min) {
-                    slideshowInterval = currElapsed - spacing;
+                if ((currElapsed - slideshow.const.spacing) >= slideshow.const.min) {
+                    slideshowInterval = currElapsed - slideshow.const.spacing;
                     changeSideshowInterval();
 
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
@@ -1060,8 +999,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             if (e.key === "=" || e.code === "Equal" || e.which === 187 || e.keyCode === 187) {
                 const currElapsed = slideshowInterval;
 
-                if ((currElapsed + spacing) <= max) {
-                    slideshowInterval = currElapsed + spacing;
+                if ((currElapsed + slideshow.const.spacing) <= slideshow.const.max) {
+                    slideshowInterval = currElapsed + slideshow.const.spacing;
 
                     changeSideshowInterval();
 
@@ -1098,7 +1037,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     changeSideshowOrientation();
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
                     shashin.showToastMessage(shashin.getTranslatedValue("main.pages.slideshow.orientation"),
-                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",orientationMap[orientation].toLowerCase()),
+                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",slideshow.const.orientationMap[orientation].toLowerCase()),
                         {
                             icon: "bi-info-circle",
                             autohide: true,
@@ -1118,7 +1057,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     changeSideshowOrientation();
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
                     shashin.showToastMessage(shashin.getTranslatedValue("main.pages.slideshow.orientation"),
-                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",orientationMap[orientation].toLowerCase()),
+                        shashin.getTranslatedValue("main.toast.slideshow.orientation.body",slideshow.const.orientationMap[orientation].toLowerCase()),
                         {
                             icon: "bi-info-circle",
                             autohide: true,
@@ -1162,21 +1101,21 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
 
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37 || e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
-                if (((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+                if (((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) && slideshow.slideshowCurrentIndex === 0) === false && slideshow.slideshowProceed === true) {
 
                     $("#slideSpinner").show();
 
-                    if ((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) && slideshowCurrentIndex > 0) {
-                        slideshowCurrentIndex--;
-                    } else if ((e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
-                        slideshowCurrentIndex++;
+                    if ((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) && slideshow.slideshowCurrentIndex > 0) {
+                        slideshow.slideshowCurrentIndex--;
+                    } else if ((e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) && slideshow.slideshowCurrentIndex <= slideshow.slideshowMetadataIds.length - 1) {
+                        slideshow.slideshowCurrentIndex++;
                     }
 
                     getSlideshowImage(function () {
-                        slideshowProceed = true;
+                        slideshow.slideshowProceed = true;
                     });
 
-                    if (slideshowIsPaused === false) {
+                    if (slideshow.slideshowIsPaused === false) {
                         setupSlideshowInterval();
                     } else {
                         restartPoll();
@@ -1226,8 +1165,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     $("#prevSlideButton").on("click", function (e) {
         e.preventDefault();
 
-        if (slideshowCurrentIndex > 0 && slideshowProceed === true) {
-            slideshowCurrentIndex--;
+        if (slideshow.slideshowCurrentIndex > 0 && slideshow.slideshowProceed === true) {
+            slideshow.slideshowCurrentIndex--;
         } else {
             return false;
         }
@@ -1235,10 +1174,10 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#slideSpinner").show();
 
         getSlideshowImage(function () {
-            slideshowProceed = true;
+            slideshow.slideshowProceed = true;
         });
 
-        if (slideshowIsPaused === false) {
+        if (slideshow.slideshowIsPaused === false) {
             setupSlideshowInterval();
         } else {
             restartPoll();
@@ -1248,8 +1187,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     $("#nextSlideButton").on("click", function (e) {
         e.preventDefault();
 
-        if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && slideshowProceed === true) {
-            slideshowCurrentIndex++;
+        if (slideshow.slideshowCurrentIndex <= slideshow.slideshowMetadataIds.length - 1 && slideshow.slideshowProceed === true) {
+            slideshow.slideshowCurrentIndex++;
         } else {
             return false;
         }
@@ -1257,10 +1196,10 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#slideSpinner").show();
 
         getSlideshowImage(function () {
-            slideshowProceed = true;
+            slideshow.slideshowProceed = true;
         });
 
-        if (slideshowIsPaused === false) {
+        if (slideshow.slideshowIsPaused === false) {
             setupSlideshowInterval();
         } else {
             restartPoll();
@@ -1279,23 +1218,23 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 slideshowInfo();
             }
         } else if (direction === "left" || direction === "right") {
-            if (slideshowProceed === false) {
+            if (slideshow.slideshowProceed === false) {
                 return false;
             }
 
-            if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+            if ((direction === "right" && slideshow.slideshowCurrentIndex === 0) === false && slideshow.slideshowProceed === true) {
                 $("#slideSpinner").show();
 
-                if (slideshowCurrentIndex > 0 && direction === "right") {
-                    slideshowCurrentIndex--;
-                } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && direction === "left") {
-                    slideshowCurrentIndex++;
+                if (slideshow.slideshowCurrentIndex > 0 && direction === "right") {
+                    slideshow.slideshowCurrentIndex--;
+                } else if (slideshow.slideshowCurrentIndex <= slideshow.slideshowMetadataIds.length - 1 && direction === "left") {
+                    slideshow.slideshowCurrentIndex++;
                 }
 
                 getSlideshowImage(function () {
-                    slideshowProceed = true;
+                    slideshow.slideshowProceed = true;
                 });
-                if (slideshowIsPaused === false) {
+                if (slideshow.slideshowIsPaused === false) {
                     setupSlideshowInterval();
                 } else {
                     restartPoll();
@@ -1305,18 +1244,18 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     });
 
     function hideCursor() {
-        slideshowMouseTimer = null;
+        slideshow.slideshowMouseTimer = null;
         document.documentElement.style.cursor = "none";
         document.getElementById("mediaSrc").style.cursor = "none";
         document.getElementById("playPause").style.cursor = "none";
-        slideshowCursorVisible = false;
+        slideshow.slideshowCursorVisible = false;
     }
 
     function showCursor() {
         document.documentElement.style.cursor = "default";
         document.getElementById("mediaSrc").style.cursor = "pointer";
         document.getElementById("playPause").style.cursor = "pointer";
-        slideshowCursorVisible = true;
+        slideshow.slideshowCursorVisible = true;
     }
 
     $("#slideshowContainer").on("click", function () {
@@ -1326,20 +1265,20 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     $("body").on("mousemove", function () {
         if (Util.isMobile() === false && $("#slideshowContainer").css("display") === "block") {
 
-            if (slideshowMouseTimer) {
-                clearTimeout(slideshowMouseTimer);
+            if (slideshow.slideshowMouseTimer) {
+                clearTimeout(slideshow.slideshowMouseTimer);
             }
 
-            if (slideshowCursorVisible === false) {
+            if (slideshow.slideshowCursorVisible === false) {
                 showCursor();
             }
 
-            if (isActive === true) {
-                slideshowMouseTimer = setTimeout(hideCursor, hideTime);
+            if (slideshow.isActive === true) {
+                slideshow.slideshowMouseTimer = setTimeout(hideCursor, slideshow.const.hideTime);
             }
         }
 
-        if (firstTime === false || (slideshowProceed === true && firstTime === true)) {
+        if (slideshow.firstTime === false || (slideshow.slideshowProceed === true && slideshow.firstTime === true)) {
             showControls();
         }
     });
@@ -1365,20 +1304,20 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
         $("#playPause").stop(true, true);
 
-        if (slideshowIsPaused === false) {
+        if (slideshow.slideshowIsPaused === false) {
             // Pause
             $("#mediaSrc").css("opacity", "0.3");
             $("#playPause").addClass("bi-play-circle").removeClass("bi-pause-circle");
-            slideshowIsPaused = true;
+            slideshow.slideshowIsPaused = true;
 
             // Save elapsed time
-            elapsedBeforePause += Date.now() - startTime;
+            slideshow.elapsedBeforePause += Date.now() - slideshow.startTime;
 
-            clearInterval(slideshowIntervalId);
-            slideshowIntervalId = null;
+            clearInterval(slideshow.slideshowIntervalId);
+            slideshow.slideshowIntervalId = null;
 
-            clearInterval(slideTimer);
-            slideTimer = null;
+            clearInterval(slideshow.slideTimer);
+            slideshow.slideTimer = null;
 
             if (hideButton === true) {
                 $("#playPause").hide();
@@ -1389,33 +1328,33 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             // Resume
             $("#mediaSrc").css("opacity", "1");
             $("#playPause").addClass("bi-pause-circle").removeClass("bi-play-circle");
-            slideshowIsPaused = false;
+            slideshow.slideshowIsPaused = false;
 
-            const remainingTime = (slideshowInterval * 1000) - elapsedBeforePause;
+            const remainingTime = (slideshowInterval * 1000) - slideshow.elapsedBeforePause;
 
-            startTime = Date.now();
-            slideTimer = setInterval(pollData, pollTimeout);
+            slideshow.startTime = Date.now();
+            slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
 
-            slideshowIntervalId = setTimeout(() => {
-                slideshowCurrentIndex++;
+            slideshow.slideshowIntervalId = setTimeout(() => {
+                slideshow.slideshowCurrentIndex++;
                 getSlideshowImage(() => {
-                    slideshowProceed = true;
+                    slideshow.slideshowProceed = true;
                     $("#slideshowProgress").css("width", "0");
                     $("#slideshowProgressContainer").attr("aria-valuenow", "0");
-                    elapsedBeforePause = 0;
-                    startTime = Date.now();
-                    slideTimer = setInterval(pollData, pollTimeout);
-                    slideshowIntervalId = setInterval(() => {
-                        if (!slideshowIsPaused) {
-                            slideshowCurrentIndex++;
+                    slideshow.elapsedBeforePause = 0;
+                    slideshow.startTime = Date.now();
+                    slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
+                    slideshow.slideshowIntervalId = setInterval(() => {
+                        if (!slideshow.slideshowIsPaused) {
+                            slideshow.slideshowCurrentIndex++;
                             getSlideshowImage(() => {
-                                slideshowProceed = true;
+                                slideshow.slideshowProceed = true;
                                 $("#slideshowProgress").css("width", "0");
                                 $("#slideshowProgressContainer").attr("aria-valuenow", "0");
-                                clearInterval(slideTimer);
-                                elapsedBeforePause = 0;
-                                startTime = Date.now();
-                                slideTimer = setInterval(pollData, pollTimeout);
+                                clearInterval(slideshow.slideTimer);
+                                slideshow.elapsedBeforePause = 0;
+                                slideshow.startTime = Date.now();
+                                slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
                             });
                         }
                     }, slideshowInterval * 1000);
@@ -1426,7 +1365,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 $("#playPause").hide();
             } else {
                 $("#playPause").show();
-                $("#playPause").fadeOut(playPauseHideTime);
+                $("#playPause").fadeOut(slideshow.const.playPauseHideTime);
             }
         }
     }
@@ -1456,7 +1395,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 // Play bg video
                 video.currentTime = 0;
                 video.play().then(_ => shashin.printMessageToConsole("Looping video", {tag: "slideshow"}));
-            } else if (slideshowIsPaused === false) {
+            } else if (slideshow.slideshowIsPaused === false) {
                 slideshowGalleryPlayPause();
             }
         });
