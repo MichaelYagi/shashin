@@ -1,4 +1,4 @@
-async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory, autoplayVideo, slideshowInterval, albumImageCount, locale, slideshowProgress, orientation, fillScreen) {
+async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, hasMediaUploadDirectory, autoplayVideo, locale) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
     shashin.autoplayVideo = autoplayVideo;
@@ -201,8 +201,6 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
             shashin.closeToastMessages();
         });
     }
-
-    initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale, slideshowProgress, orientation, fillScreen);
 
     if (activePage !== "timeline" && activePage !== "wake") {
         captureMessages(activePage, notificationAlerts, timezone, locale);
