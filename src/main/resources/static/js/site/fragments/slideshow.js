@@ -1427,6 +1427,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
                 $("#playPause").css("display", "block");
 
+                $("#mediaSrcContainer, #playPauseContainer, #prevSlideButton, #nextSlideButton, #closeActionButton, #shortcutActionButton, #infoActionButton, #screenActionButton, #downloadContainer").css("display", "block");
+
                 shashin.closeToastMessages({tags:["subhtml"]});
             }
         });
