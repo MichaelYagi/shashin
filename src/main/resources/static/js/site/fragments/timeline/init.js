@@ -159,6 +159,9 @@
 
                 renderInitPage(mediaTypeFilter);
             }
+
+            enableScroll();
+            Util.showSpinner(false);
         } else if ($('.scrollspy').length > 0) {
             if (Util.isMobile() === true) {
                 renderInitPage(mediaTypeFilter);
