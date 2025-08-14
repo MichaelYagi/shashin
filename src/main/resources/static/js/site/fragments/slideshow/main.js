@@ -210,25 +210,74 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     });
 
     function getSlideshowImage(callback) {
-        const http = new Http("show slideshow");
+        const currentIndex = slideshow.slideshowCurrentIndex;
 
-        shashin.printMessageToConsole("slideshow.slideshowCurrentIndex: " + slideshow.slideshowCurrentIndex, {tag: "slideshow"});
-        shashin.printMessageToConsole("slideshow.slideshowMetadataIds:", {tag: "slideshow"});
-        shashin.printMessageToConsole(slideshow.slideshowMetadataIds, {tag: "slideshow"});
+        // Use preloaded image if available and matches current index
+        if (
+            slideshow.preloadedImage &&
+            slideshow.preloadedImage.index === currentIndex &&
+            slideshow.preloadedImage.metadata &&
+            slideshow.preloadedImage.baseUrl
+        ) {
+            processSlideData({
+                metadata: slideshow.preloadedImage.metadata,
+                baseUrl: slideshow.preloadedImage.baseUrl
+            }, "existing", callback);
+
+            // Clear preloaded image after use
+            slideshow.preloadedImage = null;
+
+            // Preload the next image
+            preloadNextImage();
+            return;
+        }
+
+        // Otherwise, fetch image normally
+        const http = new Http("show slideshow");
 
         if (slideshow.slideshowProceed === true) {
             slideshow.slideshowProceed = false;
-            if (slideshow.slideshowMetadataIds.length > 0 && slideshow.slideshowCurrentIndex >= 0 && slideshow.slideshowCurrentIndex <= slideshow.slideshowMetadataIds.length - 1) {
-                shashin.printMessageToConsole("Looking up " + slideshow.slideshowMetadataIds[slideshow.slideshowCurrentIndex], {tag: "slideshow"});
-                http.ajax("get", "/media/metadata/" + slideshow.slideshowMetadataIds[slideshow.slideshowCurrentIndex]).then(function (data) {
+
+            if (
+                slideshow.slideshowMetadataIds.length > 0 &&
+                currentIndex >= 0 &&
+                currentIndex < slideshow.slideshowMetadataIds.length
+            ) {
+                const imageId = slideshow.slideshowMetadataIds[currentIndex];
+                http.ajax("get", "/media/metadata/" + imageId).then(function (data) {
                     processSlideData(data, "existing", callback);
+                    preloadNextImage(); // Preload next after current is shown
                 });
             } else {
-                shashin.printMessageToConsole("New random image", {tag: "slideshow"});
-                http.ajax("get", "/random/metadata/type/image?includeSlideAlbums=true&orientation="+orientation).then(function (data) {
-                    processSlideData(data, "new", callback);
-                });
+                http.ajax("get", "/random/metadata/type/image?includeSlideAlbums=true&orientation=" + orientation)
+                    .then(function (data) {
+                        processSlideData(data, "new", callback);
+                        preloadNextImage(); // Preload next after current is shown
+                    });
             }
+        }
+    }
+
+    function preloadNextImage() {
+        const nextIndex = slideshow.slideshowCurrentIndex + 1;
+
+        if (nextIndex < slideshow.slideshowMetadataIds.length) {
+            const nextId = slideshow.slideshowMetadataIds[nextIndex];
+            const http = new Http("preload");
+
+            http.ajax("get", "/media/metadata/" + nextId).then(function (data) {
+                if (data && data.metadata && data.baseUrl) {
+                    const img = new Image();
+                    img.src = data.baseUrl + "/api/v1/image/" + data.metadata.id;
+
+                    slideshow.preloadedImage = {
+                        index: nextIndex,
+                        metadata: data.metadata,
+                        baseUrl: data.baseUrl,
+                        image: img
+                    };
+                }
+            });
         }
     }
 
