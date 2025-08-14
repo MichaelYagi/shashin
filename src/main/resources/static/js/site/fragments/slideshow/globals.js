@@ -12,7 +12,6 @@ slideshow.infoTimer = null;
 slideshow.shortcutTimer = null;
 slideshow.screenTimer = null;
 slideshow.downloadTimer = null;
-slideshow.slideshowCursorVisible = true;
 slideshow.slideshowProceed = true;
 slideshow.cjsc = null;
 slideshow.currentPhotoUrl = null;
