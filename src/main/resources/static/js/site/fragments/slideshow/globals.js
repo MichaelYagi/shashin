@@ -32,6 +32,7 @@ slideshow.const.hideTime = 5000;
 slideshow.const.playPauseHideTime = 3000;
 slideshow.const.fadeOutTime = 1000;
 slideshow.const.pollTimeout = 100;
+slideshow.preloadedImage = null;
 slideshow.const.orientationMap = {
     0: shashin.getTranslatedValue("main.pages.slideshow.all"),
     1: shashin.getTranslatedValue("main.pages.slideshow.landscape"),
