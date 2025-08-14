@@ -114,7 +114,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
                     const progressBar = $("#slideshowProgress");
                     progressBar.css("transition", "none");
-                    void progressBar[0].offsetWidth;
+                    const _ = progressBar[0].offsetWidth;
                     progressBar.css("width", "0");
                     $("#slideshowProgressContainer").attr("aria-valuenow", "0");
 
@@ -1416,7 +1416,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
                     const progressBar = $("#slideshowProgress");
                     progressBar.css("transition", "none");
-                    void progressBar[0].offsetWidth;
+                    const _ = progressBar[0].offsetWidth;
                     progressBar.css("width", "0");
                     $("#slideshowProgressContainer").attr("aria-valuenow", "0");
 
@@ -1432,7 +1432,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
                                 const progressBar = $("#slideshowProgress");
                                 progressBar.css("transition", "none");
-                                void progressBar[0].offsetWidth;
+                                const _ = progressBar[0].offsetWidth;
                                 progressBar.css("width", "0");
                                 $("#slideshowProgressContainer").attr("aria-valuenow", "0");
 
