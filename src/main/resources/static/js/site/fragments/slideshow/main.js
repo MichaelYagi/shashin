@@ -76,11 +76,31 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         });
     });
 
+    function startProgressLoop() {
+        function updateProgress() {
+            if (!slideshow.slideshowIsPaused) {
+                const now = Date.now();
+                const elapsedTime = slideshow.elapsedBeforePause + (now - slideshow.startTime);
+                const progress = Math.min(Math.round(elapsedTime / (slideshowInterval * 1000) * 100), 100);
+
+                $("#slideshowProgress").css("width", progress + "%");
+                $("#slideshowProgressContainer").attr("aria-valuenow", progress);
+            }
+
+            slideshow.slideTimer = requestAnimationFrame(updateProgress);
+        }
+
+        // Start the loop
+        slideshow.slideTimer = requestAnimationFrame(updateProgress);
+    }
+
     function setupSlideshowInterval() {
         clearInterval(slideshow.slideshowIntervalId);
+        if (slideshow.slideTimer) cancelAnimationFrame(slideshow.slideTimer);
+
         slideshow.startTime = Date.now();
-        slideshow.currentTime = Date.now();
-        slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
+        startProgressLoop();
+
         slideshow.slideshowIntervalId = setInterval(() => {
             if (!slideshow.slideshowIsPaused) {
                 slideshow.slideshowCurrentIndex++;
@@ -88,22 +108,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     slideshow.slideshowProceed = true;
                     $("#slideshowProgress").css("width", "0");
                     $("#slideshowProgressContainer").attr("aria-valuenow", "0");
-                    clearInterval(slideshow.slideTimer);
+
+                    if (slideshow.slideTimer) cancelAnimationFrame(slideshow.slideTimer);
                     slideshow.startTime = Date.now();
-                    slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
+                    startProgressLoop();
                 });
             }
         }, slideshowInterval * 1000);
-    }
-
-    function pollData() {
-        if (slideshow.slideshowIsPaused === false) {
-            slideshow.currentTime = Date.now();
-            let elapsedTime = slideshow.elapsedBeforePause + (slideshow.currentTime - slideshow.startTime);
-            const progress = Math.round(elapsedTime / (slideshowInterval * 1000) * 100);
-            $("#slideshowProgress").css("width", progress + "%");
-            $("#slideshowProgressContainer").attr("aria-valuenow", progress);
-        }
     }
 
     function restartPoll() {
@@ -111,6 +122,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         slideshow.currentTime = Date.now();
         $("#slideshowProgress").css("width", slideshow.elapsedBeforePause.toString());
         $("#slideshowProgressContainer").attr("aria-valuenow", slideshow.elapsedBeforePause.toString());
+    }
+
+    function cancelProgressLoop() {
+        if (slideshow.slideTimer) {
+            cancelAnimationFrame(slideshow.slideTimer);
+            slideshow.slideTimer = null;
+        }
     }
 
     const http = new Http("getAlbums");
@@ -1352,7 +1370,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#playPause").stop(true, true);
 
         if (slideshow.slideshowIsPaused === false) {
-            // Pause
+            // 🔴 Pause
             $("#mediaSrc").css("opacity", "0.3");
             $("#playPause").addClass("bi-play-circle").removeClass("bi-pause-circle");
             slideshow.slideshowIsPaused = true;
@@ -1363,8 +1381,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             clearInterval(slideshow.slideshowIntervalId);
             slideshow.slideshowIntervalId = null;
 
-            clearInterval(slideshow.slideTimer);
-            slideshow.slideTimer = null;
+            cancelProgressLoop(); // 🛑 Stop animation loop
 
             if (hideButton === true) {
                 $("#playPause").hide();
@@ -1372,7 +1389,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 $("#playPause").show();
             }
         } else {
-            // Resume
+            // 🟢 Resume
             $("#mediaSrc").css("opacity", "1");
             $("#playPause").addClass("bi-pause-circle").removeClass("bi-play-circle");
             slideshow.slideshowIsPaused = false;
@@ -1380,7 +1397,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             const remainingTime = (slideshowInterval * 1000) - slideshow.elapsedBeforePause;
 
             slideshow.startTime = Date.now();
-            slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
+            startProgressLoop(); // ✅ Restart animation loop
 
             slideshow.slideshowIntervalId = setTimeout(() => {
                 slideshow.slideshowCurrentIndex++;
@@ -1390,7 +1407,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     $("#slideshowProgressContainer").attr("aria-valuenow", "0");
                     slideshow.elapsedBeforePause = 0;
                     slideshow.startTime = Date.now();
-                    slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
+                    startProgressLoop();
+
                     slideshow.slideshowIntervalId = setInterval(() => {
                         if (!slideshow.slideshowIsPaused) {
                             slideshow.slideshowCurrentIndex++;
@@ -1398,10 +1416,10 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                                 slideshow.slideshowProceed = true;
                                 $("#slideshowProgress").css("width", "0");
                                 $("#slideshowProgressContainer").attr("aria-valuenow", "0");
-                                clearInterval(slideshow.slideTimer);
+                                cancelProgressLoop();
                                 slideshow.elapsedBeforePause = 0;
                                 slideshow.startTime = Date.now();
-                                slideshow.slideTimer = setInterval(pollData, slideshow.const.pollTimeout);
+                                startProgressLoop();
                             });
                         }
                     }, slideshowInterval * 1000);
