@@ -77,21 +77,26 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     });
 
     function startProgressLoop() {
-        function updateProgress() {
-            if (!slideshow.slideshowIsPaused) {
-                const now = Date.now();
-                const elapsedTime = slideshow.elapsedBeforePause + (now - slideshow.startTime);
-                const progress = Math.min(Math.round(elapsedTime / (slideshowInterval * 1000) * 100), 100);
+        const duration = slideshowInterval * 1000;
+        const startTime = Date.now();
 
-                $("#slideshowProgress").css("width", progress + "%");
-                $("#slideshowProgressContainer").attr("aria-valuenow", progress);
+        function animate() {
+            if (slideshow.slideshowIsPaused) return;
+
+            const now = Date.now();
+            const elapsed = now - startTime + slideshow.elapsedBeforePause;
+            const progress = Math.min((elapsed / duration) * 100, 100);
+
+            $("#slideshowProgress").css("width", progress + "%");
+            $("#slideshowProgressContainer").attr("aria-valuenow", Math.round(progress));
+
+            if (progress < 100) {
+                slideshow.slideTimer = requestAnimationFrame(animate);
             }
-
-            slideshow.slideTimer = requestAnimationFrame(updateProgress);
         }
 
-        // Start the loop
-        slideshow.slideTimer = requestAnimationFrame(updateProgress);
+        cancelProgressLoop(); // Stop any previous animation
+        slideshow.slideTimer = requestAnimationFrame(animate);
     }
 
     function setupSlideshowInterval() {
@@ -106,7 +111,11 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 slideshow.slideshowCurrentIndex++;
                 getSlideshowImage(() => {
                     slideshow.slideshowProceed = true;
-                    $("#slideshowProgress").css("width", "0");
+
+                    const progressBar = $("#slideshowProgress");
+                    progressBar.css("transition", "none");
+                    void progressBar[0].offsetWidth;
+                    progressBar.css("width", "0");
                     $("#slideshowProgressContainer").attr("aria-valuenow", "0");
 
                     if (slideshow.slideTimer) cancelAnimationFrame(slideshow.slideTimer);
@@ -1370,7 +1379,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         $("#playPause").stop(true, true);
 
         if (slideshow.slideshowIsPaused === false) {
-            // 🔴 Pause
+            // Pause
+            $("#slideshowProgress").css("width", Math.round((slideshow.elapsedBeforePause / (slideshowInterval * 1000)) * 100) + "%");
             $("#mediaSrc").css("opacity", "0.3");
             $("#playPause").addClass("bi-play-circle").removeClass("bi-pause-circle");
             slideshow.slideshowIsPaused = true;
@@ -1381,7 +1391,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             clearInterval(slideshow.slideshowIntervalId);
             slideshow.slideshowIntervalId = null;
 
-            cancelProgressLoop(); // 🛑 Stop animation loop
+            cancelProgressLoop(); // Stop animation loop
 
             if (hideButton === true) {
                 $("#playPause").hide();
@@ -1389,7 +1399,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 $("#playPause").show();
             }
         } else {
-            // 🟢 Resume
+            // Resume
             $("#mediaSrc").css("opacity", "1");
             $("#playPause").addClass("bi-pause-circle").removeClass("bi-play-circle");
             slideshow.slideshowIsPaused = false;
@@ -1397,14 +1407,19 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             const remainingTime = (slideshowInterval * 1000) - slideshow.elapsedBeforePause;
 
             slideshow.startTime = Date.now();
-            startProgressLoop(); // ✅ Restart animation loop
+            startProgressLoop(); // Restart animation loop
 
             slideshow.slideshowIntervalId = setTimeout(() => {
                 slideshow.slideshowCurrentIndex++;
                 getSlideshowImage(() => {
                     slideshow.slideshowProceed = true;
-                    $("#slideshowProgress").css("width", "0");
+
+                    const progressBar = $("#slideshowProgress");
+                    progressBar.css("transition", "none");
+                    void progressBar[0].offsetWidth;
+                    progressBar.css("width", "0");
                     $("#slideshowProgressContainer").attr("aria-valuenow", "0");
+
                     slideshow.elapsedBeforePause = 0;
                     slideshow.startTime = Date.now();
                     startProgressLoop();
@@ -1414,8 +1429,13 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                             slideshow.slideshowCurrentIndex++;
                             getSlideshowImage(() => {
                                 slideshow.slideshowProceed = true;
-                                $("#slideshowProgress").css("width", "0");
+
+                                const progressBar = $("#slideshowProgress");
+                                progressBar.css("transition", "none");
+                                void progressBar[0].offsetWidth;
+                                progressBar.css("width", "0");
                                 $("#slideshowProgressContainer").attr("aria-valuenow", "0");
+
                                 cancelProgressLoop();
                                 slideshow.elapsedBeforePause = 0;
                                 slideshow.startTime = Date.now();
