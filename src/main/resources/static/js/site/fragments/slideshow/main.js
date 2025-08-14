@@ -112,11 +112,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 getSlideshowImage(() => {
                     slideshow.slideshowProceed = true;
 
-                    const progressBar = $("#slideshowProgress");
-                    progressBar.css("transition", "none");
-                    const _ = progressBar[0].offsetWidth;
-                    progressBar.css("width", "0");
-                    $("#slideshowProgressContainer").attr("aria-valuenow", "0");
+                    resetProgressBar();
 
                     if (slideshow.slideTimer) cancelAnimationFrame(slideshow.slideTimer);
                     slideshow.startTime = Date.now();
@@ -138,6 +134,14 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             cancelAnimationFrame(slideshow.slideTimer);
             slideshow.slideTimer = null;
         }
+    }
+
+    function resetProgressBar() {
+        const progressBar = $("#slideshowProgress");
+        progressBar.css("transition", "none");
+        const _ = progressBar[0].offsetWidth;
+        progressBar.css("width", "0");
+        $("#slideshowProgressContainer").attr("aria-valuenow", "0");
     }
 
     const http = new Http("getAlbums");
@@ -1414,11 +1418,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 getSlideshowImage(() => {
                     slideshow.slideshowProceed = true;
 
-                    const progressBar = $("#slideshowProgress");
-                    progressBar.css("transition", "none");
-                    const _ = progressBar[0].offsetWidth;
-                    progressBar.css("width", "0");
-                    $("#slideshowProgressContainer").attr("aria-valuenow", "0");
+                    resetProgressBar();
 
                     slideshow.elapsedBeforePause = 0;
                     slideshow.startTime = Date.now();
@@ -1430,11 +1430,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                             getSlideshowImage(() => {
                                 slideshow.slideshowProceed = true;
 
-                                const progressBar = $("#slideshowProgress");
-                                progressBar.css("transition", "none");
-                                const _ = progressBar[0].offsetWidth;
-                                progressBar.css("width", "0");
-                                $("#slideshowProgressContainer").attr("aria-valuenow", "0");
+                                resetProgressBar();
 
                                 cancelProgressLoop();
                                 slideshow.elapsedBeforePause = 0;
