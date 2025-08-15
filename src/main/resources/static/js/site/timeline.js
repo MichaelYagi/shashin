@@ -948,128 +948,167 @@
 
     timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter) {
         if (e) e.preventDefault();
+        if (timelineSettings.jumpInProgress === true) return;
+        timelineSettings.jumpInProgress = true;
 
-        // Disable offcanvas on mobile while jumping
-        if (Util.isMobile() === true) {
-            $("#timelineTocToggle").attr("data-bs-backdrop","static");
-            $("#timelineTocToggle").attr("data-bs-keyboard","false");
-            $("#offcanvasTocCloseButton").prop('disabled', true);
-        }
+        // Helpers
+        const getContainer = () => document.getElementById('container') || document.scrollingElement || document.body;
 
-        timelineSettings.didJumpFromTimelineToc = true;
-        timelineSettings.heightArray = [];
-        timelineSettings.heightCounter = 0;
-        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-        timelineSettings.enableScrollSpy = false;
-        const timelineDates = timelineSettings.timelineDates;
+        const scrollToInContainer = (el) => {
+            const c = getContainer();
+            if (!c || !el) return;
+            const cRect = c.getBoundingClientRect();
+            const eRect = el.getBoundingClientRect();
+            const top = (eRect.top - cRect.top) + c.scrollTop; // position el at container's top
+            c.scrollTo({ top, behavior: 'auto' });
+        };
 
-        if (Util.isMobile() === false) {
-            const anchorArray = anchor.split("-");
-            if (timelineDates.length > 2 &&
-                parseInt(anchorArray[0]) === timelineDates[timelineDates.length - 1].year &&
-                parseInt(anchorArray[1]) === timelineDates[timelineDates.length - 1].month &&
-                parseInt(anchorArray[2]) === timelineDates[timelineDates.length - 1].day
-            ) {
-                anchor = timelineDates[timelineDates.length - 3].year + "-" +
-                    timelineDates[timelineDates.length - 3].month + "-" +
-                    timelineDates[timelineDates.length - 3].day;
-            }
-        }
+        const waitFor = (fn, { timeout = 5000, interval = 50 } = {}) =>
+            new Promise((resolve, reject) => {
+                const start = Date.now();
+                const tick = () => {
+                    try {
+                        const val = fn();
+                        if (val) return resolve(val);
+                        if (Date.now() - start >= timeout) return reject(new Error("waitFor timeout"));
+                    } catch (err) { return reject(err); }
+                    setTimeout(tick, interval);
+                };
+                tick();
+            });
 
-        $('section').each((_, el) => Util.removeDateGallery(el.id));
+        const waitForElement = (id, opts) => waitFor(() => document.getElementById(id), opts);
 
-        const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
-        if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
-            await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
-
-            // if (Util.isMobile() === false) {
-            //     timelineSettings.isScrolling = true;
-            //     const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
-            //     await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
-            // } else {
-                // Mobile logic
-                const anchorIndex = timelineSettings.timelineDatesHash[anchor];
-                const depth = 6;
-                let currAnchor = anchor;
-
-                // Render above
-                for (let i = anchorIndex - 1; i >= anchorIndex - depth && i >= 0; i--) {
-                    const id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
-                    if ($("#" + id).length === 0) {
-                        const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
-                        if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                            await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                        }
-                        currAnchor = id;
-                    }
-                }
-
-                // Render below
-                currAnchor = anchor;
-                for (let i = anchorIndex + 1; i <= anchorIndex + depth && i < timelineDates.length; i++) {
-                    const id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
-                    if ($("#" + id).length === 0) {
-                        const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
-                        if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                            await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                        }
-                        currAnchor = id;
-                    }
-                }
-
-                // Scroll to anchor
-                location.href = "#" + anchor;
-                if (window.location.hash) {
-                    history.pushState("", document.title, window.location.pathname + window.location.search);
-                }
-
-                // Wait for both anchor and TOC entry to exist
-                timelineSettings.observeAnchorChange(anchor, function(id) {
-                    timelineSettings.setScrollSpyActive(id);
-                    timelineSettings.scrollToToc(id);
-                    timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
-                    timelineSettings.enableScrollSpy = true;
-                });
-            // }
-        }
-
-        // Preload adjacent sections
-        const preload = () => preloadAdjacentSections(anchor, mediaTypeFilter);
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(preload);
-        } else {
-            setTimeout(preload, 500);
-        }
-
-        // Scroll to anchor after DOM settles
-        let attempts = 0;
-        const maxAttempts = 30;
-        const scrollWhenReady = () => {
-            if (Util.isMobile() === true) {
-                $("#timelineTocToggle").removeAttr("data-bs-backdrop");
-                $("#timelineTocToggle").removeAttr("data-bs-keyboard");
-                $("#offcanvasTocCloseButton").prop('disabled', false);
-            }
-            const anchorElement = document.getElementById(anchor);
-            if (anchorElement && $(anchorElement).is(":visible")) {
-                anchorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-                if (window.location.hash) {
-                    history.pushState("", document.title, window.location.pathname + window.location.search);
-                }
-
-                timelineSettings.setScrollSpyActive(anchor);
-                timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
-                timelineSettings.enableScrollSpy = true;
-            } else if (attempts < maxAttempts) {
-                attempts++;
-                setTimeout(scrollWhenReady, 100);
-            } else {
-                shashin.printMessageToConsole("Failed to scroll to anchor after multiple attempts:" + anchor,{tag:"jumpFromTimelineToc"});
+        const withAnchorLock = async (anchorId, fn) => {
+            const c = getContainer();
+            const el = document.getElementById(anchorId);
+            if (!c || !el) return fn();
+            const prevOverflowAnchor = c.style.overflowAnchor;
+            const beforeTop = el.getBoundingClientRect().top;
+            c.style.overflowAnchor = 'none';
+            try {
+                await fn();
+            } finally {
+                // Let layout settle, then compensate any shift
+                await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+                const afterTop = el.getBoundingClientRect().top;
+                c.scrollTop += (afterTop - beforeTop);
+                c.style.overflowAnchor = prevOverflowAnchor || '';
             }
         };
 
-        setTimeout(scrollWhenReady, 500);
+        const preloadAdjacent = () => {
+            try { preloadAdjacentSections(anchor, mediaTypeFilter); } catch (_) {}
+        };
+
+        const isMobile = (Util.isMobile() === true);
+
+        try {
+            // Freeze reactive behaviors
+            timelineSettings.enableScrollSpy = false;
+            timelineSettings.isScrolling = false;
+            timelineSettings.didJumpFromTimelineToc = true;
+            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+
+            // Lock offcanvas interactions during jump (mobile)
+            if (isMobile) {
+                $("#timelineTocToggle").attr("data-bs-backdrop", "static").attr("data-bs-keyboard", "false");
+                $("#offcanvasTocCloseButton").prop('disabled', true);
+            }
+
+            // Clear any existing sections to avoid reflow thrash
+            $('section').each((_, el) => Util.removeDateGallery(el.id));
+
+            // Hide spinners during structured jump
+            $("#spinner_top, #spinner_bottom").hide();
+
+            // 1) Render the anchor
+            let ok = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
+            if (ok !== timelineSettings.success || !document.getElementById(anchor)) {
+                throw new Error("Failed to render anchor");
+            }
+
+            // 2) Render a small buffer below first (stops mobile “scroll-up”)
+            const timelineDates = timelineSettings.timelineDates || [];
+            const idx = timelineSettings.timelineDatesHash[anchor];
+            if (typeof idx !== 'number') throw new Error("Invalid anchor index");
+            const depthBelow = isMobile ? 2 : 4;
+            let attachPointBelow = anchor;
+            for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
+                const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
+                if (!document.getElementById(id)) {
+                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", attachPointBelow);
+                    if (msg === timelineSettings.success && document.getElementById(id)) {
+                        // Defer heavy metadata to after we’ve scrolled (less layout shift now)
+                    }
+                }
+                attachPointBelow = id;
+            }
+
+            // 3) Scroll to the anchor within the container (not the document)
+            await waitForElement(anchor);
+            await new Promise(r => requestAnimationFrame(r));
+            const anchorEl = document.getElementById(anchor);
+            scrollToInContainer(anchorEl);
+
+            // 4) Activate TOC and gently scroll its entry into view
+            timelineSettings.setScrollSpyActive(anchor);
+            const tocEl = document.getElementById(`offcanvas_${anchor}`);
+            if (tocEl) {
+                try { tocEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
+            }
+
+            // 5) Under a scroll-anchor lock, render “above” and attach metadata
+            await withAnchorLock(anchor, async () => {
+                // Render above (newer) dates
+                const depthAbove = isMobile ? 3 : 5;
+                let attachPointAbove = anchor;
+                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
+                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
+                    if (!document.getElementById(id)) {
+                        const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", attachPointAbove);
+                        if (msg === timelineSettings.success && document.getElementById(id)) {
+                            // no-op; metadata later in this locked phase
+                        }
+                    }
+                    attachPointAbove = id;
+                }
+
+                // Now attach metadata for anchor and neighbors (this is what changes heights; keep lock on)
+                const toAttach = [anchor];
+                for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
+                    toAttach.push(`${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`);
+                }
+                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
+                    toAttach.push(`${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`);
+                }
+                // Deduplicate and attach
+                const uniq = Array.from(new Set(toAttach));
+                for (const d of uniq) {
+                    if (document.getElementById(d)) {
+                        await timelineSettings.attachAssociatedMetadata(d, mediaTypeFilter);
+                    }
+                }
+            });
+
+            // 6) Preload adjacent sections once idle
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(preloadAdjacent);
+            } else {
+                setTimeout(preloadAdjacent, 300);
+            }
+        } catch (err) {
+            shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, { tag: "jumpFromTimelineToc" });
+        } finally {
+            // Restore offcanvas attributes correctly
+            if (isMobile) {
+                $("#timelineTocToggle").removeAttr("data-bs-backdrop").removeAttr("data-bs-keyboard");
+                $("#offcanvasTocCloseButton").prop('disabled', false);
+            }
+            timelineSettings.enableScrollSpy = true;
+            timelineSettings.isScrolling = false;
+            timelineSettings.jumpInProgress = false;
+        }
     };
 
     timelineSettings.observeAnchorChange = function(id, functionCall) {
