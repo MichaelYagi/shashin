@@ -1078,16 +1078,21 @@
                 $("#offcanvasTocCloseButton").prop('disabled', false);
             }
 
-            timelineSettings.jumpRenderInProgress = false;
-            timelineSettings.enableScrollSpy = true;
-            timelineSettings.isScrolling = true;
-            timelineSettings.jumpInProgress = false;
+            if (isMobile) {
+                $("#offcanvasTocCloseButton").click();
+            }
+
             timelineSettings.scrollByN(2);
             Util.showSpinner(false);
             $("#dLabel").removeClass("disabled");
             $("#dLabel").removeAttr("aria-disabled");
             $("#dLabel").removeAttr("tabindex");
             timelineSettings.enableScroll();
+
+            timelineSettings.jumpRenderInProgress = false;
+            timelineSettings.enableScrollSpy = true;
+            timelineSettings.isScrolling = true;
+            timelineSettings.jumpInProgress = false;
         }
     };
 
