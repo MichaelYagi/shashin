@@ -139,7 +139,10 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     function resetProgressBar() {
         const progressBar = $("#slideshowProgress");
         progressBar.css("transition", "none");
-        const _ = progressBar[0].offsetWidth;
+        function forceReflow(element) {
+            return element[0].offsetWidth;
+        }
+        forceReflow(progressBar);
         progressBar.css("width", "0");
         $("#slideshowProgressContainer").attr("aria-valuenow", "0");
     }
