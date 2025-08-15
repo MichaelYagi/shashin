@@ -1032,24 +1032,60 @@
             const timelineDates = timelineSettings.timelineDates || [];
             const idx = timelineSettings.timelineDatesHash[anchor];
             if (typeof idx !== 'number') throw new Error("Invalid anchor index");
-            const depthBelow = isMobile ? 2 : 4;
-            let attachPointBelow = anchor;
-            for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
-                const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
-                if (!document.getElementById(id)) {
-                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", attachPointBelow);
-                    if (msg === timelineSettings.success && document.getElementById(id)) {
-                        // Defer heavy metadata to after we’ve scrolled (less layout shift now)
-                    }
-                }
-                attachPointBelow = id;
-            }
 
-            // 3) Scroll to the anchor within the container (not the document)
-            await waitForElement(anchor);
-            await new Promise(r => requestAnimationFrame(r));
-            const anchorEl = document.getElementById(anchor);
-            scrollToInContainer(anchorEl);
+            if (isMobile) {
+                const depthBelow = isMobile ? 2 : 4;
+                let attachPointBelow = anchor;
+                for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
+                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
+                    if (!document.getElementById(id)) {
+                        const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", attachPointBelow);
+                        if (msg === timelineSettings.success && document.getElementById(id)) {
+                            // Defer heavy metadata to after we’ve scrolled (less layout shift now)
+                        }
+                    }
+                    attachPointBelow = id;
+                }
+
+                // 3) Scroll to the anchor within the container (not the document)
+                await waitForElement(anchor);
+                await new Promise(r => requestAnimationFrame(r));
+                const anchorEl = document.getElementById(anchor);
+                scrollToInContainer(anchorEl);
+            } else {
+                // --- DESKTOP LOGIC ---
+                const depthAbove = 5, depthBelow = 4;
+
+                // Render above first
+                let apAbove = anchor;
+                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
+                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
+                    if (!document.getElementById(id)) {
+                        await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", apAbove);
+                    }
+                    apAbove = id;
+                }
+
+                // Render below
+                let apBelow = anchor;
+                for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
+                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
+                    if (!document.getElementById(id)) {
+                        await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", apBelow);
+                    }
+                    apBelow = id;
+                }
+
+                // Wait for anchor to exist and for layout to stabilize
+                await waitForElement(anchor);
+                await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+                // Scroll to anchor in the container
+                scrollToInContainer(document.getElementById(anchor));
+
+                // Now attach metadata so it doesn't block or override the first scroll
+                await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
+            }
 
             // 4) Activate TOC and gently scroll its entry into view
             timelineSettings.setScrollSpyActive(anchor);
@@ -1058,38 +1094,40 @@
                 try { tocEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
             }
 
-            // 5) Under a scroll-anchor lock, render “above” and attach metadata
-            await withAnchorLock(anchor, async () => {
-                // Render above (newer) dates
-                const depthAbove = isMobile ? 3 : 5;
-                let attachPointAbove = anchor;
-                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
-                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
-                    if (!document.getElementById(id)) {
-                        const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", attachPointAbove);
-                        if (msg === timelineSettings.success && document.getElementById(id)) {
-                            // no-op; metadata later in this locked phase
+            if (isMobile) {
+                // 5) Under a scroll-anchor lock, render “above” and attach metadata
+                await withAnchorLock(anchor, async () => {
+                    // Render above (newer) dates
+                    const depthAbove = isMobile ? 3 : 5;
+                    let attachPointAbove = anchor;
+                    for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
+                        const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
+                        if (!document.getElementById(id)) {
+                            const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", attachPointAbove);
+                            if (msg === timelineSettings.success && document.getElementById(id)) {
+                                // no-op; metadata later in this locked phase
+                            }
+                        }
+                        attachPointAbove = id;
+                    }
+
+                    // Now attach metadata for anchor and neighbors (this is what changes heights; keep lock on)
+                    const toAttach = [anchor];
+                    for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
+                        toAttach.push(`${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`);
+                    }
+                    for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
+                        toAttach.push(`${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`);
+                    }
+                    // Deduplicate and attach
+                    const uniq = Array.from(new Set(toAttach));
+                    for (const d of uniq) {
+                        if (document.getElementById(d)) {
+                            await timelineSettings.attachAssociatedMetadata(d, mediaTypeFilter);
                         }
                     }
-                    attachPointAbove = id;
-                }
-
-                // Now attach metadata for anchor and neighbors (this is what changes heights; keep lock on)
-                const toAttach = [anchor];
-                for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
-                    toAttach.push(`${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`);
-                }
-                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
-                    toAttach.push(`${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`);
-                }
-                // Deduplicate and attach
-                const uniq = Array.from(new Set(toAttach));
-                for (const d of uniq) {
-                    if (document.getElementById(d)) {
-                        await timelineSettings.attachAssociatedMetadata(d, mediaTypeFilter);
-                    }
-                }
-            });
+                });
+            }
 
             // 6) Preload adjacent sections once idle
             if ('requestIdleCallback' in window) {
