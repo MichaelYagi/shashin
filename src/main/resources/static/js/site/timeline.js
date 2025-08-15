@@ -1144,7 +1144,7 @@
                 $("#offcanvasTocCloseButton").prop('disabled', false);
             }
             timelineSettings.enableScrollSpy = true;
-            timelineSettings.isScrolling = false;
+            timelineSettings.isScrolling = true;
             timelineSettings.jumpInProgress = false;
         }
     };
