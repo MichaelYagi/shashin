@@ -1078,6 +1078,7 @@
             timelineSettings.enableScrollSpy = true;
             timelineSettings.isScrolling = true;
             timelineSettings.jumpInProgress = false;
+            timelineSettings.scrollByN(2);
         }
     };
 
