@@ -947,67 +947,131 @@
     };
 
     timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter) {
-        if (e) e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         timelineSettings.didJumpFromTimelineToc = true;
         timelineSettings.heightArray = [];
         timelineSettings.heightCounter = 0;
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
-
         const timelineDates = timelineSettings.timelineDates;
 
-        // Adjust anchor if it's the last date
-        if (!Util.isMobile()) {
-            const anchorParts = anchor.split("-");
-            const lastDate = timelineDates[timelineDates.length - 1];
-            if (
-                parseInt(anchorParts[0]) === lastDate.year &&
-                parseInt(anchorParts[1]) === lastDate.month &&
-                parseInt(anchorParts[2]) === lastDate.day &&
-                timelineDates.length > 2
+        if (Util.isMobile() === false) {
+            const anchorArray = anchor.split("-");
+            // check if last date and change to media close to end
+            if (timelineDates.length > 2 &&
+                parseInt(anchorArray[0]) === timelineDates[timelineDates.length - 1].year &&
+                parseInt(anchorArray[1]) === timelineDates[timelineDates.length - 1].month &&
+                parseInt(anchorArray[2]) === timelineDates[timelineDates.length - 1].day
             ) {
-                const thirdLast = timelineDates[timelineDates.length - 3];
-                anchor = `${thirdLast.year}-${thirdLast.month}-${thirdLast.day}`;
+                anchor = timelineDates[timelineDates.length - 3].year + "-" + timelineDates[timelineDates.length - 3].month + "-" + timelineDates[timelineDates.length - 3].day;
             }
         }
 
-        // Clear existing sections
-        $('section').each((_, el) => Util.removeDateGallery(el.id));
+        shashin.printMessageToConsole("jumpFromTimelineToc anchor:" + anchor,{tag:"timeline"});
+        shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:" + mediaTypeFilter,{tag:"timeline"});
 
-        // Load new section
-        const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
+        $('section').each(function (index, element) {
+            Util.removeDateGallery(element.id);
+        });
+
+        let msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
 
-            if (!Util.isMobile()) {
+            if (Util.isMobile() === false) {
                 timelineSettings.isScrolling = true;
+
                 const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
                 await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
             } else {
-                // Load one section above for mobile
-                const index = timelineSettings.timelineDatesHash[anchor];
-                if (index > 0) {
-                    const prev = timelineDates[index - 1];
-                    const prevAnchor = `${prev.year}-${prev.month}-${prev.day}`;
-                    const msgAbove = await timelineSettings.updateTimeline(prevAnchor, mediaTypeFilter, "above", anchor);
-                    if (msgAbove === timelineSettings.success && $("#" + prevAnchor).length === 1) {
-                        await timelineSettings.attachAssociatedMetadata(prevAnchor, mediaTypeFilter);
-                    }
+                // Render 1 before on mobile
+                let currentDateIndex = timelineSettings.timelineDatesHash[anchor];
+                let previousAnchor = anchor;
+                if (currentDateIndex > 0) {
+                    previousAnchor = timelineDates[currentDateIndex-1].year + "-" + timelineDates[currentDateIndex-1].month + "-" + timelineDates[currentDateIndex-1].day;
                 }
+                msg = await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
+                if (msg === timelineSettings.success && $("#" + previousAnchor).length === 1) {
+                    await timelineSettings.attachAssociatedMetadata(previousAnchor, mediaTypeFilter);
+                }
+            }
+        }
 
-                // Load 6 sections below for mobile
-                let currAnchor = anchor;
-                for (let i = index + 1; i < index + 6 && i < timelineDates.length; i++) {
-                    const next = timelineDates[i];
-                    const nextAnchor = `${next.year}-${next.month}-${next.day}`;
-                    if ($("#" + nextAnchor).length === 0) {
-                        const msgBelow = await timelineSettings.updateTimeline(nextAnchor, mediaTypeFilter, "below", currAnchor);
-                        if (msgBelow === timelineSettings.success && $("#" + nextAnchor).length === 1) {
-                            await timelineSettings.attachAssociatedMetadata(nextAnchor, mediaTypeFilter);
+        if (Util.isMobile() === true) {
+            let depth = 6;
+            let currAnchor = anchor;
+            for (const [index, timelineDate] of timelineDates.entries()) {
+                let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+                if (anchor === currTimelineDate) {
+                    let limit = index - 1;
+                    for (let i = index - 1; i > limit; i--) {
+                        if (timelineDates[i] !== undefined) {
+                            let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
+                            if ($("#" + id).length === 0) {
+                                // Render currentDate
+                                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
+                                if (msg === timelineSettings.success && $("#" + id).length === 1) {
+                                    await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                                }
+                                currAnchor = id;
+                            }
+                        } else {
+                            break;
                         }
-                        currAnchor = nextAnchor;
                     }
+
+                    currAnchor = anchor;
+                    limit = index + depth;
+                    for (let i = index + 1; i < limit; i++) {
+                        if (timelineDates[i] !== undefined) {
+                            let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
+                            if ($("#" + id).length === 0) {
+                                // Render currentDate
+                                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
+                                if (msg === timelineSettings.success && $("#" + id).length === 1) {
+                                    await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                                }
+                                currAnchor = id;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Jump to anchor after rendering
+        location.href = "#" + anchor;
+
+        if (window.location.hash) {
+            // Remove hash from URL
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+        }
+
+        // Render 2 more
+
+        const elementsInViewport = Util.elementsInViewport($("section"));
+        if (elementsInViewport.length > 0) {
+            const currentDateObj = elementsInViewport[elementsInViewport.length - 1];
+            let currentDate = currentDateObj.id;
+            let currentIndex = timelineSettings.timelineDatesHash[currentDate];
+            currentIndex = parseInt(currentIndex);
+            currentIndex++;
+            let renderDateObj = timelineDates[currentIndex];
+            currentIndex++;
+            const nextRenderDateObj = timelineDates[currentIndex];
+
+            if (renderDateObj !== undefined && renderDateObj !== null) {
+                let renderDate = renderDateObj.year + "-" + renderDateObj.month + "-" + renderDateObj.day;
+                const msg = await timelineSettings.updateTimeline(renderDate, mediaTypeFilter, "below", currentDate);
+
+                if (msg === timelineSettings.success && $("#" + renderDate).length === 1) {
+                    await timelineSettings.attachAssociatedMetadata(renderDate, mediaTypeFilter);
                 }
             }
         }
