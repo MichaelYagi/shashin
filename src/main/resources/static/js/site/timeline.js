@@ -948,147 +948,159 @@
 
     timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter) {
         if (e) e.preventDefault();
-        if (timelineSettings.jumpInProgress) return;
+        if (timelineSettings.jumpInProgress === true) return;
         timelineSettings.jumpInProgress = true;
 
-        const isMobile = Util.isMobile() === true;
+        // Helpers
         const getContainer = () => document.getElementById('container') || document.scrollingElement || document.body;
+
         const scrollToInContainer = (el) => {
             const c = getContainer();
             if (!c || !el) return;
             const cRect = c.getBoundingClientRect();
             const eRect = el.getBoundingClientRect();
-            const top = (eRect.top - cRect.top) + c.scrollTop;
+            const top = (eRect.top - cRect.top) + c.scrollTop; // position el at container's top
             c.scrollTo({ top, behavior: 'auto' });
         };
-        const waitForElement = (id, timeout = 5000) =>
+
+        const waitFor = (fn, { timeout = 5000, interval = 50 } = {}) =>
             new Promise((resolve, reject) => {
                 const start = Date.now();
-                const loop = () => {
-                    const el = document.getElementById(id);
-                    if (el) return resolve(el);
-                    if (Date.now() - start >= timeout) return reject(new Error("timeout"));
-                    requestAnimationFrame(loop);
+                const tick = () => {
+                    try {
+                        const val = fn();
+                        if (val) return resolve(val);
+                        if (Date.now() - start >= timeout) return reject(new Error("waitFor timeout"));
+                    } catch (err) { return reject(err); }
+                    setTimeout(tick, interval);
                 };
-                loop();
+                tick();
             });
+
+        const waitForElement = (id, opts) => waitFor(() => document.getElementById(id), opts);
+
+        const withAnchorLock = async (anchorId, fn) => {
+            const c = getContainer();
+            const el = document.getElementById(anchorId);
+            if (!c || !el) return fn();
+            const prevOverflowAnchor = c.style.overflowAnchor;
+            const beforeTop = el.getBoundingClientRect().top;
+            c.style.overflowAnchor = 'none';
+            try {
+                await fn();
+            } finally {
+                // Let layout settle, then compensate any shift
+                await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+                const afterTop = el.getBoundingClientRect().top;
+                c.scrollTop += (afterTop - beforeTop);
+                c.style.overflowAnchor = prevOverflowAnchor || '';
+            }
+        };
+
         const preloadAdjacent = () => {
             try { preloadAdjacentSections(anchor, mediaTypeFilter); } catch (_) {}
         };
 
+        const isMobile = (Util.isMobile() === true);
+
         try {
-            // Common prep
+            // Freeze reactive behaviors
             timelineSettings.enableScrollSpy = false;
             timelineSettings.isScrolling = false;
             timelineSettings.didJumpFromTimelineToc = true;
             timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+
+            // Lock offcanvas interactions during jump (mobile)
             if (isMobile) {
                 $("#timelineTocToggle").attr("data-bs-backdrop", "static").attr("data-bs-keyboard", "false");
                 $("#offcanvasTocCloseButton").prop('disabled', true);
             }
+
+            // Clear any existing sections to avoid reflow thrash
             $('section').each((_, el) => Util.removeDateGallery(el.id));
+
+            // Hide spinners during structured jump
             $("#spinner_top, #spinner_bottom").hide();
 
-            // Render anchor
-            const ok = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
+            // 1) Render the anchor
+            let ok = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
             if (ok !== timelineSettings.success || !document.getElementById(anchor)) {
                 throw new Error("Failed to render anchor");
             }
+
+            // 2) Render a small buffer below first (stops mobile “scroll-up”)
             const timelineDates = timelineSettings.timelineDates || [];
             const idx = timelineSettings.timelineDatesHash[anchor];
             if (typeof idx !== 'number') throw new Error("Invalid anchor index");
-
-            if (isMobile) {
-                // MOBILE LOGIC
-                const depthBelow = 2, depthAbove = 3;
-
-                // Below buffer first
-                let ap = anchor;
-                for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
-                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
-                    if (!document.getElementById(id)) {
-                        await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", ap);
+            const depthBelow = isMobile ? 2 : 4;
+            let attachPointBelow = anchor;
+            for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
+                const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
+                if (!document.getElementById(id)) {
+                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", attachPointBelow);
+                    if (msg === timelineSettings.success && document.getElementById(id)) {
+                        // Defer heavy metadata to after we’ve scrolled (less layout shift now)
                     }
-                    ap = id;
                 }
-
-                // Scroll to anchor in container
-                await waitForElement(anchor);
-                scrollToInContainer(document.getElementById(anchor));
-
-                // Lock scroll anchoring for above inserts
-                const c = getContainer();
-                const prevOA = c.style.overflowAnchor;
-                const beforeTop = document.getElementById(anchor).getBoundingClientRect().top;
-                c.style.overflowAnchor = 'none';
-
-                // Render above
-                ap = anchor;
-                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
-                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
-                    if (!document.getElementById(id)) {
-                        await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", ap);
-                    }
-                    ap = id;
-                }
-
-                // Metadata after layout
-                await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
-
-                // Compensate for shift
-                await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-                const afterTop = document.getElementById(anchor).getBoundingClientRect().top;
-                c.scrollTop += (afterTop - beforeTop);
-                c.style.overflowAnchor = prevOA || '';
-
-            } else {
-                // --- DESKTOP LOGIC ---
-                const depthAbove = 5, depthBelow = 4;
-
-                // Render above first
-                let apAbove = anchor;
-                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
-                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
-                    if (!document.getElementById(id)) {
-                        await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", apAbove);
-                    }
-                    apAbove = id;
-                }
-
-                // Render below
-                let apBelow = anchor;
-                for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
-                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
-                    if (!document.getElementById(id)) {
-                        await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", apBelow);
-                    }
-                    apBelow = id;
-                }
-
-                // Wait for anchor to exist and for layout to stabilize
-                await waitForElement(anchor);
-                await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-                // Scroll to anchor in the container
-                scrollToInContainer(document.getElementById(anchor));
-
-                // Now attach metadata so it doesn't block or override the first scroll
-                await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
+                attachPointBelow = id;
             }
 
+            // 3) Scroll to the anchor within the container (not the document)
+            await waitForElement(anchor);
+            await new Promise(r => requestAnimationFrame(r));
+            const anchorEl = document.getElementById(anchor);
+            scrollToInContainer(anchorEl);
 
-            // TOC activation
+            // 4) Activate TOC and gently scroll its entry into view
             timelineSettings.setScrollSpyActive(anchor);
             const tocEl = document.getElementById(`offcanvas_${anchor}`);
-            if (tocEl) tocEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (tocEl) {
+                try { tocEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
+            }
 
-            // Preload
-            if ('requestIdleCallback' in window) requestIdleCallback(preloadAdjacent);
-            else setTimeout(preloadAdjacent, 300);
+            // 5) Under a scroll-anchor lock, render “above” and attach metadata
+            await withAnchorLock(anchor, async () => {
+                // Render above (newer) dates
+                const depthAbove = isMobile ? 3 : 5;
+                let attachPointAbove = anchor;
+                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
+                    const id = `${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`;
+                    if (!document.getElementById(id)) {
+                        const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", attachPointAbove);
+                        if (msg === timelineSettings.success && document.getElementById(id)) {
+                            // no-op; metadata later in this locked phase
+                        }
+                    }
+                    attachPointAbove = id;
+                }
 
+                // Now attach metadata for anchor and neighbors (this is what changes heights; keep lock on)
+                const toAttach = [anchor];
+                for (let i = idx + 1; i <= Math.min(timelineDates.length - 1, idx + depthBelow); i++) {
+                    toAttach.push(`${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`);
+                }
+                for (let i = idx - 1; i >= Math.max(0, idx - depthAbove); i--) {
+                    toAttach.push(`${timelineDates[i].year}-${timelineDates[i].month}-${timelineDates[i].day}`);
+                }
+                // Deduplicate and attach
+                const uniq = Array.from(new Set(toAttach));
+                for (const d of uniq) {
+                    if (document.getElementById(d)) {
+                        await timelineSettings.attachAssociatedMetadata(d, mediaTypeFilter);
+                    }
+                }
+            });
+
+            // 6) Preload adjacent sections once idle
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(preloadAdjacent);
+            } else {
+                setTimeout(preloadAdjacent, 300);
+            }
         } catch (err) {
             shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, { tag: "jumpFromTimelineToc" });
         } finally {
+            // Restore offcanvas attributes correctly
             if (isMobile) {
                 $("#timelineTocToggle").removeAttr("data-bs-backdrop").removeAttr("data-bs-keyboard");
                 $("#offcanvasTocCloseButton").prop('disabled', false);
