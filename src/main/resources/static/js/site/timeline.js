@@ -1020,22 +1020,30 @@
             setTimeout(preload, 500);
         }
 
-        // Scroll to anchor after rendering
-        requestAnimationFrame(() => {
+        // Scroll to anchor after DOM settles
+        let attempts = 0;
+        const maxAttempts = 30;
+        const scrollWhenReady = () => {
             const anchorElement = document.getElementById(anchor);
-            if (anchorElement) {
+            if (anchorElement && $(anchorElement).is(":visible")) {
                 anchorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
 
-            // Remove hash from URL
-            if (window.location.hash) {
-                history.pushState("", document.title, window.location.pathname + window.location.search);
-            }
+                if (window.location.hash) {
+                    history.pushState("", document.title, window.location.pathname + window.location.search);
+                }
 
-            timelineSettings.setScrollSpyActive(anchor);
-            timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
-            timelineSettings.enableScrollSpy = true;
-        });
+                timelineSettings.setScrollSpyActive(anchor);
+                timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
+                timelineSettings.enableScrollSpy = true;
+            } else if (attempts < maxAttempts) {
+                attempts++;
+                setTimeout(scrollWhenReady, 100);
+            } else {
+                console.warn("Failed to scroll to anchor after multiple attempts:", anchor);
+            }
+        };
+
+        setTimeout(scrollWhenReady, 500); // Delay scroll to allow DOM to settle
     };
 
     timelineSettings.observeAnchorChange = function(id, functionCall) {
