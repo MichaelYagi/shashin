@@ -982,11 +982,11 @@
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
 
-            if (Util.isMobile() === false) {
-                timelineSettings.isScrolling = true;
-                const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
-                await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
-            } else {
+            // if (Util.isMobile() === false) {
+            //     timelineSettings.isScrolling = true;
+            //     const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+            //     await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
+            // } else {
                 // Mobile logic
                 const anchorIndex = timelineSettings.timelineDatesHash[anchor];
                 const depth = 6;
@@ -1030,7 +1030,7 @@
                     timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
                     timelineSettings.enableScrollSpy = true;
                 });
-            }
+            // }
         }
 
         // Preload adjacent sections
