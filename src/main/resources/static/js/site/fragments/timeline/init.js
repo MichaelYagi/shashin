@@ -26,20 +26,20 @@
     const wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
 
     // call this to Disable
-    function disableScroll() {
+    timelineSettings.disableScroll = function() {
         window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
         window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
         window.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
         window.addEventListener('keydown', preventDefaultForScrollKeys, false);
-    }
+    };
 
     // call this to Enable
-    function enableScroll() {
+    timelineSettings.enableScroll = function() {
         window.removeEventListener('DOMMouseScroll', preventDefault, false);
         window.removeEventListener(wheelEvent, preventDefault, wheelOpt);
         window.removeEventListener('touchmove', preventDefault, wheelOpt);
         window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
-    }
+    };
 
     const renderInitPage = function(mediaTypeFilter) {
         const firstElem = $('.scrollspy')[0];
@@ -69,7 +69,7 @@
     };
 
     timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount, timelineDatesHash, locale) {
-        disableScroll();
+        timelineSettings.disableScroll();
         Util.showSpinner(true);
         $("#dLabel").addClass("disabled");
         $("#dLabel").attr("aria-disabled", "true");
@@ -160,7 +160,7 @@
                 renderInitPage(mediaTypeFilter);
             }
 
-            enableScroll();
+            timelineSettings.enableScroll();
             Util.showSpinner(false);
         } else if ($('.scrollspy').length > 0) {
             if (Util.isMobile() === true) {
@@ -389,7 +389,7 @@
 
         scrollTimer = setTimeout(function() {
             timelineSettings.scrollByN(2);
-            enableScroll();
+            timelineSettings.enableScroll();
             Util.showSpinner(false);
             $("#dLabel").removeClass("disabled");
             $("#dLabel").removeAttr("aria-disabled");

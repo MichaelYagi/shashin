@@ -1051,6 +1051,9 @@
                 await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
             }
 
+
+
+
             // Set active in TOC and scroll it into view
             timelineSettings.setScrollSpyActive(anchor);
             const tocEl = document.getElementById(`offcanvas_${anchor}`);
@@ -1074,11 +1077,17 @@
                 $("#timelineTocToggle").removeAttr("data-bs-backdrop").removeAttr("data-bs-keyboard");
                 $("#offcanvasTocCloseButton").prop('disabled', false);
             }
+
             timelineSettings.jumpRenderInProgress = false;
             timelineSettings.enableScrollSpy = true;
             timelineSettings.isScrolling = true;
             timelineSettings.jumpInProgress = false;
             timelineSettings.scrollByN(2);
+            Util.showSpinner(false);
+            $("#dLabel").removeClass("disabled");
+            $("#dLabel").removeAttr("aria-disabled");
+            $("#dLabel").removeAttr("tabindex");
+            timelineSettings.enableScroll();
         }
     };
 
