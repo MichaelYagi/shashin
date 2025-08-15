@@ -970,13 +970,13 @@
             });
 
         const scrollToAnchor = async (id) => {
-            const c = getContainer();
-            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-            const el = document.getElementById(id);
-            if (!el) return;
-            const cRect = c.getBoundingClientRect();
-            const eRect = el.getBoundingClientRect();
-            c.scrollTop += (eRect.top - cRect.top);
+            const container = getContainer();
+            await new Promise(raf => requestAnimationFrame(() => requestAnimationFrame(raf)));
+            const element = document.getElementById(id);
+            if (!element) return;
+            const containerRect = container.getBoundingClientRect();
+            const elementRect = element.getBoundingClientRect();
+            container.scrollTop += (elementRect.top - containerRect.top);
         };
 
         const renderRange = async (start, end, direction, attachFrom) => {
@@ -1010,7 +1010,11 @@
             // 1. Render the anchor itself
             const ok = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
             if (ok !== timelineSettings.success || !document.getElementById(anchor)) {
-                throw new Error("Failed to render anchor");
+                shashin.printMessageToConsole("Failed to render anchor", {
+                    tag: "jumpFromTimelineToc",
+                    consoleType: shashin.consoleTypes.error
+                });
+                return;
             }
 
             if (isMobile) {
@@ -1051,9 +1055,6 @@
                 await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
             }
 
-
-
-
             // Set active in TOC and scroll it into view
             timelineSettings.setScrollSpyActive(anchor);
             const tocEl = document.getElementById(`offcanvas_${anchor}`);
@@ -1071,14 +1072,14 @@
                 setTimeout(preloadAdjacent, 300);
             }
         } catch (err) {
-            shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, { tag: "jumpFromTimelineToc" });
+            shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, {
+                tag: "jumpFromTimelineToc",
+                consoleType: shashin.consoleTypes.error
+            });
         } finally {
             if (isMobile) {
                 $("#timelineTocToggle").removeAttr("data-bs-backdrop").removeAttr("data-bs-keyboard");
                 $("#offcanvasTocCloseButton").prop('disabled', false);
-            }
-
-            if (isMobile) {
                 $("#offcanvasTocCloseButton").click();
             }
 
