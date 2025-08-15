@@ -11,20 +11,26 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Show progress bar option for slideshow
-- Orientation option on slideshow
-- Fill to screen option on slideshow
-- Query params to define orientation to RSS/ATOM feeds 
-
 ### Changed
 ### Deprecated
 ### Removed
+### Fixed
+### Security
+
+## [2.12.0] - 2025-08-15
+### Added
+- Show progress bar option for slideshow
+- Fill to screen option on slideshow
+- Orientation option on slideshow
+- Query params to define orientation to RSS/ATOM feeds
+
 ### Fixed
 - Pause for slideshow
 - Loading spinner in timeline when specifying date hash
 - Timeline jumping
 
-### Security
+### Fixed
+- ATOM feed date format
 
 ## [2.11.6] - 2025-08-07
 ### Added
