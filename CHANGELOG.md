@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 ### Security
+- Update brace-expansion from 2.0.1 to 2.0.2
 
 ## [2.12.0] - 2025-08-15
 ### Added
