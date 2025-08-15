@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 - Pause for slideshow
 - Loading spinner in timeline when specifying date hash
+- Timeline jumping
 
 ### Security
 
