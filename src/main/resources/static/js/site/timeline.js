@@ -953,6 +953,7 @@
         if (Util.isMobile() === true) {
             $("#timelineTocToggle").attr("data-bs-backdrop","static");
             $("#timelineTocToggle").attr("data-bs-keyboard","false");
+            $("#offcanvasTocCloseButton").prop('disabled', true);
         }
 
         timelineSettings.didJumpFromTimelineToc = true;
@@ -1047,6 +1048,7 @@
             if (Util.isMobile() === true) {
                 $("#timelineTocToggle").removeAttr("data-bs-backdrop");
                 $("#timelineTocToggle").removeAttr("data-bs-keyboard");
+                $("#offcanvasTocCloseButton").prop('disabled', false);
             }
             const anchorElement = document.getElementById(anchor);
             if (anchorElement && $(anchorElement).is(":visible")) {
