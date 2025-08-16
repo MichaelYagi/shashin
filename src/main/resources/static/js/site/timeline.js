@@ -1047,7 +1047,7 @@
                 if (currentDateIndex > 0) {
                     previousAnchor = timelineSettings.timelineDates[currentDateIndex-1].year + "-" + timelineSettings.timelineDates[currentDateIndex-1].month + "-" + timelineSettings.timelineDates[currentDateIndex-1].day;
                 }
-                msg = await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
+                const msg = await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
                 if (msg === timelineSettings.success && $("#" + previousAnchor).length === 1) {
                     await timelineSettings.attachAssociatedMetadata(previousAnchor, mediaTypeFilter);
                 }
