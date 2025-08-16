@@ -940,28 +940,19 @@
             }
 
             $("#dateSliderWrapper").hover(function () {
-                //$("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-                const slider = document.getElementById("dateSlider");
-                slider.style.opacity = "1";
-                slider.style.visibility = "visible";
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
                 document.getElementById("dateSliderWrapper").style.cursor = "pointer";
             }, function () {
                 if (timelineSettings.scrollBarIsSliding === false) {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
                 } else {
-                    //$("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-                    const slider = document.getElementById("dateSlider");
-                    slider.style.opacity = "1";
-                    slider.style.visibility = "visible";
+                    $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
                 }
                 document.getElementById("dateSliderWrapper").style.cursor = "default";
             });
 
             $("#dateSliderWrapper").mousemove(function () {
-                //$("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-                const slider = document.getElementById("dateSlider");
-                slider.style.opacity = "1";
-                slider.style.visibility = "visible";
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
             });
         }
     };
@@ -1542,8 +1533,7 @@
 
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                 if (Util.getOS() === "iOS" && Util.isChrome() === true) {
-                    //$("#infinite-scroll-gallery").invisible();
-                    document.getElementById("infinite-scroll-gallery").style.visibility = "hidden";
+                    $("#infinite-scroll-gallery").invisible();
                 }
             }
 
