@@ -1040,7 +1040,6 @@
                     await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                 }
             } else {
-                // Desktop
                 timelineSettings.enableScrollSpy = false;
                 timelineSettings.isScrolling = false;
                 timelineSettings.didJumpFromTimelineToc = true;
