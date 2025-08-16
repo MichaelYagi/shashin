@@ -163,11 +163,11 @@
             timelineSettings.enableScroll();
             Util.showSpinner(false);
         } else if ($('.scrollspy').length > 0) {
-            if (Util.isMobile() === true) {
-                renderInitPage(mediaTypeFilter);
-            } else {
-                timelineSettings.jumpFromTimelineToc(null, timelineSettings.timelineDates[0].year + "-" + timelineSettings.timelineDates[0].month + "-" + timelineSettings.timelineDates[0].day, mediaTypeFilter);
-            }
+            // if (Util.isMobile() === true) {
+            renderInitPage(mediaTypeFilter);
+            // } else {
+            //     timelineSettings.jumpFromTimelineToc(null, timelineSettings.timelineDates[0].year + "-" + timelineSettings.timelineDates[0].month + "-" + timelineSettings.timelineDates[0].day, mediaTypeFilter);
+            // }
         } else {
             timelineSettings.enableScrollSpy = false;
         }
