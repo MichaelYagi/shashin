@@ -1,4 +1,13 @@
 (function( timelineSettings, $, undefined ) {
+    function scrollToElementSmoothly(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            requestAnimationFrame(() => {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+    }
+
     function preloadAdjacentSections(anchor, mediaTypeFilter) {
         const index = timelineSettings.timelineDatesHash[anchor];
         const preloadDepth = 2;
@@ -584,18 +593,20 @@
                 prevIndex = currentTimelineIndex;
             });
 
-            if (Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                    $('#container').scrollTop(tempScrollTop - removeHeight);
-                } else if (topHeight > 0) {
-                    $('#container').scrollTop(tempScrollTop - topHeight);
-                }
-            }
-            section.visible();
-
             // Get list of visible elements
             const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
             const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length - 1] : null;
+
+            if (Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                if (firstVisibleContainer !== null && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                    //$('#container').scrollTop(tempScrollTop - removeHeight);
+                    scrollToElementSmoothly(firstVisibleContainer.id);
+                } else if (lastVisibleContainer !== null && topHeight > 0) {
+                    //$('#container').scrollTop(tempScrollTop - topHeight);
+                    scrollToElementSmoothly(lastVisibleContainer.id);
+                }
+            }
+            section.visible();
 
             if (timelineSettings.isScrolling === true &&
                 firstVisibleContainer !== null) {
@@ -929,19 +940,28 @@
             }
 
             $("#dateSliderWrapper").hover(function () {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                //$("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                const slider = document.getElementById("dateSlider");
+                slider.style.opacity = "1";
+                slider.style.visibility = "visible";
                 document.getElementById("dateSliderWrapper").style.cursor = "pointer";
             }, function () {
                 if (timelineSettings.scrollBarIsSliding === false) {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
                 } else {
-                    $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                    //$("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                    const slider = document.getElementById("dateSlider");
+                    slider.style.opacity = "1";
+                    slider.style.visibility = "visible";
                 }
                 document.getElementById("dateSliderWrapper").style.cursor = "default";
             });
 
             $("#dateSliderWrapper").mousemove(function () {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                //$("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                const slider = document.getElementById("dateSlider");
+                slider.style.opacity = "1";
+                slider.style.visibility = "visible";
             });
         }
     };
@@ -1522,7 +1542,8 @@
 
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                 if (Util.getOS() === "iOS" && Util.isChrome() === true) {
-                    $("#infinite-scroll-gallery").invisible();
+                    //$("#infinite-scroll-gallery").invisible();
+                    document.getElementById("infinite-scroll-gallery").style.visibility = "hidden";
                 }
             }
 
