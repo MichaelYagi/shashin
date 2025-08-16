@@ -20,15 +20,6 @@
 
             <div id="scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
-                    <th:block th:if="${agentName == 'Safari'}">
-                        <th:block th:if="${pageParam == null}">
-                            <div><a th:href="${'/taken' + ((mediaTypeFilter == 'all') ? '' : '/' + mediaTypeFilter)}" class="ms-1" style="text-decoration:none;"><th:block th:text="#{main.view.default}"></th:block></a></div>
-                        </th:block>
-                        <th:block th:if="${pageParam != null}">
-                            <div><a th:href="${'/taken/0/' + mediaTypeFilter}" class="ms-1" style="text-decoration:none;"><th:block th:text="#{main.view.paged}"></th:block></a></div>
-                        </th:block>
-                    </th:block>
-
                     <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 

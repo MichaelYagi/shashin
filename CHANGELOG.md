@@ -16,6 +16,12 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 ### Security
+
+## [2.13.0] - 2025-08-16
+### Added
+- Increased support for Safari and Firefox
+
+### Security
 - Update brace-expansion from 2.0.1 to 2.0.2
 
 ## [2.12.0] - 2025-08-15
