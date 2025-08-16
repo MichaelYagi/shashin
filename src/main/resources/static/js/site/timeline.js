@@ -1040,19 +1040,96 @@
                     await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                 }
             } else {
-                // Desktop flow
-                // 2. Render below first so bottom is populated
-                await renderRange(idx + 1, idx + 1 + 4, "below", anchor); // below 4 days
+                // Desktop
+                timelineSettings.enableScrollSpy = false;
+                timelineSettings.isScrolling = false;
+                timelineSettings.didJumpFromTimelineToc = true;
+                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                timelineSettings.jumpRenderInProgress = true;
 
-                // 3. Then render above
-                await renderRange(idx - 1, idx - 1 - 5, "above", anchor); // above 5 days
+                // Clear current sections
+                $('section').each((_, el) => Util.removeDateGallery(el.id));
+                $("#spinner_top, #spinner_bottom").hide();
 
-                // 4. Scroll
-                await waitForElement(anchor);
-                await scrollToAnchor(anchor);
+                // Render anchor section
+                const anchorRendered = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
+                if (anchorRendered !== timelineSettings.success || !document.getElementById(anchor)) {
+                    throw new Error("Anchor failed to render");
+                }
 
-                // 5. Attach metadata after scroll
+                // Attach metadata to anchor immediately
                 await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
+
+                // Wait for anchor to be in DOM
+                await new Promise(resolve => {
+                    const check = () => {
+                        if (document.getElementById(anchor)) return resolve();
+                        setTimeout(check, 50);
+                    };
+                    check();
+                });
+
+                // Scroll to anchor
+                const container = document.getElementById("container");
+                const anchorEl = document.getElementById(anchor);
+                if (container && anchorEl) {
+                    const containerRect = container.getBoundingClientRect();
+                    const anchorRect = anchorEl.getBoundingClientRect();
+                    container.scrollTop += (anchorRect.top - containerRect.top);
+                }
+
+                // Render below sections (4 days)
+                let attachPoint = anchor;
+                for (let i = 1; i <= 4; i++) {
+                    const idxBelow = idx + i;
+                    if (idxBelow < dates.length) {
+                        const idBelow = `${dates[idxBelow].year}-${dates[idxBelow].month}-${dates[idxBelow].day}`;
+                        const rendered = await timelineSettings.updateTimeline(idBelow, mediaTypeFilter, "below", attachPoint);
+                        if (rendered === timelineSettings.success) {
+                            await timelineSettings.attachAssociatedMetadata(idBelow, mediaTypeFilter);
+                            attachPoint = idBelow;
+                        }
+                    }
+                }
+
+                // Render above sections (5 days)
+                attachPoint = anchor;
+                for (let i = 1; i <= 5; i++) {
+                    const idxAbove = idx - i;
+                    if (idxAbove >= 0) {
+                        const idAbove = `${dates[idxAbove].year}-${dates[idxAbove].month}-${dates[idxAbove].day}`;
+                        const rendered = await timelineSettings.updateTimeline(idAbove, mediaTypeFilter, "above", attachPoint);
+                        if (rendered === timelineSettings.success) {
+                            await timelineSettings.attachAssociatedMetadata(idAbove, mediaTypeFilter);
+                            attachPoint = idAbove;
+                        }
+                    }
+                }
+
+                // Nudge scroll if stuck
+                if (container.scrollTop === 0) {
+                    container.scrollTop = 1;
+                }
+
+                // Trigger synthetic scroll event
+                container.dispatchEvent(new Event("scroll"));
+
+                // Set scrollSpy active
+                timelineSettings.setScrollSpyActive(anchor);
+                const tocEl = document.getElementById(`offcanvas_${anchor}`);
+                if (tocEl) {
+                    try { tocEl.scrollIntoView({ behavior: "smooth", block: "nearest" }); } catch (_) {}
+                }
+
+                // Preload adjacent sections
+                const preloadAdjacent = () => {
+                    try { preloadAdjacentSections(anchor, mediaTypeFilter); } catch (_) {}
+                };
+                if ("requestIdleCallback" in window) {
+                    requestIdleCallback(preloadAdjacent);
+                } else {
+                    setTimeout(preloadAdjacent, 300);
+                }
             }
 
             // Set active in TOC and scroll it into view
@@ -1088,7 +1165,8 @@
             $("#dLabel").removeClass("disabled");
             $("#dLabel").removeAttr("aria-disabled");
             $("#dLabel").removeAttr("tabindex");
-            timelineSettings.enableScroll();
+
+            setTimeout(timelineSettings.enableScroll, 200);
 
             timelineSettings.jumpRenderInProgress = false;
             timelineSettings.enableScrollSpy = true;
