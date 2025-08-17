@@ -1135,6 +1135,10 @@
                 $("#offcanvasTocCloseButton").click();
             }
 
+            if (window.location.hash) {
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
+
             timelineSettings.scrollByN(2);
             Util.showSpinner(false);
             $("#dLabel").removeClass("disabled");
