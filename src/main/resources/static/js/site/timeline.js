@@ -529,7 +529,6 @@
             }
 
             // Remove elements not visible in viewport
-            let removeHeight = 0;
             let topHeight = 0;
             let tempScrollTop = $('#container').scrollTop();
             const section = $('section');
@@ -560,10 +559,8 @@
                         Util.isInViewport($("#container_" + element.id)) === false &&
                         Util.isInViewport($("#amp_" + element.id)) === false
                     ) {
-                        // removeHeight += Util.getDateGalleryHeight(element.id);
-                        if (Util.isSafari() === false) {
-                            Util.removeDateGallery(element.id);
-                        }
+                        topHeight += Util.getDateGalleryHeight(element.id);
+                        Util.removeDateGallery(element.id);
                         removedElements.push(element.id);
                         sectionArray.pop();
                     } else if (section[index + 1] !== undefined &&
@@ -573,9 +570,7 @@
                         Util.isInViewport($("#container_" + section[index + 1].id)) === false &&
                         Util.isInViewport($("#amp_" + section[index + 1].id)) === false
                     ) {
-                        if (Util.isSafari() === false) {
-                            Util.removeDateGallery(element.id);
-                        }
+                        Util.removeDateGallery(element.id);
                         sectionArray.pop();
                     }
                 }
@@ -585,9 +580,7 @@
 
                 if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
                     shashin.printMessageToConsole("Removing from timeline " + element.id,{tag:"timeline"});
-                    if (Util.isSafari() === false) {
-                        Util.removeDateGallery(element.id);
-                    }
+                    Util.removeDateGallery(element.id);
                 }
 
                 prevIndex = currentTimelineIndex;
@@ -605,7 +598,10 @@
                     //$('#container').scrollTop(tempScrollTop - topHeight);
                     scrollToElementSmoothly(lastVisibleContainer.id);
                 }
+            } else if (Util.isSafari() && topHeight > 0) {
+                $('#container').scrollTop(tempScrollTop - topHeight);
             }
+
             section.visible();
 
             if (timelineSettings.isScrolling === true &&
