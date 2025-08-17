@@ -95,7 +95,22 @@
             $("#"+date).css("display","none");
             $("#container_"+date).css("display","none");
 
+            // Required for safari
             $("#container").scrollTop(tempScrollTop - topHeight);
+
+
+            topHeight = getDateGalleryHeight(date);
+            tempScrollTop = $("#container").scrollTop();
+
+            $("#br"+date).css("display","block");
+            $("#row"+date).css("display","block");
+            $("#amp_"+date).css("display","block");
+            $("#tail_"+date).css("display","block");
+            $("#"+date).css("display","block");
+            $("#container_"+date).css("display","block");
+
+            // Required for safari
+            $("#container").scrollTop(tempScrollTop + topHeight);
         })
     });
 </script>
