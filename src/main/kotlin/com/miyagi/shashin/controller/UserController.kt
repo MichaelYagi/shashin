@@ -505,8 +505,10 @@ class UserController {
     fun getRegisterUser(model: Model, request: HttpServletRequest, locale: Locale): String {
         val module = "register"
 
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
+        if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "Safari") {
             return "redirect:/timeline"
+        } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") == "Safari") {
+            return "redirect:/recent"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
         } else if (TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository) != null) {
@@ -530,8 +532,10 @@ class UserController {
 
     @RequestMapping(value = ["/users/register"], method = [RequestMethod.POST])
     fun registerUser(model: Model, request: HttpServletRequest, locale: Locale): String {
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
+        if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "Safari") {
             return "redirect:/timeline"
+        } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") == "Safari") {
+            return "redirect:/taken"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
         } else {
@@ -672,8 +676,10 @@ class UserController {
         val userCount = userRepository?.count()
         if ((userCount != null) && (userCount.toInt() == 0)) {
             return "redirect:/users/register"
-        } else if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
+        } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "Safari") {
             return "redirect:/timeline"
+        } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") == "Safari") {
+            return "redirect:/taken"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
         } else {
