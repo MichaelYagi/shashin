@@ -2,6 +2,7 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<script src="/js/dexie.js" th:nonce="${cspNonce}"></script>
 <body class="thumb d-flex flex-column vh-100">
 
 <script type="text/babel" src="/js/site/test.js"></script>
@@ -87,7 +88,12 @@
             let topHeight = getDateGalleryHeight(date);
             let tempScrollTop = $("#container").scrollTop();
 
-            Util.removeDateGallery(date);
+            $("#br"+date).css("display","none");
+            $("#row"+date).css("display","none");
+            $("#amp_"+date).css("display","none");
+            $("#tail_"+date).css("display","none");
+            $("#"+date).css("display","none");
+            $("#container_"+date).css("display","none");
 
             $("#container").scrollTop(tempScrollTop - topHeight);
         })
