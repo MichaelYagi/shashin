@@ -10,325 +10,90 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col">
-            <h2 class="mt-3">Repair Tools</h2>
-            <ul>
-<!--                <li><a href="/testvideo">Video test</a></li>-->
-<!--                <li><a href="/testimage">Image test</a></li>-->
-<!--                <li><a href="/testaudio">Audio test</a></li>-->
-                <li><a href="/deletethread">Delete thread file</a></li>
-                <li><a href="/creategif">Scan for missing gif images</a></li>
-                <li><a href="/createxsmall">Scan for missing x-small images</a></li>
-                <li><a href="/fixtakendates">Reconcile taken dates - year/month/day & metadata.takenAt dates</a></li>
-                <li><a href="/fixnullplacenames">Scan for null place names with coordinates</a></li>
-                <li><a href="/fixexif">Rescan exif files</a></li>
-                <li><a href="/rescanflengths">Rescan all focal lengths</a></li>
-                <li><a href="/rescanplacenames">Rescan all place names with coordinates</a> type <code>true</code> in input field</li>
-                <li><a href="/rescansearchedplacenames">Rescan location name with coordinates with query</a> type in the exact <code>place name</code> in the input field</li>
-            </ul>
-            <input type="text" id="queryParam">
 
-            <h2 class="mt-5">Progress</h2>
-            <p>Current index: <span id="currentIndex">0</span></p>
-            <p>Total index: <span id="totalIndex">0</span></p>
-            <p>Estimated time remaining: <span id="etr">00:00:00</span></p>
-            <p>Active link: <span id="activeLink"></span></p>
-            <p>Message: <span id="scanMessage"></span></p>
+            <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+                <div class="row flex-grow-sm-1 flex-grow-0">
+                    <main role="main" class="col overflow-auto h-100">
+
+                        <div id="infinite-scroll-gallery">
+                            <th:block th:if="${not #lists.isEmpty(metadataList)}">
+                                <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
+                                    <th:block th:each="metadata, iterStat: ${metadataList}">
+<!--                                        <span th:id="${'container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">-->
+                                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
+                                                <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
+                                                </th:block>
+                                            </th:block>
+
+                                            <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
+                                                <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
+
+                                                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+                                                <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
+                                                <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
+
+                                                <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
+
+                                                <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
+
+                                                <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)}"></div>
+
+                                                <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},'shashin.openGallery',${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
+
+                                            </div>
+
+                                            <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.year!=null and (metadataList[iterStat.index+1].year+'-'+metadataList[iterStat.index+1].month+'-'+metadataList[iterStat.index+1].day)!=metadata.year+'-'+metadata.month+'-'+metadata.day}">
+                                                <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                                <span class="appendMetadataPhotos" style="width:0;height:0;padding:0"></span>
+                                            </th:block>
+                                            <th:block th:if="${iterStat.last and metadata.year!=null}">
+                                                <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                                <span class="appendMetadataPhotos" style="width:0;height:0;padding:0"></span>
+                                            </th:block>
+<!--                                        </span>-->
+                                    </th:block>
+                                </div>
+                            </th:block>
+                        </div>
+
+                        <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
+                        <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
+                    </main>
+                </div>
+            </div>
 
             <script type="text/javascript">
                 $(document).ready(function() {
-                    $(document).on("click", "main a", function(e) {
-                        e.preventDefault();
-
-                        const url = $(this).attr("href");
-
-                        const queryParam = $("#queryParam").val();
-                        let data = {};
-
-                        if (url === "/rescanplacenames") {
-                            data = {proceed: queryParam};
-                        } else if (url === "/rescansearchedplacenames") {
-                            data = {query: queryParam};
+                    function getDateGalleryHeight(id) {
+                        if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
+                            return 0;
                         }
 
-                        $.ajax({
-                            url: url,
-                            type: "GET", //send it through get method
-                            data: data,
-                            contentType: "application/json",
-                            success: function (response) {
-                                //Do Something
-                                setTimeout(function () {
-                                    connectTP();
-                                }, 2000);
-                            },
-                            error: function (xhr) {
-                                //Do Something to handle error
-                                shashin.printMessageToConsole("XHR error");
-                                shashin.printMessageToConsole(xhr);
-                            }
-                        });
-                    });
+                        // console.log("$(\"#br\" + id).outerHeight(true):" + $("#br" + id).outerHeight(true))
+                        // console.log("$(\"#row\" + id).outerHeight(true):"+$("#row" + id).outerHeight(true))
+                        // console.log("$(\"#amp_\" + id).outerHeight(true):"+$("#amp_" + id).outerHeight(true))
+                        // console.log("$(\"#container_\" + id).outerHeight(true):"+$("#amp_" + id).outerHeight(true))
+                        // console.log("$(\"#tail_\" + id).outerHeight(true):"+$("#tail_" + id).outerHeight(true))
+                        // console.log("$(\"#\" + id).outerHeight(true):"+$("#" + id).outerHeight(true))
 
-                    let scanInProgress = false;
-                    let stompClient = null;
 
-                    function scanRefresh() {
-                        sendMessageTP();
-                        let index = parseInt($("#currentIndex").text());
-                        let totalIndex = parseInt($("#totalIndex").text());
-
-                        // if (totalIndex === index) {
-                        //     scanInProgress = false;
-                        //     $("#currentIndex").text("0");
-                        //     $("#totalIndex").text("0");
-                        // // } else if (totalIndex === 0) {
-                        // //     scanInProgress = false;
-                        // //     $("#currentIndex").text("0");
-                        // //     $("#totalIndex").text("0");
-                        // } else {
-                        //     scanInProgress = true;
-                            setTimeout(scanRefresh, 1000);
-                        // }
+                        return $("#" + id).outerHeight(true);
+                        //$("#container_" + id).outerHeight(true);
+                        // $("#br" + id).outerHeight(true) +
+                        // $("#row" + id).outerHeight(true) +
+                        // $("#" + id).outerHeight(true) +
+                        // $("#amp_" + id).outerHeight(true);
                     }
 
-                    function connectTP() {
-                        const socket = new SockJS('/websocket-endpoint');
-                        stompClient = Stomp.over(socket);
-                        if (shashin.showDebug === false) {
-                            stompClient.debug = null
-                        }
-
-                        shashin.printMessageToConsole("Socket Connecting");
-
-                        let counterTP = 0;
-                        stompClient.connect({}, function() {
-                            if (scanInProgress === false) {
-                                scanRefresh();
-                            }
-                            shashin.printMessageToConsole( "Connected STOMP client");
-                            this.subscribe("/topic/fixscriptmessages", function (message) {
-                                let respMessage = JSON.parse(JSON.parse(message.body).content);
-                                shashin.printMessageToConsole("message: "+message);
-                                // console.log(respMessage)
-
-                                const currentIndex = respMessage.hasOwnProperty("currentIndex") ? parseInt(respMessage["currentIndex"]) : 0;
-                                const totalIndex = respMessage.hasOwnProperty("totalIndex") ? parseInt(respMessage["totalIndex"]) : 0;
-                                const etr = respMessage.hasOwnProperty("etr") ? parseInt(respMessage["etr"]) : 0;
-                                const activeLink = respMessage.hasOwnProperty("activeLink") ? respMessage["activeLink"] : "";
-
-                                $("#currentIndex").text(currentIndex);
-                                $("#totalIndex").text(totalIndex);
-                                $("#activeLink").text(activeLink);
-                                $("#etr").text(msToTime(etr));
-
-                                if (activeLink.length > 0) {
-                                    if (currentIndex === totalIndex) {
-                                        showMessageTP("Scan completed for " + activeLink);
-                                        $("#currentIndex").text("0");
-                                        $("#totalIndex").text("0");
-                                        $("#etr").text("00:00:00");
-                                        $("#activeLink").text("");
-                                        scanInProgress = false;
-                                        disconnectTP();
-                                    } else {
-                                        scanInProgress = true;
-                                        showMessageTP("Scan in progress for " + activeLink);
-                                    }
-                                } else {
-                                    $("#currentIndex").text("0");
-                                    $("#totalIndex").text("0");
-                                    $("#etr").text("00:00:00");
-                                    $("#activeLink").text("");
-                                    counterTP = 0;
-                                    scanInProgress = false;
-                                    showMessageTP("Not scanning");
-                                    disconnectTP();
-                                }
-
-                                counterTP++;
-                            });
-                        }, function(e) {
-                            shashin.printMessageToConsole("Socket connection error in connectTP(): " + e.toString())
-
-                            // if (counterTP > 10) {
-                            //     showMessageTP("Oops, something went wrong! " + e.toString());
-                            //     counterTP = 0;
-                            // } else {
-                                showMessageTP("Oops, something went wrong! " + e.toString());
-                                disconnectTP();
-                                connectTP();
-                            // }
-
-                            // scanInProgress = false;
-                            // counterTP++;
-                        });
-                    }
-
-                    function disconnectTP() {
-                        if (stompClient !== null) {
-                            stompClient.disconnect();
-                        }
-                        shashin.printMessageToConsole("Disconnected");
-                    }
-
-                    function sendMessageTP() {
-                        if (stompClient !== null) {
-                            stompClient.send("/app/fixscriptmessage", {}, JSON.stringify({'message': "getScanMessage"}));
-                        } else {
-                            showMessageTP("Trying to send message but STOMP client is null")
-                            scanInProgress = false;
-                        }
-                    }
-
-                    function showMessageTP(message) {
-                        $("#scanMessage").text(message);
-                    }
-
-                    function msToTime(s) {
-
-                        // Pad to 2 or 3 digits, default is 2
-                        function pad(n, z) {
-                            z = z || 2;
-                            return ('00' + n).slice(-z);
-                        }
-
-                        const ms = s % 1000;
-                        s = (s - ms) / 1000;
-                        const secs = s % 60;
-                        s = (s - secs) / 60;
-                        const mins = s % 60;
-                        const hrs = (s - mins) / 60;
-
-                        return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
-                    }
+                    const date = "2025-4-10";
+                    // Util.removeDateGallery(date);
+                    console.log(getDateGalleryHeight("2025-5-12"));
+                    console.log(getDateGalleryHeight("2025-4-10"));
                 });
-
-
-
-
-
-
-                // shashin.showToastMessage("Title 1", "Message 1.",{autohide:false,tag:"test1",placement:shashin.toast.placement.top.left});
-                // shashin.showToastMessage("Title 2", "Message 2.",{autohide:false,tag:"test2",placement:shashin.toast.placement.top.center});
-                // shashin.showToastMessage("Title 3", "Message 3.",{autohide:false,tag:"test3",placement:shashin.toast.placement.top.right});
-                // shashin.showToastMessage("Title 4", "Message 4.",{autohide:false,tag:"test4",placement:shashin.toast.placement.middle.left});
-                // shashin.showToastMessage("Title 5", "Message 5.",{autohide:false,tag:"test5",placement:shashin.toast.placement.middle.center});
-                // shashin.showToastMessage("Title 6", "Message 6.",{autohide:false,tag:"test6",placement:shashin.toast.placement.middle.right});
-                // shashin.showToastMessage("Title 7", "Message 7.",{autohide:false,tag:"test7",placement:shashin.toast.placement.bottom.left});
-                // shashin.showToastMessage("Title 8", "Message 8.",{autohide:false,tag:"test8",placement:shashin.toast.placement.bottom.center});
-                // shashin.showToastMessage("Title 9", "Message 9.",{autohide:false,tag:"test9",placement:shashin.toast.placement.bottom.right});
-                // shashin.showToastMessage("Title 10", "Message 10.",{tag:"test10",placement:shashin.toast.placement.bottom.right});
-                // shashin.showToastMessage("Title 11", "Message 11.",{autohide:false,tag:"test11",placement:shashin.toast.placement.bottom.right});
-                //
-                //
-                // let timer = 3000;
-                // setTimeout(function () {
-                //     shashin.closeToastMessages({
-                //         tags: ["test3"]
-                //     });
-                // }, timer);
-                // timer += 2000;
-                // setTimeout(function () {
-                //     shashin.closeToastMessages({
-                //         tag: "test8"
-                //     });
-                // }, timer);
-                // timer += 2000;
-                // setTimeout(function () {
-                //     shashin.closeToastMessages({
-                //         placements: [shashin.toast.placement.top.left],
-                //         tags: ["test4"]
-                //     });
-                // }, timer);
-                // timer += 2000;
-                // setTimeout(function () {
-                //     shashin.closeToastMessages({
-                //         placement: shashin.toast.placement.middle.center
-                //     });
-                // }, timer);
-                // timer += 2000;
-                // setTimeout(function () {
-                //     shashin.closeToastMessages({
-                //         placements: [shashin.toast.placement.bottom.right, shashin.toast.placement.middle.left]
-                //     });
-                // }, timer);
-                // timer += 2000;
-                // setTimeout(function () {
-                //     shashin.closeToastMessages({
-                //         hide: true,
-                //         tags: ["test5","test7"]
-                //     });
-                // }, timer);
-                // timer += 2000;
-                // setTimeout(function () {
-                //     shashin.closeToastMessages();
-                // }, timer);
-                //
-                //
-                // timer += 2000;
-                // setTimeout(function () {
-                //     shashin.showToastMessage("Title 1", "Message 1.",{autohide:false,tag:"test1",placement:shashin.toast.placement.top.left});
-                //     setTimeout(function () {
-                //         shashin.showToastMessage("Title 2", "Message 2.",{autohide:false,tag:"testzzz2",placement:shashin.toast.placement.top.center});
-                //     }, 2000);
-                //     setTimeout(function () {
-                //         shashin.showToastMessage("Title 2", "Message 2a.",{autohide:false,tag:"testzzz2",placement:shashin.toast.placement.top.center});
-                //     }, 4000);
-                //     setTimeout(function () {
-                //         shashin.showToastMessage("Title 2", "Message 2 refreshed.",{autohide:false,refreshTag:true,tag:"testzzz2",placement:shashin.toast.placement.top.center});
-                //     }, 6000);
-                //     shashin.showToastMessage("Title 3", "Message 3.",{autohide:false,tag:"test3",placement:shashin.toast.placement.top.right});
-                //     shashin.showToastMessage("Title 4", "Message 4.",{autohide:false,tag:"test4",placement:shashin.toast.placement.middle.left});
-                //     shashin.showToastMessage("Title 5", "Message 5.",{autohide:false,tag:"test5",placement:shashin.toast.placement.middle.center});
-                //     shashin.showToastMessage("Title 6", "Message 6.",{autohide:false,tag:"test6",placement:shashin.toast.placement.middle.right});
-                //     shashin.showToastMessage("Title 7", "Message 7.",{autohide:false,tag:"test7",placement:shashin.toast.placement.bottom.left});
-                //     shashin.showToastMessage("Title 7a", "Message 7a.",{autohide:false,tag:"test7a",placement:shashin.toast.placement.bottom.left});
-                //     shashin.showToastMessage("Title 8", "Message 8.",{autohide:false,tag:"test8",placement:shashin.toast.placement.bottom.center});
-                //     shashin.showToastMessage("Title 9", "Message 9 (all the things, almost).", {
-                //         autohide:false,
-                //         tag:"test9",
-                //         placement:shashin.toast.placement.bottom.right,
-                //         icon: "bi-activity",
-                //         iconColor: "blue",
-                //         headerSubtext: "some subtext",
-                //         borderColor: "success",
-                //         refreshTag: true
-                //     });
-                //     shashin.showToastMessage("Title 10", "Message 10.",{tag:"test10",placement:shashin.toast.placement.bottom.right});
-                //     shashin.showToastMessage("Title 11", "Message 11.",{autohide:true,tag:"test11",placement:shashin.toast.placement.bottom.right});
-                //
-                //     shashin.showToastMessage("Default Options", "Toast with default options.");
-                //     shashin.showToastMessage("Invalid Options", "Invalid toast options. Check console by typing shashin.enableDebug({tag: \"toast\"})", {autohide:false,invalidOption: "hi",anotherInvalidOption: "hi"});
-                //
-                //     const notificationCount = 14;
-                //     const createdAtDate = "2025-01-01";
-                //     const title = notificationCount + " new notification" + (notificationCount === 1 ? "" : "s");
-                //     let message = '<div class="container"><strong>hello</strong></div>';
-                //
-                //     message = message + '</div>';
-                //
-                //     shashin.showToastMessage(title, message, {
-                //         icon: "bi-bell",
-                //         iconColor: "#FF8C00",
-                //         headerSubtext: createdAtDate,
-                //         autohide: false,
-                //         borderColor:"primary" // primary, secondary, success, danger, warning, info, light, dark, white
-                //     });
-                //
-                //     timer = 2000;
-                //     setTimeout(function () {
-                //         shashin.closeToastMessages({
-                //             hide: true,
-                //             tag: "test7a"
-                //         });
-                //     }, timer);
-                // }, timer);
             </script>
 
-            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
-            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
 </div>

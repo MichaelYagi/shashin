@@ -17,6 +17,7 @@ import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
@@ -48,6 +49,7 @@ import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
+import org.hibernate.query.Page.page
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
@@ -55,6 +57,10 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.imageio.ImageIO
 import kotlin.String
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
+import kotlin.collections.set
 
 
 @Controller
@@ -159,6 +165,15 @@ class TestController {
     @GetMapping("/sandbox")
     fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["activePage"] = "sandbox"
+        model["metadataList"] = mutableListOf<Metadata>()
+
+        val size = 500
+        val page = 0
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            model["metadataList"] = metadataRepository.findAllByOffsetAndLimit((page * size), size)
+        }
 
         return "sandbox"
     }
