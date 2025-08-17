@@ -35,6 +35,14 @@
                 <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;">
                 </span>
             </a>
+            <th:block th:if="${activePage == 'sandbox'}">
+                <span id="sandboxtest">
+                    &nbsp;
+                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="#" aria-controls="back" id="doit" th:title="Remove section">
+                        <span th:class="'bi-arrow-through-heart placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
+                    </a>
+                </span>
+            </th:block>
             <th:block th:if="${activeProfile != 'prod'}">
                 <span id="environmentLabel" class="align-items-center link-dark text-decoration-none ms-2" style="font-size: 1.6rem;">
                     <th:block th:if="${activeProfile == 'dev'}">
