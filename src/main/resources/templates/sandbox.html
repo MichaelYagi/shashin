@@ -47,166 +47,172 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        /*<![CDATA[*/
-        const metadataList = /*[[${metadataList}]]*/ [];
-        /*]]>*/
+        let http = new Http("timeline");
+        http.ajax("get", "/sandbox/data").then(function (data) {
+            if (data.hasOwnProperty("metadataList")) {
+                const metadataList = data.metadataList;
 
-        // Dexie
-        let dbOperationComplete = false;
-        const db = new Dexie("MetadataDatabase");
-        db.version(1).stores({
-            metadataList: `id, [year+month+day]`
-        });
-
-        db.metadataList.bulkPut(metadataList).then(() => {
-            dbOperationComplete = true;
-        });
-
-        const http = new Http("timeline");
-        http.ajax("get", "/timeline/yearmonthcounts/"+shashin.mediaTypeFilter).then(function (data) {
-            if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount") && data.hasOwnProperty("metadataDatesHash")) {
-                const timelineYearMonthCountsData = data["metadataYearMonthCount"];
-                const timelineDatesData = data["metadataDates"];
-                const timelineDatesHash = data["metadataDatesHash"];
-                const timelineDatesHashCount = Object.keys(timelineDatesHash).length;
-
-                console.log(timelineDatesData);
-                console.log(timelineDatesHash);
-
-                function createSection(year, month, day, attachDate, aboveBelow) {
-                    db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataList) {
-                        let html = "<section class='dateSection' id='"+year+"-"+month+"-"+day+"'>" +
-                            "<p><strong>"+year+"-"+month+"-"+day+"</strong></p>" +
-                            "<div id='dateBody"+year+"-"+month+"-"+day+"' class='row' style='margin-left: -2px;'>";
-
-                        for (const index in metadataList) {
-                            const metadata = metadataList[index];
-
-                            html += "<div id='photoThumbnailContainer"+metadata.id+"' class='photo-thumbnail-container photo-thumbnail' style='width:"+metadata.thumbnailSmallWidth+"px;height:"+metadata.thumbnailSmallHeight+"px;padding-left:0;padding-right:0;'>" +
-                                "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/"+metadata.id+"' class='photo-thumbnail-image' id='image"+metadata.id+"' width='"+metadata.thumbnailSmallWidth+"' th:height='"+metadata.thumbnailSmallHeight+"' style='background-color:lightgray;'>" +
-                                "</div>"
-                        }
-
-                        html += "</div></section>" +
-                            "<span class='appendMetadataPhotos' id='append"+year+"-"+month+"-"+day+"' style='width:0;height:0;padding:0'></span>";
-
-                        if (aboveBelow === "above") {
-                            $(html).before($("#"+attachDate));
-                        } else {
-                            $(html).insertAfter($("#append"+attachDate));
-                        }
-                    });
-
-
-                }
-
-                // Functions to imitate timeline
-                $("#doit").on("click", function (e) {
-                    e.preventDefault();
-                    //
-                    // const date = "2025-8-14";
-                    // let topHeight = getDateGalleryHeight(date);
-                    // let tempScrollTop = $("#container").scrollTop();
-                    // removeDate(date);
-                    // $("#container").scrollTop(tempScrollTop - topHeight);
-                    //
-                    //
-                    // topHeight = getDateGalleryHeight(date);
-                    // tempScrollTop = $("#container").scrollTop();
-                    // // Required for safari
-                    // $("#container").scrollTop(tempScrollTop + topHeight);
-                })
-
-                function getDateGalleryHeight(id) {
-                    if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
-                        return 0;
-                    }
-
-                    // console.log("$(\"#br\" + id).outerHeight(true):" + $("#br" + id).outerHeight(true))
-                    // console.log("$(\"#row\" + id).outerHeight(true):"+$("#row" + id).outerHeight(true))
-                    // console.log("$(\"#amp_\" + id).outerHeight(true):"+$("#amp_" + id).outerHeight(true))
-                    // console.log("$(\"#container_\" + id).outerHeight(true):"+$("#amp_" + id).outerHeight(true))
-                    // console.log("$(\"#tail_\" + id).outerHeight(true):"+$("#tail_" + id).outerHeight(true))
-                    // console.log("$(\"#\" + id).outerHeight(true):"+$("#" + id).outerHeight(true))
-
-
-                    return $("#" + id).outerHeight(true);
-                    //$("#container_" + id).outerHeight(true);
-                    // $("#br" + id).outerHeight(true) +
-                    // $("#row" + id).outerHeight(true) +
-                    // $("#" + id).outerHeight(true) +
-                    // $("#amp_" + id).outerHeight(true);
-                }
-
-                function removeDate(date) {
-                    $("#br"+date).remove();
-                    $("#row"+date).remove();
-                    $("#amp_"+date).remove();
-                    $("#tail_"+date).remove();
-                    $("#"+date).remove();
-                    $("#container_"+date).remove();
-                    $("#append"+date).remove();
-                }
-
-                $.fn.isInViewport = function() {
-                    const elementTop = $(this).offset().top;
-                    const elementBottom = elementTop + $(this).outerHeight();
-
-                    const viewportTop = $("#container").scrollTop();
-                    const viewportBottom = viewportTop + $("#container").height();
-
-                    return elementBottom > viewportTop && elementTop < viewportBottom;
-                };
-
-                $("section").each(function(index, element) {
-                    if (Util.isInViewport($(element)) === false) {
-                        removeDate($(element).attr("id"));
-                    }
+                // Dexie
+                let dbOperationComplete = false;
+                const db = new Dexie("MetadataDatabase");
+                db.version(1).stores({
+                    metadataList: `id, [year+month+day]`
                 });
 
-                const calculateDistanceToFooter = function() {
-                    return $(window).height() - $('footer').offset().top - 30;
-                };
+                db.metadataList.bulkPut(metadataList).then(() => {
+                    dbOperationComplete = true;
+                });
 
-                // createSection(2025, 8, 10);
+                http = new Http("timeline");
+                http.ajax("get", "/timeline/yearmonthcounts/"+shashin.mediaTypeFilter).then(function (data) {
+                    if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount") && data.hasOwnProperty("metadataDatesHash")) {
+                        const timelineYearMonthCountsData = data["metadataYearMonthCount"];
+                        const timelineDatesData = data["metadataDates"];
+                        const timelineDatesHash = data["metadataDatesHash"];
+                        const timelineDatesHashCount = Object.keys(timelineDatesHash).length;
 
-                // Scroll
-                document.getElementById("container").addEventListener('scroll', function() {
-                    // Removing anything not in viewport
-                    setTimeout(function () {
+                        // console.log(timelineDatesData);
+                        // console.log(timelineDatesHash);
+
+                        function scrollToElementSmoothly(id) {
+                            const el = document.getElementById(id);
+                            if (el) {
+                                el.scrollTo(0, 0);
+                            }
+                        }
+
+                        function createSection(year, month, day, attachDate, aboveBelow) {
+                            db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
+                                let html = "<section class='dateSection' id='"+year+"-"+month+"-"+day+"'>" +
+                                    "<p><strong>"+year+"-"+month+"-"+day+"</strong></p>" +
+                                    "<div id='dateBody"+year+"-"+month+"-"+day+"' class='row' style='margin-left: -2px;'>";
+
+                                for (const index in metadataArray) {
+                                    const metadata = metadataArray[index];
+
+                                    html += "<div id='photoThumbnailContainer"+metadata.id+"' class='photo-thumbnail-container photo-thumbnail' style='width:"+metadata.thumbnailSmallWidth+"px;height:"+metadata.thumbnailSmallHeight+"px;padding-left:0;padding-right:0;'>" +
+                                        "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/"+metadata.id+"' class='photo-thumbnail-image' id='image"+metadata.id+"' width='"+metadata.thumbnailSmallWidth+"' th:height='"+metadata.thumbnailSmallHeight+"' style='background-color:lightgray;'>" +
+                                        "</div>"
+                                }
+
+                                html += "</div></section>" +
+                                    "<span class='appendMetadataPhotos' id='append"+year+"-"+month+"-"+day+"' style='width:0;height:0;padding:0'></span>";
+
+                                let htmlContent = $(html);
+
+                                if (aboveBelow === "above") {
+                                    $("#"+attachDate).before(htmlContent);
+                                } else {
+                                    htmlContent.insertAfter($("#append"+attachDate));
+                                }
+
+                                const contentHeight = $("#"+year+"-"+month+"-"+day).outerHeight(true);
+                                const viewportTop = $("#container").scrollTop();
+
+                                if (aboveBelow === "above") {
+                                    // $("#"+attachDate).before(htmlContent);
+                                    scrollToElementSmoothly(attachDate);
+                                }
+                            });
+                        }
+
+                        // Functions to imitate timeline
+                        $("#doit").on("click", function (e) {
+                            e.preventDefault();
+                            //
+                            // const date = "2025-8-14";
+                            // let topHeight = getDateGalleryHeight(date);
+                            // let tempScrollTop = $("#container").scrollTop();
+                            // removeDate(date);
+                            // $("#container").scrollTop(tempScrollTop - topHeight);
+                            //
+                            //
+                            // topHeight = getDateGalleryHeight(date);
+                            // tempScrollTop = $("#container").scrollTop();
+                            // // Required for safari
+                            // $("#container").scrollTop(tempScrollTop + topHeight);
+                        })
+
+                        function getDateGalleryHeight(id) {
+                            if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
+                                return 0;
+                            }
+
+                            return $("#" + id).outerHeight(true);
+                            //$("#container_" + id).outerHeight(true);
+                            // $("#br" + id).outerHeight(true) +
+                            // $("#row" + id).outerHeight(true) +
+                            // $("#" + id).outerHeight(true) +
+                            // $("#amp_" + id).outerHeight(true);
+                        }
+
+                        function removeDate(date) {
+                            $("#br"+date).remove();
+                            $("#row"+date).remove();
+                            $("#amp_"+date).remove();
+                            $("#tail_"+date).remove();
+                            $("#"+date).remove();
+                            $("#container_"+date).remove();
+                            $("#append"+date).remove();
+                        }
+
+                        $.fn.isInViewport = function() {
+                            const elementTop = $(this).offset().top;
+                            const elementBottom = elementTop + $(this).outerHeight();
+
+                            const viewportTop = $("#container").scrollTop();
+                            const viewportBottom = viewportTop + $("#container").height();
+
+                            return elementBottom > viewportTop && elementTop < viewportBottom;
+                        };
+
                         $("section").each(function(index, element) {
                             if (Util.isInViewport($(element)) === false) {
                                 removeDate($(element).attr("id"));
                             }
                         });
-                    }, 200);
 
-                    const viewportTop = $("#container").scrollTop();
-                    const firstEl = $("section")[0];
-                    const firstDate = $(firstEl).attr("id");
-                    const lastEl = $("section")[$("section").length - 1];
-                    const lastDate = $(lastEl).attr("id");
+                        const calculateDistanceToFooter = function() {
+                            return $(window).height() - $('footer').offset().top - 30;
+                        };
 
-                    // View top 0 add more to the top
-                    if (viewportTop < 3 && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
-                        console.log("test1")
-                        const prevDate = timelineDatesData[timelineDatesHash[lastDate]-1];
-                        createSection(prevDate.year, prevDate.month, prevDate.day, lastDate, "above");
+                        let direction = "down";
+                        document.body.addEventListener('wheel', function (event) {
+                            direction = event.deltaY > 0 ? 'down' : 'up';
+                        });
+
+                        // Scroll
+                        document.getElementById("container").addEventListener('scroll', function() {
+                            // Removing anything not in viewport
+                            setTimeout(function () {
+                                $("section").each(function(index, element) {
+                                    if (Util.isInViewport($(element)) === false) {
+                                        removeDate($(element).attr("id"));
+                                    }
+                                });
+                            }, 0);
+
+                            const viewportTop = $("#container").scrollTop();
+                            const firstEl = $("section")[0];
+                            const firstDate = $(firstEl).attr("id");
+                            const lastEl = $("section")[$("section").length - 1];
+                            const lastDate = $(lastEl).attr("id");
+
+                            // View top 0 add more to the top
+                            if (direction === "up" && viewportTop < 30 && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
+                                const prevDate = timelineDatesData[timelineDatesHash[firstDate]-1];
+                                createSection(prevDate.year, prevDate.month, prevDate.day, firstDate, "above");
+                            } else if (direction === "down" && calculateDistanceToFooter() >= 0 && calculateDistanceToFooter() < 3 && timelineDatesHash[lastDate] < timelineDatesHashCount && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
+                                const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
+                                createSection(nextDate.year, nextDate.month, nextDate.day, lastDate, "below");
+                            }
+                        }, { passive: true });
+
+                        // Scroll stop
+                        // document.getElementById("container").addEventListener("scrollend", () => {
+                        //
+                        // });
                     }
-
-                    // View bottom close to 0 add more to the bottom
-                    if (calculateDistanceToFooter() >= 0 && calculateDistanceToFooter() < 3 && timelineDatesHash[lastDate] < timelineDatesHashCount && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
-                        console.log("test2");
-                        const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
-                        createSection(nextDate.year, nextDate.month, nextDate.day, lastDate, "below");
-                    }
-
-                    console.log("========================")
-                }, { passive: true });
-
-                // Scroll stop
-                document.getElementById("container").addEventListener("scrollend", () => {
-
                 });
             }
         });
