@@ -81,40 +81,6 @@
                             }
                         }
 
-                        function createSection(year, month, day, attachDate, aboveBelow) {
-                            db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
-                                let html = "<section class='dateSection' id='"+year+"-"+month+"-"+day+"'>" +
-                                    "<p><strong>"+year+"-"+month+"-"+day+"</strong></p>" +
-                                    "<div id='dateBody"+year+"-"+month+"-"+day+"' class='row' style='margin-left: -2px;'>";
-
-                                for (const index in metadataArray) {
-                                    const metadata = metadataArray[index];
-
-                                    html += "<div id='photoThumbnailContainer"+metadata.id+"' class='photo-thumbnail-container photo-thumbnail' style='width:"+metadata.thumbnailSmallWidth+"px;height:"+metadata.thumbnailSmallHeight+"px;padding-left:0;padding-right:0;'>" +
-                                        "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/"+metadata.id+"' class='photo-thumbnail-image' id='image"+metadata.id+"' width='"+metadata.thumbnailSmallWidth+"' th:height='"+metadata.thumbnailSmallHeight+"' style='background-color:lightgray;'>" +
-                                        "</div>"
-                                }
-
-                                html += "</div></section>" +
-                                    "<span class='appendMetadataPhotos' id='append"+year+"-"+month+"-"+day+"' style='width:0;height:0;padding:0'></span>";
-
-                                let htmlContent = $(html);
-
-                                if (aboveBelow === "above") {
-                                    $("#"+attachDate).before(htmlContent);
-                                } else {
-                                    htmlContent.insertAfter($("#append"+attachDate));
-                                }
-
-                                // const contentHeight = $("#"+year+"-"+month+"-"+day).outerHeight(true);
-                                // const viewportTop = $("#container").scrollTop();
-
-                                if (aboveBelow === "above") {
-                                    scrollToElementSmoothly(attachDate);
-                                }
-                            });
-                        }
-
                         // Functions to imitate timeline
                         $("#doit").on("click", function (e) {
                             e.preventDefault();
@@ -180,13 +146,63 @@
                             direction = event.deltaY > 0 ? 'down' : 'up';
                         });
 
+                        function createSection(year, month, day, attachDate, aboveBelow) {
+                            db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
+                                let html = "<section class='dateSection' id='"+year+"-"+month+"-"+day+"'>" +
+                                    "<p><strong>"+year+"-"+month+"-"+day+"</strong></p>" +
+                                    "<div id='dateBody"+year+"-"+month+"-"+day+"' class='row' style='margin-left: -2px;'>";
+
+                                for (const index in metadataArray) {
+                                    const metadata = metadataArray[index];
+
+                                    html += "<div id='photoThumbnailContainer"+metadata.id+"' class='photo-thumbnail-container photo-thumbnail' style='width:"+metadata.thumbnailSmallWidth+"px;height:"+metadata.thumbnailSmallHeight+"px;padding-left:0;padding-right:0;'>" +
+                                        "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/"+metadata.id+"' class='photo-thumbnail-image' id='image"+metadata.id+"' width='"+metadata.thumbnailSmallWidth+"' th:height='"+metadata.thumbnailSmallHeight+"' style='background-color:lightgray;'>" +
+                                        "</div>"
+                                }
+
+                                html += "</div></section>" +
+                                    "<span class='appendMetadataPhotos' id='append"+year+"-"+month+"-"+day+"' style='width:0;height:0;padding:0'></span>";
+
+                                let htmlContent = $(html);
+
+                                const viewportTop = $("#container").scrollTop();
+
+                                if (aboveBelow === "above") {
+                                    $("#"+attachDate).before(htmlContent);
+                                } else {
+                                    htmlContent.insertAfter($("#append"+attachDate));
+                                }
+
+                                const contentHeight = $("#" + year + "-" + month + "-" + day).outerHeight(true);
+
+                                // TODO: Look in timeline - needed for all browsers
+                                if (aboveBelow === "above") {
+                                    $("#container")[0].scrollTop = contentHeight;
+                                } else {
+                                    $("#container")[0].scrollTop = viewportTop
+                                }
+                            });
+                        }
+
                         // Scroll
                         document.getElementById("container").addEventListener('scroll', function() {
                             // Removing anything not in viewport
                             setTimeout(function () {
                                 $("section").each(function(index, element) {
                                     if (Util.isInViewport($(element)) === false) {
+                                        const viewportTop = $("#container").scrollTop();
+                                        const contentHeight = $(element).outerHeight(true);
+
                                         removeDate($(element).attr("id"));
+
+                                        // TODO: Needed for Safari
+                                        if (Util.isSafari()) {
+                                            if (direction === "down") {
+                                                $("#container")[0].scrollTop = viewportTop - contentHeight;
+                                            } else {
+                                                $("#container")[0].scrollTop = contentHeight;
+                                            }
+                                        }
                                     }
                                 });
                             }, 0);
