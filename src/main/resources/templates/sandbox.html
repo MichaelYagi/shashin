@@ -106,11 +106,10 @@
                                     htmlContent.insertAfter($("#append"+attachDate));
                                 }
 
-                                const contentHeight = $("#"+year+"-"+month+"-"+day).outerHeight(true);
-                                const viewportTop = $("#container").scrollTop();
+                                // const contentHeight = $("#"+year+"-"+month+"-"+day).outerHeight(true);
+                                // const viewportTop = $("#container").scrollTop();
 
                                 if (aboveBelow === "above") {
-                                    // $("#"+attachDate).before(htmlContent);
                                     scrollToElementSmoothly(attachDate);
                                 }
                             });
