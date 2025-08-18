@@ -50,6 +50,8 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import org.hibernate.query.Page.page
+import org.thymeleaf.util.DateUtils.day
+import org.thymeleaf.util.DateUtils.month
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
