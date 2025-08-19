@@ -175,7 +175,7 @@
 
                                 const contentHeight = $("#" + year + "-" + month + "-" + day).outerHeight(true);
 
-                                // TODO: Look in timeline - needed for all browsers
+                                // TODO: Create - look in timeline - needed for all browsers
                                 if (aboveBelow === "above") {
                                     $("#container")[0].scrollTop = contentHeight;
                                 } else {
@@ -195,7 +195,7 @@
 
                                         removeDate($(element).attr("id"));
 
-                                        // TODO: Needed for Safari
+                                        // TODO: Removal - Needed for Safari
                                         if (Util.isSafari()) {
                                             if (direction === "down") {
                                                 $("#container")[0].scrollTop = viewportTop - contentHeight;

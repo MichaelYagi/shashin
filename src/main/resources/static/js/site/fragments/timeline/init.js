@@ -172,6 +172,11 @@
             timelineSettings.enableScrollSpy = false;
         }
 
+        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+        document.body.addEventListener('wheel', function (event) {
+            timelineSettings.currentScrollDirection = event.deltaY > 0 ? timelineSettings.ScrollDirection.down : timelineSettings.ScrollDirection.up;
+        });
+
         $(window).bind("scrollStop", function() {
             firsthovered = true;
             timelineSettings.isScrolling = false;
