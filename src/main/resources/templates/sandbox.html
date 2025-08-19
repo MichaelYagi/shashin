@@ -85,31 +85,14 @@
                         // Functions to imitate timeline
                         $("#doit").on("click", function (e) {
                             e.preventDefault();
-                            //
-                            // const date = "2025-8-14";
-                            // let topHeight = getDateGalleryHeight(date);
-                            // let tempScrollTop = $("#container").scrollTop();
-                            // removeDate(date);
-                            // $("#container").scrollTop(tempScrollTop - topHeight);
-                            //
-                            //
-                            // topHeight = getDateGalleryHeight(date);
-                            // tempScrollTop = $("#container").scrollTop();
-                            // // Required for safari
-                            // $("#container").scrollTop(tempScrollTop + topHeight);
                         })
 
                         function getDateGalleryHeight(id) {
-                            if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
+                            if ($("#" + id).length === 0) {
                                 return 0;
                             }
 
                             return $("#" + id).outerHeight(true);
-                            //$("#container_" + id).outerHeight(true);
-                            // $("#br" + id).outerHeight(true) +
-                            // $("#row" + id).outerHeight(true) +
-                            // $("#" + id).outerHeight(true) +
-                            // $("#amp_" + id).outerHeight(true);
                         }
 
                         function removeDate(date) {
@@ -174,7 +157,7 @@
                                     htmlContent.insertAfter($("#append"+attachDate));
                                 }
 
-                                const contentHeight = $("#" + year + "-" + month + "-" + day).outerHeight(true);
+                                const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
 
                                 // TODO: Create - look in timeline - needed for all browsers
                                 if (aboveBelow === "above") {
@@ -192,7 +175,7 @@
                                 $("section").each(function(index, element) {
                                     if (Util.isInViewport($(element)) === false) {
                                         const viewportTop = $("#container").scrollTop();
-                                        const contentHeight = $(element).outerHeight(true);
+                                        const contentHeight = getDateGalleryHeight($(element).attr("id"));
 
                                         removeDate($(element).attr("id"));
 
