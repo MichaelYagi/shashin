@@ -47,6 +47,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        const offset = 30;
         let http = new Http("timeline");
         http.ajax("get", "/sandbox/data").then(function (data) {
             if (data.hasOwnProperty("metadataList")) {
@@ -138,7 +139,7 @@
                         });
 
                         const calculateDistanceToFooter = function() {
-                            return $(window).height() - $('footer').offset().top - 30;
+                            return $(window).height() - $('footer').offset().top - offset - 1;
                         };
 
                         let direction = "down";
@@ -214,19 +215,19 @@
                             const lastDate = $(lastEl).attr("id");
 
                             // View top 0 add more to the top
-                            if (direction === "up" && viewportTop < 30 && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
+                            if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
                                 const prevDate = timelineDatesData[timelineDatesHash[firstDate]-1];
                                 createSection(prevDate.year, prevDate.month, prevDate.day, firstDate, "above");
-                            } else if (direction === "down" && calculateDistanceToFooter() >= 0 && calculateDistanceToFooter() < 3 && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
+                            } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
                                 const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
                                 createSection(nextDate.year, nextDate.month, nextDate.day, lastDate, "below");
                             }
                         }, { passive: true });
 
                         // Scroll stop
-                        // document.getElementById("container").addEventListener("scrollend", () => {
-                        //
-                        // });
+                        document.getElementById("container").addEventListener("scrollend", () => {
+
+                        });
                     }
                 });
             }
