@@ -1430,8 +1430,14 @@ class Util {
         // console.log("$(\"#tail_\" + id).outerHeight(true):"+$("#tail_" + id).outerHeight(true))
         // console.log("$(\"#\" + id).outerHeight(true):"+$("#" + id).outerHeight(true))
 
+        if (Util.isSafari()) {
+            return $("#br" + id).outerHeight(true) +
+                $("#" + id).outerHeight(true) +
+                $("#row" + id).outerHeight(true);
+        } else {
+            return $("#container_" + id).outerHeight(true);
+        }
 
-        return $("#container_" + id).outerHeight(true);
         // $("#br" + id).outerHeight(true) +
         // $("#row" + id).outerHeight(true) +
         // $("#" + id).outerHeight(true) +
