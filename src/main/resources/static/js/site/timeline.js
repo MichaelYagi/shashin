@@ -570,6 +570,7 @@
                         Util.isInViewport($("#container_" + section[index + 1].id)) === false &&
                         Util.isInViewport($("#amp_" + section[index + 1].id)) === false
                     ) {
+                        topHeight += Util.getDateGalleryHeight(element.id);
                         Util.removeDateGallery(element.id);
                         sectionArray.pop();
                     }
@@ -599,7 +600,11 @@
                     scrollToElementSmoothly(lastVisibleContainer.id);
                 }
             } else if (Util.isSafari() && topHeight > 0) {
-                $('#container').scrollTop(tempScrollTop - topHeight);
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                    $('#container').scrollTop(tempScrollTop - topHeight);
+                } else {
+                    $('#container').scrollTop(topHeight);
+                }
             }
 
             section.visible();
@@ -1545,17 +1550,9 @@
                     htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
                         // deferred.resolve(timelineSettings.success);
                         ret = timelineSettings.success;
-                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                            if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                //$("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                // Scroll back to anchor element
-                                requestAnimationFrame(() => {
-                                    if (anchorElement) {
-                                        anchorElement.scrollIntoView({ behavior: 'auto', block: 'start' });
-                                    }
-                                });
-                                $("#infinite-scroll-gallery").visible();
-                            }
+                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                            $("#container")[0].scrollTop = Util.getDateGalleryHeight(date);
+                            $("#infinite-scroll-gallery").visible();
                         }
                     });
                 } else if (action === "emptyContainer") {
@@ -1564,11 +1561,9 @@
                     $('<span class="attachMetadataPhotos" id="amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" style="visibility: hidden"></span>').insertAfter($("#container_"+date));
                 } else if (action === "new") {
                     $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                            if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                $("#infinite-scroll-gallery").visible();
-                            }
+                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                            $("#container")[0].scrollTop = Util.getDateGalleryHeight(date);
+                            $("#infinite-scroll-gallery").visible();
                         }
                         // deferred.resolve(timelineSettings.success);
                         ret = timelineSettings.success;
@@ -1577,22 +1572,19 @@
                     if (attachToId == null) {
                         if ($(".attachMetadataPhotos").length > 0) {
                             htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                        $("#infinite-scroll-gallery").visible();
-                                    }
+                                if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                                    $("#container")[0].scrollTop = tempScrollTop;
+                                    $("#infinite-scroll-gallery").visible();
                                 }
                                 // deferred.resolve(timelineSettings.success);
                                 ret = timelineSettings.success;
                             });
                         } else {
                             $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                        $("#infinite-scroll-gallery").visible();
-                                    }
+                                if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                                    //$("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                    $("#container")[0].scrollTop = Util.getDateGalleryHeight(date);
+                                    $("#infinite-scroll-gallery").visible();
                                 }
                                 // deferred.resolve(timelineSettings.success);
                                 ret = timelineSettings.success;
@@ -1600,12 +1592,11 @@
                         }
                     } else {
                         htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
-                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                    $("#infinite-scroll-gallery").visible();
-                                }
+                            if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                                $("#container")[0].scrollTop = tempScrollTop;
+                                $("#infinite-scroll-gallery").visible();
                             }
+
                             // deferred.resolve(timelineSettings.success);
                             ret = timelineSettings.success;
                         });
