@@ -1545,12 +1545,12 @@
             setTimeout(function () {
                 if (action === "above") {
                     // Find anchor element in viewport
-                    const anchorElement = $(".scrollspy:visible").first()[0];
-
                     htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
                         // deferred.resolve(timelineSettings.success);
                         ret = timelineSettings.success;
-                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                        if ((!(Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) &&
+                            timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up
+                        ) {
                             $("#container")[0].scrollTop = Util.getDateGalleryHeight(date);
                             $("#infinite-scroll-gallery").visible();
                         }
