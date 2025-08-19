@@ -2,6 +2,17 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<style>
+    /* Fix Safari's buggy 100vh behavior */
+    html, body {
+        height: -webkit-fill-available;
+    }
+
+    /* Prevent body scroll bleed when container is active */
+    body.noscroll {
+        overflow: hidden;
+    }
+</style>
 <script src="/js/dexie.js" th:nonce="${cspNonce}"></script>
 <body class="thumb d-flex flex-column vh-100">
 
@@ -49,6 +60,17 @@
     $(document).ready(function() {
         const offset = 30;
         let http = new Http("timeline");
+
+        const container = document.getElementById("container");
+
+        container.addEventListener("mouseenter", () => {
+            document.body.classList.add("noscroll");
+        });
+
+        container.addEventListener("mouseleave", () => {
+            document.body.classList.remove("noscroll");
+        });
+
         http.ajax("get", "/sandbox/data").then(function (data) {
             if (data.hasOwnProperty("metadataList")) {
                 const metadataList = data.metadataList;
