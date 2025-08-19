@@ -217,7 +217,7 @@
                             if (direction === "up" && viewportTop < 30 && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
                                 const prevDate = timelineDatesData[timelineDatesHash[firstDate]-1];
                                 createSection(prevDate.year, prevDate.month, prevDate.day, firstDate, "above");
-                            } else if (direction === "down" && calculateDistanceToFooter() >= 0 && calculateDistanceToFooter() < 3 && timelineDatesHash[lastDate] < timelineDatesHashCount && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
+                            } else if (direction === "down" && calculateDistanceToFooter() >= 0 && calculateDistanceToFooter() < 3 && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
                                 const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
                                 createSection(nextDate.year, nextDate.month, nextDate.day, lastDate, "below");
                             }
