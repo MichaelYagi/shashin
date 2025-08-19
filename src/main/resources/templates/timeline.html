@@ -2,6 +2,25 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<th:block th:if="${agentName != 'Safari'}">
+<style>
+    #container {
+        -webkit-overflow-scrolling: touch;
+        overflow-y: scroll;
+        height: 100vh;
+    }
+
+    /* Fix Safari's buggy 100vh behavior */
+    html, body {
+        height: -webkit-fill-available;
+    }
+
+    /* Prevent body scroll bleed when container is active */
+    body.noscroll {
+        overflow: hidden;
+    }
+</style>
+</th:block>
 <body class="thumb d-flex flex-column vh-100 overflow-hidden">
 
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
@@ -9,6 +28,20 @@
     Util.showSpinner(true);
 
     $(document).ready(function () {
+        if (Util.isSafari()) {
+            document.addEventListener("DOMContentLoaded", function () {
+                const container = document.getElementById("container");
+
+                container.addEventListener("mouseenter", () => {
+                    document.body.classList.add("noscroll");
+                });
+
+                container.addEventListener("mouseleave", () => {
+                    document.body.classList.remove("noscroll");
+                });
+            });
+        }
+
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         /*]]>*/
