@@ -601,9 +601,9 @@
                 }
             } else if (Util.isSafari() && topHeight > 0) {
                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                    $('#container').scrollTop(tempScrollTop - topHeight);
+                    $("#container")[0].scrollTop = tempScrollTop - topHeight;
                 } else {
-                    $('#container').scrollTop(topHeight);
+                    $("#container")[0].scrollTop = topHeight;
                 }
             }
 
