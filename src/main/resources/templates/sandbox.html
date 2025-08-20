@@ -106,18 +106,8 @@
                             $("#append"+date).remove();
                         }
 
-                        $.fn.isInViewport = function() {
-                            const elementTop = $(this).offset().top;
-                            const elementBottom = elementTop + $(this).outerHeight();
-
-                            const viewportTop = $("#container").scrollTop();
-                            const viewportBottom = viewportTop + $("#container").height();
-
-                            return elementBottom > viewportTop && elementTop < viewportBottom;
-                        };
-
                         $("section").each(function(index, element) {
-                            if (Util.isInViewport($(element)) === false) {
+                            if (isInViewport($(element)) === false) {
                                 removeDate($(element).attr("id"));
                             }
                         });
@@ -177,14 +167,37 @@
                             });
                         }
 
+                        function isInViewport(element) {
+                            // const elementTop = $(this).offset().top;
+                            // const elementBottom = elementTop + $(this).outerHeight();
+                            //
+                            // const viewportTop = $("#container").scrollTop();
+                            // const viewportBottom = viewportTop + $("#container").height();
+                            //
+                            // return elementBottom > viewportTop && elementTop < viewportBottom;
+
+
+                            if (element.length > 0) {
+                                const header = $('header');
+                                const elementTop = element.offset().top;
+                                const elementBottom = elementTop + element.outerHeight();
+                                const viewportTop = header.outerHeight()-$(window).scrollTop();
+                                const viewportBottom = viewportTop + ($(window).height()-header.outerHeight());
+
+                                return elementBottom > viewportTop && elementTop < viewportBottom;
+                            }
+
+                            return false;
+                        }
+
                         // Scroll
                         document.getElementById("container").addEventListener('scroll', function() {
                             // Removing anything not in viewport
                             setTimeout(function () {
                                 $("section").each(function(index, element) {
                                     console.log("-----");
-                                    console.log(element + " element in viewport: " + Util.isInViewport($()));
-                                    if (Util.isInViewport($(element)) === false) {
+                                    console.log($(element).attr("id")); + " element in viewport: " + isInViewport($()));
+                                    if (isInViewport($(element)) === false) {
                                         const viewportTop = $("#container").scrollTop();
                                         const contentHeight = getDateGalleryHeight($(element).attr("id"));
 
