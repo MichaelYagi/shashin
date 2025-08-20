@@ -163,15 +163,13 @@
                             let retVal = false;
 
                             if (element.length > 0) {
-                                const container = document.getElementById('container');
-                                const rect = element[0].getBoundingClientRect();
-                                const containerRect = container.getBoundingClientRect();
+                                const header = $('header');
+                                const elementTop = element.offset().top;
+                                const elementBottom = elementTop + element.outerHeight();
+                                const viewportTop = header.outerHeight() - $(window).scrollTop();
+                                const viewportBottom = viewportTop + ($(window).height() - header.outerHeight());
 
-                                // Compare against container’s visible area
-                                retVal = (
-                                    rect.bottom > containerRect.top &&
-                                    rect.top < containerRect.bottom
-                                );
+                                retVal = elementBottom > viewportTop && elementTop < viewportBottom;
                             }
 
                             callback(retVal);
