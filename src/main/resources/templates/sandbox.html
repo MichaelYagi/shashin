@@ -219,9 +219,9 @@
                                                 console.log("contentHeight: " + contentHeight);
 
                                                 if (direction === "down") {
-                                                    $("#container").scrollTop = viewportTop - contentHeight;
+                                                    $("#container")[0].scrollTop = viewportTop - contentHeight;
                                                 } else {
-                                                    $("#container").scrollTop = viewportTop + contentHeight; // maintain relative pos
+                                                    $("#container")[0].scrollTop = viewportTop + contentHeight; // maintain relative pos
                                                 }
                                             }
                                         }
