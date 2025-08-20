@@ -163,13 +163,15 @@
                             let retVal = false;
 
                             if (element.length > 0) {
-                                const header = $('header');
-                                const elementTop = element.offset().top;
-                                const elementBottom = elementTop + element.outerHeight();
-                                const viewportTop = header.outerHeight() - $(window).scrollTop();
-                                const viewportBottom = viewportTop + ($(window).height() - header.outerHeight());
+                                const container = document.getElementById('container');
+                                const rect = element[0].getBoundingClientRect();
+                                const containerRect = container.getBoundingClientRect();
 
-                                retVal = elementBottom > viewportTop && elementTop < viewportBottom;
+                                // Compare against container’s visible area
+                                retVal = (
+                                    rect.bottom > containerRect.top &&
+                                    rect.top < containerRect.bottom
+                                );
                             }
 
                             callback(retVal);
@@ -219,9 +221,9 @@
                                                 console.log("contentHeight: " + contentHeight);
 
                                                 if (direction === "down") {
-                                                    $("#container")[0].scrollTop = viewportTop - contentHeight;
+                                                    $("#container").scrollTop = viewportTop - contentHeight;
                                                 } else {
-                                                    $("#container")[0].scrollTop = contentHeight;
+                                                    $("#container").scrollTop = viewportTop + contentHeight; // maintain relative pos
                                                 }
                                             }
                                         }
