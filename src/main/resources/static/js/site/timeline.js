@@ -603,7 +603,7 @@
                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                     $("#container")[0].scrollTop = tempScrollTop - topHeight;
                 } else {
-                    $("#container")[0].scrollTop = topHeight;
+                    $("#container")[0].scrollTop = tempScrollTop + topHeight;
                 }
             }
 
