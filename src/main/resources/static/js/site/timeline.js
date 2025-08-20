@@ -714,14 +714,14 @@
                                 // Render currentDate
                                 // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                                 const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
-                                // if (Util.isMobile() === false) {
-                                shashin.printMessageToConsole("timelineSettings.createEmptyContainer called", {tag: "timeline"});
-                                // Stage 1 - create an empty block
-                                await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
-                                action = "emptyContainer";
-                                // } else {
-                                //     action = "below";
-                                // }
+                                if (Util.isSafari() === false) {
+                                    shashin.printMessageToConsole("timelineSettings.createEmptyContainer called", {tag: "timeline"});
+                                    // Stage 1 - create an empty block
+                                    await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
+                                    action = "emptyContainer";
+                                } else {
+                                    action = "below";
+                                }
 
                                 // Stage 2 - network call to create image placeholders and UI skeleton for month
                                 const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
