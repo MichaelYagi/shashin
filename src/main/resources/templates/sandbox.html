@@ -131,7 +131,7 @@
                             direction = event.deltaY > 0 ? 'down' : 'up';
                         });
 
-                        function createSection(year, month, day, attachDate, aboveBelow) {
+                        function createSection(year, month, day, attachDate) {
                             db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
                                 let html = "<section class='dateSection' id='"+year+"-"+month+"-"+day+"'>" +
                                     "<p><strong>"+year+"-"+month+"-"+day+"</strong></p>" +
@@ -152,7 +152,7 @@
 
                                 const viewportTop = $("#container").scrollTop();
 
-                                if (aboveBelow === "above") {
+                                if (direction === "up") {
                                     $("#"+attachDate).before(htmlContent);
                                 } else {
                                     htmlContent.insertAfter($("#append"+attachDate));
@@ -161,8 +161,13 @@
                                 // TODO: Create - look in timeline - needed for all browsers
                                 if (Util.isSafari()) {
                                     const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
-                                    
-                                    if (aboveBelow === "above") {
+
+                                    console.log("created date: " + year+"-"+month+"-"+day);
+                                    console.log("direction: " + direction);
+                                    console.log("viewportTop: " + viewportTop);
+                                    console.log("contentHeight: " + contentHeight);
+
+                                    if (direction === "up") {
                                         $("#container")[0].scrollTop = contentHeight;
                                     } else {
                                         $("#container")[0].scrollTop = viewportTop
@@ -184,6 +189,11 @@
 
                                         // TODO: Removal - Needed for Safari
                                         if (Util.isSafari()) {
+                                            console.log("removed date: " + $(element).attr("id"));
+                                            console.log("direction: " + direction);
+                                            console.log("viewportTop: " + viewportTop);
+                                            console.log("contentHeight: " + contentHeight);
+
                                             if (direction === "down") {
                                                 $("#container")[0].scrollTop = viewportTop - contentHeight;
                                             } else {
@@ -203,10 +213,10 @@
                             // View top 0 add more to the top
                             if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
                                 const prevDate = timelineDatesData[timelineDatesHash[firstDate]-1];
-                                createSection(prevDate.year, prevDate.month, prevDate.day, firstDate, "above");
+                                createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
                             } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
                                 const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
-                                createSection(nextDate.year, nextDate.month, nextDate.day, lastDate, "below");
+                                createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
                             }
                         }, { passive: true });
 
