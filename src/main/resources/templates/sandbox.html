@@ -76,13 +76,6 @@
                         // console.log(timelineDatesData);
                         // console.log(timelineDatesHash);
 
-                        function scrollToElementSmoothly(id) {
-                            const el = document.getElementById(id);
-                            if (el) {
-                                el.scrollTo(0, 0);
-                            }
-                        }
-
                         // Functions to imitate timeline
                         $("#doit").on("click", function (e) {
                             e.preventDefault();
@@ -107,9 +100,11 @@
                         }
 
                         $("section").each(function(index, element) {
-                            if (isInViewport($(element)) === false) {
-                                removeDate($(element).attr("id"));
-                            }
+                            isInViewport($(element), function (inViewport) {
+                                if (inViewport === false) {
+                                    removeDate($(element).attr("id"));
+                                }
+                            });
                         });
 
                         const calculateDistanceToFooter = function() {
@@ -167,27 +162,31 @@
                             });
                         }
 
-                        function isInViewport(element) {
-                            const elementTop = element.offset().top;
-                            const elementBottom = elementTop + element.outerHeight();
+                        function isInViewport(element, callback) {
+                            if (Util.isSafari()) {
+                                const el = element[0];
+                                const observer = new window.IntersectionObserver(([entry]) => {
+                                    callback(entry.isIntersecting);
+                                }, {
+                                    root: null,
+                                    threshold: 0.0, // set offset 0.1 means trigger if at least 10% of element in viewport
+                                })
 
-                            const viewportTop = $("#container").scrollTop();
-                            const viewportBottom = viewportTop + $("#container").height();
+                                observer.observe(el);
+                            } else {
+                                let retVal = false;
+                                if (element.length > 0) {
+                                    const header = $('header');
+                                    const elementTop = element.offset().top;
+                                    const elementBottom = elementTop + element.outerHeight();
+                                    const viewportTop = header.outerHeight()-$(window).scrollTop();
+                                    const viewportBottom = viewportTop + ($(window).height()-header.outerHeight());
 
-                            return elementBottom > viewportTop && elementTop < viewportBottom;
+                                    retVal = elementBottom > viewportTop && elementTop < viewportBottom;
+                                }
 
-
-                            // if (element.length > 0) {
-                            //     const header = $('header');
-                            //     const elementTop = element.offset().top;
-                            //     const elementBottom = elementTop + element.outerHeight();
-                            //     const viewportTop = header.outerHeight()-$(window).scrollTop();
-                            //     const viewportBottom = viewportTop + ($(window).height()-header.outerHeight());
-                            //
-                            //     return elementBottom > viewportTop && elementTop < viewportBottom;
-                            // }
-                            //
-                            // return false;
+                                callback(retVal);
+                            }
                         }
 
                         // Scroll
@@ -195,29 +194,32 @@
                             // Removing anything not in viewport
                             setTimeout(function () {
                                 $("section").each(function(index, element) {
-                                    console.log("-----");
-                                    console.log($(element).attr("id") + " element in viewport: " + isInViewport($(element)));
-                                    if (isInViewport($(element)) === false) {
-                                        const viewportTop = $("#container").scrollTop();
-                                        const contentHeight = getDateGalleryHeight($(element).attr("id"));
+                                    isInViewport($(element), function (inViewport) {
+                                        console.log("-----");
+                                        console.log($(element).attr("id") + " element in viewport: " + inViewport);
 
-                                        removeDate($(element).attr("id"));
+                                        if (inViewport === false) {
+                                            const viewportTop = $("#container").scrollTop();
+                                            const contentHeight = getDateGalleryHeight($(element).attr("id"));
 
-                                        // TODO: Removal - Needed for Safari
-                                        if (Util.isSafari()) {
-                                            console.log("----------");
-                                            console.log("removed date: " + $(element).attr("id"));
-                                            console.log("direction: " + direction);
-                                            console.log("viewportTop: " + viewportTop);
-                                            console.log("contentHeight: " + contentHeight);
+                                            removeDate($(element).attr("id"));
 
-                                            if (direction === "down") {
-                                                $("#container")[0].scrollTop = viewportTop - contentHeight;
-                                            } else {
-                                                $("#container")[0].scrollTop = contentHeight;
+                                            // TODO: Removal - Needed for Safari
+                                            if (Util.isSafari()) {
+                                                console.log("----------");
+                                                console.log("removed date: " + $(element).attr("id"));
+                                                console.log("direction: " + direction);
+                                                console.log("viewportTop: " + viewportTop);
+                                                console.log("contentHeight: " + contentHeight);
+
+                                                if (direction === "down") {
+                                                    $("#container")[0].scrollTop = viewportTop - contentHeight;
+                                                } else {
+                                                    $("#container")[0].scrollTop = contentHeight;
+                                                }
                                             }
                                         }
-                                    }
+                                    })
                                 });
                             }, 0);
 
