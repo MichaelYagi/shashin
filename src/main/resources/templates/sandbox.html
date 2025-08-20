@@ -177,57 +177,61 @@
 
                         // Scroll
                         document.getElementById("container").addEventListener('scroll', function() {
-                            const viewportTop = $("#container").scrollTop();
-                            const firstEl = $("section")[0];
-                            const firstDate = $(firstEl).attr("id");
-                            const lastEl = $("section")[$("section").length - 1];
-                            const lastDate = $(lastEl).attr("id");
+                            requestAnimationFrame(() => {
+                                const viewportTop = $("#container").scrollTop();
+                                const firstEl = $("section")[0];
+                                const firstDate = $(firstEl).attr("id");
+                                const lastEl = $("section")[$("section").length - 1];
+                                const lastDate = $(lastEl).attr("id");
 
-                            // View top 0 add more to the top
-                            console.log(direction);
-                            console.log(viewportTop);
-                            console.log(offset);
-                            if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
-                                const prevDate = timelineDatesData[timelineDatesHash[firstDate]-1];
-                                console.log("testzzz")
-                                console.log(prevDate)
-                                createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
-                            } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
-                                const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
-                                createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
-                            }
+                                // View top 0 add more to the top
+                                console.log(direction);
+                                console.log(viewportTop);
+                                console.log(offset);
+                                if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
+                                    const prevDate = timelineDatesData[timelineDatesHash[firstDate]-1];
+                                    console.log("testzzz")
+                                    console.log(prevDate)
+                                    createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
+                                } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
+                                    const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
+                                    createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
+                                }
 
-                            // Removing anything not in viewport
-                            setTimeout(function () {
-                                $("section").each(function(index, element) {
-                                    isInViewport($(element), function (inViewport) {
-                                        console.log("-----");
-                                        console.log($(element).attr("id") + " element in viewport: " + inViewport);
+                                // Removing anything not in viewport
+                                setTimeout(function () {
+                                    $("section").each(function(index, element) {
+                                        isInViewport($(element), function (inViewport) {
+                                            console.log("-----");
+                                            console.log($(element).attr("id") + " element in viewport: " + inViewport);
 
-                                        if (inViewport === false) {
-                                            const viewportTop = $("#container").scrollTop();
-                                            const contentHeight = getDateGalleryHeight($(element).attr("id"));
+                                            if (inViewport === false) {
+                                                const viewportTop = $("#container").scrollTop();
+                                                const contentHeight = getDateGalleryHeight($(element).attr("id"));
 
-                                            removeDate($(element).attr("id"));
+                                                removeDate($(element).attr("id"));
 
-                                            // TODO: Removal - Needed for Safari
-                                            if (Util.isSafari()) {
-                                                console.log("----------");
-                                                console.log("removed date: " + $(element).attr("id"));
-                                                console.log("direction: " + direction);
-                                                console.log("viewportTop: " + viewportTop);
-                                                console.log("contentHeight: " + contentHeight);
+                                                // TODO: Removal - Needed for Safari
+                                                if (Util.isSafari()) {
+                                                    console.log("----------");
+                                                    console.log("removed date: " + $(element).attr("id"));
+                                                    console.log("direction: " + direction);
+                                                    console.log("viewportTop: " + viewportTop);
+                                                    console.log("contentHeight: " + contentHeight);
 
-                                                if (direction === "down") {
-                                                    $("#container")[0].scrollTop = viewportTop - contentHeight;
-                                                } else {
-                                                    $("#container")[0].scrollTop = viewportTop + contentHeight; // maintain relative pos
+                                                    requestAnimationFrame(() => {
+                                                        if (direction === "down") {
+                                                            $("#container")[0].scrollTop = viewportTop - contentHeight;
+                                                        } else {
+                                                            $("#container")[0].scrollTop = viewportTop + contentHeight; // maintain relative pos
+                                                        }
+                                                    });
                                                 }
                                             }
-                                        }
-                                    })
-                                });
-                            }, 0);
+                                        })
+                                    });
+                                }, 0);
+                            });
                         }, { passive: true });
 
                         // Scroll stop
