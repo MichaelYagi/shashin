@@ -697,63 +697,64 @@
                     shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
 
                     if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && timelineSettings.closeToFooter() === true) {
-                        if (timelineSettings.currentScrollDirection ===
-                            timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
-                            const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
+                        if (Util.isSafari() === false) {
+                            if (timelineSettings.currentScrollDirection ===
+                                timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                                const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
-                            let sectionHeight = 0;
+                                let sectionHeight = 0;
 
-                            if (numberOfPhotos !== null && numberOfPhotos > 0) {
-                                // sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
-                                sectionHeight = 11705;
-                            }
-
-                            let action = "below";
-
-                            // Render currentDate
-                            // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
-                            const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
-                            // if (Util.isMobile() === false) {
-                            shashin.printMessageToConsole("timelineSettings.createEmptyContainer called",{tag:"timeline"});
-                            // Stage 1 - create an empty block
-                            await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
-                            action = "emptyContainer";
-                            // } else {
-                            //     action = "below";
-                            // }
-
-                            // Stage 2 - network call to create image placeholders and UI skeleton for month
-                            const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
-
-                            // Stage 3 - network call to embed the image URL and complete the process
-                            if (timelineSettings.initialized === false) {
-                                if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                                    await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                                    timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
-                                }
-                            } else {
-                                // 1 sec delay for smoother scrolling
-                                let toValue = 1000;
-                                if (timelineSettings.dbOperationComplete === true) {
-                                    toValue = 0;
+                                if (numberOfPhotos !== null && numberOfPhotos > 0) {
+                                    // sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
+                                    sectionHeight = 11705;
                                 }
 
-                                setTimeout(async() => {
+                                let action = "below";
+
+                                // Render currentDate
+                                // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
+                                const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+                                // if (Util.isMobile() === false) {
+                                shashin.printMessageToConsole("timelineSettings.createEmptyContainer called", {tag: "timeline"});
+                                // Stage 1 - create an empty block
+                                await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
+                                action = "emptyContainer";
+                                // } else {
+                                //     action = "below";
+                                // }
+
+                                // Stage 2 - network call to create image placeholders and UI skeleton for month
+                                const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
+
+                                // Stage 3 - network call to embed the image URL and complete the process
+                                if (timelineSettings.initialized === false) {
                                     if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                                         await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                                         timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
                                     }
-                                }, toValue);
+                                } else {
+                                    // 1 sec delay for smoother scrolling
+                                    let toValue = 1000;
+                                    if (timelineSettings.dbOperationComplete === true) {
+                                        toValue = 0;
+                                    }
+
+                                    setTimeout(async () => {
+                                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                                            await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                                            timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
+                                        }
+                                    }, toValue);
+                                }
+
+                                timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
+
+                                // Break if footer not in viewport
+                                if (timelineSettings.closeToFooter() === false) {
+                                    currentDate = prevDate;
+                                    break;
+                                }
                             }
-
-                            timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
-
-                            // Break if footer not in viewport
-                            if (timelineSettings.closeToFooter() === false) {
-                                currentDate = prevDate;
-                                break;
-                            }
-
                         }
 
                         if (prevDate !== lastDate) {
