@@ -182,6 +182,8 @@
                             // Removing anything not in viewport
                             setTimeout(function () {
                                 $("section").each(function(index, element) {
+                                    console.log("-----");
+                                    console.log(element + " element in viewport: " + Util.isInViewport($()));
                                     if (Util.isInViewport($(element)) === false) {
                                         const viewportTop = $("#container").scrollTop();
                                         const contentHeight = getDateGalleryHeight($(element).attr("id"));
