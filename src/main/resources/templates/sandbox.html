@@ -211,16 +211,18 @@
                                             removeDate($(element).attr("id"));
 
                                             // TODO: Removal - Needed for Safari
-                                            console.log("----------");
-                                            console.log("removed date: " + $(element).attr("id"));
-                                            console.log("direction: " + direction);
-                                            console.log("viewportTop: " + viewportTop);
-                                            console.log("contentHeight: " + contentHeight);
+                                            if (Util.isSafari()) {
+                                                console.log("----------");
+                                                console.log("removed date: " + $(element).attr("id"));
+                                                console.log("direction: " + direction);
+                                                console.log("viewportTop: " + viewportTop);
+                                                console.log("contentHeight: " + contentHeight);
 
-                                            if (direction === "down") {
-                                                $("#container")[0].scrollTop = viewportTop - contentHeight;
-                                            } else {
-                                                $("#container")[0].scrollTop = contentHeight;
+                                                if (direction === "down") {
+                                                    $("#container")[0].scrollTop = viewportTop - contentHeight;
+                                                } else {
+                                                    $("#container")[0].scrollTop = contentHeight;
+                                                }
                                             }
                                         }
                                     })
