@@ -48,6 +48,10 @@
 <script type="text/javascript">
     $(document).ready(function() {
         const offset = 30;
+        let direction = "down";
+        const calculateDistanceToFooter = function() {
+            return $(window).height() - $('footer').offset().top - offset - 1;
+        };
         let http = new Http("timeline");
 
         http.ajax("get", "/sandbox/data").then(function (data) {
@@ -107,11 +111,6 @@
                             });
                         });
 
-                        const calculateDistanceToFooter = function() {
-                            return $(window).height() - $('footer').offset().top - offset - 1;
-                        };
-
-                        let direction = "down";
                         document.body.addEventListener('wheel', function (event) {
                             direction = event.deltaY > 0 ? 'down' : 'up';
                         });
@@ -144,53 +143,60 @@
                                 }
 
                                 // TODO: Create - look in timeline - needed for all browsers
-                                if (Util.isSafari()) {
-                                    const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
+                                const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
 
-                                    console.log("====================");
-                                    console.log("created date: " + year+"-"+month+"-"+day);
-                                    console.log("direction: " + direction);
-                                    console.log("viewportTop: " + viewportTop);
-                                    console.log("contentHeight: " + contentHeight);
+                                console.log("====================");
+                                console.log("created date: " + year+"-"+month+"-"+day);
+                                console.log("direction: " + direction);
+                                console.log("viewportTop: " + viewportTop);
+                                console.log("contentHeight: " + contentHeight);
 
-                                    if (direction === "up") {
-                                        $("#container")[0].scrollTop = contentHeight;
-                                    } else {
-                                        $("#container")[0].scrollTop = viewportTop
-                                    }
+                                if (direction === "up") {
+                                    $("#container")[0].scrollTop = contentHeight;
+                                } else {
+                                    $("#container")[0].scrollTop = viewportTop
                                 }
                             });
                         }
 
                         function isInViewport(element, callback) {
-                            if (Util.isSafari()) {
-                                const el = element[0];
-                                const observer = new window.IntersectionObserver(([entry]) => {
-                                    callback(entry.isIntersecting);
-                                }, {
-                                    root: null,
-                                    threshold: 0.0, // set offset 0.1 means trigger if at least 10% of element in viewport
-                                })
+                            let retVal = false;
 
-                                observer.observe(el);
-                            } else {
-                                let retVal = false;
-                                if (element.length > 0) {
-                                    const header = $('header');
-                                    const elementTop = element.offset().top;
-                                    const elementBottom = elementTop + element.outerHeight();
-                                    const viewportTop = header.outerHeight()-$(window).scrollTop();
-                                    const viewportBottom = viewportTop + ($(window).height()-header.outerHeight());
+                            if (element.length > 0) {
+                                const header = $('header');
+                                const elementTop = element.offset().top;
+                                const elementBottom = elementTop + element.outerHeight();
+                                const viewportTop = header.outerHeight() - $(window).scrollTop();
+                                const viewportBottom = viewportTop + ($(window).height() - header.outerHeight());
 
-                                    retVal = elementBottom > viewportTop && elementTop < viewportBottom;
-                                }
-
-                                callback(retVal);
+                                retVal = elementBottom > viewportTop && elementTop < viewportBottom;
                             }
+
+                            callback(retVal);
                         }
 
                         // Scroll
                         document.getElementById("container").addEventListener('scroll', function() {
+                            const viewportTop = $("#container").scrollTop();
+                            const firstEl = $("section")[0];
+                            const firstDate = $(firstEl).attr("id");
+                            const lastEl = $("section")[$("section").length - 1];
+                            const lastDate = $(lastEl).attr("id");
+
+                            // View top 0 add more to the top
+                            console.log(direction);
+                            console.log(viewportTop);
+                            console.log(offset);
+                            if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
+                                const prevDate = timelineDatesData[timelineDatesHash[firstDate]-1];
+                                console.log("testzzz")
+                                console.log(prevDate)
+                                createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
+                            } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
+                                const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
+                                createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
+                            }
+
                             // Removing anything not in viewport
                             setTimeout(function () {
                                 $("section").each(function(index, element) {
@@ -222,21 +228,6 @@
                                     })
                                 });
                             }, 0);
-
-                            const viewportTop = $("#container").scrollTop();
-                            const firstEl = $("section")[0];
-                            const firstDate = $(firstEl).attr("id");
-                            const lastEl = $("section")[$("section").length - 1];
-                            const lastDate = $(lastEl).attr("id");
-
-                            // View top 0 add more to the top
-                            if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate]-1 > -1) {
-                                const prevDate = timelineDatesData[timelineDatesHash[firstDate]-1];
-                                createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
-                            } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate]+1 <= timelineDatesHashCount) {
-                                const nextDate = timelineDatesData[timelineDatesHash[lastDate]+1];
-                                createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
-                            }
                         }, { passive: true });
 
                         // Scroll stop
