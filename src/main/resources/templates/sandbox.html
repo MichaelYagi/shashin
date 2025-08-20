@@ -162,6 +162,7 @@
                                 if (Util.isSafari()) {
                                     const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
 
+                                    console.log("====================");
                                     console.log("created date: " + year+"-"+month+"-"+day);
                                     console.log("direction: " + direction);
                                     console.log("viewportTop: " + viewportTop);
@@ -189,6 +190,7 @@
 
                                         // TODO: Removal - Needed for Safari
                                         if (Util.isSafari()) {
+                                            console.log("----------");
                                             console.log("removed date: " + $(element).attr("id"));
                                             console.log("direction: " + direction);
                                             console.log("viewportTop: " + viewportTop);
