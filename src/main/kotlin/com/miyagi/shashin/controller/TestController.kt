@@ -167,16 +167,16 @@ class TestController {
 
     @Secured("ROLE_SUPER")
     @GetMapping("/sandbox")
-    fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+    fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse, @RequestParam size: Optional<Int>): String {
         model["activePage"] = "sandbox"
         model["metadataList"] = mutableListOf<Metadata>()
 
-        val size = 500
+        val sizeValue = size.orElse(500)
         val page = 0
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            model["metadataList"] = metadataRepository.findAllByOffsetAndLimit((page * size), size)
+            model["metadataList"] = metadataRepository.findAllByOffsetAndLimit((page * sizeValue), sizeValue)
         }
 
         return "sandbox"
