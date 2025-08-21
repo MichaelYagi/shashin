@@ -187,6 +187,11 @@
                         document.getElementById("container").addEventListener('scroll', function() {
                             if (scrollTimeout) clearTimeout(scrollTimeout);
 
+                            let timeoutVal = 0;
+                            if (Util.isSafari()) {
+                                timeoutVal = 100;
+                            }
+
                             scrollTimeout = setTimeout(() => {
                                 requestAnimationFrame(() => {
                                     const viewportTop = $("#container").scrollTop();
@@ -253,7 +258,7 @@
                                         });
                                     }, 0);
                                 });
-                            }, 100); // Delay to allow scroll momentum to settle
+                            }, timeoutVal); // Delay to allow scroll momentum to settle
                         }, { passive: true });
 
                         // Scroll stop
