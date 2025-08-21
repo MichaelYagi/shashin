@@ -126,21 +126,24 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    fun findAllYearMonthDay(): MutableIterable<MetadataDate>?
 
    @Query("WITH date_counts AS (\n" +
-           "    SELECT year, month, day, COUNT(*) AS result_count\n" +
-           "    FROM metadata\n" +
-           "    WHERE hidden = 0\n" +
-           "    GROUP BY year, month, day\n" +
-           "    ORDER BY year DESC, month DESC, day DESC\n" +
+           "  SELECT\n" +
+           "    year,\n" +
+           "    month,\n" +
+           "    day,\n" +
+           "    COUNT(*) AS result_count\n" +
+           "  FROM metadata\n" +
+           "  WHERE hidden = 0\n" +
+           "  GROUP BY year, month, day\n" +
+           "  ORDER BY year DESC, month DESC, day DESC\n" +
+           "),\n" +
+           "running_total AS (\n" +
+           "  SELECT *,\n" +
+           "         SUM(result_count) OVER (ORDER BY year DESC, month DESC, day DESC) AS cumulative_total\n" +
+           "  FROM date_counts\n" +
            ")\n" +
-           "SELECT dc.year, dc.month, dc.day\n" +
-           "FROM date_counts dc\n" +
-           "WHERE (\n" +
-           "          SELECT SUM(result_count)\n" +
-           "          FROM date_counts sub\n" +
-           "          WHERE sub.year = dc.year\n" +
-           "             OR (sub.year = dc.year AND sub.month = dc.month)\n" +
-           "             OR (sub.year = dc.year AND sub.month = dc.month AND sub.day = dc.day)\n" +
-           "      ) + dc.result_count <= :limit", nativeQuery = true)
+           "SELECT year, month, day\n" +
+           "FROM running_total\n" +
+           "WHERE cumulative_total <= :limit", nativeQuery = true)
    fun findAllYearMonthDayByOffsetAndLimit(@Param("limit") limit: Int): MutableIterable<MetadataDate>?
 
    @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)

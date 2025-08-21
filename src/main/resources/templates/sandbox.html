@@ -77,8 +77,8 @@
                     dbOperationComplete = true;
                 });
 
-                // console.log(timelineDatesData);
-                // console.log(timelineDatesHash);
+                console.log(timelineDatesData);
+                console.log(timelineDatesHash);
 
                 // Functions to imitate timeline
                 $("#doit").on("click", function (e) {
@@ -205,6 +205,9 @@
                             console.log(direction);
                             console.log(viewportTop);
                             console.log(offset);
+                            console.log(firstDate);
+                            console.log(lastDate);
+                            console.log(timelineDatesHash);
                             addingSection = true;
                             if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
                                 const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
