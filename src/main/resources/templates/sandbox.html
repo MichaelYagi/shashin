@@ -205,6 +205,8 @@
                             console.log(direction);
                             console.log(viewportTop);
                             console.log(offset);
+                            console.log(timelineDatesHash[firstDate]);
+                            console.log(timelineDatesHash[lastDate] - 1);
                             addingSection = true;
                             if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
                                 const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
