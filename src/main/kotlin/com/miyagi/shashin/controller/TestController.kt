@@ -16,6 +16,7 @@ import com.miyagi.shashin.component.DuplicateImageChecker
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.MetadataDate
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
@@ -62,6 +63,7 @@ import kotlin.String
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
+import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
 
@@ -189,6 +191,8 @@ class TestController {
         response["status"] = ApiResponse.SUCCESS.status
         response["activePage"] = "sandbox"
         response["metadataList"] = mutableListOf<Metadata>()
+        response["metadataDates"] = mutableListOf<MetadataDate>()
+        response["metadataDatesHash"] = mutableMapOf<String, Int>()
 
         val size = 500
         val page = 0
@@ -196,6 +200,22 @@ class TestController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             response["metadataList"] = metadataRepository.findAllByOffsetAndLimit((page * size), size)
+
+            val metadataDateHash = mutableMapOf<String, Int>()
+            response["metadataDatesHash"] = metadataDateHash
+
+            val metadataDates = metadataRepository.findAllYearMonthDayByOffsetAndLimit((page * size), size)
+
+            if (metadataDates != null) {
+                response["metadataDates"] = metadataDates
+
+                val dates = metadataDates.toMutableList()
+                for ((index, metadataDate) in dates.withIndex()) {
+                    metadataDateHash[metadataDate.getYear().toString() + "-" + metadataDate.getMonth()
+                        .toString() + "-" + metadataDate.getDay().toString()] = index
+                }
+                response["metadataDatesHash"] = metadataDateHash
+            }
         }
 
         return mapper.writeValueAsString(response)
