@@ -45,8 +45,12 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
+        /*<![CDATA[*/
+        const size = /*[[${size}]]*/ 500;
+        /*]]>*/
+
         const offset = 30;
         let direction = "down";
         let addingSection = false;
@@ -55,7 +59,7 @@
         };
 
         let http = new Http("timeline");
-        http.ajax("get", "/sandbox/data").then(function (data) {
+        http.ajax("get", "/sandbox/data?size="+size).then(function (data) {
             if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataDatesHash")) {
                 const metadataList = data.metadataList;
                 const timelineDatesData = data["metadataDates"];

@@ -169,6 +169,7 @@ class TestController {
     @GetMapping("/sandbox")
     fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse, @RequestParam size: Optional<Int>): String {
         model["activePage"] = "sandbox"
+        model["size"] = size.orElse(500)
         model["metadataList"] = mutableListOf<Metadata>()
 
         val sizeValue = size.orElse(500)
@@ -185,26 +186,27 @@ class TestController {
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/sandbox/data"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun sandboxAPI(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+    fun sandboxAPI(model: Model, request: HttpServletRequest, response: HttpServletResponse, @RequestParam size: Optional<Int>): String {
         val response = mutableMapOf<String, Any?>()
         response["msg"] = ""
         response["status"] = ApiResponse.SUCCESS.status
         response["activePage"] = "sandbox"
+        response["size"] = size.orElse(500)
         response["metadataList"] = mutableListOf<Metadata>()
         response["metadataDates"] = mutableListOf<MetadataDate>()
         response["metadataDatesHash"] = mutableMapOf<String, Int>()
 
-        val size = 500
+        val sizeValue = size.orElse(500)
         val page = 0
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            response["metadataList"] = metadataRepository.findAllByOffsetAndLimit((page * size), size)
+            response["metadataList"] = metadataRepository.findAllByOffsetAndLimit((page * sizeValue), sizeValue)
 
             val metadataDateHash = mutableMapOf<String, Int>()
             response["metadataDatesHash"] = metadataDateHash
 
-            val metadataDates = metadataRepository.findAllYearMonthDayByOffsetAndLimit((page * size), size)
+            val metadataDates = metadataRepository.findAllYearMonthDayByOffsetAndLimit((page * sizeValue), sizeValue)
 
             if (metadataDates != null) {
                 response["metadataDates"] = metadataDates
