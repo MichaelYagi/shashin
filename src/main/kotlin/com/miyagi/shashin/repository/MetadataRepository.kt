@@ -125,6 +125,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC", nativeQuery = true)
    fun findAllYearMonthDay(): MutableIterable<MetadataDate>?
 
+   @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findAllYearMonthDayByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<MetadataDate>?
+
    @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByMediaType(@Param("type") type: String): MutableIterable<MetadataDate>?
 

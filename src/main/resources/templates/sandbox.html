@@ -53,11 +53,14 @@
         const calculateDistanceToFooter = function() {
             return $(window).height() - $('footer').offset().top - offset - 1;
         };
-        let http = new Http("timeline");
 
+        let http = new Http("timeline");
         http.ajax("get", "/sandbox/data").then(function (data) {
-            if (data.hasOwnProperty("metadataList")) {
+            if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataDatesHash")) {
                 const metadataList = data.metadataList;
+                const timelineDatesData = data["metadataDates"];
+                const timelineDatesHash = data["metadataDatesHash"];
+                const timelineDatesHashCount = Object.keys(timelineDatesHash).length;
 
                 // Dexie
                 let dbOperationComplete = false;
@@ -70,203 +73,193 @@
                     dbOperationComplete = true;
                 });
 
-                http = new Http("timeline");
-                http.ajax("get", "/timeline/yearmonthcounts/"+shashin.mediaTypeFilter).then(function (data) {
-                    if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount") && data.hasOwnProperty("metadataDatesHash")) {
-                        const timelineYearMonthCountsData = data["metadataYearMonthCount"];
-                        const timelineDatesData = data["metadataDates"];
-                        const timelineDatesHash = data["metadataDatesHash"];
-                        const timelineDatesHashCount = Object.keys(timelineDatesHash).length;
+                // console.log(timelineDatesData);
+                // console.log(timelineDatesHash);
 
-                        // console.log(timelineDatesData);
-                        // console.log(timelineDatesHash);
+                // Functions to imitate timeline
+                $("#doit").on("click", function (e) {
+                    e.preventDefault();
+                })
 
-                        // Functions to imitate timeline
-                        $("#doit").on("click", function (e) {
-                            e.preventDefault();
-                        })
-
-                        function getDateGalleryHeight(id) {
-                            if ($("#" + id).length === 0) {
-                                return 0;
-                            }
-
-                            return $("#" + id).outerHeight(true);
-                        }
-
-                        function removeDate(date) {
-                            $("#br"+date).remove();
-                            $("#row"+date).remove();
-                            $("#amp_"+date).remove();
-                            $("#tail_"+date).remove();
-                            $("#"+date).remove();
-                            $("#container_"+date).remove();
-                            $("#append"+date).remove();
-                        }
-
-                        $("section").each(function(index, element) {
-                            isInViewport($(element), function (inViewport) {
-                                if (inViewport === false) {
-                                    removeDate($(element).attr("id"));
-                                }
-                            });
-                        });
-
-                        document.body.addEventListener('wheel', function (event) {
-                            direction = event.deltaY > 0 ? 'down' : 'up';
-                        });
-
-                        function createSection(year, month, day, attachDate) {
-                            db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
-                                let html = "<section class='dateSection' id='"+year+"-"+month+"-"+day+"'>" +
-                                    "<p><strong>"+year+"-"+month+"-"+day+"</strong></p>" +
-                                    "<div id='dateBody"+year+"-"+month+"-"+day+"' class='row' style='margin-left: -2px;'>";
-
-                                for (const index in metadataArray) {
-                                    const metadata = metadataArray[index];
-
-                                    html += "<div id='photoThumbnailContainer"+metadata.id+"' class='photo-thumbnail-container photo-thumbnail' style='width:"+metadata.thumbnailSmallWidth+"px;height:"+metadata.thumbnailSmallHeight+"px;padding-left:0;padding-right:0;'>" +
-                                        "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/"+metadata.id+"' class='photo-thumbnail-image' id='image"+metadata.id+"' width='"+metadata.thumbnailSmallWidth+"' th:height='"+metadata.thumbnailSmallHeight+"' style='background-color:lightgray;'>" +
-                                        "</div>"
-                                }
-
-                                html += "</div></section>" +
-                                    "<span class='appendMetadataPhotos' id='append"+year+"-"+month+"-"+day+"' style='width:0;height:0;padding:0'></span>";
-
-                                let htmlContent = $(html);
-
-                                const viewportTop = $("#container").scrollTop();
-
-                                if (direction === "up") {
-                                    $("#"+attachDate).before(htmlContent);
-                                } else {
-                                    htmlContent.insertAfter($("#append"+attachDate));
-                                }
-
-                                // TODO: Create - look in timeline - needed for all browsers
-                                const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
-
-                                console.log("====================");
-                                console.log("created date: " + year+"-"+month+"-"+day);
-                                console.log("direction: " + direction);
-                                console.log("viewportTop: " + viewportTop);
-                                console.log("contentHeight: " + contentHeight);
-
-                                if (direction === "up") {
-                                    $("#container")[0].scrollTop = contentHeight;
-                                } else {
-                                    $("#container")[0].scrollTop = viewportTop
-                                }
-                            });
-                        }
-
-                        function isInViewport(element, callback) {
-                            let retVal = false;
-
-                            if (element.length > 0) {
-                                if (Util.isSafari()) {
-                                    const rect = element[0].getBoundingClientRect();
-                                    const containerRect = container.getBoundingClientRect();
-                                    retVal = rect.bottom > containerRect.top && rect.top < containerRect.bottom;
-                                } else {
-                                    const header = $('header');
-                                    const elementTop = element.offset().top;
-                                    const elementBottom = elementTop + element.outerHeight();
-                                    const viewportTop = header.outerHeight() - $(window).scrollTop();
-                                    const viewportBottom = viewportTop + ($(window).height() - header.outerHeight());
-
-                                    retVal = elementBottom > viewportTop && elementTop < viewportBottom;
-                                }
-                            }
-
-                            callback(retVal);
-                        }
-
-                        // Scroll
-                        let scrollTimeout;
-                        document.getElementById("container").addEventListener('scroll', function() {
-                            if (scrollTimeout) clearTimeout(scrollTimeout);
-
-                            let timeoutVal = 0;
-                            if (Util.isSafari()) {
-                                timeoutVal = 100;
-                            }
-
-                            scrollTimeout = setTimeout(() => {
-                                requestAnimationFrame(() => {
-                                    const viewportTop = $("#container").scrollTop();
-                                    const firstEl = $("section")[0];
-                                    const firstDate = $(firstEl).attr("id");
-                                    const lastEl = $("section")[$("section").length - 1];
-                                    const lastDate = $(lastEl).attr("id");
-
-                                    // View top 0 add more to the top
-                                    console.log(direction);
-                                    console.log(viewportTop);
-                                    console.log(offset);
-                                    addingSection = true;
-                                    if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
-                                        const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
-                                        console.log("testzzz")
-                                        console.log(prevDate)
-                                        createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
-                                    } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate] + 1 <= timelineDatesHashCount) {
-                                        const nextDate = timelineDatesData[timelineDatesHash[lastDate] + 1];
-                                        createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
-                                    }
-                                    addingSection = false;
-
-                                    // Removing anything not in viewport
-                                    setTimeout(function () {
-                                        $("section").each(function (index, element) {
-                                            isInViewport($(element), function (inViewport) {
-                                                console.log("-----");
-                                                console.log($(element).attr("id") + " element in viewport: " + inViewport);
-
-                                                if (inViewport === false && addingSection === false) {
-                                                    const viewportTop = $("#container").scrollTop();
-                                                    const contentHeight = getDateGalleryHeight($(element).attr("id"));
-
-                                                    removeDate($(element).attr("id"));
-
-                                                    // TODO: Removal - Needed for Safari
-                                                    if (Util.isSafari()) {
-                                                        const container = document.getElementById('container');
-
-                                                        // --- Anti-bounce fix ---
-                                                        const maxScroll = container.scrollHeight - container.clientHeight;
-                                                        let newScrollTop = direction === "down"
-                                                            ? viewportTop - contentHeight
-                                                            : viewportTop + contentHeight;
-
-                                                        // Clamp within bounds
-                                                        if (newScrollTop > maxScroll) newScrollTop = maxScroll;
-                                                        if (newScrollTop < 0) newScrollTop = 0;
-
-                                                        // Temporarily disable smooth/momentum scroll
-                                                        container.style.scrollBehavior = 'auto';
-                                                        requestAnimationFrame(() => {
-                                                            container.scrollTop = newScrollTop;
-                                                            // Restore scroll behaviour on the next frame
-                                                            requestAnimationFrame(() => {
-                                                                container.style.scrollBehavior = '';
-                                                            });
-                                                        });
-                                                    }
-                                                }
-                                            })
-                                        });
-                                    }, 0);
-                                });
-                            }, timeoutVal); // Delay to allow scroll momentum to settle
-                        }, { passive: true });
-
-                        // Scroll stop
-                        // document.getElementById("container").addEventListener("scrollend", () => {
-                        //
-                        // });
+                function getDateGalleryHeight(id) {
+                    if ($("#" + id).length === 0) {
+                        return 0;
                     }
+
+                    return $("#" + id).outerHeight(true);
+                }
+
+                function removeDate(date) {
+                    $("#br"+date).remove();
+                    $("#row"+date).remove();
+                    $("#amp_"+date).remove();
+                    $("#tail_"+date).remove();
+                    $("#"+date).remove();
+                    $("#container_"+date).remove();
+                    $("#append"+date).remove();
+                }
+
+                $("section").each(function(index, element) {
+                    isInViewport($(element), function (inViewport) {
+                        if (inViewport === false) {
+                            removeDate($(element).attr("id"));
+                        }
+                    });
                 });
+
+                document.body.addEventListener('wheel', function (event) {
+                    direction = event.deltaY > 0 ? 'down' : 'up';
+                });
+
+                function createSection(year, month, day, attachDate) {
+                    db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
+                        let html = "<section class='dateSection' id='"+year+"-"+month+"-"+day+"'>" +
+                            "<p><strong>"+year+"-"+month+"-"+day+"</strong></p>" +
+                            "<div id='dateBody"+year+"-"+month+"-"+day+"' class='row' style='margin-left: -2px;'>";
+
+                        for (const index in metadataArray) {
+                            const metadata = metadataArray[index];
+
+                            html += "<div id='photoThumbnailContainer"+metadata.id+"' class='photo-thumbnail-container photo-thumbnail' style='width:"+metadata.thumbnailSmallWidth+"px;height:"+metadata.thumbnailSmallHeight+"px;padding-left:0;padding-right:0;'>" +
+                                "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/"+metadata.id+"' class='photo-thumbnail-image' id='image"+metadata.id+"' width='"+metadata.thumbnailSmallWidth+"' th:height='"+metadata.thumbnailSmallHeight+"' style='background-color:lightgray;'>" +
+                                "</div>"
+                        }
+
+                        html += "</div></section>" +
+                            "<span class='appendMetadataPhotos' id='append"+year+"-"+month+"-"+day+"' style='width:0;height:0;padding:0'></span>";
+
+                        let htmlContent = $(html);
+
+                        const viewportTop = $("#container").scrollTop();
+
+                        if (direction === "up") {
+                            $("#"+attachDate).before(htmlContent);
+                        } else {
+                            htmlContent.insertAfter($("#append"+attachDate));
+                        }
+
+                        // TODO: Create - look in timeline - needed for all browsers
+                        const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
+
+                        console.log("====================");
+                        console.log("created date: " + year+"-"+month+"-"+day);
+                        console.log("direction: " + direction);
+                        console.log("viewportTop: " + viewportTop);
+                        console.log("contentHeight: " + contentHeight);
+
+                        if (direction === "up") {
+                            $("#container")[0].scrollTop = contentHeight;
+                        } else {
+                            $("#container")[0].scrollTop = viewportTop
+                        }
+                    });
+                }
+
+                function isInViewport(element, callback) {
+                    let retVal = false;
+
+                    if (element.length > 0) {
+                        if (Util.isSafari()) {
+                            const rect = element[0].getBoundingClientRect();
+                            const containerRect = container.getBoundingClientRect();
+                            retVal = rect.bottom > containerRect.top && rect.top < containerRect.bottom;
+                        } else {
+                            const header = $('header');
+                            const elementTop = element.offset().top;
+                            const elementBottom = elementTop + element.outerHeight();
+                            const viewportTop = header.outerHeight() - $(window).scrollTop();
+                            const viewportBottom = viewportTop + ($(window).height() - header.outerHeight());
+
+                            retVal = elementBottom > viewportTop && elementTop < viewportBottom;
+                        }
+                    }
+
+                    callback(retVal);
+                }
+
+                // Scroll
+                let scrollTimeout;
+                document.getElementById("container").addEventListener('scroll', function() {
+                    if (scrollTimeout) clearTimeout(scrollTimeout);
+
+                    let timeoutVal = 0;
+                    if (Util.isSafari()) {
+                        timeoutVal = 100;
+                    }
+
+                    scrollTimeout = setTimeout(() => {
+                        requestAnimationFrame(() => {
+                            const viewportTop = $("#container").scrollTop();
+                            const firstEl = $("section")[0];
+                            const firstDate = $(firstEl).attr("id");
+                            const lastEl = $("section")[$("section").length - 1];
+                            const lastDate = $(lastEl).attr("id");
+
+                            // View top 0 add more to the top
+                            console.log(direction);
+                            console.log(viewportTop);
+                            console.log(offset);
+                            addingSection = true;
+                            if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
+                                const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
+                                console.log("testzzz")
+                                console.log(prevDate)
+                                createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
+                            } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate] + 1 <= timelineDatesHashCount) {
+                                const nextDate = timelineDatesData[timelineDatesHash[lastDate] + 1];
+                                createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
+                            }
+                            addingSection = false;
+
+                            // Removing anything not in viewport
+                            setTimeout(function () {
+                                $("section").each(function (index, element) {
+                                    isInViewport($(element), function (inViewport) {
+                                        console.log("-----");
+                                        console.log($(element).attr("id") + " element in viewport: " + inViewport);
+
+                                        if (inViewport === false && addingSection === false) {
+                                            const viewportTop = $("#container").scrollTop();
+                                            const contentHeight = getDateGalleryHeight($(element).attr("id"));
+
+                                            removeDate($(element).attr("id"));
+
+                                            // TODO: Removal - Needed for Safari
+                                            if (Util.isSafari()) {
+                                                const container = document.getElementById('container');
+
+                                                // --- Anti-bounce fix ---
+                                                const maxScroll = container.scrollHeight - container.clientHeight;
+                                                let newScrollTop = direction === "down"
+                                                    ? viewportTop - contentHeight
+                                                    : viewportTop + contentHeight;
+
+                                                // Clamp within bounds
+                                                if (newScrollTop > maxScroll) newScrollTop = maxScroll;
+                                                if (newScrollTop < 0) newScrollTop = 0;
+
+                                                // Temporarily disable smooth/momentum scroll
+                                                container.style.scrollBehavior = 'auto';
+                                                requestAnimationFrame(() => {
+                                                    container.scrollTop = newScrollTop;
+                                                    // Restore scroll behaviour on the next frame
+                                                    requestAnimationFrame(() => {
+                                                        container.style.scrollBehavior = '';
+                                                    });
+                                                });
+                                            }
+                                        }
+                                    })
+                                });
+                            }, 0);
+                        });
+                    }, timeoutVal); // Delay to allow scroll momentum to settle
+                }, { passive: true });
+
+                // Scroll stop
+                // document.getElementById("container").addEventListener("scrollend", () => {
+                //
+                // });
             }
         });
     });
