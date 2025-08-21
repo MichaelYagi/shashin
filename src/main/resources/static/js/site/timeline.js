@@ -570,7 +570,6 @@
                         Util.isInViewport($("#container_" + section[index + 1].id)) === false &&
                         Util.isInViewport($("#amp_" + section[index + 1].id)) === false
                     ) {
-                        topHeight += Util.getDateGalleryHeight(element.id);
                         Util.removeDateGallery(element.id);
                         sectionArray.pop();
                     }
@@ -600,11 +599,7 @@
                     scrollToElementSmoothly(lastVisibleContainer.id);
                 }
             } else if (Util.isSafari() && topHeight > 0) {
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                    $("#container")[0].scrollTop = tempScrollTop - topHeight;
-                } else {
-                    $("#container")[0].scrollTop = tempScrollTop + topHeight;
-                }
+                $('#container').scrollTop(tempScrollTop - topHeight);
             }
 
             section.visible();
@@ -697,64 +692,63 @@
                     shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
 
                     if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && timelineSettings.closeToFooter() === true) {
-                        if (Util.isSafari() === false) {
-                            if (timelineSettings.currentScrollDirection ===
-                                timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
-                                const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
+                        if (timelineSettings.currentScrollDirection ===
+                            timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                            const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
-                                let sectionHeight = 0;
+                            let sectionHeight = 0;
 
-                                if (numberOfPhotos !== null && numberOfPhotos > 0) {
-                                    // sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
-                                    sectionHeight = 11705;
+                            if (numberOfPhotos !== null && numberOfPhotos > 0) {
+                                // sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
+                                sectionHeight = 11705;
+                            }
+
+                            let action = "below";
+
+                            // Render currentDate
+                            // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
+                            const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+                            // if (Util.isMobile() === false) {
+                            shashin.printMessageToConsole("timelineSettings.createEmptyContainer called",{tag:"timeline"});
+                            // Stage 1 - create an empty block
+                            await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
+                            action = "emptyContainer";
+                            // } else {
+                            //     action = "below";
+                            // }
+
+                            // Stage 2 - network call to create image placeholders and UI skeleton for month
+                            const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
+
+                            // Stage 3 - network call to embed the image URL and complete the process
+                            if (timelineSettings.initialized === false) {
+                                if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                                    await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                                    timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
+                                }
+                            } else {
+                                // 1 sec delay for smoother scrolling
+                                let toValue = 1000;
+                                if (timelineSettings.dbOperationComplete === true) {
+                                    toValue = 0;
                                 }
 
-                                let action = "below";
-
-                                // Render currentDate
-                                // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
-                                const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
-                                if (Util.isSafari() === false) {
-                                    shashin.printMessageToConsole("timelineSettings.createEmptyContainer called", {tag: "timeline"});
-                                    // Stage 1 - create an empty block
-                                    await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
-                                    action = "emptyContainer";
-                                } else {
-                                    action = "below";
-                                }
-
-                                // Stage 2 - network call to create image placeholders and UI skeleton for month
-                                const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
-
-                                // Stage 3 - network call to embed the image URL and complete the process
-                                if (timelineSettings.initialized === false) {
+                                setTimeout(async() => {
                                     if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                                         await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                                         timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
                                     }
-                                } else {
-                                    // 1 sec delay for smoother scrolling
-                                    let toValue = 1000;
-                                    if (timelineSettings.dbOperationComplete === true) {
-                                        toValue = 0;
-                                    }
-
-                                    setTimeout(async () => {
-                                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                                            await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                                            timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
-                                        }
-                                    }, toValue);
-                                }
-
-                                timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
-
-                                // Break if footer not in viewport
-                                if (timelineSettings.closeToFooter() === false) {
-                                    currentDate = prevDate;
-                                    break;
-                                }
+                                }, toValue);
                             }
+
+                            timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
+
+                            // Break if footer not in viewport
+                            if (timelineSettings.closeToFooter() === false) {
+                                currentDate = prevDate;
+                                break;
+                            }
+
                         }
 
                         if (prevDate !== lastDate) {
@@ -1546,14 +1540,22 @@
             setTimeout(function () {
                 if (action === "above") {
                     // Find anchor element in viewport
+                    const anchorElement = $(".scrollspy:visible").first()[0];
+
                     htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
                         // deferred.resolve(timelineSettings.success);
                         ret = timelineSettings.success;
-                        if ((!(Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) &&
-                            timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up
-                        ) {
-                            $("#container")[0].scrollTop = Util.getDateGalleryHeight(date);
-                            $("#infinite-scroll-gallery").visible();
+                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                            if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
+                                //$("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                // Scroll back to anchor element
+                                requestAnimationFrame(() => {
+                                    if (anchorElement) {
+                                        anchorElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+                                    }
+                                });
+                                $("#infinite-scroll-gallery").visible();
+                            }
                         }
                     });
                 } else if (action === "emptyContainer") {
@@ -1562,9 +1564,11 @@
                     $('<span class="attachMetadataPhotos" id="amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" style="visibility: hidden"></span>').insertAfter($("#container_"+date));
                 } else if (action === "new") {
                     $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                            $("#container")[0].scrollTop = Util.getDateGalleryHeight(date);
-                            $("#infinite-scroll-gallery").visible();
+                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                            if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
+                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                $("#infinite-scroll-gallery").visible();
+                            }
                         }
                         // deferred.resolve(timelineSettings.success);
                         ret = timelineSettings.success;
@@ -1573,19 +1577,22 @@
                     if (attachToId == null) {
                         if ($(".attachMetadataPhotos").length > 0) {
                             htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                                    $("#container")[0].scrollTop = tempScrollTop;
-                                    $("#infinite-scroll-gallery").visible();
+                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                    if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
+                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                        $("#infinite-scroll-gallery").visible();
+                                    }
                                 }
                                 // deferred.resolve(timelineSettings.success);
                                 ret = timelineSettings.success;
                             });
                         } else {
                             $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                                    //$("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                    $("#container")[0].scrollTop = Util.getDateGalleryHeight(date);
-                                    $("#infinite-scroll-gallery").visible();
+                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                    if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
+                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                        $("#infinite-scroll-gallery").visible();
+                                    }
                                 }
                                 // deferred.resolve(timelineSettings.success);
                                 ret = timelineSettings.success;
@@ -1593,11 +1600,12 @@
                         }
                     } else {
                         htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
-                            if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                                $("#container")[0].scrollTop = tempScrollTop;
-                                $("#infinite-scroll-gallery").visible();
+                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
+                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                    $("#infinite-scroll-gallery").visible();
+                                }
                             }
-
                             // deferred.resolve(timelineSettings.success);
                             ret = timelineSettings.success;
                         });
