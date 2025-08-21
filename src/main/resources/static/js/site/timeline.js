@@ -140,21 +140,21 @@
                 const firstWithoutTail = firstElement.indexOf("tail_") > -1 ? firstElement.split("tail_")[1] : firstElement;
                 const prevLastWithoutTail = (prevElements !== null && prevLastElement.indexOf("tail_") > -1) ? prevLastElement.split("tail_")[1] : prevLastElement;
                 const lastWithoutTail = lastElement.indexOf("tail_") > -1 ? lastElement.split("tail_")[1] : lastElement;
-                // if (prevElements !== null) {
-                //     if (Util.isInViewport($("#tail_" + lastDate)) === true) {
-                //         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
-                //     } else {
-                //         if ((Util.getDateObject(prevFirstWithoutTail) > Util.getDateObject(firstWithoutTail)) ||
-                //             (Util.getDateObject(prevLastWithoutTail) > Util.getDateObject(lastWithoutTail))
-                //         ) {
-                //             timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-                //         } else if ((Util.getDateObject(prevFirstWithoutTail) < Util.getDateObject(firstWithoutTail)) ||
-                //             (Util.getDateObject(prevLastWithoutTail) < Util.getDateObject(lastWithoutTail))
-                //         ) {
-                //             timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
-                //         }
-                //     }
-                // }
+                if (prevElements !== null) {
+                    if (Util.isInViewport($("#tail_" + lastDate)) === true) {
+                        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
+                    } else {
+                        if ((Util.getDateObject(prevFirstWithoutTail) > Util.getDateObject(firstWithoutTail)) ||
+                            (Util.getDateObject(prevLastWithoutTail) > Util.getDateObject(lastWithoutTail))
+                        ) {
+                            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                        } else if ((Util.getDateObject(prevFirstWithoutTail) < Util.getDateObject(firstWithoutTail)) ||
+                            (Util.getDateObject(prevLastWithoutTail) < Util.getDateObject(lastWithoutTail))
+                        ) {
+                            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
+                        }
+                    }
+                }
 
                 elements.each(function (index) {
                     let id = $(this).attr("id");
@@ -493,9 +493,9 @@
 
         timelineSettings.enableScrollSpy = false;
 
-        // if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
-        //     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-        // }
+        if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
+            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+        }
 
         if ($(".attachMetadataPhotos").last().text() !== "EOL") {
             $("#spinner_bottom").css("display", "block");
@@ -622,9 +622,9 @@
                     reversed = true;
                 }
 
-                // if (currentDate === firstDate) {
-                //     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-                // }
+                if (currentDate === firstDate) {
+                    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                }
 
                 let startingIndexTop = timelineSettings.timelineDatesHash[$(firstVisibleContainer).attr("id")];
                 let startingIndexBottom = timelineSettings.timelineDatesHash[$(lastVisibleContainer).attr("id")];
