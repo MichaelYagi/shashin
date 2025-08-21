@@ -183,72 +183,77 @@
                         }
 
                         // Scroll
+                        let scrollTimeout;
                         document.getElementById("container").addEventListener('scroll', function() {
-                            requestAnimationFrame(() => {
-                                const viewportTop = $("#container").scrollTop();
-                                const firstEl = $("section")[0];
-                                const firstDate = $(firstEl).attr("id");
-                                const lastEl = $("section")[$("section").length - 1];
-                                const lastDate = $(lastEl).attr("id");
+                            if (scrollTimeout) clearTimeout(scrollTimeout);
 
-                                // View top 0 add more to the top
-                                console.log(direction);
-                                console.log(viewportTop);
-                                console.log(offset);
-                                addingSection = true;
-                                if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
-                                    const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
-                                    console.log("testzzz")
-                                    console.log(prevDate)
-                                    createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
-                                } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate] + 1 <= timelineDatesHashCount) {
-                                    const nextDate = timelineDatesData[timelineDatesHash[lastDate] + 1];
-                                    createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
-                                }
-                                addingSection = false;
+                            scrollTimeout = setTimeout(() => {
+                                requestAnimationFrame(() => {
+                                    const viewportTop = $("#container").scrollTop();
+                                    const firstEl = $("section")[0];
+                                    const firstDate = $(firstEl).attr("id");
+                                    const lastEl = $("section")[$("section").length - 1];
+                                    const lastDate = $(lastEl).attr("id");
 
-                                // Removing anything not in viewport
-                                setTimeout(function () {
-                                    $("section").each(function (index, element) {
-                                        isInViewport($(element), function (inViewport) {
-                                            console.log("-----");
-                                            console.log($(element).attr("id") + " element in viewport: " + inViewport);
+                                    // View top 0 add more to the top
+                                    console.log(direction);
+                                    console.log(viewportTop);
+                                    console.log(offset);
+                                    addingSection = true;
+                                    if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
+                                        const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
+                                        console.log("testzzz")
+                                        console.log(prevDate)
+                                        createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
+                                    } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate] + 1 <= timelineDatesHashCount) {
+                                        const nextDate = timelineDatesData[timelineDatesHash[lastDate] + 1];
+                                        createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
+                                    }
+                                    addingSection = false;
 
-                                            if (inViewport === false && addingSection === false) {
-                                                const viewportTop = $("#container").scrollTop();
-                                                const contentHeight = getDateGalleryHeight($(element).attr("id"));
+                                    // Removing anything not in viewport
+                                    setTimeout(function () {
+                                        $("section").each(function (index, element) {
+                                            isInViewport($(element), function (inViewport) {
+                                                console.log("-----");
+                                                console.log($(element).attr("id") + " element in viewport: " + inViewport);
 
-                                                removeDate($(element).attr("id"));
+                                                if (inViewport === false && addingSection === false) {
+                                                    const viewportTop = $("#container").scrollTop();
+                                                    const contentHeight = getDateGalleryHeight($(element).attr("id"));
 
-                                                // TODO: Removal - Needed for Safari
-                                                if (Util.isSafari()) {
-                                                    const container = document.getElementById('container');
+                                                    removeDate($(element).attr("id"));
 
-                                                    // --- Anti-bounce fix ---
-                                                    const maxScroll = container.scrollHeight - container.clientHeight;
-                                                    let newScrollTop = direction === "down"
-                                                        ? viewportTop - contentHeight
-                                                        : viewportTop + contentHeight;
+                                                    // TODO: Removal - Needed for Safari
+                                                    if (Util.isSafari()) {
+                                                        const container = document.getElementById('container');
 
-                                                    // Clamp within bounds
-                                                    if (newScrollTop > maxScroll) newScrollTop = maxScroll;
-                                                    if (newScrollTop < 0) newScrollTop = 0;
+                                                        // --- Anti-bounce fix ---
+                                                        const maxScroll = container.scrollHeight - container.clientHeight;
+                                                        let newScrollTop = direction === "down"
+                                                            ? viewportTop - contentHeight
+                                                            : viewportTop + contentHeight;
 
-                                                    // Temporarily disable smooth/momentum scroll
-                                                    container.style.scrollBehavior = 'auto';
-                                                    requestAnimationFrame(() => {
-                                                        container.scrollTop = newScrollTop;
-                                                        // Restore scroll behaviour on the next frame
+                                                        // Clamp within bounds
+                                                        if (newScrollTop > maxScroll) newScrollTop = maxScroll;
+                                                        if (newScrollTop < 0) newScrollTop = 0;
+
+                                                        // Temporarily disable smooth/momentum scroll
+                                                        container.style.scrollBehavior = 'auto';
                                                         requestAnimationFrame(() => {
-                                                            container.style.scrollBehavior = '';
+                                                            container.scrollTop = newScrollTop;
+                                                            // Restore scroll behaviour on the next frame
+                                                            requestAnimationFrame(() => {
+                                                                container.style.scrollBehavior = '';
+                                                            });
                                                         });
-                                                    });
+                                                    }
                                                 }
-                                            }
-                                        })
-                                    });
-                                }, 0);
-                            });
+                                            })
+                                        });
+                                    }, 0);
+                                });
+                            }, 100); // Delay to allow scroll momentum to settle
                         }, { passive: true });
 
                         // Scroll stop
