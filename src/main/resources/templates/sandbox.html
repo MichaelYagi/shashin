@@ -113,44 +113,46 @@
 
                 function createSection(year, month, day, attachDate) {
                     db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
-                        let html = "<section class='dateSection' id='"+year+"-"+month+"-"+day+"'>" +
-                            "<p><strong>"+year+"-"+month+"-"+day+"</strong></p>" +
-                            "<div id='dateBody"+year+"-"+month+"-"+day+"' class='row' style='margin-left: -2px;'>";
+                        if (metadataArray.length > 0) {
+                            let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
+                                "<p><strong>" + year + "-" + month + "-" + day + "</strong></p>" +
+                                "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
 
-                        for (const index in metadataArray) {
-                            const metadata = metadataArray[index];
+                            for (const index in metadataArray) {
+                                const metadata = metadataArray[index];
 
-                            html += "<div id='photoThumbnailContainer"+metadata.id+"' class='photo-thumbnail-container photo-thumbnail' style='width:"+metadata.thumbnailSmallWidth+"px;height:"+metadata.thumbnailSmallHeight+"px;padding-left:0;padding-right:0;'>" +
-                                "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/"+metadata.id+"' class='photo-thumbnail-image' id='image"+metadata.id+"' width='"+metadata.thumbnailSmallWidth+"' th:height='"+metadata.thumbnailSmallHeight+"' style='background-color:lightgray;'>" +
-                                "</div>"
-                        }
+                                html += "<div id='photoThumbnailContainer" + metadata.id + "' class='photo-thumbnail-container photo-thumbnail' style='width:" + metadata.thumbnailSmallWidth + "px;height:" + metadata.thumbnailSmallHeight + "px;padding-left:0;padding-right:0;'>" +
+                                    "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/" + metadata.id + "' class='photo-thumbnail-image' id='image" + metadata.id + "' width='" + metadata.thumbnailSmallWidth + "' th:height='" + metadata.thumbnailSmallHeight + "' style='background-color:lightgray;'>" +
+                                    "</div>"
+                            }
 
-                        html += "</div></section>" +
-                            "<span class='appendMetadataPhotos' id='append"+year+"-"+month+"-"+day+"' style='width:0;height:0;padding:0'></span>";
+                            html += "</div></section>" +
+                                "<span class='appendMetadataPhotos' id='append" + year + "-" + month + "-" + day + "' style='width:0;height:0;padding:0'></span>";
 
-                        let htmlContent = $(html);
+                            let htmlContent = $(html);
 
-                        const viewportTop = $("#container").scrollTop();
+                            const viewportTop = $("#container").scrollTop();
 
-                        if (direction === "up") {
-                            $("#"+attachDate).before(htmlContent);
-                        } else {
-                            htmlContent.insertAfter($("#append"+attachDate));
-                        }
+                            if (direction === "up") {
+                                $("#" + attachDate).before(htmlContent);
+                            } else {
+                                htmlContent.insertAfter($("#append" + attachDate));
+                            }
 
-                        // TODO: Create - look in timeline - needed for all browsers
-                        const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
+                            // TODO: Create - look in timeline - needed for all browsers
+                            const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
 
-                        console.log("====================");
-                        console.log("created date: " + year+"-"+month+"-"+day);
-                        console.log("direction: " + direction);
-                        console.log("viewportTop: " + viewportTop);
-                        console.log("contentHeight: " + contentHeight);
+                            console.log("====================");
+                            console.log("created date: " + year + "-" + month + "-" + day);
+                            console.log("direction: " + direction);
+                            console.log("viewportTop: " + viewportTop);
+                            console.log("contentHeight: " + contentHeight);
 
-                        if (direction === "up") {
-                            $("#container")[0].scrollTop = contentHeight;
-                        } else {
-                            $("#container")[0].scrollTop = viewportTop
+                            if (direction === "up") {
+                                $("#container")[0].scrollTop = contentHeight;
+                            } else {
+                                $("#container")[0].scrollTop = viewportTop
+                            }
                         }
                     });
                 }
