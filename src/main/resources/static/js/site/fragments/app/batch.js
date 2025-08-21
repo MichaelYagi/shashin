@@ -154,6 +154,7 @@
                             }
                         });
 
+                        shashin.updateToolbarUI(view, shashin.getMetadataIdList());
                         shashin.updateSelectionCount(shashin.getMetadataIdList());
                         resetBorders();
                         applyBorderToLastSelected();
