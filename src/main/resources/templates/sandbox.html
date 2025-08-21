@@ -167,7 +167,7 @@
                     if (element.length > 0) {
                         if (Util.isSafari()) {
                             const rect = element[0].getBoundingClientRect();
-                            const containerRect = container.getBoundingClientRect();
+                            const containerRect = document.getElementById("container").getBoundingClientRect();
                             retVal = rect.bottom > containerRect.top && rect.top < containerRect.bottom;
                         } else {
                             const header = $('header');

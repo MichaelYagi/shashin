@@ -125,8 +125,23 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC", nativeQuery = true)
    fun findAllYearMonthDay(): MutableIterable<MetadataDate>?
 
-   @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
-   fun findAllYearMonthDayByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<MetadataDate>?
+   @Query("WITH date_counts AS (\n" +
+           "    SELECT year, month, day, COUNT(*) AS result_count\n" +
+           "    FROM metadata\n" +
+           "    WHERE hidden = 0\n" +
+           "    GROUP BY year, month, day\n" +
+           "    ORDER BY year DESC, month DESC, day DESC\n" +
+           ")\n" +
+           "SELECT dc.year, dc.month, dc.day\n" +
+           "FROM date_counts dc\n" +
+           "WHERE (\n" +
+           "          SELECT SUM(result_count)\n" +
+           "          FROM date_counts sub\n" +
+           "          WHERE sub.year > dc.year\n" +
+           "             OR (sub.year = dc.year AND sub.month > dc.month)\n" +
+           "             OR (sub.year = dc.year AND sub.month = dc.month AND sub.day > dc.day)\n" +
+           "      ) + dc.result_count <= :limit", nativeQuery = true)
+   fun findAllYearMonthDayByOffsetAndLimit(@Param("limit") limit: Int): MutableIterable<MetadataDate>?
 
    @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByMediaType(@Param("type") type: String): MutableIterable<MetadataDate>?
