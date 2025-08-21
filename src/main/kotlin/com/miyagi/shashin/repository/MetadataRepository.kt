@@ -137,9 +137,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
            "WHERE (\n" +
            "          SELECT SUM(result_count)\n" +
            "          FROM date_counts sub\n" +
-           "          WHERE sub.year > dc.year\n" +
-           "             OR (sub.year = dc.year AND sub.month > dc.month)\n" +
-           "             OR (sub.year = dc.year AND sub.month = dc.month AND sub.day > dc.day)\n" +
+           "          WHERE sub.year = dc.year\n" +
+           "             OR (sub.year = dc.year AND sub.month = dc.month)\n" +
+           "             OR (sub.year = dc.year AND sub.month = dc.month AND sub.day = dc.day)\n" +
            "      ) + dc.result_count <= :limit", nativeQuery = true)
    fun findAllYearMonthDayByOffsetAndLimit(@Param("limit") limit: Int): MutableIterable<MetadataDate>?
 
