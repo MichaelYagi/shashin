@@ -821,6 +821,7 @@
                     timelineSettings.scrollBarIsSliding = false;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
+                    // Jump to another date from the date slider
                     if (currentDateObj && timelineSettings.enableScrollSpy === true) {
                         timelineSettings.jumpFromTimelineToc(null, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
                         timelineSettings.enableScrollSpy = true;
@@ -962,43 +963,36 @@
         const dates = timelineSettings.timelineDates || [];
         const idx = timelineSettings.timelineDatesHash[anchor];
 
-        const getContainer = () =>
-            document.getElementById('container') || document.scrollingElement || document.body;
-
         const waitForElement = (id, { timeout = 5000, interval = 50 } = {}) =>
-            new Promise((resolve, reject) => {
-                const start = Date.now();
-                (function check() {
-                    const el = document.getElementById(id);
-                    if (el) return resolve(el);
-                    if (Date.now() - start > timeout) return reject(new Error('timeout'));
-                    setTimeout(check, interval);
-                })();
-            });
+        new Promise((resolve, reject) => {
+            const start = Date.now();
+            (function check() {
+                const el = document.getElementById(id);
+                if (el) return resolve(el);
+                if (Date.now() - start > timeout) return reject(new Error('timeout'));
+                setTimeout(check, interval);
+            })();
+        });
 
-        const scrollToAnchor = async (id) => {
-            const container = getContainer();
-            await new Promise(raf => requestAnimationFrame(() => requestAnimationFrame(raf)));
-            const element = document.getElementById(id);
-            if (!element) return;
-            const containerRect = container.getBoundingClientRect();
-            const elementRect = element.getBoundingClientRect();
-            container.scrollTop += (elementRect.top - containerRect.top);
-        };
+        const renderRange = async (start, end, direction, anchor) => {
+            const step = start < end ? 1 : -1;
+            let attachFrom = anchor;
 
-        const renderRange = async (start, end, direction, attachFrom) => {
-            for (let i = start; i !== end; i += (start < end ? 1 : -1)) {
-                if (i < 0 || i >= dates.length) break;
+            for (let i = start; i !== end + step; i += step) {
+                if (i < 0 || i >= dates.length) continue;
                 const id = `${dates[i].year}-${dates[i].month}-${dates[i].day}`;
                 if (!document.getElementById(id)) {
-                    await timelineSettings.updateTimeline(id, mediaTypeFilter, direction, attachFrom);
+                    const result = await timelineSettings.updateTimeline(id, mediaTypeFilter, direction, attachFrom);
+                    if (result === timelineSettings.success) {
+                        attachFrom = id; // update attachFrom only if successful
+                    }
+                } else {
+                    attachFrom = id; // already exists, update attachFrom
                 }
-                attachFrom = id;
             }
         };
 
         try {
-            // Initial locks and state
             timelineSettings.enableScrollSpy = false;
             timelineSettings.isScrolling = false;
             timelineSettings.didJumpFromTimelineToc = true;
@@ -1010,11 +1004,9 @@
                 $("#offcanvasTocCloseButton").prop('disabled', true);
             }
 
-            // Clear current sections
             $('section').each((_, el) => Util.removeDateGallery(el.id));
             $("#spinner_top, #spinner_bottom").hide();
 
-            // 1. Render the anchor itself
             const ok = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
             if (ok !== timelineSettings.success || !document.getElementById(anchor)) {
                 shashin.printMessageToConsole("Failed to render anchor", {
@@ -1024,101 +1016,16 @@
                 return;
             }
 
-            if (isMobile) {
-                // 2. Render below *and* above before scroll
-                await renderRange(idx + 1, idx + 1 + 2, "below", anchor); // below 2 days
-                await renderRange(idx - 1, idx - 1 - 3, "above", anchor); // above 3 days
+            await renderRange(idx + 1, idx + 1 + 4, "below", anchor); // below 2 days
+            await renderRange(idx - 1, idx - 1 - 3, "above", anchor); // above 3 days
 
-                // 3. Scroll once everything is in place
-                await waitForElement(anchor);
-                await scrollToAnchor(anchor);
+            await waitForElement(anchor);
 
-                // 4. Attach metadata in one batch
-                const toAttach = [];
-                for (let i = idx - 3; i <= idx + 2; i++) {
-                    if (i >= 0 && i < dates.length) {
-                        const id = `${dates[i].year}-${dates[i].month}-${dates[i].day}`;
-                        if (document.getElementById(id)) {
-                            toAttach.push(id);
-                        }
-                    }
-                }
-                for (const id of toAttach) {
-                    await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                }
-            } else {
-                // Desktop flow
-                // Render 1 before on mobile
-                let currentDateIndex = timelineSettings.timelineDatesHash[anchor];
-                let previousAnchor = anchor;
-                if (currentDateIndex > 0) {
-                    previousAnchor = timelineSettings.timelineDates[currentDateIndex-1].year + "-" + timelineSettings.timelineDates[currentDateIndex-1].month + "-" + timelineSettings.timelineDates[currentDateIndex-1].day;
-                }
-                const msg = await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
-                if (msg === timelineSettings.success && $("#" + previousAnchor).length === 1) {
-                    await timelineSettings.attachAssociatedMetadata(previousAnchor, mediaTypeFilter);
-                }
+            // Land on correct TOC date
+            const element = document.getElementById(anchor);
+            document.getElementById("container").scrollTop = element.offsetTop;
 
-                let depth = 6;
-                let currAnchor = anchor;
-                for (const [index, timelineDate] of timelineSettings.timelineDates.entries()) {
-                    let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-                    if (anchor === currTimelineDate) {
-                        let limit = index - 1;
-                        for (let i = index - 1; i > limit; i--) {
-                            if (timelineSettings.timelineDates[i] !== undefined) {
-                                let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
-                                if ($("#" + id).length === 0) {
-                                    // Render currentDate
-                                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
-                                    if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                        await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                                    }
-                                    currAnchor = id;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
-                        currAnchor = anchor;
-                        limit = index + depth;
-                        for (let i = index + 1; i < limit; i++) {
-                            if (timelineSettings.timelineDates[i] !== undefined) {
-                                let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
-                                if ($("#" + id).length === 0) {
-                                    // Render currentDate
-                                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
-                                    if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                        await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                                    }
-                                    currAnchor = id;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-
-            // Set active in TOC and scroll it into view
-            timelineSettings.setScrollSpyActive(anchor);
-            const tocEl = document.getElementById(`offcanvas_${anchor}`);
-            if (tocEl) {
-                try { tocEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
-            }
-
-            // Preload neighbors in idle time
-            const preloadAdjacent = () => {
-                try { preloadAdjacentSections(anchor, mediaTypeFilter); } catch (_) {}
-            };
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(preloadAdjacent);
-            } else {
-                setTimeout(preloadAdjacent, 300);
-            }
+            await waitForElement(anchor);
         } catch (err) {
             shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, {
                 tag: "jumpFromTimelineToc",
@@ -1131,24 +1038,21 @@
                 $("#offcanvasTocCloseButton").click();
             }
 
-            if (window.location.hash) {
-                history.pushState("", document.title, window.location.pathname + window.location.search);
-            }
-
             timelineSettings.scrollByN(2);
             Util.showSpinner(false);
-            $("#dLabel").removeClass("disabled");
-            $("#dLabel").removeAttr("aria-disabled");
-            $("#dLabel").removeAttr("tabindex");
+            $("#dLabel").removeClass("disabled").removeAttr("aria-disabled").removeAttr("tabindex");
 
             timelineSettings.jumpRenderInProgress = false;
             timelineSettings.enableScrollSpy = true;
             timelineSettings.isScrolling = true;
             timelineSettings.jumpInProgress = false;
 
-            setTimeout(timelineSettings.enableScroll, 300);
+            setTimeout(async function () {
+                timelineSettings.enableScroll();
+            }, 300);
         }
     };
+
 
     timelineSettings.observeAnchorChange = function(id, functionCall) {
         if (MutationObserver) {
