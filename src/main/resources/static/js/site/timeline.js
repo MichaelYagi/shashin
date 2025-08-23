@@ -959,6 +959,11 @@
         if (timelineSettings.jumpInProgress) return;
         timelineSettings.jumpInProgress = true;
 
+        Util.showSpinner(true);
+        $("#dLabel").addClass("disabled");
+        $("#dLabel").attr("aria-disabled", "true");
+        $("#dLabel").attr("tabindex", "-1");
+
         const isMobile = Util.isMobile() === true;
         const dates = timelineSettings.timelineDates || [];
         const idx = timelineSettings.timelineDatesHash[anchor];
