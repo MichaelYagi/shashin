@@ -541,6 +541,7 @@
                 sectionArray.push(element);
 
                 if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) &&
+                    $('#infinite-scroll-gallery .dateContainer').length > 1 &&
                     Util.isInViewport($("#" + element.id)) === false &&
                     Util.isInViewport($("#br" + element.id)) === false &&
                     Util.isInViewport($("#row" + element.id)) === false &&
@@ -578,7 +579,7 @@
                 // Remove elements out of order
                 const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
 
-                if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
+                if ($('#infinite-scroll-gallery .dateContainer').length > 1 && prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
                     shashin.printMessageToConsole("Removing from timeline " + element.id,{tag:"timeline"});
                     Util.removeDateGallery(element.id);
                 }
