@@ -1023,8 +1023,6 @@
             const element = document.getElementById(anchor);
             document.getElementById("container").scrollTop = element.offsetTop;
 
-            timelineSettings.scrollByN(-30);
-
             await waitForElement(anchor);
         } catch (err) {
             shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, {
@@ -1045,6 +1043,8 @@
             timelineSettings.enableScrollSpy = true;
             timelineSettings.isScrolling = true;
             timelineSettings.jumpInProgress = false;
+
+            await waitForElement(anchor);
 
             setTimeout(async function () {
                 timelineSettings.enableScroll();
