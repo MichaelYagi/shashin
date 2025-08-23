@@ -1024,8 +1024,6 @@
             // Land on correct TOC date
             const element = document.getElementById(anchor);
             document.getElementById("container").scrollTop = element.offsetTop;
-
-            await waitForElement(anchor);
         } catch (err) {
             shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, {
                 tag: "jumpFromTimelineToc",
