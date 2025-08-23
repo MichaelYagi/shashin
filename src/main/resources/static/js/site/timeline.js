@@ -1036,7 +1036,6 @@
                 $("#offcanvasTocCloseButton").click();
             }
 
-            timelineSettings.scrollByN(2);
             Util.showSpinner(false);
             $("#dLabel").removeClass("disabled").removeAttr("aria-disabled").removeAttr("tabindex");
 
@@ -1047,6 +1046,7 @@
 
             setTimeout(async function () {
                 timelineSettings.enableScroll();
+                timelineSettings.scrollByN(-30);
             }, 300);
         }
     };
