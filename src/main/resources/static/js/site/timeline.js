@@ -135,7 +135,8 @@
                         }
 
                         // Set the timeline slider while scrolling
-                        if (Util.isMobile() === false && $("#dateSlider").length > 0) {
+                        //if (Util.isMobile() === false && $("#dateSlider").length > 0) {
+                        if ($("#dateSlider").length > 0) {
                             timelineDates.forEach(function (timelineDate, i) {
                                 if (id === timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day) {
                                     $("#dateSlider").slider("option", "value", timelineDates.length - i - 1);
@@ -890,12 +891,6 @@
 
                     $(sliderEl).append(sliderTooltip);
                     $("#dateSlider").append(sliderEl);
-
-                    sliderEl.hover(function () {
-                        sliderTooltip.visible();
-                    } , function () {
-                        sliderTooltip.invisible();
-                    });
                 }
             }
 
@@ -903,6 +898,20 @@
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
                 document.getElementById("dateSliderWrapper").style.cursor = "pointer";
             }, function () {
+                if (timelineSettings.scrollBarIsSliding === false) {
+                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                } else {
+                    $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                }
+                document.getElementById("dateSliderWrapper").style.cursor = "default";
+            });
+
+            $('#dateSliderWrapper').on('touchstart', function() {
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                document.getElementById("dateSliderWrapper").style.cursor = "pointer";
+            });
+
+            $('#dateSliderWrapper').on('touchend', function() {
                 if (timelineSettings.scrollBarIsSliding === false) {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
                 } else {
@@ -1019,7 +1028,6 @@
             }, 300);
         }
     };
-
 
     timelineSettings.observeAnchorChange = function(id, functionCall) {
         if (MutationObserver) {
