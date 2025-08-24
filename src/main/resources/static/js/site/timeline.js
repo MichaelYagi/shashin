@@ -783,7 +783,6 @@
                     }
                 },
                 stop: function (event, ui) {
-                    timelineSettings.scrollBarIsSliding = false;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     // Jump to another date from the date slider
@@ -813,9 +812,39 @@
             });
 
             // Handle style
-            $(".ui-slider-handle").css({
-                "z-index": "9999",
-                "border-color": "slategray"
+            $(".ui-slider-vertical .ui-slider-handle").css({
+                "width": "100%",
+                "height": "20px",
+                "left": "0",
+                "background": "transparent",
+                "border": "none",
+                "cursor": "pointer",
+                "position": "absolute",
+                "box-sizing": "border-box"
+            });
+
+            // Add a pseudo-line using a child div
+            $(".ui-slider-vertical .ui-slider-handle").append(
+                $("<div></div>").css({
+                    "position": "absolute",
+                    "top": "50%",
+                    "left": "0",
+                    "width": "100%",
+                    "height": "2px",
+                    "background": "#333",
+                    "transform": "translateY(-50%)"
+                })
+            );
+
+            $(".ui-slider-vertical .ui-slider-handle").css({
+                "outline": "none",            // Removes focus outline
+                "box-shadow": "none"        // Removes any glow or border effect
+            });
+
+            // Slider style
+            $(".ui-slider-vertical").css({
+                "background": "none",
+                "border": "none"
             });
 
             // Render ticks
@@ -858,7 +887,7 @@
                     } else if (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month)) {
                         if ($('#tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month).length === 0) {
                             // Tick for month/year
-                            const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '" style="color: #777777">' + '-' + '</span>').css({
+                            const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '" style="color: #777777; font-size: x-small">' + '&#9679;' + '</span>').css({
                                 'width': '10px',
                                 'right': '15px',
                                 'position': 'absolute',
@@ -1075,6 +1104,46 @@
 
             setTimeout(async function () {
                 timelineSettings.enableScroll();
+
+                const dateList = timelineSettings.timelineDates;
+                const dateSliderHeight = $("#dateSlider").height();
+                const containerHeight = $("body").height();
+
+                timelineSettings.scrollBarIsSliding = false;
+                const anchorArray = anchor.split("-");
+                const currentDateObj = {
+                    year: parseInt(anchorArray[0]),
+                    month: parseInt(anchorArray[1]),
+                    day: parseInt(anchorArray[2])
+                };
+
+                // Mark as last known date
+                for (let i = 0; i < dateList.length; i++) {
+                    const timelineDateObj = dateList[i];
+                    const tickTop = i / dateList.length * 100;
+
+                    if (timelineDateObj && timelineDateObj.year === currentDateObj.year && timelineDateObj.month === currentDateObj.month && timelineDateObj.day === currentDateObj.day) {
+                        const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day+'" style="color: #ADD8E6; font-size: x-large">' + '&#8213;' + '</span>').css({
+                            'width': '10px',
+                            'right': '15px',
+                            'position': 'absolute',
+                            'z-index': '1',
+                            'bottom': '50%',
+                            'top': (tickTop - ((dateSliderHeight/containerHeight)+1)) + '%'
+                        });
+
+                        $("#dateSlider").append(tickEl);
+
+                        break;
+                    }
+                }
+
+                if (timelineSettings.lastDateMarker !== null) {
+                    const lastDateMarker = timelineSettings.lastDateMarker;
+                    $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
+                }
+
+                timelineSettings.lastDateMarker = currentDateObj;
             }, 300);
         }
     };

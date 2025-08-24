@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
+- UI for date slider
 - Use date slider in timeline for mobile view 
 
 ### Deprecated

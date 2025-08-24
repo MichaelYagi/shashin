@@ -270,6 +270,12 @@
         let lastDate = new Date().getTime();
 
         const scrollHandler = function (e) {
+            if (timelineSettings.lastDateMarker !== null) {
+                const lastDateMarker = timelineSettings.lastDateMarker;
+                $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
+                timelineSettings.lastDateMarker = null;
+            }
+
             firsthovered = true;
 
             if (scrollTimer !== null) {
