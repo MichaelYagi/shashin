@@ -993,7 +993,11 @@
                 return;
             }
 
-            await renderRange(idx + 1, idx + 1 + 4, "below", anchor); // below 2 days
+            if (Util.isMobile()) {
+                await renderRange(idx + 1, idx + 1 + 2, "below", anchor);
+            } else {
+                await renderRange(idx + 1, idx + 1 + 4, "below", anchor); // below 2 days
+            }
             await renderRange(idx - 1, idx - 1 - 3, "above", anchor); // above 3 days
 
             // Land on correct TOC date
