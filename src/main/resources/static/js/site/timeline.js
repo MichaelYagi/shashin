@@ -753,6 +753,7 @@
                 'right': 17
             }).invisible();
 
+            // Text for first slider date
             handleTooltip.text(Util.getShortMonths(dateList[0].month - 1, timelineSettings.locale) + ' ' + Util.getYearLocale(dateList[0].year, timelineSettings.locale));
 
             $("#dateSlider").slider({
@@ -812,7 +813,10 @@
             });
 
             // Handle style
-            $(".ui-slider-handle").css({"z-index": "9999"});
+            $(".ui-slider-handle").css({
+                "z-index": "9999",
+                "border-color": "slategray"
+            });
 
             // Render ticks
             let prevEl = null;
