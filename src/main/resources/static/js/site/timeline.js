@@ -764,6 +764,9 @@
                 step: 0.0001,
                 range: false,
                 slide: function (event, ui) {
+                    $(".hoverDateMarker").remove();
+                    $(".hoverDateText").remove();
+
                     timelineSettings.scrollBarIsSliding = true;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
@@ -783,6 +786,9 @@
                     }
                 },
                 stop: function (event, ui) {
+                    $(".hoverDateMarker").remove();
+                    $(".hoverDateText").remove();
+
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     // Jump to another date from the date slider
@@ -794,6 +800,9 @@
                     $(".monthYearSlider").visible();
                 },
                 change: function (event, ui) {
+                    $(".hoverDateMarker").remove();
+                    $(".hoverDateText").remove();
+
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
                     if (currentDateObj) {
                         const prevDateObj = dateList.length > 1 ? dateList[Math.round((dateList.length - 2) - ui.value)] : currentDateObj;
@@ -1105,8 +1114,8 @@
                     }
                 }
             } else {
-                await renderRange(idx + 1, idx + 1 + 4, "below", anchor); // below 4 days
-                await renderRange(idx - 1, idx - 1 - 3, "above", anchor); // above 3 days
+                await renderRange(idx + 1, idx + 1 + 5, "below", anchor); // below 4 days
+                await renderRange(idx - 1, idx - 1 - 4, "above", anchor); // above 3 days
             }
 
             // Land on correct TOC date
