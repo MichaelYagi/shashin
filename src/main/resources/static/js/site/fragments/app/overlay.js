@@ -64,10 +64,12 @@
         $("#image" + id).on("click", function (e) {
             e.preventDefault();
 
-            if (Util.isMobile() && e.detail === 1) {
-                shashin.touchTimer = setTimeout(imageClickEvent, 300);
-            } else {
-                imageClickEvent();
+            if (shashin.getMetadataIdList().length > 0) {
+                if (Util.isMobile() && e.detail === 1) {
+                    shashin.touchTimer = setTimeout(imageClickEvent, 300);
+                } else {
+                    imageClickEvent();
+                }
             }
 
             function imageClickEvent() {
@@ -182,7 +184,7 @@
 
         const hideOverlay = () => {
             $(".bi-play-btn, .bi-play-circle").css("color", "lightgray");
-            hide(`#tntl${id}`, `#tncentered${id}`, `#tnbl${id}`, `#tnbr${id}`, `#tntr${id}`);
+            hide(`#tntl${id}`, `#tncentered${id}`, `#tnbl${id}`, `#tnbr${id}`/*, `#tntr${id}`*/);
             updateOpacity(transparent);
         };
 
