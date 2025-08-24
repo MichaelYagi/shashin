@@ -938,37 +938,39 @@
                 }
             }
 
-            $(".monthYearSlider").hover(function () {
-                $(".hoverDateMarker").remove();
-                $(".hoverDateText").remove();
+            if (!Util.isMobile()) {
+                $(".monthYearSlider").hover(function () {
+                    $(".hoverDateMarker").remove();
+                    $(".hoverDateText").remove();
 
-                const hoverDateId = $(this).attr("data-slider-id");
-                if (hoverDateId && hoverDateId.length > 0) {
-                    const hoverDateArray = hoverDateId.split("-");
-                    const hoverDateObj = {
-                        year: parseInt(hoverDateArray[0]),
-                        month: parseInt(hoverDateArray[1]),
-                        day: parseInt(hoverDateArray[2])
-                    };
+                    const hoverDateId = $(this).attr("data-slider-id");
+                    if (hoverDateId && hoverDateId.length > 0) {
+                        const hoverDateArray = hoverDateId.split("-");
+                        const hoverDateObj = {
+                            year: parseInt(hoverDateArray[0]),
+                            month: parseInt(hoverDateArray[1]),
+                            day: parseInt(hoverDateArray[2])
+                        };
 
-                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="color: #ADD8E6; margin-top: -10px;">' + '&#8213;' + '</span>').css({
-                        'width': '10px',
-                        'right': '15px',
-                        'position': 'absolute',
-                        'z-index': '1'
-                    });
+                        const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="color: #ADD8E6; margin-top: -10px;">' + '&#8213;' + '</span>').css({
+                            'width': '10px',
+                            'right': '15px',
+                            'position': 'absolute',
+                            'z-index': '1'
+                        });
 
-                    const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge'+hoverDateObj.year + '-' + hoverDateObj.month+'" style="background-color: slategray;" />').css({
-                        position: 'absolute',
-                        right: 15,
-                        bottom: "1%"
-                    });
-                    sliderTooltip.text(Util.getShortMonths(hoverDateObj.month - 1, timelineSettings.locale) + ' ' + hoverDateObj.year);
+                        const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="background-color: slategray;" />').css({
+                            position: 'absolute',
+                            right: 15,
+                            bottom: "1%"
+                        });
+                        sliderTooltip.text(Util.getShortMonths(hoverDateObj.month - 1, timelineSettings.locale) + ' ' + hoverDateObj.year);
 
-                    $(tickEl).append(sliderTooltip);
-                    $("#sliderId" + hoverDateObj.year + '-' + hoverDateObj.month).append(tickEl);
-                }
-            });
+                        $(tickEl).append(sliderTooltip);
+                        $("#sliderId" + hoverDateObj.year + '-' + hoverDateObj.month).append(tickEl);
+                    }
+                });
+            }
 
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
