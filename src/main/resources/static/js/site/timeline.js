@@ -994,11 +994,62 @@
             }
 
             if (Util.isMobile()) {
-                await renderRange(idx + 1, idx + 1 + 2, "below", anchor);
+                let currentDateIndex = timelineSettings.timelineDatesHash[anchor];
+                let previousAnchor = anchor;
+                if (currentDateIndex > 0) {
+                    previousAnchor = timelineSettings.timelineDates[currentDateIndex-1].year + "-" + timelineSettings.timelineDates[currentDateIndex-1].month + "-" + timelineSettings.timelineDates[currentDateIndex-1].day;
+                }
+                const msg = await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
+                if (msg === timelineSettings.success && $("#" + previousAnchor).length === 1) {
+                    await timelineSettings.attachAssociatedMetadata(previousAnchor, mediaTypeFilter);
+                }
+
+                let depth = 6;
+                let currAnchor = anchor;
+                for (const [index, timelineDate] of timelineSettings.timelineDates.entries()) {
+                    let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+                    if (anchor === currTimelineDate) {
+                        let limit = index - 1;
+                        for (let i = index - 1; i > limit; i--) {
+                            if (timelineSettings.timelineDates[i] !== undefined) {
+                                let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
+                                if ($("#" + id).length === 0) {
+                                    // Render currentDate
+                                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
+                                    if (msg === timelineSettings.success && $("#" + id).length === 1) {
+                                        await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                                    }
+                                    currAnchor = id;
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+
+                        currAnchor = anchor;
+                        limit = index + depth;
+                        for (let i = index + 1; i < limit; i++) {
+                            if (timelineSettings.timelineDates[i] !== undefined) {
+                                let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
+                                if ($("#" + id).length === 0) {
+                                    // Render currentDate
+                                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
+                                    if (msg === timelineSettings.success && $("#" + id).length === 1) {
+                                        await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                                    }
+                                    currAnchor = id;
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
             } else {
-                await renderRange(idx + 1, idx + 1 + 4, "below", anchor); // below 2 days
+                await renderRange(idx + 1, idx + 1 + 4, "below", anchor); // below 4 days
+                await renderRange(idx - 1, idx - 1 - 3, "above", anchor); // above 3 days
             }
-            await renderRange(idx - 1, idx - 1 - 3, "above", anchor); // above 3 days
 
             // Land on correct TOC date
             const element = document.getElementById(anchor);
