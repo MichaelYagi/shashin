@@ -999,10 +999,7 @@
                 if (currentDateIndex > 0) {
                     previousAnchor = timelineSettings.timelineDates[currentDateIndex-1].year + "-" + timelineSettings.timelineDates[currentDateIndex-1].month + "-" + timelineSettings.timelineDates[currentDateIndex-1].day;
                 }
-                const msg = await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
-                if (msg === timelineSettings.success && $("#" + previousAnchor).length === 1) {
-                    await timelineSettings.attachAssociatedMetadata(previousAnchor, mediaTypeFilter);
-                }
+                await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
 
                 let depth = 6;
                 let currAnchor = anchor;
@@ -1015,10 +1012,7 @@
                                 let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
                                 if ($("#" + id).length === 0) {
                                     // Render currentDate
-                                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
-                                    if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                        await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                                    }
+                                    await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
                                     currAnchor = id;
                                 }
                             } else {
@@ -1033,10 +1027,7 @@
                                 let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
                                 if ($("#" + id).length === 0) {
                                     // Render currentDate
-                                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
-                                    if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                        await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                                    }
+                                    await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
                                     currAnchor = id;
                                 }
                             } else {
