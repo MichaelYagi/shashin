@@ -103,10 +103,6 @@
 
         Util.setMetadataLocalStorage();
 
-        // if (Util.isMobile() === false) {
-        //     $("#infinite-scroll-gallery").attr('style', 'width: 97%');
-        // }
-
         shashin.setLightGalleryElement('infinite-scroll-gallery');
 
         const lgConfig = {
@@ -131,12 +127,7 @@
         let firsthovered = false;
 
         // Initialize
-        if (Util.isMobile() === false) {
-            timelineSettings.initializeTimelineSlider(mediaTypeFilter);
-        } else {
-            $("#timelineTocToggle").show();
-            $("#dateSliderContainer").invisible();
-        }
+        timelineSettings.initializeTimelineSlider(mediaTypeFilter);
 
         let hash = "";
         if (window.location.hash) {
@@ -163,11 +154,7 @@
             timelineSettings.enableScroll();
             Util.showSpinner(false);
         } else if ($('.scrollspy').length > 0) {
-            // if (Util.isMobile() === true) {
             renderInitPage(mediaTypeFilter);
-            // } else {
-            //     timelineSettings.jumpFromTimelineToc(null, timelineSettings.timelineDates[0].year + "-" + timelineSettings.timelineDates[0].month + "-" + timelineSettings.timelineDates[0].day, mediaTypeFilter);
-            // }
         } else {
             timelineSettings.enableScrollSpy = false;
         }
@@ -222,7 +209,7 @@
                 }, 1000);
             }
 
-            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
+            if ($("#dateSliderWrapper:not(:hover)").length > 0) {
                 let timeoutValue = 1000;
                 if (timelineSettings.dbOperationComplete === true) {
                     timeoutValue = 0;

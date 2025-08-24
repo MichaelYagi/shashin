@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
+- Use date slider in timeline for mobile view 
+
 ### Deprecated
 ### Removed
 ### Fixed

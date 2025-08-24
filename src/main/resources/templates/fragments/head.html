@@ -105,6 +105,7 @@
         <th:block th:if="${activePageLower == 'timeline'}">
             <link rel="stylesheet" href="/css/jquery-ui.css">
             <script src="/js/dexie.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/jquery.ui.touch-punch.min.js" th:nonce="${cspNonce}"></script>
         </th:block>
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true' and activePageLower != 'login' and activePageLower != 'register'}">
             <link rel="stylesheet" href="/css/site/min/style.min.css">
