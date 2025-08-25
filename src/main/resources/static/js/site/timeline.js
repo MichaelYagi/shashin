@@ -938,39 +938,37 @@
                 }
             }
 
-            if (Util.isMobile()) {
-                $(".monthYearSlider").hover(function () {
-                    $(".hoverDateMarker").remove();
-                    $(".hoverDateText").remove();
+            $(".monthYearSlider").hover(function () {
+                $(".hoverDateMarker").remove();
+                $(".hoverDateText").remove();
 
-                    const hoverDateId = $(this).attr("data-slider-id");
-                    if (hoverDateId && hoverDateId.length > 0) {
-                        const hoverDateArray = hoverDateId.split("-");
-                        const hoverDateObj = {
-                            year: parseInt(hoverDateArray[0]),
-                            month: parseInt(hoverDateArray[1]),
-                            day: parseInt(hoverDateArray[2])
-                        };
+                const hoverDateId = $(this).attr("data-slider-id");
+                if (hoverDateId && hoverDateId.length > 0) {
+                    const hoverDateArray = hoverDateId.split("-");
+                    const hoverDateObj = {
+                        year: parseInt(hoverDateArray[0]),
+                        month: parseInt(hoverDateArray[1]),
+                        day: parseInt(hoverDateArray[2])
+                    };
 
-                        const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="color: #ADD8E6; margin-top: -10px;">' + '&#8213;' + '</span>').css({
-                            'width': '10px',
-                            'right': '15px',
-                            'position': 'absolute',
-                            'z-index': '1'
-                        });
+                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="color: #ADD8E6; margin-top: -10px;">' + '&#8213;' + '</span>').css({
+                        'width': '10px',
+                        'right': '15px',
+                        'position': 'absolute',
+                        'z-index': '1'
+                    });
 
-                        const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="background-color: slategray;" />').css({
-                            position: 'absolute',
-                            right: 15,
-                            bottom: "1%"
-                        });
-                        sliderTooltip.text(Util.getShortMonths(hoverDateObj.month - 1, timelineSettings.locale) + ' ' + hoverDateObj.year);
+                    const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge'+hoverDateObj.year + '-' + hoverDateObj.month+'" style="background-color: slategray;" />').css({
+                        position: 'absolute',
+                        right: 15,
+                        bottom: "1%"
+                    });
+                    sliderTooltip.text(Util.getShortMonths(hoverDateObj.month - 1, timelineSettings.locale) + ' ' + hoverDateObj.year);
 
-                        $(tickEl).append(sliderTooltip);
-                        $("#sliderId" + hoverDateObj.year + '-' + hoverDateObj.month).append(tickEl);
-                    }
-                });
-            }
+                    $(tickEl).append(sliderTooltip);
+                    $("#sliderId" + hoverDateObj.year + '-' + hoverDateObj.month).append(tickEl);
+                }
+            });
 
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
@@ -1148,53 +1146,53 @@
             await waitForElement(anchor);
 
             setTimeout(async function() {
-                const dateList = timelineSettings.timelineDates;
-                const dateSliderHeight = $("#dateSlider").height();
-                const containerHeight = $("body").height();
-
-                timelineSettings.scrollBarIsSliding = false;
-                const anchorArray = anchor.split("-");
-                const currentDateObj = {
-                    year: parseInt(anchorArray[0]),
-                    month: parseInt(anchorArray[1]),
-                    day: parseInt(anchorArray[2])
-                };
-
-                // Mark as last known date
-                for (let i = 0; i < dateList.length; i++) {
-                    const timelineDateObj = dateList[i];
-                    const tickTop = i / dateList.length * 100;
-
-                    if (timelineDateObj && timelineDateObj.year === currentDateObj.year && timelineDateObj.month === currentDateObj.month && timelineDateObj.day === currentDateObj.day) {
-                        const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day+'" style="color: #ADD8E6; font-size: x-large">' + '&#8213;' + '</span>').css({
-                            'width': '10px',
-                            'right': '15px',
-                            'position': 'absolute',
-                            'z-index': '1',
-                            'bottom': '50%',
-                            'top': (tickTop - ((dateSliderHeight/containerHeight)+1)) + '%'
-                        });
-
-                        $("#dateSlider").append(tickEl);
-
-                        break;
-                    }
-                }
-
-                if (timelineSettings.lastDateMarker !== null) {
-                    const lastDateMarker = timelineSettings.lastDateMarker;
-                    $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
-                }
-
-                timelineSettings.lastDateMarker = currentDateObj;
-
-                $(".hoverDateMarker").remove();
-                $(".hoverDateText").remove();
-            }, 0);
-
-            setTimeout(async function () {
                 timelineSettings.enableScroll();
-            }, 300);
+
+                setTimeout(async function() {
+                    const dateList = timelineSettings.timelineDates;
+                    const dateSliderHeight = $("#dateSlider").height();
+                    const containerHeight = $("body").height();
+
+                    timelineSettings.scrollBarIsSliding = false;
+                    const anchorArray = anchor.split("-");
+                    const currentDateObj = {
+                        year: parseInt(anchorArray[0]),
+                        month: parseInt(anchorArray[1]),
+                        day: parseInt(anchorArray[2])
+                    };
+
+                    // Mark as last known date
+                    for (let i = 0; i < dateList.length; i++) {
+                        const timelineDateObj = dateList[i];
+                        const tickTop = i / dateList.length * 100;
+
+                        if (timelineDateObj && timelineDateObj.year === currentDateObj.year && timelineDateObj.month === currentDateObj.month && timelineDateObj.day === currentDateObj.day) {
+                            const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day+'" style="color: #ADD8E6; font-size: x-large">' + '&#8213;' + '</span>').css({
+                                'width': '10px',
+                                'right': '15px',
+                                'position': 'absolute',
+                                'z-index': '1',
+                                'bottom': '50%',
+                                'top': (tickTop - ((dateSliderHeight/containerHeight)+1)) + '%'
+                            });
+
+                            $("#dateSlider").append(tickEl);
+
+                            break;
+                        }
+                    }
+
+                    if (timelineSettings.lastDateMarker !== null) {
+                        const lastDateMarker = timelineSettings.lastDateMarker;
+                        $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
+                    }
+
+                    timelineSettings.lastDateMarker = currentDateObj;
+
+                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                    document.getElementById("dateSliderWrapper").style.cursor = "default";
+                }, 100);
+            }, 100);
         }
     };
 
