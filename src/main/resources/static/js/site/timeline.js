@@ -939,7 +939,6 @@
             }
 
             $(".monthYearSlider").hover(function () {
-                console.log("hovering")
                 $(".hoverDateMarker").remove();
                 $(".hoverDateText").remove();
 
