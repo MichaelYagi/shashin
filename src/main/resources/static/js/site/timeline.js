@@ -657,7 +657,9 @@
 
                     if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && timelineSettings.closeToFooter() === true) {
                         if (timelineSettings.currentScrollDirection ===
-                            timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                            timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 &&
+                            ((index - 2) > -1) &&
+                            ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
                             const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
                             let sectionHeight = 0;
@@ -896,7 +898,7 @@
                     } else if (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month)) {
                         if ($('#tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month).length === 0) {
                             // Tick for month/year
-                            const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '" style="color: #777777; font-size: x-small">' + '&#9679;' + '</span>').css({
+                            const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '" style="color: #777777; font-size: x-small">-</span>').css({
                                 'width': '10px',
                                 'right': '15px',
                                 'position': 'absolute',
@@ -951,7 +953,7 @@
                         day: parseInt(hoverDateArray[2])
                     };
 
-                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="color: #ADD8E6; margin-top: -10px;">' + '&#8213;' + '</span>').css({
+                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
                         'width': '10px',
                         'right': '15px',
                         'position': 'absolute',
@@ -1070,50 +1072,6 @@
             }
 
             if (Util.isMobile()) {
-                // let currentDateIndex = timelineSettings.timelineDatesHash[anchor];
-                // let previousAnchor = anchor;
-                // if (currentDateIndex > 0) {
-                //     previousAnchor = timelineSettings.timelineDates[currentDateIndex-1].year + "-" + timelineSettings.timelineDates[currentDateIndex-1].month + "-" + timelineSettings.timelineDates[currentDateIndex-1].day;
-                // }
-                // await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
-                //
-                // let depth = 6;
-                // let currAnchor = anchor;
-                // for (const [index, timelineDate] of timelineSettings.timelineDates.entries()) {
-                //     let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-                //     if (anchor === currTimelineDate) {
-                //         let limit = index - 1;
-                //         for (let i = index - 1; i > limit; i--) {
-                //             if (timelineSettings.timelineDates[i] !== undefined) {
-                //                 let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
-                //                 if ($("#" + id).length === 0) {
-                //                     // Render currentDate
-                //                     await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
-                //                     currAnchor = id;
-                //                 }
-                //             } else {
-                //                 break;
-                //             }
-                //         }
-                //
-                //         currAnchor = anchor;
-                //         limit = index + depth;
-                //         for (let i = index + 1; i < limit; i++) {
-                //             if (timelineSettings.timelineDates[i] !== undefined) {
-                //                 let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
-                //                 if ($("#" + id).length === 0) {
-                //                     // Render currentDate
-                //                     await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
-                //                     currAnchor = id;
-                //                 }
-                //             } else {
-                //                 break;
-                //             }
-                //         }
-                //         break;
-                //     }
-                // }
-
                 await renderRange(idx + 1, idx + 1 + 3, "below", anchor); // below 2 days
                 await renderRange(idx - 1, idx - 1 - 4, "above", anchor); // above 3 days
             } else {
@@ -1172,13 +1130,12 @@
                         const tickTop = i / dateList.length * 100;
 
                         if (timelineDateObj && timelineDateObj.year === currentDateObj.year && timelineDateObj.month === currentDateObj.month && timelineDateObj.day === currentDateObj.day) {
-                            const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day+'" style="color: #ADD8E6; font-size: x-large">' + '&#8213;' + '</span>').css({
-                                'width': '10px',
+
+                            const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day+'" style="color: #ADD8E6; font-size: x-large">&#8213;</span>').css({
                                 'right': '15px',
-                                'position': 'absolute',
+                                'position': 'relative',
                                 'z-index': '1',
-                                'bottom': '50%',
-                                'top': (tickTop - ((dateSliderHeight/containerHeight)+1)) + '%'
+                                'top': (tickTop - ((dateSliderHeight/containerHeight)+1.09)) + '%'
                             });
 
                             $("#dateSlider").append(tickEl);
