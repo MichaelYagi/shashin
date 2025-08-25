@@ -30,6 +30,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
 import kotlin.math.ceil
+import kotlin.math.floor
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -162,11 +163,11 @@ class FavoritesController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val favoriteList = if (mediaType == "all") {
-                response["totalPages"] = ceil((favoriteRepository.countAllByUserId(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((favoriteRepository.countAllByUserId(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
 
                 favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
             } else if (mediaType == "nolatlng") {
-                response["totalPages"] = ceil((favoriteRepository.countAllByUserIdAndNoCoord(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((favoriteRepository.countAllByUserIdAndNoCoord(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
 
                 favoriteRepository.findAllByUserIdAndNoCoordAndOffsetAndLimit(
                     currentUserObj.getId(),
@@ -174,7 +175,7 @@ class FavoritesController: BaseController() {
                     size
                 )
             } else if (mediaType == "description") {
-                response["totalPages"] = ceil((favoriteRepository.countAllByUserIdAndDescription(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((favoriteRepository.countAllByUserIdAndDescription(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
 
                 favoriteRepository.findAllByUserIdAndDescriptionAndOffsetAndLimit(
                     currentUserObj.getId(),
@@ -182,7 +183,7 @@ class FavoritesController: BaseController() {
                     size
                 )
             } else {
-                response["totalPages"] = ceil((favoriteRepository.countAllByUserIdAndMediaType(currentUserObj.getId(), mediaType)!!.toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((favoriteRepository.countAllByUserIdAndMediaType(currentUserObj.getId(), mediaType)!!.toDouble()) / size.toDouble()).toInt()
 
                 favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(
                     currentUserObj.getId(),
