@@ -1070,49 +1070,52 @@
             }
 
             if (Util.isMobile()) {
-                let currentDateIndex = timelineSettings.timelineDatesHash[anchor];
-                let previousAnchor = anchor;
-                if (currentDateIndex > 0) {
-                    previousAnchor = timelineSettings.timelineDates[currentDateIndex-1].year + "-" + timelineSettings.timelineDates[currentDateIndex-1].month + "-" + timelineSettings.timelineDates[currentDateIndex-1].day;
-                }
-                await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
+                // let currentDateIndex = timelineSettings.timelineDatesHash[anchor];
+                // let previousAnchor = anchor;
+                // if (currentDateIndex > 0) {
+                //     previousAnchor = timelineSettings.timelineDates[currentDateIndex-1].year + "-" + timelineSettings.timelineDates[currentDateIndex-1].month + "-" + timelineSettings.timelineDates[currentDateIndex-1].day;
+                // }
+                // await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
+                //
+                // let depth = 6;
+                // let currAnchor = anchor;
+                // for (const [index, timelineDate] of timelineSettings.timelineDates.entries()) {
+                //     let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+                //     if (anchor === currTimelineDate) {
+                //         let limit = index - 1;
+                //         for (let i = index - 1; i > limit; i--) {
+                //             if (timelineSettings.timelineDates[i] !== undefined) {
+                //                 let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
+                //                 if ($("#" + id).length === 0) {
+                //                     // Render currentDate
+                //                     await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
+                //                     currAnchor = id;
+                //                 }
+                //             } else {
+                //                 break;
+                //             }
+                //         }
+                //
+                //         currAnchor = anchor;
+                //         limit = index + depth;
+                //         for (let i = index + 1; i < limit; i++) {
+                //             if (timelineSettings.timelineDates[i] !== undefined) {
+                //                 let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
+                //                 if ($("#" + id).length === 0) {
+                //                     // Render currentDate
+                //                     await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
+                //                     currAnchor = id;
+                //                 }
+                //             } else {
+                //                 break;
+                //             }
+                //         }
+                //         break;
+                //     }
+                // }
 
-                let depth = 6;
-                let currAnchor = anchor;
-                for (const [index, timelineDate] of timelineSettings.timelineDates.entries()) {
-                    let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-                    if (anchor === currTimelineDate) {
-                        let limit = index - 1;
-                        for (let i = index - 1; i > limit; i--) {
-                            if (timelineSettings.timelineDates[i] !== undefined) {
-                                let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
-                                if ($("#" + id).length === 0) {
-                                    // Render currentDate
-                                    await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
-                                    currAnchor = id;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
-                        currAnchor = anchor;
-                        limit = index + depth;
-                        for (let i = index + 1; i < limit; i++) {
-                            if (timelineSettings.timelineDates[i] !== undefined) {
-                                let id = timelineSettings.timelineDates[i].year + "-" + timelineSettings.timelineDates[i].month + "-" + timelineSettings.timelineDates[i].day;
-                                if ($("#" + id).length === 0) {
-                                    // Render currentDate
-                                    await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
-                                    currAnchor = id;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
+                await renderRange(idx + 1, idx + 1 + 3, "below", anchor); // below 2 days
+                await renderRange(idx - 1, idx - 1 - 4, "above", anchor); // above 3 days
             } else {
                 await renderRange(idx + 1, idx + 1 + 5, "below", anchor); // below 4 days
                 await renderRange(idx - 1, idx - 1 - 4, "above", anchor); // above 3 days
@@ -1147,6 +1150,8 @@
 
             setTimeout(async function() {
                 timelineSettings.enableScroll();
+                $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                document.getElementById("dateSliderWrapper").style.cursor = "default";
 
                 setTimeout(async function() {
                     const dateList = timelineSettings.timelineDates;
@@ -1188,11 +1193,8 @@
                     }
 
                     timelineSettings.lastDateMarker = currentDateObj;
-
-                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
-                    document.getElementById("dateSliderWrapper").style.cursor = "default";
                 }, 100);
-            }, 100);
+            }, 300);
         }
     };
 
