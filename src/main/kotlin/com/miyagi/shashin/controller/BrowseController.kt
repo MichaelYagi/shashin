@@ -33,6 +33,7 @@ import kotlin.collections.component2
 import kotlin.collections.iterator
 import kotlin.collections.mutableListOf
 import kotlin.math.ceil
+import kotlin.math.floor
 
 @Controller
 class BrowseController: BaseController() {
@@ -617,7 +618,7 @@ class BrowseController: BaseController() {
 
             var metadataList = mutableListOf<Metadata>()
             if (mediaType == "all") {
-                response["totalPages"] = ceil((metadataRepository.countAllByHiddenIsFalse().toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((metadataRepository.countAllByHiddenIsFalse().toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -646,7 +647,7 @@ class BrowseController: BaseController() {
                     }
                 }
             } else if (mediaType == "nolatlng") {
-                response["totalPages"] = ceil((metadataRepository.countByNoCoordAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((metadataRepository.countByNoCoordAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -675,7 +676,7 @@ class BrowseController: BaseController() {
                     }
                 }
             } else if (mediaType == "description") {
-                response["totalPages"] = ceil((metadataRepository.countByDescriptionAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((metadataRepository.countByDescriptionAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -704,7 +705,7 @@ class BrowseController: BaseController() {
                     }
                 }
             } else {
-                response["totalPages"] = ceil((metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType).toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType).toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -1122,7 +1123,7 @@ class BrowseController: BaseController() {
 
             if (folderObj != null && folderObj.count() > 0) {
                 val folderCount = metadataRepository.countTotalFolders()
-                response["totalPages"] = ceil((folderCount.toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = floor((folderCount.toDouble()) / size.toDouble()).toInt()
                 response["foldersList"] = folderObj
                 response["status"] = ApiResponse.SUCCESS.status
                 response["message"] = ""
@@ -1494,7 +1495,7 @@ class BrowseController: BaseController() {
 
 
             val folderTotalCount = metadataRepository.countFolder(folder)
-            response["totalPages"] = ceil((folderTotalCount.toDouble()) / size.toDouble()).toInt()
+            response["totalPages"] = floor((folderTotalCount.toDouble()) / size.toDouble()).toInt()
             val metadataList = metadataRepository.findAllByFolderOffsetAndLimit(
                 folder,
                 pageValue,
