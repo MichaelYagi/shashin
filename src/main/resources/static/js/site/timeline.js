@@ -1572,17 +1572,9 @@
                     htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
                         // deferred.resolve(timelineSettings.success);
                         ret = timelineSettings.success;
-                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                            if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                //$("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                // Scroll back to anchor element
-                                requestAnimationFrame(() => {
-                                    if (anchorElement) {
-                                        anchorElement.scrollIntoView({ behavior: 'auto', block: 'start' });
-                                    }
-                                });
-                                $("#infinite-scroll-gallery").visible();
-                            }
+                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                            $("#container").scrollTop(Util.getDateGalleryHeight(date));
+                            $("#infinite-scroll-gallery").visible();
                         }
                     });
                 } else if (action === "emptyContainer") {
@@ -1591,49 +1583,37 @@
                     $('<span class="attachMetadataPhotos" id="amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" style="visibility: hidden"></span>').insertAfter($("#container_"+date));
                 } else if (action === "new") {
                     $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                            if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                $("#infinite-scroll-gallery").visible();
-                            }
+                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                            //$("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                            $("#infinite-scroll-gallery").visible();
                         }
-                        // deferred.resolve(timelineSettings.success);
                         ret = timelineSettings.success;
                     });
                 } else {
                     if (attachToId == null) {
                         if ($(".attachMetadataPhotos").length > 0) {
                             htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                        $("#infinite-scroll-gallery").visible();
-                                    }
+                                if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                                    $("#container").scrollTop(tempScrollTop);
+                                    $("#infinite-scroll-gallery").visible();
                                 }
-                                // deferred.resolve(timelineSettings.success);
                                 ret = timelineSettings.success;
                             });
                         } else {
                             $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                        $("#infinite-scroll-gallery").visible();
-                                    }
+                                if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                                    $("#container").scrollTop(tempScrollTop);
+                                    $("#infinite-scroll-gallery").visible();
                                 }
-                                // deferred.resolve(timelineSettings.success);
                                 ret = timelineSettings.success;
                             });
                         }
                     } else {
                         htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
-                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
-                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                    $("#infinite-scroll-gallery").visible();
-                                }
+                            if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                                $("#container").scrollTop(tempScrollTop);
+                                $("#infinite-scroll-gallery").visible();
                             }
-                            // deferred.resolve(timelineSettings.success);
                             ret = timelineSettings.success;
                         });
                     }
