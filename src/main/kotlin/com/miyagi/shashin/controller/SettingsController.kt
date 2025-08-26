@@ -76,6 +76,7 @@ import java.util.stream.Collectors
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.math.floor
+import kotlin.math.round
 
 
 @Suppress("UNCHECKED_CAST")
@@ -2391,7 +2392,7 @@ class SettingsController {
 
                 logger.log(
                     Level.INFO,
-                    "${floor(completedPercent).toInt()}% completed scanning location and facial data"
+                    "${round(completedPercent).toInt()}% completed scanning location and facial data"
                 )
             }
 
