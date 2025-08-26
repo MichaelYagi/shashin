@@ -1108,8 +1108,6 @@
 
             setTimeout(async function() {
                 timelineSettings.enableScroll();
-                $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
-                document.getElementById("dateSliderWrapper").style.cursor = "default";
 
                 setTimeout(async function() {
                     const dateList = timelineSettings.timelineDates;
@@ -1149,6 +1147,12 @@
 
                             break;
                         }
+                    }
+
+
+                    if (!document.getElementById("dateSlider").matches(':hover')) {
+                        $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                        document.getElementById("dateSliderWrapper").style.cursor = "default";
                     }
                 }, 100);
             }, 300);
