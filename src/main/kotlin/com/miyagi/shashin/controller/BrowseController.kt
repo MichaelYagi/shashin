@@ -619,7 +619,7 @@ class BrowseController: BaseController() {
 
             var metadataList = mutableListOf<Metadata>()
             if (mediaType == "all") {
-                response["totalPages"] = round((metadataRepository.countAllByHiddenIsFalse().toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = ceil((metadataRepository.countAllByHiddenIsFalse().toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -648,7 +648,7 @@ class BrowseController: BaseController() {
                     }
                 }
             } else if (mediaType == "nolatlng") {
-                response["totalPages"] = round((metadataRepository.countByNoCoordAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = ceil((metadataRepository.countByNoCoordAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -677,7 +677,7 @@ class BrowseController: BaseController() {
                     }
                 }
             } else if (mediaType == "description") {
-                response["totalPages"] = round((metadataRepository.countByDescriptionAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = ceil((metadataRepository.countByDescriptionAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -706,7 +706,7 @@ class BrowseController: BaseController() {
                     }
                 }
             } else {
-                response["totalPages"] = round((metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType).toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = ceil((metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType).toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -1124,7 +1124,7 @@ class BrowseController: BaseController() {
 
             if (folderObj != null && folderObj.count() > 0) {
                 val folderCount = metadataRepository.countTotalFolders()
-                response["totalPages"] = round((folderCount.toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = ceil((folderCount.toDouble()) / size.toDouble()).toInt()
                 response["foldersList"] = folderObj
                 response["status"] = ApiResponse.SUCCESS.status
                 response["message"] = ""
@@ -1496,7 +1496,7 @@ class BrowseController: BaseController() {
 
 
             val folderTotalCount = metadataRepository.countFolder(folder)
-            response["totalPages"] = round((folderTotalCount.toDouble()) / size.toDouble()).toInt()
+            response["totalPages"] = ceil((folderTotalCount.toDouble()) / size.toDouble()).toInt()
             val metadataList = metadataRepository.findAllByFolderOffsetAndLimit(
                 folder,
                 pageValue,
