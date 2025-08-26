@@ -8,6 +8,19 @@
         }
     }
 
+    timelineSettings.once = function(func) {
+        let hasRun = false;
+        let result;
+
+        return function(...args) {
+            if (!hasRun) {
+                hasRun = true;
+                result = func.apply(this, args); // Preserve 'this' context and pass arguments
+            }
+            return result;
+        };
+    };
+
     timelineSettings.rescanElements = function (preCalculatedElements) {
         setTimeout(() => {
             let elements;
@@ -795,7 +808,8 @@
 
                     // Jump to another date from the date slider
                     if (currentDateObj && timelineSettings.enableScrollSpy === true) {
-                        timelineSettings.jumpFromTimelineToc(null, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
+                        const jumpFromTimelineToc = timelineSettings.once(timelineSettings.jumpFromTimelineToc);
+                        jumpFromTimelineToc(null, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
                         timelineSettings.enableScrollSpy = true;
                     }
 

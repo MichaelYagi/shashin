@@ -401,7 +401,8 @@ async function saveMetadata(e) {
                             const elements = Util.elementsInViewport($(".scrollspy"));
                             let firstElementId = $(elements[0]).attr("id");
                             let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-                            timelineSettings.jumpFromTimelineToc(event, firstVisibleId, $("#mediaTypeFilter").val());
+                            const jumpFromTimelineToc = timelineSettings.once(timelineSettings.jumpFromTimelineToc);
+                            jumpFromTimelineToc(event, firstVisibleId, $("#mediaTypeFilter").val());
                         }
                     });
                 }

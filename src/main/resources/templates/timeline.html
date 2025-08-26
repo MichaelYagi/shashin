@@ -56,7 +56,8 @@
                                         /*<![CDATA[*/
                                         $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
                                             e.preventDefault();
-                                            timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
+                                            const jumpFromTimelineToc = timelineSettings.once(timelineSettings.jumpFromTimelineToc);
+                                            jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
                                         });
                                         /*]]>*/
                                     });
@@ -69,7 +70,8 @@
                                         /*<![CDATA[*/
                                         $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
                                             e.preventDefault();
-                                            timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
+                                            const jumpFromTimelineToc = timelineSettings.once(timelineSettings.jumpFromTimelineToc);
+                                            jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
                                         });
                                         /*]]>*/
                                     });

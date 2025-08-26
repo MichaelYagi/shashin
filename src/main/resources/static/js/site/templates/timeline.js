@@ -18,7 +18,8 @@ class TimelineTemplates {
                 $(document).ready(function () {
                     $("#offcanvas_${year}-${month}-${day}").on("click", function (e) {
                         e.preventDefault();
-                        timelineSettings.jumpFromTimelineToc(e,"${year}-${month}-${day}","${mediaTypeFilter}")
+                        const jumpFromTimelineToc = timelineSettings.once(timelineSettings.jumpFromTimelineToc);
+                        jumpFromTimelineToc(e,"${year}-${month}-${day}","${mediaTypeFilter}");
                     });
                 });
                 </script>
