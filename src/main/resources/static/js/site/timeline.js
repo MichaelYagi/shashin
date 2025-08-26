@@ -1014,149 +1014,151 @@
         $("#dLabel").attr("aria-disabled", "true");
         $("#dLabel").attr("tabindex", "-1");
 
-        const isMobile = Util.isMobile() === true;
-        const dates = timelineSettings.timelineDates || [];
-        const idx = timelineSettings.timelineDatesHash[anchor];
+        setTimeout(async function () {
+            const isMobile = Util.isMobile() === true;
+            const dates = timelineSettings.timelineDates || [];
+            const idx = timelineSettings.timelineDatesHash[anchor];
 
-        const waitForElement = (id, { timeout = 5000, interval = 50 } = {}) =>
-        new Promise((resolve, reject) => {
-            const start = Date.now();
-            (function check() {
-                const el = document.getElementById(id);
-                if (el) return resolve(el);
-                if (Date.now() - start > timeout) return reject(new Error('timeout'));
-                setTimeout(check, interval);
-            })();
-        });
+            const waitForElement = (id, {timeout = 5000, interval = 50} = {}) =>
+                new Promise((resolve, reject) => {
+                    const start = Date.now();
+                    (function check() {
+                        const el = document.getElementById(id);
+                        if (el) return resolve(el);
+                        if (Date.now() - start > timeout) return reject(new Error('timeout'));
+                        setTimeout(check, interval);
+                    })();
+                });
 
-        const renderRange = async (start, end, direction, anchor) => {
-            const step = start < end ? 1 : -1;
-            let attachFrom = anchor;
+            const renderRange = async (start, end, direction, anchor) => {
+                const step = start < end ? 1 : -1;
+                let attachFrom = anchor;
 
-            for (let i = start; i !== end + step; i += step) {
-                if (i < 0 || i >= dates.length) continue;
-                const id = `${dates[i].year}-${dates[i].month}-${dates[i].day}`;
-                if (!document.getElementById(id)) {
-                    const result = await timelineSettings.updateTimeline(id, mediaTypeFilter, direction, attachFrom);
-                    if (result === timelineSettings.success) {
-                        attachFrom = id; // update attachFrom only if successful
+                for (let i = start; i !== end + step; i += step) {
+                    if (i < 0 || i >= dates.length) continue;
+                    const id = `${dates[i].year}-${dates[i].month}-${dates[i].day}`;
+                    if (!document.getElementById(id)) {
+                        const result = await timelineSettings.updateTimeline(id, mediaTypeFilter, direction, attachFrom);
+                        if (result === timelineSettings.success) {
+                            attachFrom = id; // update attachFrom only if successful
+                        }
+                    } else {
+                        attachFrom = id; // already exists, update attachFrom
                     }
-                } else {
-                    attachFrom = id; // already exists, update attachFrom
                 }
-            }
-        };
+            };
 
-        try {
-            timelineSettings.enableScrollSpy = false;
-            timelineSettings.isScrolling = false;
-            timelineSettings.didJumpFromTimelineToc = true;
-            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-            timelineSettings.jumpRenderInProgress = true;
+            try {
+                timelineSettings.enableScrollSpy = false;
+                timelineSettings.isScrolling = false;
+                timelineSettings.didJumpFromTimelineToc = true;
+                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                timelineSettings.jumpRenderInProgress = true;
 
-            if (isMobile) {
-                $("#timelineTocToggle").attr("data-bs-backdrop", "static").attr("data-bs-keyboard", "false");
-                $("#offcanvasTocCloseButton").prop('disabled', true);
-            }
+                if (isMobile) {
+                    $("#timelineTocToggle").attr("data-bs-backdrop", "static").attr("data-bs-keyboard", "false");
+                    $("#offcanvasTocCloseButton").prop('disabled', true);
+                }
 
-            $('section').each((_, el) => Util.removeDateGallery(el.id));
-            $("#spinner_top, #spinner_bottom").hide();
+                $('section').each((_, el) => Util.removeDateGallery(el.id));
+                $("#spinner_top, #spinner_bottom").hide();
 
-            const ok = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
-            if (ok !== timelineSettings.success || !document.getElementById(anchor)) {
-                shashin.printMessageToConsole("Failed to render anchor", {
+                const ok = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
+                if (ok !== timelineSettings.success || !document.getElementById(anchor)) {
+                    shashin.printMessageToConsole("Failed to render anchor", {
+                        tag: "jumpFromTimelineToc",
+                        consoleType: shashin.consoleTypes.error
+                    });
+                    return;
+                }
+
+                if (Util.isMobile()) {
+                    await renderRange(idx + 1, idx + 1 + 3, "below", anchor); // below 2 days
+                    await renderRange(idx - 1, idx - 1 - 4, "above", anchor); // above 3 days
+                } else {
+                    await renderRange(idx + 1, idx + 1 + 5, "below", anchor); // below 4 days
+                    await renderRange(idx - 1, idx - 1 - 4, "above", anchor); // above 3 days
+                }
+
+                // Land on correct TOC date
+                const element = document.getElementById(anchor);
+                document.getElementById("container").scrollTop = element.offsetTop;
+
+                await waitForElement(anchor);
+            } catch (err) {
+                shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, {
                     tag: "jumpFromTimelineToc",
                     consoleType: shashin.consoleTypes.error
                 });
-                return;
-            }
+            } finally {
+                if (isMobile) {
+                    $("#timelineTocToggle").removeAttr("data-bs-backdrop").removeAttr("data-bs-keyboard");
+                    $("#offcanvasTocCloseButton").prop('disabled', false);
+                    $("#offcanvasTocCloseButton").click();
+                }
 
-            if (Util.isMobile()) {
-                await renderRange(idx + 1, idx + 1 + 3, "below", anchor); // below 2 days
-                await renderRange(idx - 1, idx - 1 - 4, "above", anchor); // above 3 days
-            } else {
-                await renderRange(idx + 1, idx + 1 + 5, "below", anchor); // below 4 days
-                await renderRange(idx - 1, idx - 1 - 4, "above", anchor); // above 3 days
-            }
+                Util.showSpinner(false);
+                $("#dLabel").removeClass("disabled").removeAttr("aria-disabled").removeAttr("tabindex");
 
-            // Land on correct TOC date
-            const element = document.getElementById(anchor);
-            document.getElementById("container").scrollTop = element.offsetTop;
+                timelineSettings.jumpRenderInProgress = false;
+                timelineSettings.enableScrollSpy = true;
+                timelineSettings.isScrolling = true;
+                timelineSettings.jumpInProgress = false;
 
-            await waitForElement(anchor);
-        } catch (err) {
-            shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, {
-                tag: "jumpFromTimelineToc",
-                consoleType: shashin.consoleTypes.error
-            });
-        } finally {
-            if (isMobile) {
-                $("#timelineTocToggle").removeAttr("data-bs-backdrop").removeAttr("data-bs-keyboard");
-                $("#offcanvasTocCloseButton").prop('disabled', false);
-                $("#offcanvasTocCloseButton").click();
-            }
+                await waitForElement(anchor);
 
-            Util.showSpinner(false);
-            $("#dLabel").removeClass("disabled").removeAttr("aria-disabled").removeAttr("tabindex");
+                setTimeout(async function () {
+                    timelineSettings.enableScroll();
 
-            timelineSettings.jumpRenderInProgress = false;
-            timelineSettings.enableScrollSpy = true;
-            timelineSettings.isScrolling = true;
-            timelineSettings.jumpInProgress = false;
+                    setTimeout(async function () {
+                        const dateList = timelineSettings.timelineDates;
+                        const dateSliderHeight = $("#dateSlider").height();
+                        const containerHeight = $("body").height();
 
-            await waitForElement(anchor);
+                        timelineSettings.scrollBarIsSliding = false;
+                        const anchorArray = anchor.split("-");
+                        const currentDateObj = {
+                            year: parseInt(anchorArray[0]),
+                            month: parseInt(anchorArray[1]),
+                            day: parseInt(anchorArray[2])
+                        };
 
-            setTimeout(async function() {
-                timelineSettings.enableScroll();
-
-                setTimeout(async function() {
-                    const dateList = timelineSettings.timelineDates;
-                    const dateSliderHeight = $("#dateSlider").height();
-                    const containerHeight = $("body").height();
-
-                    timelineSettings.scrollBarIsSliding = false;
-                    const anchorArray = anchor.split("-");
-                    const currentDateObj = {
-                        year: parseInt(anchorArray[0]),
-                        month: parseInt(anchorArray[1]),
-                        day: parseInt(anchorArray[2])
-                    };
-
-                    if (timelineSettings.lastDateMarker !== null) {
-                        const lastDateMarker = timelineSettings.lastDateMarker;
-                        $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
-                    }
-
-                    timelineSettings.lastDateMarker = currentDateObj;
-
-                    // Mark as last known date
-                    for (let i = 0; i < dateList.length; i++) {
-                        const timelineDateObj = dateList[i];
-                        const tickTop = i / dateList.length * 100;
-
-                        if (timelineDateObj && timelineDateObj.year === currentDateObj.year && timelineDateObj.month === currentDateObj.month && timelineDateObj.day === currentDateObj.day) {
-
-                            const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day+'" style="color: #ADD8E6; font-size: x-large">&#8213;</span>').css({
-                                'right': '15px',
-                                'position': 'relative',
-                                'z-index': '1',
-                                'top': (tickTop - ((dateSliderHeight/containerHeight)+1.09)) + '%'
-                            });
-
-                            $("#dateSlider").append(tickEl);
-
-                            break;
+                        if (timelineSettings.lastDateMarker !== null) {
+                            const lastDateMarker = timelineSettings.lastDateMarker;
+                            $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
                         }
-                    }
+
+                        timelineSettings.lastDateMarker = currentDateObj;
+
+                        // Mark as last known date
+                        for (let i = 0; i < dateList.length; i++) {
+                            const timelineDateObj = dateList[i];
+                            const tickTop = i / dateList.length * 100;
+
+                            if (timelineDateObj && timelineDateObj.year === currentDateObj.year && timelineDateObj.month === currentDateObj.month && timelineDateObj.day === currentDateObj.day) {
+
+                                const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day + '" style="color: #ADD8E6; font-size: x-large">&#8213;</span>').css({
+                                    'right': '15px',
+                                    'position': 'relative',
+                                    'z-index': '1',
+                                    'top': (tickTop - ((dateSliderHeight / containerHeight) + 1.09)) + '%'
+                                });
+
+                                $("#dateSlider").append(tickEl);
+
+                                break;
+                            }
+                        }
 
 
-                    if (!document.getElementById("dateSlider").matches(':hover')) {
-                        $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
-                        document.getElementById("dateSliderWrapper").style.cursor = "default";
-                    }
-                }, 100);
-            }, 300);
-        }
+                        if (!document.getElementById("dateSlider").matches(':hover')) {
+                            $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                            document.getElementById("dateSliderWrapper").style.cursor = "default";
+                        }
+                    }, 100);
+                }, 300);
+            }
+        }, 300);
     };
 
     timelineSettings.observeAnchorChange = function(id, functionCall) {
