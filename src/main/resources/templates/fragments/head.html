@@ -113,6 +113,24 @@
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false' and activePageLower != 'login' and activePageLower != 'register'}">
             <link rel="stylesheet" href="/css/site/style.css">
         </th:block>
+        <th:block th:if="${activePageLower == 'timeline'}">
+            <style>
+                .dateHeader {
+                    margin-top: -25px;
+                    margin-left: -17px;
+                    padding: 25px 0 15px 22px !important;
+                }
+            </style>
+        </th:block>
+        <th:block th:if="${isMobile == true}">
+            <style>
+                .dateHeader {
+                    margin-top: -25px;
+                    margin-left: -17px;
+                    padding: 25px 0 15px 25px !important;
+                }
+            </style>
+        </th:block>
         <th:block th:if="${activePageLower == 'login' or activePageLower == 'register'}">
             <link href="/css/loginreg.css" rel="stylesheet" type="text/css">
         </th:block>
