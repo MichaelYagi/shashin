@@ -1432,9 +1432,11 @@ class Util {
         // console.log("$(\"#\" + id).outerHeight(true):"+$("#" + id).outerHeight(true))
 
         if (Util.isSafari()) {
-            return $("#br" + id).outerHeight(true) +
-                $("#" + id).outerHeight(true) +
-                $("#row" + id).outerHeight(true);
+            let totalHeight = 0;
+            $('#container_'+id).children().each(function() {
+                totalHeight += $(this).outerHeight(true);
+            });
+            return totalHeight;
         } else {
             return $("#container_" + id).outerHeight(true);
         }
