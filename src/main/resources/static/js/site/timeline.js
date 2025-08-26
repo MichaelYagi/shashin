@@ -1119,6 +1119,8 @@
                 timelineSettings.isScrolling = true;
                 timelineSettings.jumpInProgress = false;
 
+                timelineSettings.scrollByN(2);
+
                 await waitForElement(anchor);
 
                 setTimeout(async function () {
