@@ -137,7 +137,8 @@
         // Jump to date
         if (hash.length > 0) {
             if ($("#offcanvas_"+hash).length > 0) {
-                timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
+                const jumpFromTimelineToc = timelineSettings.once(timelineSettings.jumpFromTimelineToc);
+                jumpFromTimelineToc(null, hash, mediaTypeFilter);
             } else if ($('.scrollspy').length > 0) {
                 history.pushState("", document.title, window.location.pathname + window.location.search);
 
