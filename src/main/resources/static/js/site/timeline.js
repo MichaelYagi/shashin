@@ -1124,6 +1124,13 @@
                         day: parseInt(anchorArray[2])
                     };
 
+                    if (timelineSettings.lastDateMarker !== null) {
+                        const lastDateMarker = timelineSettings.lastDateMarker;
+                        $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
+                    }
+
+                    timelineSettings.lastDateMarker = currentDateObj;
+
                     // Mark as last known date
                     for (let i = 0; i < dateList.length; i++) {
                         const timelineDateObj = dateList[i];
@@ -1143,13 +1150,6 @@
                             break;
                         }
                     }
-
-                    if (timelineSettings.lastDateMarker !== null) {
-                        const lastDateMarker = timelineSettings.lastDateMarker;
-                        $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
-                    }
-
-                    timelineSettings.lastDateMarker = currentDateObj;
                 }, 100);
             }, 300);
         }
