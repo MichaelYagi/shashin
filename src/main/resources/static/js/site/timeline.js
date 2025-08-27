@@ -963,38 +963,39 @@
                 const relativeY = e.pageY - offset.top;
                 const percentage = relativeY / height;
 
-                let value = Math.round(percentage * 100);
-                if (value < 0) {
-                    value = 0;
+                let percent = Math.round(percentage * 100);
+                if (percent < 0) {
+                    percent = 0;
                 }
 
-                const percent = Math.round((dateList.length - 1) - (100 - value)) + 10;
-
                 const index = Math.round(((dateList.length-1)/100)*percent);
-                const currentDateObj = dateList[index];
 
-                const year = currentDateObj.year;
-                const month = currentDateObj.month;
-                const day = currentDateObj.day;
+                if (index > -1 && index < dateList.length) {
+                    const hoverDateObj = dateList[index];
 
-                const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
-                    'width': '10px',
-                    'right': '15px',
-                    'position': 'absolute',
-                    'z-index': '1',
-                    'top': value + '%'
-                });
+                    const year = hoverDateObj.year;
+                    const month = hoverDateObj.month;
+                    const day = hoverDateObj.day;
 
-                const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge'+year + '-' + month+'-' + day + '" style="background-color: slategray;" />').css({
-                    position: 'absolute',
-                    right: 15,
-                    bottom: "1%"
-                });
-                sliderTooltip.text(Util.getDateString(year,month,day,timelineSettings.locale,false));
+                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
+                        'width': '10px',
+                        'right': '15px',
+                        'position': 'absolute',
+                        'z-index': '1',
+                        'top': percent + '%'
+                    });
 
-                $(tickEl).append(sliderTooltip);
+                    const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge' + year + '-' + month + '-' + day + '" style="background-color: slategray;" />').css({
+                        position: 'absolute',
+                        right: 15,
+                        bottom: "1%"
+                    });
+                    sliderTooltip.text(Util.getDateString(year, month, day, timelineSettings.locale, false));
 
-                $("#dateSlider").append(tickEl);
+                    $(tickEl).append(sliderTooltip);
+
+                    $("#dateSlider").append(tickEl);
+                }
             });
 
             $("#dateSliderWrapper").hover(function () {
