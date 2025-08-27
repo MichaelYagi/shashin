@@ -985,7 +985,7 @@
                         'top': percent + '%'
                     });
 
-                    const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge' + year + '-' + month + '-' + day + '" style="background-color: slategray;" />').css({
+                    const sliderTooltip = $('<span class="badge bg-secondary mt-2 hoverDateText" id="badge' + year + '-' + month + '-' + day + '" style="background-color: slategray;" />').css({
                         position: 'absolute',
                         right: 15,
                         bottom: "1%"
