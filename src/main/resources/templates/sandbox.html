@@ -47,8 +47,23 @@
 
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
+        const disableScroll = function() {
+            window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
+            window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
+            window.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
+            window.addEventListener('keydown', preventDefaultForScrollKeys, false);
+        };
+
+        // call this to Enable
+        const enableScroll = function() {
+            window.removeEventListener('DOMMouseScroll', preventDefault, false);
+            window.removeEventListener(wheelEvent, preventDefault, wheelOpt);
+            window.removeEventListener('touchmove', preventDefault, wheelOpt);
+            window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
+        };
+
         // Disable scroll
-        timelineSettings.disableScroll();
+        disableScroll();
 
         /*<![CDATA[*/
         const size = /*[[${size}]]*/ 500;
@@ -78,7 +93,7 @@
 
                 db.metadataList.bulkPut(metadataList).then(() => {
                     // Re-enable scrolling
-                    timelineSettings.enableScroll();
+                    enableScroll();
                     dbOperationComplete = true;
                 });
 
