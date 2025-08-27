@@ -18,7 +18,7 @@
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
                                 <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
+                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><a th:href="'timeline#'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" target="_blank"><strong th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></strong></a></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
                                 </th:block>
                             </th:block>
 
@@ -47,6 +47,9 @@
 
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
+        // Disable scroll
+        document.body.style.overflow = 'hidden';
+
         /*<![CDATA[*/
         const size = /*[[${size}]]*/ 500;
         /*]]>*/
@@ -74,6 +77,8 @@
                 });
 
                 db.metadataList.bulkPut(metadataList).then(() => {
+                    // Re-enable scrolling
+                    document.body.style.overflow = '';
                     dbOperationComplete = true;
                 });
 
@@ -119,7 +124,7 @@
                     db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
                         if (metadataArray.length > 0) {
                             let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
-                                "<p><strong>" + year + "-" + month + "-" + day + "</strong></p>" +
+                                "<p><a href='/timeline#"+year + "-" + month + "-" + day+"' target='_blank'><strong>" + year + "-" + month + "-" + day + "</strong></a></p>" +
                                 "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
 
                             for (const index in metadataArray) {
