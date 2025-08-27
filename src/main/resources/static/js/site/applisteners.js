@@ -27,6 +27,11 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
     $("#batchMetadataIds").val(JSON.stringify(metadataIdArray));
     $("#batchisobject")[0].checked = false;
     $("#batchhidden")[0].checked = false;
+
+    $("#addtoexistingkeywords")[0].checked = true;
+    $("#addtoexistingalbums")[0].checked = true;
+    $("#addtoexistingpeople")[0].checked = true;
+
     if (thumbnailList !== "") {
         $("#editPhotosNamesModalLabel").html(thumbnailList);
     }
