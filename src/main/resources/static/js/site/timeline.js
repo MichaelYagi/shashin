@@ -959,48 +959,42 @@
                 $(".hoverDateText").remove();
 
                 const offset = $(this).offset();
-                const height = $(this).height();
+                const height = $(this).outerHeight(true);
                 const relativeY = e.pageY - offset.top;
-                const percentage = 1 - (relativeY / height); // invert for vertical
-                const value = 100-(Math.round(percentage * 100)); // assuming max is 100
+                const percentage = relativeY / height;
 
-                const sliderId = $(e.target).closest('.monthYearSlider').attr("id");
-
-                if (sliderId) {
-                    const monthYearStr = sliderId.replace("sliderId", "");
-                    const monthYearArray = monthYearStr.split("-");
-                    const year = monthYearArray[0];
-                    const month = monthYearArray[1];
-
-                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
-                        'width': '10px',
-                        'right': '15px',
-                        'position': 'absolute',
-                        'z-index': '1',
-                        'top': value + '%'
-                    });
-
-                    const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge'+year + '-' + month+'" style="background-color: slategray;" />').css({
-                        position: 'absolute',
-                        right: 15,
-                        bottom: "1%"
-                    });
-                    sliderTooltip.text(Util.getShortMonths(month - 1, timelineSettings.locale) + ' ' + year);
-
-                    $(tickEl).append(sliderTooltip);
-
-                    $("#dateSlider").append(tickEl);
-                } else {
-                    const tickEl = $('<span class="hoverDateMarker" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
-                        'width': '10px',
-                        'right': '15px',
-                        'position': 'absolute',
-                        'z-index': '1',
-                        'top': value + '%'
-                    });
-
-                    $("#dateSlider").append(tickEl);
+                let value = Math.round(percentage * 100);
+                if (value < 0) {
+                    value = 0;
                 }
+
+                const percent = Math.round((dateList.length - 1) - (100 - value)) + 10;
+
+                const index = Math.round(((dateList.length-1)/100)*percent);
+                const currentDateObj = dateList[index];
+
+                const year = currentDateObj.year;
+                const month = currentDateObj.month;
+                const day = currentDateObj.day;
+
+                const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
+                    'width': '10px',
+                    'right': '15px',
+                    'position': 'absolute',
+                    'z-index': '1',
+                    'top': value + '%'
+                });
+
+                const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge'+year + '-' + month+'-' + day + '" style="background-color: slategray;" />').css({
+                    position: 'absolute',
+                    right: 15,
+                    bottom: "1%"
+                });
+                sliderTooltip.text(Util.getDateString(year,month,day,timelineSettings.locale,false));
+
+                $(tickEl).append(sliderTooltip);
+
+                $("#dateSlider").append(tickEl);
             });
 
             $("#dateSliderWrapper").hover(function () {
