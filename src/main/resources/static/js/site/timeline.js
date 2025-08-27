@@ -1030,6 +1030,12 @@
         if (timelineSettings.jumpInProgress) return;
         timelineSettings.jumpInProgress = true;
 
+        // Remove hash
+        const uri = window.location.toString();
+        if (uri.indexOf("#") > 0) {
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+        }
+
         Util.showSpinner(true);
         $("#dLabel").addClass("disabled");
         $("#dLabel").attr("aria-disabled", "true");
