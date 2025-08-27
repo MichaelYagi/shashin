@@ -832,7 +832,7 @@
                         handleTooltip.visible();
                     }
                 }
-            }).find(".ui-slider-handle").append(handleTooltip).hover(function () {
+            }).find(".ui-slider-handle").append(handleTooltip).hover(function (e) {
                 handleTooltip.visible();
             });
 
@@ -843,7 +843,7 @@
                 "left": "0",
                 "background": "transparent",
                 "border": "none",
-                "cursor": "pointer",
+                "cursor": "default",
                 "position": "absolute",
                 "box-sizing": "border-box"
             });
@@ -942,7 +942,7 @@
                             'width': '73px',
                             'right': '0px',
                             'margin-right': '-3px',
-                            'cursor': 'pointer',
+                            'cursor': 'default',
                             'z-index': '3',
                             'position': 'absolute',
                             'top': tickTop + '%'
@@ -954,41 +954,58 @@
                 }
             }
 
-            $(".monthYearSlider").hover(function () {
+            $("#dateSliderWrapper").on('mousemove', function (e) {
                 $(".hoverDateMarker").remove();
                 $(".hoverDateText").remove();
 
-                const hoverDateId = $(this).attr("data-slider-id");
-                if (hoverDateId && hoverDateId.length > 0) {
-                    const hoverDateArray = hoverDateId.split("-");
-                    const hoverDateObj = {
-                        year: parseInt(hoverDateArray[0]),
-                        month: parseInt(hoverDateArray[1]),
-                        day: parseInt(hoverDateArray[2])
-                    };
+                const offset = $(this).offset();
+                const height = $(this).height();
+                const relativeY = e.pageY - offset.top;
+                const percentage = 1 - (relativeY / height); // invert for vertical
+                const value = 100-(Math.round(percentage * 100)); // assuming max is 100
 
-                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + hoverDateObj.year + '-' + hoverDateObj.month + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
+                const sliderId = $(e.target).closest('.monthYearSlider').attr("id");
+
+                if (sliderId) {
+                    const monthYearStr = sliderId.replace("sliderId", "");
+                    const monthYearArray = monthYearStr.split("-");
+                    const year = monthYearArray[0];
+                    const month = monthYearArray[1];
+
+                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
                         'width': '10px',
                         'right': '15px',
                         'position': 'absolute',
-                        'z-index': '1'
+                        'z-index': '1',
+                        'top': value + '%'
                     });
 
-                    const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge'+hoverDateObj.year + '-' + hoverDateObj.month+'" style="background-color: slategray;" />').css({
+                    const sliderTooltip = $('<span class="badge bg-secondary mt-2" id="badge'+year + '-' + month+'" style="background-color: slategray;" />').css({
                         position: 'absolute',
                         right: 15,
                         bottom: "1%"
                     });
-                    sliderTooltip.text(Util.getShortMonths(hoverDateObj.month - 1, timelineSettings.locale) + ' ' + hoverDateObj.year);
+                    sliderTooltip.text(Util.getShortMonths(month - 1, timelineSettings.locale) + ' ' + year);
 
                     $(tickEl).append(sliderTooltip);
-                    $("#sliderId" + hoverDateObj.year + '-' + hoverDateObj.month).append(tickEl);
+
+                    $("#dateSlider").append(tickEl);
+                } else {
+                    const tickEl = $('<span class="hoverDateMarker" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
+                        'width': '10px',
+                        'right': '15px',
+                        'position': 'absolute',
+                        'z-index': '1',
+                        'top': value + '%'
+                    });
+
+                    $("#dateSlider").append(tickEl);
                 }
             });
 
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-                document.getElementById("dateSliderWrapper").style.cursor = "pointer";
+                document.getElementById("dateSliderWrapper").style.cursor = "default";
             }, function () {
                 if (timelineSettings.scrollBarIsSliding === false) {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
@@ -1000,7 +1017,7 @@
 
             $('#dateSliderWrapper').on('touchstart', function() {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-                document.getElementById("dateSliderWrapper").style.cursor = "pointer";
+                document.getElementById("dateSliderWrapper").style.cursor = "default";
             });
 
             $('#dateSliderWrapper').on('touchend', function() {
