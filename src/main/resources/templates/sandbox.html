@@ -47,6 +47,14 @@
 
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
+        let useDexie = true;
+
+        shashin.showToastMessage("Using Dexie", "Using Dexie", {
+            tag:"sandbox",
+            icon:"bi-info-circle",
+            iconColor:"#777777"
+        });
+
         const keys = {37: 1, 38: 1, 39: 1, 40: 1};
 
         function preventDefault(e) {
@@ -89,10 +97,6 @@
         // Disable scroll
         disableScroll();
 
-        /*<![CDATA[*/
-        const size = /*[[${size}]]*/ 500;
-        /*]]>*/
-
         const offset = 30;
         let direction = "down";
         let addingSection = false;
@@ -101,7 +105,7 @@
         };
 
         let http = new Http("timeline");
-        http.ajax("get", "/sandbox/data?size="+size).then(function (data) {
+        http.ajax("get", "/sandbox/data").then(function (data) {
             if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataDatesHash")) {
                 const metadataList = data.metadataList;
                 const timelineDatesData = data["metadataDates"];
@@ -127,6 +131,24 @@
                 // Functions to imitate timeline
                 $("#doit").on("click", function (e) {
                     e.preventDefault();
+
+                    if (useDexie === true) {
+                        useDexie = false;
+                        $("#doitspan").addClass("bi-arrow-through-heart").removeClass("bi-arrow-through-heart-fill");
+                        shashin.showToastMessage("Using backend", "Using backend", {
+                            tag:"sandbox",
+                            icon:"bi-info-circle",
+                            iconColor:"#777777"
+                        });
+                    } else {
+                        useDexie = true;
+                        $("#doitspan").removeClass("bi-arrow-through-heart").addClass("bi-arrow-through-heart-fill");
+                        shashin.showToastMessage("Using Dexie", "Using Dexie", {
+                            tag:"sandbox",
+                            icon:"bi-info-circle",
+                            iconColor:"#777777"
+                        });
+                    }
                 })
 
                 function getDateGalleryHeight(id) {
@@ -160,49 +182,103 @@
                 });
 
                 function createSection(year, month, day, attachDate) {
-                    db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataArray) {
-                        if (metadataArray.length > 0) {
-                            let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
-                                "<p><a href='/timeline#"+year + "-" + month + "-" + day+"' target='_blank'><strong>" + year + "-" + month + "-" + day + "</strong></a></p>" +
-                                "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
+                    if (useDexie === false) {
+                        let http = new Http("timeline");
+                        http.ajax("get", "/sandbox/data/" + year + "/" + month + "/" + day).then(function (data) {
+                            console.log(data);
+                            if (data.hasOwnProperty("metadataList") && data.metadataList.length > 0) {
+                                const metadataArray = data.metadataList;
 
-                            for (const index in metadataArray) {
-                                const metadata = metadataArray[index];
+                                let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
+                                    "<p><a href='/timeline#" + year + "-" + month + "-" + day + "' target='_blank'><strong>" + year + "-" + month + "-" + day + "</strong></a></p>" +
+                                    "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
 
-                                html += "<div id='photoThumbnailContainer" + metadata.id + "' class='photo-thumbnail-container photo-thumbnail' style='width:" + metadata.thumbnailSmallWidth + "px;height:" + metadata.thumbnailSmallHeight + "px;padding-left:0;padding-right:0;'>" +
-                                    "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/" + metadata.id + "' class='photo-thumbnail-image' id='image" + metadata.id + "' width='" + metadata.thumbnailSmallWidth + "' th:height='" + metadata.thumbnailSmallHeight + "' style='background-color:lightgray;'>" +
-                                    "</div>"
+                                for (const index in metadataArray) {
+                                    const metadata = metadataArray[index];
+
+                                    html += "<div id='photoThumbnailContainer" + metadata.id + "' class='photo-thumbnail-container photo-thumbnail' style='width:" + metadata.thumbnailSmallWidth + "px;height:" + metadata.thumbnailSmallHeight + "px;padding-left:0;padding-right:0;'>" +
+                                        "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/" + metadata.id + "' class='photo-thumbnail-image' id='image" + metadata.id + "' width='" + metadata.thumbnailSmallWidth + "' th:height='" + metadata.thumbnailSmallHeight + "' style='background-color:lightgray;'>" +
+                                        "</div>"
+                                }
+
+                                html += "</div></section>" +
+                                    "<span class='appendMetadataPhotos' id='append" + year + "-" + month + "-" + day + "' style='width:0;height:0;padding:0'></span>";
+
+                                let htmlContent = $(html);
+
+                                const viewportTop = $("#container").scrollTop();
+
+                                if (direction === "up") {
+                                    $("#" + attachDate).before(htmlContent);
+                                } else {
+                                    htmlContent.insertAfter($("#append" + attachDate));
+                                }
+
+                                // TODO: Create - look in timeline - needed for all browsers
+                                const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
+
+                                console.log("====================");
+                                console.log("created date: " + year + "-" + month + "-" + day);
+                                console.log("direction: " + direction);
+                                console.log("viewportTop: " + viewportTop);
+                                console.log("contentHeight: " + contentHeight);
+
+                                if (direction === "up") {
+                                    $("#container")[0].scrollTop = contentHeight;
+                                } else {
+                                    $("#container")[0].scrollTop = viewportTop
+                                }
                             }
+                        });
+                    } else {
+                        db.metadataList.where({
+                            year: year,
+                            month: month,
+                            day: day
+                        }).reverse().sortBy("time", function (metadataArray) {
+                            if (metadataArray.length > 0) {
+                                let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
+                                    "<p><a href='/timeline#" + year + "-" + month + "-" + day + "' target='_blank'><strong>" + year + "-" + month + "-" + day + "</strong></a></p>" +
+                                    "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
 
-                            html += "</div></section>" +
-                                "<span class='appendMetadataPhotos' id='append" + year + "-" + month + "-" + day + "' style='width:0;height:0;padding:0'></span>";
+                                for (const index in metadataArray) {
+                                    const metadata = metadataArray[index];
 
-                            let htmlContent = $(html);
+                                    html += "<div id='photoThumbnailContainer" + metadata.id + "' class='photo-thumbnail-container photo-thumbnail' style='width:" + metadata.thumbnailSmallWidth + "px;height:" + metadata.thumbnailSmallHeight + "px;padding-left:0;padding-right:0;'>" +
+                                        "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/" + metadata.id + "' class='photo-thumbnail-image' id='image" + metadata.id + "' width='" + metadata.thumbnailSmallWidth + "' th:height='" + metadata.thumbnailSmallHeight + "' style='background-color:lightgray;'>" +
+                                        "</div>"
+                                }
 
-                            const viewportTop = $("#container").scrollTop();
+                                html += "</div></section>" +
+                                    "<span class='appendMetadataPhotos' id='append" + year + "-" + month + "-" + day + "' style='width:0;height:0;padding:0'></span>";
 
-                            if (direction === "up") {
-                                $("#" + attachDate).before(htmlContent);
-                            } else {
-                                htmlContent.insertAfter($("#append" + attachDate));
+                                let htmlContent = $(html);
+
+                                const viewportTop = $("#container").scrollTop();
+
+                                if (direction === "up") {
+                                    $("#" + attachDate).before(htmlContent);
+                                } else {
+                                    htmlContent.insertAfter($("#append" + attachDate));
+                                }
+
+                                // TODO: Create - look in timeline - needed for all browsers
+                                const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
+
+                                console.log("====================");
+                                console.log("created date: " + year + "-" + month + "-" + day);
+                                console.log("direction: " + direction);
+                                console.log("viewportTop: " + viewportTop);
+                                console.log("contentHeight: " + contentHeight);
+
+                                if (direction === "up") {
+                                    $("#container")[0].scrollTop = contentHeight;
+                                } else {
+                                    $("#container")[0].scrollTop = viewportTop
+                                }
                             }
-
-                            // TODO: Create - look in timeline - needed for all browsers
-                            const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
-
-                            console.log("====================");
-                            console.log("created date: " + year + "-" + month + "-" + day);
-                            console.log("direction: " + direction);
-                            console.log("viewportTop: " + viewportTop);
-                            console.log("contentHeight: " + contentHeight);
-
-                            if (direction === "up") {
-                                $("#container")[0].scrollTop = contentHeight;
-                            } else {
-                                $("#container")[0].scrollTop = viewportTop
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
 
                 function isInViewport(element, callback) {
