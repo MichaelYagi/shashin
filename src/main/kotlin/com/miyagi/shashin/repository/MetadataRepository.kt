@@ -284,6 +284,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    fun findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(year: Int?, month: Int?, day: Int?, hidden: Boolean?): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   fun findTimelineByDate(year: Int?, month: Int?, day: Int?): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = 0 AND place_name IS NOT NULL ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelinePlaceByDate(year: Int?, month: Int?, day: Int?): MutableIterable<Metadata>
 

@@ -224,6 +224,24 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/sandbox/data/{year}/{month}/{day}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun sandboxAPIDate(model: Model, request: HttpServletRequest, response: HttpServletResponse, @PathVariable(required = true) year: Int?, @PathVariable(required = true) month: Int?, @PathVariable(required = true) day: Int?): String {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = ""
+        response["status"] = ApiResponse.SUCCESS.status
+        response["activePage"] = "sandbox"
+        response["metadataList"] = mutableListOf<Metadata>()
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            response["metadataList"] = metadataRepository.findTimelineByDate(year, month, day)
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @Secured("ROLE_SUPER")
     @GetMapping("/wake")
     fun wake(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["activePage"] = "wake"
