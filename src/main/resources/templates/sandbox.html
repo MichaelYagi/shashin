@@ -118,12 +118,13 @@
                 db.version(1).stores({
                     metadataList: `id, [year+month+day]`
                 });
-
-                db.metadataList.bulkPut(metadataList).then(() => {
-                    // Re-enable scrolling
-                    enableScroll();
-                    dbOperationComplete = true;
-                });
+                setTimeout(function () {
+                    db.metadataList.bulkPut(metadataList).then(() => {
+                        // Re-enable scrolling
+                        enableScroll();
+                        dbOperationComplete = true;
+                    });
+                }, 0);
 
                 console.log(timelineDatesData);
                 console.log(timelineDatesHash);
