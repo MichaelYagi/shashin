@@ -2,6 +2,16 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<style>
+    .hide-scrollbar {
+        /* Apply the scrollbar hiding styles here */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        scrollbar-width: none; /* For Firefox */
+        -ms-overflow-style: none; /* For IE/Edge */
+    }
+</style>
 <script src="/js/dexie.js" th:nonce="${cspNonce}"></script>
 <body class="thumb d-flex flex-column vh-100">
 
@@ -84,6 +94,7 @@
             window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
             window.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
             window.addEventListener('keydown', preventDefaultForScrollKeys, false);
+            $("#container").addClass("hide-scrollbar");
         };
 
         // call this to Enable
@@ -92,6 +103,7 @@
             window.removeEventListener(wheelEvent, preventDefault, wheelOpt);
             window.removeEventListener('touchmove', preventDefault, wheelOpt);
             window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
+            $("#container").removeClass("hide-scrollbar");
         };
 
         // Disable scroll
