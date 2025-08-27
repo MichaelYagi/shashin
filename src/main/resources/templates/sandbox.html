@@ -48,7 +48,7 @@
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
         // Disable scroll
-        document.body.style.overflow = 'hidden';
+        timelineSettings.disableScroll();
 
         /*<![CDATA[*/
         const size = /*[[${size}]]*/ 500;
@@ -78,7 +78,7 @@
 
                 db.metadataList.bulkPut(metadataList).then(() => {
                     // Re-enable scrolling
-                    document.body.style.overflow = '';
+                    timelineSettings.enableScroll();
                     dbOperationComplete = true;
                 });
 
