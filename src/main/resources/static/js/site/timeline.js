@@ -961,9 +961,9 @@
                 const offset = $(this).offset();
                 const height = $(this).outerHeight(true);
                 const relativeY = e.pageY - offset.top;
-                const percent = Math.round((relativeY / height) * 100); // Percent of slide from top to bottom: top 0 -> bottom 100
+                const percent = (relativeY / height) * 100; // Percent of slide from top to bottom: top 0 -> bottom 100
 
-                const index = Math.round(((dateList.length-1)/100)*percent); // Get date index based on slide percentage
+                const index = Math.ceil(((dateList.length-1)/100)*percent); // Get date index based on slide percentage
 
                 if (index > -1 && index < dateList.length) {
                     const hoverDateObj = dateList[index];
