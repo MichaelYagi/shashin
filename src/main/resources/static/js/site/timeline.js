@@ -760,7 +760,6 @@
         const dateSliderHeight = $("#dateSlider").height();
         const containerHeight = $("body").height();
         const sliderOffset = (dateSliderHeight/containerHeight)-0.2;
-        let isDragging = false;
 
         if (dateList.length > 0) {
             // Tooltip for handle
@@ -783,7 +782,6 @@
                     $(".hoverDateMarker").remove();
                     $(".hoverDateText").remove();
 
-                    isDragging = true;
                     timelineSettings.scrollBarIsSliding = true;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
@@ -806,7 +804,7 @@
                     $(".hoverDateMarker").remove();
                     $(".hoverDateText").remove();
 
-                    isDragging = false;
+                    timelineSettings.scrollBarIsSliding = false;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     // Jump to another date from the date slider
@@ -959,13 +957,15 @@
             }
 
             $("#dateSliderWrapper").on('mousemove', function (e) {
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+
                 const offset = $(this).offset();
                 const height = $(this).outerHeight(true);
                 const relativeY = e.pageY - offset.top;
                 const percent = (relativeY / height) * 100; // Percent of slide from top to bottom: top 0 -> bottom 100
                 timelineSettings.slidePercent = percent;
 
-                if (isDragging === false) {
+                if (timelineSettings.scrollBarIsSliding === false) {
                     $(".hoverDateMarker").remove();
                     $(".hoverDateText").remove();
 
@@ -1026,9 +1026,9 @@
                 document.getElementById("dateSliderWrapper").style.cursor = "default";
             });
 
-            $("#dateSliderWrapper").mousemove(function () {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-            });
+            // $("#dateSliderWrapper").mousemove(function () {
+            //     $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+            // });
         }
     };
 
