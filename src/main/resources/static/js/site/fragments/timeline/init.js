@@ -379,14 +379,6 @@
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
             }
-
-            // Nudge if bottoms out and not the end
-            setTimeout(function () {
-                let checkViewPort = Util.elementsInViewport($(".scrollspy"));
-                if (Util.isInViewport($footer) && $(checkViewPort[checkViewPort.length-1])[0].hasAttribute("id") && $(checkViewPort[checkViewPort.length-1]).attr("id").replace("tail_", "") !== (finalDate.year + "-" + finalDate.month + "-" + finalDate.day)) {
-                    timelineSettings.scrollByN(-1);
-                }
-            }, 1000);
         };
         document.getElementById("container").addEventListener('scroll', scrollHandler, { passive: true });
 
