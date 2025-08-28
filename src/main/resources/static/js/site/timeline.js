@@ -836,6 +836,7 @@
                     }
                 }
             }).find(".ui-slider-handle").append(handleTooltip).hover(function (e) {
+                $("#tooltip").css("margin-top", "3px");
                 handleTooltip.visible();
             });
 
