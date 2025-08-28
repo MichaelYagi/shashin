@@ -760,6 +760,7 @@
         const dateSliderHeight = $("#dateSlider").height();
         const containerHeight = $("body").height();
         const sliderOffset = (dateSliderHeight/containerHeight)-0.2;
+        let isDragging = false;
 
         if (dateList.length > 0) {
             // Tooltip for handle
@@ -782,6 +783,7 @@
                     $(".hoverDateMarker").remove();
                     $(".hoverDateText").remove();
 
+                    isDragging = true;
                     timelineSettings.scrollBarIsSliding = true;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
@@ -804,6 +806,7 @@
                     $(".hoverDateMarker").remove();
                     $(".hoverDateText").remove();
 
+                    isDragging = false;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     // Jump to another date from the date slider
@@ -955,41 +958,43 @@
             }
 
             $("#dateSliderWrapper").on('mousemove', function (e) {
-                $(".hoverDateMarker").remove();
-                $(".hoverDateText").remove();
+                if (isDragging === false) {
+                    $(".hoverDateMarker").remove();
+                    $(".hoverDateText").remove();
 
-                const offset = $(this).offset();
-                const height = $(this).outerHeight(true);
-                const relativeY = e.pageY - offset.top;
-                const percent = (relativeY / height) * 100; // Percent of slide from top to bottom: top 0 -> bottom 100
+                    const offset = $(this).offset();
+                    const height = $(this).outerHeight(true);
+                    const relativeY = e.pageY - offset.top;
+                    const percent = (relativeY / height) * 100; // Percent of slide from top to bottom: top 0 -> bottom 100
 
-                const index = Math.ceil(((dateList.length-1)/100)*percent); // Get date index based on slide percentage
+                    const index = Math.ceil(((dateList.length - 1) / 100) * percent); // Get date index based on slide percentage
 
-                if (index > -1 && index < dateList.length) {
-                    const hoverDateObj = dateList[index];
+                    if (index > -1 && index < dateList.length) {
+                        const hoverDateObj = dateList[index];
 
-                    const year = hoverDateObj.year;
-                    const month = hoverDateObj.month;
-                    const day = hoverDateObj.day;
+                        const year = hoverDateObj.year;
+                        const month = hoverDateObj.month;
+                        const day = hoverDateObj.day;
 
-                    const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
-                        'width': '10px',
-                        'right': '15px',
-                        'position': 'absolute',
-                        'z-index': '1',
-                        'top': percent + '%'
-                    });
+                        const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
+                            'width': '10px',
+                            'right': '15px',
+                            'position': 'absolute',
+                            'z-index': '1',
+                            'top': percent + '%'
+                        });
 
-                    const sliderTooltip = $('<span class="badge bg-secondary mt-2 hoverDateText" id="badge' + year + '-' + month + '-' + day + '" style="background-color: slategray;" />').css({
-                        position: 'absolute',
-                        right: 15,
-                        bottom: "1%"
-                    });
-                    sliderTooltip.text(Util.getDateString(year, month, day, timelineSettings.locale, false));
+                        const sliderTooltip = $('<span class="badge bg-secondary mt-2 hoverDateText" id="badge' + year + '-' + month + '-' + day + '" style="background-color: slategray;" />').css({
+                            position: 'absolute',
+                            right: 15,
+                            bottom: "1%"
+                        });
+                        sliderTooltip.text(Util.getDateString(year, month, day, timelineSettings.locale, false));
 
-                    $(tickEl).append(sliderTooltip);
+                        $(tickEl).append(sliderTooltip);
 
-                    $("#dateSlider").append(tickEl);
+                        $("#dateSlider").append(tickEl);
+                    }
                 }
             });
 
