@@ -766,7 +766,7 @@
             // Tooltip for handle
             const handleTooltip = $('<span class="badge bg-secondary" id="tooltip" style="background-color: slategray" />').css({
                 'position': 'absolute',
-                'right': 17
+                'right': '15px'
             }).invisible();
 
             // Text for first slider date
@@ -848,6 +848,7 @@
                 "border": "none",
                 "cursor": "default",
                 "position": "absolute",
+                "z-index": "9998",
                 "box-sizing": "border-box"
             });
 
@@ -886,7 +887,6 @@
                 if (timelineDateObj) {
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year);
                     if (i === 0 || i === dateList.length-1 || (i < dateList.length && dateList[i + 1].year !== timelineDateObj.year)) {
-                        // if ($('#sliderLabel' + dateObj.getFullYear()).length === 0) {
                         // Label for year
                         const el = $('<span class="badge rounded-pill bg-secondary yearLabel" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
                             'width': '35px',
@@ -979,9 +979,9 @@
 
                         const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
                             'width': '10px',
-                            'right': '15px',
+                            'right': 0,
                             'position': 'absolute',
-                            'z-index': '1',
+                            "z-index": "9999",
                             'top': percent + '%'
                         });
 
