@@ -247,6 +247,42 @@
                 });
             }
 
+            $(".hoverDateMarker").remove();
+            $(".hoverDateText").remove();
+
+            timelineSettings.slidePercent = Math.abs(($("#dateSlider").slider("value")/(metadataDates.length-1)*100)-100);
+
+            const index = Math.ceil(((metadataDates.length-1)/100)*timelineSettings.slidePercent); // Get date index based on slide percentage
+            if (index > -1 && index < metadataDates.length) {
+                const hoverDateObj = metadataDates[index];
+
+                const year = hoverDateObj.year;
+                const month = hoverDateObj.month;
+                const day = hoverDateObj.day;
+
+                if (timelineSettings.lastDateMarker !== null) {
+                    const lastDateMarker = timelineSettings.lastDateMarker;
+                    $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
+                    timelineSettings.lastDateMarker = null;
+                }
+
+                timelineSettings.lastDateMarker = {
+                    year: parseInt(year),
+                    month: parseInt(month),
+                    day: parseInt(day)
+                };
+
+                const tickEl = $('<span id="lastDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; font-size: x-large; margin-top: -20px;">&#8213;</span>').css({
+                    'width': '10px',
+                    'right': '15px',
+                    'position': 'absolute',
+                    'z-index': '1',
+                    'top': timelineSettings.slidePercent + '%'
+                });
+
+                $("#dateSlider").append(tickEl);
+            }
+
             Util.reinitLightGalleryInstance();
         });
 
