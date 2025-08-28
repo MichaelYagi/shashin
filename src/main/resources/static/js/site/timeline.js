@@ -979,7 +979,7 @@
                         const day = hoverDateObj.day;
 
                         const tickEl = $('<span class="hoverDateMarker" id="hoverDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; margin-top: -10px;">&#8213;</span>').css({
-                            'width': '10px',
+                            'width': '15px',
                             'right': 0,
                             'position': 'absolute',
                             "z-index": "9999",
