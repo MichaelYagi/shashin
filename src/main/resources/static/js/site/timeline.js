@@ -1118,7 +1118,7 @@
                 const element = document.getElementById(anchor);
                 document.getElementById("container").scrollTop = element.offsetTop;
 
-                await waitForElement(anchor);
+                // await waitForElement(anchor);
             } catch (err) {
                 shashin.printMessageToConsole(`jumpFromTimelineToc error: ${err.message}`, {
                     tag: "jumpFromTimelineToc",
@@ -1141,7 +1141,7 @@
 
                 timelineSettings.scrollByN(2);
 
-                await waitForElement(anchor);
+                // await waitForElement(anchor);
 
                 setTimeout(async function () {
                     timelineSettings.enableScroll();
