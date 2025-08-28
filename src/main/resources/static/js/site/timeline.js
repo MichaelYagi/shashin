@@ -958,16 +958,17 @@
             }
 
             $("#dateSliderWrapper").on('mousemove', function (e) {
+                const offset = $(this).offset();
+                const height = $(this).outerHeight(true);
+                const relativeY = e.pageY - offset.top;
+                const percent = (relativeY / height) * 100; // Percent of slide from top to bottom: top 0 -> bottom 100
+                timelineSettings.slidePercent = percent;
+
                 if (isDragging === false) {
                     $(".hoverDateMarker").remove();
                     $(".hoverDateText").remove();
 
-                    const offset = $(this).offset();
-                    const height = $(this).outerHeight(true);
-                    const relativeY = e.pageY - offset.top;
-                    const percent = (relativeY / height) * 100; // Percent of slide from top to bottom: top 0 -> bottom 100
-
-                    const index = Math.ceil(((dateList.length - 1) / 100) * percent); // Get date index based on slide percentage
+                    const index = Math.ceil(((dateList.length-1)/100)*percent); // Get date index based on slide percentage
 
                     if (index > -1 && index < dateList.length) {
                         const hoverDateObj = dateList[index];
@@ -1145,11 +1146,8 @@
                     timelineSettings.enableScroll();
 
                     setTimeout(async function () {
-                        const dateList = timelineSettings.timelineDates;
-                        const dateSliderHeight = $("#dateSlider").height();
-                        const containerHeight = $("body").height();
-
                         timelineSettings.scrollBarIsSliding = false;
+                        
                         const anchorArray = anchor.split("-");
                         const currentDateObj = {
                             year: parseInt(anchorArray[0]),
@@ -1165,25 +1163,15 @@
                         timelineSettings.lastDateMarker = currentDateObj;
 
                         // Mark as last known date
-                        for (let i = 0; i < dateList.length; i++) {
-                            const timelineDateObj = dateList[i];
-                            const tickTop = i / dateList.length * 100;
+                        const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day + '" style="color: #ADD8E6; font-size: x-large">&#8213;</span>').css({
+                            'width': '10px',
+                            'right': '15px',
+                            'position': 'absolute',
+                            'z-index': '1',
+                            'top': timelineSettings.slidePercent-2.5 + '%'
+                        });
 
-                            if (timelineDateObj && timelineDateObj.year === currentDateObj.year && timelineDateObj.month === currentDateObj.month && timelineDateObj.day === currentDateObj.day) {
-
-                                const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day + '" style="color: #ADD8E6; font-size: x-large">&#8213;</span>').css({
-                                    'right': '15px',
-                                    'position': 'relative',
-                                    'z-index': '1',
-                                    'top': (tickTop - ((dateSliderHeight / containerHeight) + 1.09)) + '%'
-                                });
-
-                                $("#dateSlider").append(tickEl);
-
-                                break;
-                            }
-                        }
-
+                        $("#dateSlider").append(tickEl);
 
                         if (!document.getElementById("dateSlider").matches(':hover')) {
                             $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();

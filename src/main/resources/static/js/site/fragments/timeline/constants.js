@@ -31,6 +31,7 @@
     timelineSettings.locale = "en";
     timelineSettings.dbOperationComplete = false;
     timelineSettings.lastDateMarker = null;
+    timelineSettings.slidePercent = 0;
     if (Util.isMobile()) {
         timelineSettings.thumbnailType = "centered";
         timelineSettings.thumbnailHeight = "120";
