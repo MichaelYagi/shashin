@@ -173,6 +173,17 @@ describe('#Util tests', function() {
     });
 
     it('Gallery removal test', function () {
+        const navigatorRef = global.navigator;
+
+        global.navigator = {
+            vendor: "acme inc",
+            userAgent: undefined,
+            platform: undefined,
+            userAgentData: {
+                platform: undefined
+            }
+        };
+
         $("body").append($("<div/>", {
                 id: 'brmetadataelement',
                 height: 15
@@ -202,6 +213,8 @@ describe('#Util tests', function() {
         assert.equal(Util.getDateGalleryHeight("metadataelement"),23);
         Util.removeDateGallery("metadataelement");
         assert.equal(Util.getDateGalleryHeight("metadataelement"),0);
+
+        global.navigator = navigatorRef;
     });
 
     it('Date object from string test', function () {
