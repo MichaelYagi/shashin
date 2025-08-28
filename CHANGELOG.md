@@ -12,13 +12,18 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
-- UI for date slider
-- Use date slider in timeline for mobile view 
-
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [2.13.1] - 2025-08-28
+### Changed
+- UI for date slider
+- Use date slider in timeline for mobile view
+
+### Fixed
+- Scrolling in timeline
 
 ## [2.13.0] - 2025-08-16
 ### Added
