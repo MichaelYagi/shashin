@@ -345,12 +345,16 @@
                                 addingSection = true;
                                 if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
                                     const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
-                                    console.log("testzzz")
-                                    console.log(prevDate)
-                                    createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
+                                    if ($("#"+prevDate.year+"-"+prevDate.month+"-"+prevDate.day).length === 0) {
+                                        console.log("testzzz")
+                                        console.log(prevDate)
+                                        createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
+                                    }
                                 } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate] + 1 <= timelineDatesHashCount) {
                                     const nextDate = timelineDatesData[timelineDatesHash[lastDate] + 1];
-                                    createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
+                                    if ($("#"+nextDate.year+"-"+nextDate.month+"-"+nextDate.day).length === 0) {
+                                        createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
+                                    }
                                 }
                                 addingSection = false;
 
