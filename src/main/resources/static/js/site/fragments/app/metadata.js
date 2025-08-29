@@ -8,36 +8,74 @@
         return [...firstThree, ...lastThree];
     }
 
-    function isLocalStorageAvailable(){
-        const test = 'test';
+    const session = "session";
+    const local = "local";
+    function isStorageAvailable(type) {
+        const test = 't';
         try {
-            localStorage.setItem(test, test);
-            localStorage.removeItem(test);
-            return true;
-        } catch(e) {
+            if (type === session) {
+                sessionStorage.setItem(test, test);
+                sessionStorage.removeItem(test);
+                return true;
+            } else if (type === local) {
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } else {
+                let sessionOK = false;
+                let localOK = false;
+
+                try {
+                    sessionStorage.setItem(test, test);
+                    sessionStorage.removeItem(test);
+                    sessionOK = true;
+                } catch (_) {}
+
+                try {
+                    localStorage.setItem(test, test);
+                    localStorage.removeItem(test);
+                    localOK = true;
+                } catch (_) {}
+
+                return sessionOK || localOK;
+            }
+        } catch (e) {
             return false;
         }
     }
 
-    const localstorageLimitKB = 5000; // Limit to 5 mb
-    if (isLocalStorageAvailable()) {
+    const useStorage = isStorageAvailable();
+    const useSession = isStorageAvailable(session);
+    const useLocal = isStorageAvailable(local);
+
+    const storageLimitKB = 5000; // Limit to 5 mb
+    if (useSession) {
+        sessionStorage.setItem("selectedMetadataIds", JSON.stringify([]));
+        sessionStorage.setItem("selectedMetadataFilenames", JSON.stringify([]));
+        sessionStorage.setItem("selectedMetadataThumbnails", JSON.stringify([]));
+    } else if (useLocal) {
         localStorage.setItem("selectedMetadataIds", JSON.stringify([]));
         localStorage.setItem("selectedMetadataFilenames", JSON.stringify([]));
         localStorage.setItem("selectedMetadataThumbnails", JSON.stringify([]));
     }
 
     shashin.addToMetadataThumbnailsList = function(thumbnail) {
-        if (isLocalStorageAvailable()) {
-            const usedSpaceInBytes = JSON.stringify(localStorage).length * 2;
+        if (useStorage) {
+            const usedSpaceInBytes = useSession ? JSON.stringify(sessionStorage).length * 2 : JSON.stringify(localStorage).length * 2;
             const usedSpaceInKB = usedSpaceInBytes / 1024;
-            if (usedSpaceInKB < localstorageLimitKB) {
-                let metadataThumbnailsArray = JSON.parse(localStorage.selectedMetadataThumbnails);
+            if (usedSpaceInKB < storageLimitKB) {
+                let metadataThumbnailsArray = useSession ? JSON.parse(sessionStorage.selectedMetadataThumbnails) : JSON.parse(localStorage.selectedMetadataThumbnails);
                 if (metadataThumbnailsArray.indexOf(thumbnail) === -1) {
                     metadataThumbnailsArray.push(thumbnail);
                     if (metadataThumbnailsArray.length > 5) {
                         metadataThumbnailsArray = removeMiddleKeepEnds(metadataThumbnailsArray);
                     }
-                    localStorage.setItem("selectedMetadataThumbnails", JSON.stringify(metadataThumbnailsArray));
+
+                    if (useSession) {
+                        sessionStorage.setItem("selectedMetadataThumbnails", JSON.stringify(metadataThumbnailsArray));
+                    } else {
+                        localStorage.setItem("selectedMetadataThumbnails", JSON.stringify(metadataThumbnailsArray));
+                    }
                 }
             } else {
                 shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
@@ -62,14 +100,19 @@
     };
 
     shashin.removeFromMetadataThumbnailsList = function(thumbnail) {
-        if (isLocalStorageAvailable()) {
-            let metadataThumbnailsArray = JSON.parse(localStorage.selectedMetadataThumbnails);
+        if (useStorage) {
+            let metadataThumbnailsArray = useSession ? JSON.parse(sessionStorage.selectedMetadataThumbnails) : JSON.parse(localStorage.selectedMetadataThumbnails);
             if (metadataThumbnailsArray.length > 0 && metadataThumbnailsArray.indexOf(thumbnail) > -1) {
                 const index = metadataThumbnailsArray.indexOf(thumbnail);
                 if (index > -1) {
                     metadataThumbnailsArray.splice(index, 1);
                 }
-                localStorage.setItem("selectedMetadataThumbnails", JSON.stringify(metadataThumbnailsArray));
+
+                if (useSession) {
+                    sessionStorage.setItem("selectedMetadataThumbnails", JSON.stringify(metadataThumbnailsArray));
+                } else {
+                    localStorage.setItem("selectedMetadataThumbnails", JSON.stringify(metadataThumbnailsArray));
+                }
             }
         } else {
             if ($("#multiSelectThumbnails").length > 0) {
@@ -84,8 +127,8 @@
     };
 
     shashin.getMetadataThumbnailsList = function() {
-        if (isLocalStorageAvailable()) {
-            let metadataThumbnailsArray = JSON.parse(localStorage.selectedMetadataThumbnails);
+        if (useStorage) {
+            let metadataThumbnailsArray = useSession ? JSON.parse(sessionStorage.selectedMetadataThumbnails) : JSON.parse(localStorage.selectedMetadataThumbnails);
             if (metadataThumbnailsArray.length > 5) {
                 metadataThumbnailsArray = removeMiddleKeepEnds(metadataThumbnailsArray);
             }
@@ -105,15 +148,20 @@
     };
 
     shashin.removeFromMetadataFilenamesList = function(filename) {
-        if (isLocalStorageAvailable()) {
-            let metadataFilenamesArray = JSON.parse(localStorage.selectedMetadataFilenames);
+        if (useStorage) {
+            let metadataFilenamesArray = useSession ? JSON.parse(sessionStorage.selectedMetadataFilenames) : JSON.parse(localStorage.selectedMetadataFilenames);
 
             if (metadataFilenamesArray.length > 0 && metadataFilenamesArray.indexOf(filename) > -1) {
                 const index = metadataFilenamesArray.indexOf(filename);
                 if (index > -1) {
                     metadataFilenamesArray.splice(index, 1);
                 }
-                localStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
+
+                if (useSession) {
+                    sessionStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
+                } else {
+                    localStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
+                }
             }
         } else {
             if ($("#multiSelectFilenames").length > 0) {
@@ -128,8 +176,8 @@
     };
 
     shashin.getMetadataFilenamesList = function() {
-        if (isLocalStorageAvailable()) {
-            let metadataFilenamesArray = JSON.parse(localStorage.selectedMetadataFilenames);
+        if (useStorage) {
+            let metadataFilenamesArray = useSession ? JSON.parse(sessionStorage.selectedMetadataFilenames) : JSON.parse(localStorage.selectedMetadataFilenames);
             if (metadataFilenamesArray.length > 5) {
                 metadataFilenamesArray = removeMiddleKeepEnds(metadataFilenamesArray);
             }
@@ -149,25 +197,30 @@
     };
 
     shashin.addToMetadataFilenamesList = function (filename) {
-        if (isLocalStorageAvailable()) {
-            const usedSpaceInBytes = JSON.stringify(localStorage).length * 2;
+        if (useStorage) {
+            const usedSpaceInBytes = useSession ? JSON.stringify(sessionStorage).length * 2 : JSON.stringify(localStorage).length * 2;
             const usedSpaceInKB = usedSpaceInBytes / 1024;
-            if (usedSpaceInKB < localstorageLimitKB) {
-                let metadataFilenamesArray = JSON.parse(localStorage.selectedMetadataFilenames);
+            if (usedSpaceInKB < storageLimitKB) {
+                let metadataFilenamesArray = useSession ? JSON.parse(sessionStorage.selectedMetadataFilenames) : JSON.parse(localStorage.selectedMetadataFilenames);
                 if (metadataFilenamesArray.indexOf(filename) === -1) {
                     metadataFilenamesArray.push(filename);
                     if (metadataFilenamesArray.length > 5) {
                         metadataFilenamesArray = removeMiddleKeepEnds(metadataFilenamesArray);
                     }
-                    localStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
+
+                    if (useSession) {
+                        sessionStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
+                    } else {
+                        localStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
+                    }
+                } else {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
+                        tag: "localstorage",
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000",
+                        borderColor: "danger"
+                    });
                 }
-            } else {
-                shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
-                    tag: "localstorage",
-                    icon:"bi-exclamation-triangle",
-                    iconColor:"#FF0000",
-                    borderColor:"danger"
-                });
             }
         } else {
             if ($("#multiSelectFilenames").length > 0) {
@@ -184,14 +237,19 @@
     };
 
     shashin.addToMetadataIdList = function (metadataId) {
-        if (isLocalStorageAvailable()) {
+        if (useStorage) {
             const usedSpaceInBytes = JSON.stringify(localStorage).length * 2;
             const usedSpaceInKB = usedSpaceInBytes / 1024;
-            if (usedSpaceInKB < localstorageLimitKB) {
-                let metadataIdsArray = JSON.parse(localStorage.selectedMetadataIds);
+            if (usedSpaceInKB < storageLimitKB) {
+                let metadataIdsArray = useSession ? JSON.parse(sessionStorage.selectedMetadataIds) : JSON.parse(localStorage.selectedMetadataIds);
                 if (metadataIdsArray.indexOf(metadataId) === -1) {
                     metadataIdsArray.push(metadataId);
-                    localStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+
+                    if (useSession) {
+                        sessionStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+                    } else {
+                        localStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+                    }
                 }
             } else {
                 shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
@@ -213,14 +271,19 @@
     };
 
     shashin.removeFromMetadataIdList = function (metadataId) {
-        if (isLocalStorageAvailable()) {
-            let metadataIdsArray = JSON.parse(localStorage.selectedMetadataIds);
+        if (useStorage) {
+            let metadataIdsArray = useSession ? JSON.parse(sessionStorage.selectedMetadataIds) : JSON.parse(localStorage.selectedMetadataIds);
             if (metadataIdsArray.length > 0 && metadataIdsArray.indexOf(metadataId) > -1) {
                 const index = metadataIdsArray.indexOf(metadataId);
                 if (index > -1) {
                     metadataIdsArray.splice(index, 1);
                 }
-                localStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+
+                if (useSession) {
+                    sessionStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+                } else {
+                    localStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+                }
             }
         } else {
             if ($("#multiSelectMetadataIds").length > 0) {
@@ -235,8 +298,8 @@
     };
 
     shashin.getMetadataIdList = function() {
-        if (isLocalStorageAvailable()) {
-            return JSON.parse(localStorage.selectedMetadataIds);
+        if (useStorage) {
+            return useSession ? JSON.parse(sessionStorage.selectedMetadataIds) : JSON.parse(localStorage.selectedMetadataIds);
         } else {
             if ($("#multiSelectMetadataIds").length > 0) {
                 return JSON.parse($("#multiSelectMetadataIds").val());
@@ -247,8 +310,12 @@
     };
 
     shashin.removeAllMetadataIdList = function () {
-        if (isLocalStorageAvailable()) {
-            localStorage.setItem("selectedMetadataIds", JSON.stringify([]));
+        if (useStorage) {
+            if (useSession) {
+                sessionStorage.setItem("selectedMetadataIds", JSON.stringify([]));
+            } else {
+                localStorage.setItem("selectedMetadataIds", JSON.stringify([]));
+            }
         } else {
             if ($("#multiSelectMetadataIds").length > 0) {
                 $("#multiSelectMetadataIds").val(JSON.stringify([]));
@@ -257,8 +324,12 @@
     };
 
     shashin.removeAllMetadataFilenamesList = function () {
-        if (isLocalStorageAvailable()) {
-            localStorage.setItem("selectedMetadataFilenames", JSON.stringify([]));
+        if (useStorage) {
+            if (useSession) {
+                sessionStorage.setItem("selectedMetadataFilenames", JSON.stringify([]));
+            } else {
+                localStorage.setItem("selectedMetadataFilenames", JSON.stringify([]));
+            }
         } else {
             if ($("#multiSelectFilenames").length > 0) {
                 $("#multiSelectFilenames").val(JSON.stringify([]));
@@ -267,8 +338,12 @@
     };
 
     shashin.removeAllMetadataThumbnailsList = function () {
-        if (isLocalStorageAvailable()) {
-            localStorage.setItem("selectedMetadataThumbnails", JSON.stringify([]));
+        if (useStorage) {
+            if (useSession) {
+                sessionStorage.setItem("selectedMetadataThumbnails", JSON.stringify([]));
+            } else {
+                localStorage.setItem("selectedMetadataThumbnails", JSON.stringify([]));
+            }
         } else {
             if ($("#multiSelectThumbnails").length > 0) {
                 $("#multiSelectThumbnails").val(JSON.stringify([]));
