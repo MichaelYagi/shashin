@@ -619,7 +619,7 @@
 
                     shashin.clearSelection("album");
                     $("#clearMultiSelect").hide();
-                    $("#multiSelectMetadataIds").val("[]");
+                    shashin.removeAllMetadataIdList();
                     $("#albumNumberSelected").hide();
                     shashin.closeToastMessages({tag:"sharedownload"});
                     const downloadEl = $("#download" + albumId);
