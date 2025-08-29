@@ -53,10 +53,10 @@
             const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
             const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
 
-            const direction = (pointerHash.y > selectionHash.y || (pointerHash.x > selectionHash.x && pointerHash.y >= selectionHash.y)) ? "down" : "up";
-
             if (view !== "timeline" && addBorder) {
                 // Non-timeline selection logic...
+                const direction = (pointerHash.y > selectionHash.y || (pointerHash.x > selectionHash.x && pointerHash.y >= selectionHash.y)) ? "down" : "up";
+
                 shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify([selectionHash.x, selectionHash.y]), { tag: "multiselect" });
                 shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify([pointerHash.x, pointerHash.y]), { tag: "multiselect" });
                 shashin.printMessageToConsole("Select direction: " + direction, { tag: "multiselect" });
@@ -120,7 +120,7 @@
 
                 let url = "";
                 if (view === "timeline") {
-                    url = `/metadata/range/${direction}/${shashin.lastSelectedMetadataId}/${metadataId}/${shashin.mediaTypeFilter}`;
+                    url = `/metadata/range/${shashin.lastSelectedMetadataId}/${metadataId}/${shashin.mediaTypeFilter}`;
                 } else if (view === "album") {
                     const albumId = $("#albumId").val();
                     url = `/album/${albumId}/range/${metadataId}/${shashin.mediaTypeFilter}`;

@@ -124,9 +124,9 @@ class TimelineController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/metadata/range/{direction}/{anchorId}/{selectId}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/range/{anchorId}/{selectId}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) direction: String?,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, locale: Locale): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<MutableList<String>>()
         val response = mutableMapOf<String, Any?>()
 
@@ -160,7 +160,9 @@ class TimelineController: BaseController() {
 
             var startDate = selectMetadataString
             var endDate = anchorMetadataString
+            var direction = "down"
             if (anchorMetadataDateObj < selectMetadataDateObj) {
+                direction = "up"
                 startDate = anchorMetadataString
                 endDate = selectMetadataString
             }
