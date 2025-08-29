@@ -125,7 +125,8 @@
                     const timelineDatesHash = data["metadataDatesHash"];
                     const timelineDatesHashCount = Object.keys(timelineDatesHash).length;
 
-                    // Dexie
+                    // Dexie - works smoother than connecting to the backend
+                    // You need to load lots of data at once which is slow at the onset
                     let dbOperationComplete = false;
                     const db = new Dexie("MetadataDatabase");
                     db.version(1).stores({
@@ -142,7 +143,7 @@
                     console.log(timelineDatesData);
                     console.log(timelineDatesHash);
 
-                    // Functions to imitate timeline
+                    // Switch between Dexie and backend calls
                     $("#doit").on("click", function (e) {
                         e.preventDefault();
 
@@ -276,7 +277,7 @@
                                         htmlContent.insertAfter($("#append" + attachDate));
                                     }
 
-                                    // TODO: Create - look in timeline - needed for all browsers
+                                    // TODO: Create Dates - look in timeline - needed for all browsers
                                     const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
 
                                     console.log("====================");
@@ -371,7 +372,7 @@
 
                                                 removeDate($(element).attr("id"));
 
-                                                // TODO: Removal - Needed for Safari
+                                                // TODO: Date Removal - Needed for Safari
                                                 if (Util.isSafari()) {
                                                     const container = document.getElementById('container');
 
