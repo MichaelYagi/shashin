@@ -274,7 +274,7 @@
 
                 const tickEl = $('<span id="lastDateMarker' + year + '-' + month + '-' + day + '" style="color: #ADD8E6; font-size: x-large; margin-top: -20px;">&#8213;</span>').css({
                     'width': '10px',
-                    'right': '15px',
+                    'right': '5px',
                     'position': 'absolute',
                     'z-index': '1',
                     'top': timelineSettings.slidePercent + '%'

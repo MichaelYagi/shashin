@@ -847,7 +847,7 @@
                 "border": "none",
                 "cursor": "default",
                 "position": "absolute",
-                "z-index": "9998",
+                "z-index": "9997",
                 "box-sizing": "border-box"
             });
 
@@ -982,7 +982,7 @@
                             'width': '15px',
                             'right': 0,
                             'position': 'absolute',
-                            "z-index": "9999",
+                            "z-index": "9998",
                             'top': percent + '%'
                         });
 
@@ -1166,9 +1166,9 @@
                         // Mark as last known date
                         const tickEl = $('<span id="lastDateMarker' + currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day + '" style="color: #ADD8E6; font-size: x-large">&#8213;</span>').css({
                             'width': '10px',
-                            'right': '15px',
+                            'right': '5px',
                             'position': 'absolute',
-                            'z-index': '1',
+                            'z-index': '9999',
                             'top': timelineSettings.slidePercent-2.5 + '%'
                         });
 
