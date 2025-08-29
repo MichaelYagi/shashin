@@ -91,24 +91,27 @@
                 let start = false;
                 let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
 
-                for (const currentMetadataId of selectedRowMetadataIds) {
-                    const compareOne = direction === "down" ? lastSelectedMetadataId : metadataId;
-                    const compareTwo = direction === "down" ? metadataId : lastSelectedMetadataId;
+                const compareOne = direction === "down" ? lastSelectedMetadataId : metadataId;
+                const compareTwo = direction === "down" ? metadataId : lastSelectedMetadataId;
 
+                for (const currentMetadataId of selectedRowMetadataIds) {
                     if (currentMetadataId === compareOne || start) {
                         if (currentMetadataId === compareOne) {
                             lastSelectedMetadataId = direction === "down" ? currentMetadataId : shashin.lastSelectedMetadataId;
+                            selectedMetadataIds.push(currentMetadataId);
                             start = true;
                             continue;
                         }
 
-                        selectedMetadataIds.push(compareOne);
                         updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                        if (direction === "down") lastSelectedMetadataId = currentMetadataId;
+                        if (direction === "down") {
+                            lastSelectedMetadataId = currentMetadataId;
+                        }
+
+                        selectedMetadataIds.push(currentMetadataId);
                     }
 
                     if (currentMetadataId === compareTwo) {
-                        selectedMetadataIds.push(compareTwo);
                         selectedMetadataIds.push(currentMetadataId);
                         updateImageSelection(metadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
                         updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
@@ -116,8 +119,12 @@
                     }
                 }
 
-                metadataIdArrayCopy = [...new Set(selectedMetadataIds)];
+                metadataIdArrayCopy = [];
+                $(".thumbnail-tl .bi-circle-fill").each(function (i, obj) {
+                    metadataIdArrayCopy.push(obj.id.substring(6, obj.id.length));
+                });
 
+                metadataIdArrayCopy = [...new Set(metadataIdArrayCopy)];
                 shashin.addAllToMetadataIdList(metadataIdArrayCopy);
                 shashin.updateToolbarUI(view, metadataIdArrayCopy);
                 shashin.updateSelectionCount(metadataIdArrayCopy);
