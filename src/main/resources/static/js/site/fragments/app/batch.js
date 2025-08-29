@@ -50,11 +50,12 @@
             shashin.printMessageToConsole("Select view: " + view, { tag: "multiselect" });
             shashin.printMessageToConsole("addBorder: " + addBorder, { tag: "multiselect" });
 
-            const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
-            const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
-
             if (view !== "timeline" && addBorder) {
                 // Non-timeline selection logic...
+
+                // Get selection direction
+                const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
+                const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
                 const direction = (pointerHash.y > selectionHash.y || (pointerHash.x > selectionHash.x && pointerHash.y >= selectionHash.y)) ? "down" : "up";
 
                 shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify([selectionHash.x, selectionHash.y]), { tag: "multiselect" });
@@ -245,7 +246,7 @@
     };
 
     shashin.updateToolbarUI = function(view, metadataIdArray) {
-        const hasSelection = $('.bi-circle-fill')[0] || metadataIdArray.length > 0;
+        const hasSelection = $('.bi-circle-fill').length > 0 || metadataIdArray.length > 0;
         $("#appSearch").toggle(!hasSelection);
 
         const showTools = (selector, hideSelector) => {
