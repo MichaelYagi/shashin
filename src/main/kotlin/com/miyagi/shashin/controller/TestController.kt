@@ -206,7 +206,7 @@ class TestController {
             val metadataDateHash = mutableMapOf<String, Int>()
             response["metadataDatesHash"] = metadataDateHash
 
-            val metadataDates = metadataRepository.findAllYearMonthDayByOffsetAndLimit(sizeValue)
+            val metadataDates = metadataRepository.findAllYearMonthDay()
 
             if (metadataDates != null) {
                 response["metadataDates"] = metadataDates
