@@ -63,6 +63,7 @@
         if (useStorage) {
             const usedSpaceInBytes = useSession ? JSON.stringify(sessionStorage).length * 2 : JSON.stringify(localStorage).length * 2;
             const usedSpaceInKB = usedSpaceInBytes / 1024;
+
             if (usedSpaceInKB < storageLimitKB) {
                 let metadataThumbnailsArray = useSession ? JSON.parse(sessionStorage.selectedMetadataThumbnails) : JSON.parse(localStorage.selectedMetadataThumbnails);
                 if (metadataThumbnailsArray.indexOf(thumbnail) === -1) {
@@ -200,6 +201,7 @@
         if (useStorage) {
             const usedSpaceInBytes = useSession ? JSON.stringify(sessionStorage).length * 2 : JSON.stringify(localStorage).length * 2;
             const usedSpaceInKB = usedSpaceInBytes / 1024;
+
             if (usedSpaceInKB < storageLimitKB) {
                 let metadataFilenamesArray = useSession ? JSON.parse(sessionStorage.selectedMetadataFilenames) : JSON.parse(localStorage.selectedMetadataFilenames);
                 if (metadataFilenamesArray.indexOf(filename) === -1) {
@@ -213,14 +215,14 @@
                     } else {
                         localStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
                     }
-                } else {
-                    shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
-                        tag: "localstorage",
-                        icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000",
-                        borderColor: "danger"
-                    });
                 }
+            } else {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
+                    tag: "localstorage",
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    borderColor: "danger"
+                });
             }
         } else {
             if ($("#multiSelectFilenames").length > 0) {
@@ -238,8 +240,9 @@
 
     shashin.addToMetadataIdList = function (metadataId) {
         if (useStorage) {
-            const usedSpaceInBytes = JSON.stringify(localStorage).length * 2;
+            const usedSpaceInBytes = useSession ? JSON.stringify(sessionStorage).length * 2 : JSON.stringify(localStorage).length * 2;
             const usedSpaceInKB = usedSpaceInBytes / 1024;
+
             if (usedSpaceInKB < storageLimitKB) {
                 let metadataIdsArray = useSession ? JSON.parse(sessionStorage.selectedMetadataIds) : JSON.parse(localStorage.selectedMetadataIds);
                 if (metadataIdsArray.indexOf(metadataId) === -1) {
@@ -267,6 +270,30 @@
                     $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
                 }
             }
+        }
+    };
+
+    shashin.addAllToMetadataIdList = function (metadataIdsArray) {
+        if (useStorage) {
+            const usedSpaceInBytes = useSession ? JSON.stringify(sessionStorage).length * 2 : JSON.stringify(localStorage).length * 2;
+            const usedSpaceInKB = usedSpaceInBytes / 1024;
+
+            if (usedSpaceInKB < storageLimitKB) {
+                if (useSession) {
+                    sessionStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+                } else {
+                    localStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+                }
+            } else {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
+                    tag: "localstorage",
+                    icon:"bi-exclamation-triangle",
+                    iconColor:"#FF0000",
+                    borderColor:"danger"
+                });
+            }
+        } else {
+            $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdsArray));
         }
     };
 
