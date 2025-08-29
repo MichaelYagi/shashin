@@ -19,7 +19,8 @@
         }
     }
 
-    if (isLocalStorageAvailable()){
+    const localstorageLimitKB = 5000; // Limit to 5 mb
+    if (isLocalStorageAvailable()) {
         localStorage.setItem("selectedMetadataIds", JSON.stringify([]));
         localStorage.setItem("selectedMetadataFilenames", JSON.stringify([]));
         localStorage.setItem("selectedMetadataThumbnails", JSON.stringify([]));
@@ -27,13 +28,24 @@
 
     shashin.addToMetadataThumbnailsList = function(thumbnail) {
         if (isLocalStorageAvailable()) {
-            let metadataThumbnailsArray = JSON.parse(localStorage.selectedMetadataThumbnails);
-            if (metadataThumbnailsArray.indexOf(thumbnail) === -1) {
-                metadataThumbnailsArray.push(thumbnail);
-                if (metadataThumbnailsArray.length > 5) {
-                    metadataThumbnailsArray = removeMiddleKeepEnds(metadataThumbnailsArray);
+            const usedSpaceInBytes = JSON.stringify(localStorage).length * 2;
+            const usedSpaceInKB = usedSpaceInBytes / 1024;
+            if (usedSpaceInKB < localstorageLimitKB) {
+                let metadataThumbnailsArray = JSON.parse(localStorage.selectedMetadataThumbnails);
+                if (metadataThumbnailsArray.indexOf(thumbnail) === -1) {
+                    metadataThumbnailsArray.push(thumbnail);
+                    if (metadataThumbnailsArray.length > 5) {
+                        metadataThumbnailsArray = removeMiddleKeepEnds(metadataThumbnailsArray);
+                    }
+                    localStorage.setItem("selectedMetadataThumbnails", JSON.stringify(metadataThumbnailsArray));
                 }
-                localStorage.setItem("selectedMetadataThumbnails", JSON.stringify(metadataThumbnailsArray));
+            } else {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
+                    tag: "localstorage",
+                    icon:"bi-exclamation-triangle",
+                    iconColor:"#FF0000",
+                    borderColor:"danger"
+                });
             }
         } else {
             if ($("#multiSelectThumbnails").length > 0) {
@@ -138,13 +150,24 @@
 
     shashin.addToMetadataFilenamesList = function (filename) {
         if (isLocalStorageAvailable()) {
-            let metadataFilenamesArray = JSON.parse(localStorage.selectedMetadataFilenames);
-            if (metadataFilenamesArray.indexOf(filename) === -1) {
-                metadataFilenamesArray.push(filename);
-                if (metadataFilenamesArray.length > 5) {
-                    metadataFilenamesArray = removeMiddleKeepEnds(metadataFilenamesArray);
+            const usedSpaceInBytes = JSON.stringify(localStorage).length * 2;
+            const usedSpaceInKB = usedSpaceInBytes / 1024;
+            if (usedSpaceInKB < localstorageLimitKB) {
+                let metadataFilenamesArray = JSON.parse(localStorage.selectedMetadataFilenames);
+                if (metadataFilenamesArray.indexOf(filename) === -1) {
+                    metadataFilenamesArray.push(filename);
+                    if (metadataFilenamesArray.length > 5) {
+                        metadataFilenamesArray = removeMiddleKeepEnds(metadataFilenamesArray);
+                    }
+                    localStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
                 }
-                localStorage.setItem("selectedMetadataFilenames", JSON.stringify(metadataFilenamesArray));
+            } else {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
+                    tag: "localstorage",
+                    icon:"bi-exclamation-triangle",
+                    iconColor:"#FF0000",
+                    borderColor:"danger"
+                });
             }
         } else {
             if ($("#multiSelectFilenames").length > 0) {
@@ -162,10 +185,21 @@
 
     shashin.addToMetadataIdList = function (metadataId) {
         if (isLocalStorageAvailable()) {
-            let metadataIdsArray = JSON.parse(localStorage.selectedMetadataIds);
-            if (metadataIdsArray.indexOf(metadataId) === -1) {
-                metadataIdsArray.push(metadataId);
-                localStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+            const usedSpaceInBytes = JSON.stringify(localStorage).length * 2;
+            const usedSpaceInKB = usedSpaceInBytes / 1024;
+            if (usedSpaceInKB < localstorageLimitKB) {
+                let metadataIdsArray = JSON.parse(localStorage.selectedMetadataIds);
+                if (metadataIdsArray.indexOf(metadataId) === -1) {
+                    metadataIdsArray.push(metadataId);
+                    localStorage.setItem("selectedMetadataIds", JSON.stringify(metadataIdsArray));
+                }
+            } else {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.page.localstorage.limit"), shashin.getTranslatedValue("main.page.localstorage.limit"), {
+                    tag: "localstorage",
+                    icon:"bi-exclamation-triangle",
+                    iconColor:"#FF0000",
+                    borderColor:"danger"
+                });
             }
         } else {
             if ($("#multiSelectMetadataIds").length > 0) {

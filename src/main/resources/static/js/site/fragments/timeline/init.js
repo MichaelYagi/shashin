@@ -78,6 +78,9 @@
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
         timelineSettings.timelineDatesHash = timelineDatesHash;
         timelineSettings.locale = locale;
+        shashin.removeAllMetadataFilenamesList();
+        shashin.removeAllMetadataThumbnailsList();
+        shashin.removeAllMetadataIdList();
 
         if (timelineSettings.useDexie === true) {
             setTimeout(function () {
