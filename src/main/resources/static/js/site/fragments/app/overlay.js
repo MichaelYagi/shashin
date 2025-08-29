@@ -65,7 +65,7 @@
 
             function imageClickEvent() {
                 // Fill top left icon when clicking anywhere on thumbnail
-                if ($('.bi-circle-fill').length > 0) {
+                if ($('.bi-circle-fill').length > 0 || metadataIdArray.length > 0) {
                     const isSelected = $("#tlicon" + metadata.id).attr("class") === "bi-circle";
                     const isVideo = metadata.type.includes("video");
 
