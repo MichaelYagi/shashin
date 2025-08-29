@@ -60,7 +60,7 @@
         let useDexie = true;
 
         shashin.showToastMessage("Using Dexie", "Using Dexie", {
-            tag:"sandbox",
+            tag:"usedexie",
             icon:"bi-info-circle",
             iconColor:"#777777"
         });
@@ -151,7 +151,7 @@
                             useDexie = false;
                             $("#doitspan").addClass("bi-arrow-through-heart").removeClass("bi-arrow-through-heart-fill");
                             shashin.showToastMessage("Using backend", "Using backend", {
-                                tag:"sandbox",
+                                tag:"usebe",
                                 icon:"bi-info-circle",
                                 iconColor:"#777777"
                             });
@@ -159,7 +159,7 @@
                             useDexie = true;
                             $("#doitspan").removeClass("bi-arrow-through-heart").addClass("bi-arrow-through-heart-fill");
                             shashin.showToastMessage("Using Dexie", "Using Dexie", {
-                                tag:"sandbox",
+                                tag:"usedexie",
                                 icon:"bi-info-circle",
                                 iconColor:"#777777"
                             });
@@ -198,53 +198,58 @@
 
                     function createSection(year, month, day, attachDate) {
                         if (useDexie === false) {
-                            let http = new Http("timeline");
-                            http.ajax("get", "/sandbox/data/" + year + "/" + month + "/" + day).then(function (data) {
-                                console.log(data);
-                                if (data.hasOwnProperty("metadataList") && data.metadataList.length > 0) {
-                                    const metadataArray = data.metadataList;
+                            setTimeout(function () {
+                                let http = new Http("timeline");
+                                http.ajax("get", "/sandbox/data/" + year + "/" + month + "/" + day).then(function (data) {
+                                    console.log(data);
+                                    if (data.hasOwnProperty("metadataList") && data.metadataList.length > 0) {
+                                        const metadataArray = data.metadataList;
 
-                                    let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
-                                        "<p><a href='/timeline#" + year + "-" + month + "-" + day + "' target='_blank'><strong>" + year + "-" + month + "-" + day + "</strong></a></p>" +
-                                        "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
+                                        let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
+                                            "<p><a href='/timeline#" + year + "-" + month + "-" + day + "' target='_blank'><strong>" + year + "-" + month + "-" + day + "</strong></a></p>" +
+                                            "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
 
-                                    for (const index in metadataArray) {
-                                        const metadata = metadataArray[index];
+                                        for (const index in metadataArray) {
+                                            const metadata = metadataArray[index];
 
-                                        html += "<div id='photoThumbnailContainer" + metadata.id + "' class='photo-thumbnail-container photo-thumbnail' style='width:" + metadata.thumbnailSmallWidth + "px;height:" + metadata.thumbnailSmallHeight + "px;padding-left:0;padding-right:0;'>" +
-                                            "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/" + metadata.id + "' class='photo-thumbnail-image' id='image" + metadata.id + "' width='" + metadata.thumbnailSmallWidth + "' th:height='" + metadata.thumbnailSmallHeight + "' style='background-color:lightgray;'>" +
-                                            "</div>"
+                                            html += "<div id='photoThumbnailContainer" + metadata.id + "' class='photo-thumbnail-container photo-thumbnail' style='width:" + metadata.thumbnailSmallWidth + "px;height:" + metadata.thumbnailSmallHeight + "px;padding-left:0;padding-right:0;'>" +
+                                                "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/" + metadata.id + "' class='photo-thumbnail-image' id='image" + metadata.id + "' width='" + metadata.thumbnailSmallWidth + "' th:height='" + metadata.thumbnailSmallHeight + "' style='background-color:lightgray;'>" +
+                                                "</div>"
+                                        }
+
+                                        html += "</div></section>" +
+                                            "<span class='appendMetadataPhotos' id='append" + year + "-" + month + "-" + day + "' style='width:0;height:0;padding:0'></span>";
+
+
+                                        if ($("#" + year + "-" + month + "-" + day).length === 0) {
+                                            let htmlContent = $(html);
+
+                                            const viewportTop = $("#container").scrollTop();
+
+                                            if (direction === "up") {
+                                                $("#" + attachDate).before(htmlContent);
+                                            } else {
+                                                htmlContent.insertAfter($("#append" + attachDate));
+                                            }
+
+                                            // TODO: Create - look in timeline - needed for all browsers
+                                            const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
+
+                                            console.log("====================");
+                                            console.log("created date: " + year + "-" + month + "-" + day);
+                                            console.log("direction: " + direction);
+                                            console.log("viewportTop: " + viewportTop);
+                                            console.log("contentHeight: " + contentHeight);
+
+                                            if (direction === "up") {
+                                                $("#container")[0].scrollTop = contentHeight;
+                                            } else {
+                                                $("#container")[0].scrollTop = viewportTop
+                                            }
+                                        }
                                     }
-
-                                    html += "</div></section>" +
-                                        "<span class='appendMetadataPhotos' id='append" + year + "-" + month + "-" + day + "' style='width:0;height:0;padding:0'></span>";
-
-                                    let htmlContent = $(html);
-
-                                    const viewportTop = $("#container").scrollTop();
-
-                                    if (direction === "up") {
-                                        $("#" + attachDate).before(htmlContent);
-                                    } else {
-                                        htmlContent.insertAfter($("#append" + attachDate));
-                                    }
-
-                                    // TODO: Create - look in timeline - needed for all browsers
-                                    const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
-
-                                    console.log("====================");
-                                    console.log("created date: " + year + "-" + month + "-" + day);
-                                    console.log("direction: " + direction);
-                                    console.log("viewportTop: " + viewportTop);
-                                    console.log("contentHeight: " + contentHeight);
-
-                                    if (direction === "up") {
-                                        $("#container")[0].scrollTop = contentHeight;
-                                    } else {
-                                        $("#container")[0].scrollTop = viewportTop
-                                    }
-                                }
-                            });
+                                });
+                            }, 0);
                         } else {
                             db.metadataList.where({
                                 year: year,
@@ -344,6 +349,7 @@
                                 console.log(lastDate);
                                 console.log(timelineDatesHash);
                                 addingSection = true;
+
                                 if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
                                     const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
                                     if ($("#"+prevDate.year+"-"+prevDate.month+"-"+prevDate.day).length === 0) {
