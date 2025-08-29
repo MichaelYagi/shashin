@@ -153,7 +153,7 @@ class ShareAlbum {
             shashin.clearSelection("album");
             $("#clearMultiSelect").hide();
             $("#albumNumberSelected").hide();
-            $("#multiSelectMetadataIds").val("[]");
+            shashin.removeAllMetadataIdList();
             $("#downloadWrapper").attr("action", '/download/share/' + shareLink + '/album/' + albumId);
             const downloadEl = $("#download" + albumId);
             downloadEl.attr("name", "download");

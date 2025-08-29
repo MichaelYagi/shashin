@@ -250,7 +250,7 @@
                 $("#deleteUser").on("click", async function (e) {
                     e.preventDefault();
 
-                    let compreFaceImageIds = $("#multiSelectMetadataIds").val();
+                    let compreFaceImageIds = shashin.getMetadataIdList();
 
                     const http = new Http("marking notification saving album");
                     let json = {imageIds: compreFaceImageIds}
@@ -261,7 +261,7 @@
                         location.reload();
                     }
 
-                    $("#multiSelectMetadataIds").val("[]");
+                    shashin.removeAllMetadataIdList();
                 });
             </script>
         </div>
@@ -293,7 +293,7 @@
         });
 
         $('#comprefaceModal').on('hide.bs.modal', function () {
-            $("#multiSelectMetadataIds").val("[]");
+            shashin.removeAllMetadataIdList();
         });
 
         const comprefaceInstance = new Compreface(resultList, personId, activePage);

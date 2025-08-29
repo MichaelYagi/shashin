@@ -302,7 +302,7 @@
         } else {
             shashin.clearSelection("album");
             $("#clearMultiSelect").hide();
-            $("#multiSelectMetadataIds").val("[]");
+            shashin.removeAllMetadataIdList();
             $("#albumNumberSelected").hide();
             downloadEl.attr({
                 name: "download",
@@ -322,7 +322,7 @@
 
             let date = rowId.replace("row", "");
             date = date.replace("dateBody", "");
-            const selectedMetadata = JSON.parse($("#multiSelectMetadataIds").val());
+            const selectedMetadata = shashin.getMetadataIdList();
 
             if (view === "timeline" || view === "taken" || view === "album" || view === "accessed" || view === "modified" || view === "recent") {
                 let url = "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata";
