@@ -5,7 +5,9 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     // Start slideshow
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
-        
+
+        slideshow.globalActive = true;
+
         $("#slideshowProgress").css("transition", "width "+slideshow.const.pollTimeout+"ms ease-in-out");
         $("#slideshowProgressContainer").css("z-index", 999999);
 
@@ -890,6 +892,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         slideshow.firstTime = true;
         slideshow.isFileDialogOpened = false;
         slideshow.isActive = false;
+        slideshow.globalActive = false;
 
         showCursor();
 
