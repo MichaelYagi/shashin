@@ -124,7 +124,10 @@ class ScheduledTasks {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
-        if (settings != null && superAdmins != null && !settings.getCompreFaceServer().isNullOrBlank() && !settings.getCompreFaceKey().isNullOrBlank()) {
+        if (settings != null && superAdmins != null && settings.getFacialDetection() == true &&
+            !settings.getCompreFaceServer().isNullOrBlank() &&
+            !settings.getCompreFaceKey().isNullOrBlank()
+        ) {
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
             if (!faceRecogServicesAvailable) {
                 val notificationObjList = mutableListOf<Notification>()
@@ -136,7 +139,7 @@ class ScheduledTasks {
                         language = "en"
                     }
 
-                    var locale = Locale(language)
+                    val locale = Locale(language)
 
                     val notificationObj = Notification()
                     notificationObj.setUserId(admin.getId())
