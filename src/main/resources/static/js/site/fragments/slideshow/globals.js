@@ -21,7 +21,6 @@ slideshow.isFileDialogOpened = false;
 slideshow.slideTimer = null;
 slideshow.elapsedBeforePause = 0;
 slideshow.isActive = false;
-slideshow.globalActive = false;
 slideshow.startTime = Date.now();
 slideshow.currentTime = Date.now();
 slideshow.const = {};

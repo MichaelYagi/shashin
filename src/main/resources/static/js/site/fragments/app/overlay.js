@@ -101,11 +101,9 @@
             $("#photoThumbnailContainer" + metadata.id).on("doubletap", function(e) {
                 e.preventDefault();
 
-                if (slideshow.globalActive === false) {
-                    shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
-                    metadataIdArray = shashin.batchSelect(metadata.id, view);
-                    clearTimeout(shashin.touchTimer);
-                }
+                shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
+                metadataIdArray = shashin.batchSelect(metadata.id, view);
+                clearTimeout(shashin.touchTimer);
             });
         }
 
