@@ -95,6 +95,20 @@
             }
         });
 
+        // Multiselect doubletap logic
+        if (Util.isMobile() === true) {
+            $("#photoThumbnailContainer" + metadata.id).on("pointerup", shashin.detectDoubleTap(200));
+            $("#photoThumbnailContainer" + metadata.id).on("doubletap", function(e) {
+                e.preventDefault();
+
+                if (slideshow.globalActive === false) {
+                    shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
+                    metadataIdArray = shashin.batchSelect(metadata.id, view);
+                    clearTimeout(shashin.touchTimer);
+                }
+            });
+        }
+
         $("#photoThumbnailContainer" + metadata.id).hover(function (e) {
             e.preventDefault();
 
@@ -115,17 +129,6 @@
                     metadataIdArray = shashin.batchSelect(metadata.id, view);
                 }
             });
-
-            if (Util.isMobile() === true) {
-                $(document).bind("dblclick", function (e) {
-                    e.preventDefault();
-
-                    shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
-                    metadataIdArray = shashin.batchSelect(metadata.id, view);
-
-                    clearTimeout(shashin.touchTimer);
-                });
-            }
 
             if (metadata.type.includes("video") && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
