@@ -2,6 +2,8 @@
     shashin.batchSelect = function(metadataId, view, addBorder = true, opaque = 0.3, transparent = 1.0) {
         shashin.printMessageToConsole("Select action", { tag: "multiselect" });
 
+        Util.showSpinner(true);
+
         let metadataIdArrayCopy = shashin.getMetadataIdList();
 
         if (metadataIdArrayCopy.length === 0) {
@@ -184,6 +186,7 @@
                         }, 0);
                     }
                 });
+
             } else {
                 shashin.printMessageToConsole("lastSelectionPos undefined or null", { tag: "multiselect" });
             }
@@ -191,6 +194,8 @@
             shashin.lastSelectedMetadataId = "";
             shashin.multiSelected = false;
         }
+
+        Util.showSpinner(false);
 
         return metadataIdArrayCopy;
     };
