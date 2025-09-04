@@ -15,7 +15,7 @@
                     'color': '' // or use a specific color like '#000' if needed
                 });
             });
-            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").off('click.disableClick');
+            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").on('click');
         }
 
         function disableToolbar() {
@@ -30,7 +30,7 @@
                     'color': 'gray',
                 });
             });
-            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").on('click.disableClick', function (e) {
+            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").off('click', function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
             });
