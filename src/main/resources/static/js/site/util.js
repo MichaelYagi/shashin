@@ -1,5 +1,5 @@
 class Util {
-    static showSpinner(show = false) {
+    static showSpinner(show = true) {
         if (show === true) {
             $("#mediaScanSpinner").css("display", "block");
             $("#profileImage").css("opacity", 0.5);

@@ -2,6 +2,8 @@
     shashin.batchSelect = function(metadataId, view, addBorder = true, opaque = 0.3, transparent = 1.0) {
         shashin.printMessageToConsole("Select action", { tag: "multiselect" });
 
+        Util.showSpinner(true);
+
         let metadataIdArrayCopy = shashin.getMetadataIdList();
 
         if (metadataIdArrayCopy.length === 0) {
@@ -52,87 +54,83 @@
 
             if (view !== "timeline" && addBorder) {
                 // Non-timeline selection logic. No DB lookup...
+                setTimeout(function () {
+                    // Get selection direction
+                    const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
+                    const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
+                    const direction = (pointerHash.y > selectionHash.y || (pointerHash.x > selectionHash.x && pointerHash.y >= selectionHash.y)) ? "down" : "up";
 
-                Util.showSpinner(true);
+                    shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify([selectionHash.x, selectionHash.y]), { tag: "multiselect" });
+                    shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify([pointerHash.x, pointerHash.y]), { tag: "multiselect" });
+                    shashin.printMessageToConsole("Select direction: " + direction, { tag: "multiselect" });
 
-                // Get selection direction
-                const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
-                const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
-                const direction = (pointerHash.y > selectionHash.y || (pointerHash.x > selectionHash.x && pointerHash.y >= selectionHash.y)) ? "down" : "up";
-
-                shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify([selectionHash.x, selectionHash.y]), { tag: "multiselect" });
-                shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify([pointerHash.x, pointerHash.y]), { tag: "multiselect" });
-                shashin.printMessageToConsole("Select direction: " + direction, { tag: "multiselect" });
-
-                const whileLimit = 1000;
-                let selectedMetadataIds = [];
-                let container = $("#photoThumbnailContainer" + (direction === "down" ? shashin.lastSelectedMetadataId : metadataId));
-                let selectedRowMetadataIds = container.siblings().addBack().map(function () {
-                    return this.id.split("photoThumbnailContainer")[1];
-                }).toArray();
-
-                let found = selectedRowMetadataIds.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
-                let index = 0;
-
-                while (!found && index < whileLimit) {
-                    let nextContainer = container.parent().parent().nextUntil().filter(view === "timeline" ? ".dateContainer:first" : ".dateSection:first");
-                    container = $(nextContainer[0]).children("div.row").children("div");
-
-                    metadataIdArrayCopy = container.siblings().addBack().map(function () {
+                    const whileLimit = 1000;
+                    let container = $("#photoThumbnailContainer" + (direction === "down" ? shashin.lastSelectedMetadataId : metadataId));
+                    let selectedRowMetadataIds = container.siblings().addBack().map(function () {
                         return this.id.split("photoThumbnailContainer")[1];
                     }).toArray();
 
-                    found = metadataIdArrayCopy.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
+                    let found = selectedRowMetadataIds.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
+                    let index = 0;
 
-                    $.merge(selectedRowMetadataIds, metadataIdArrayCopy);
-                    index++;
-                }
+                    while (!found && index < whileLimit) {
+                        let nextContainer = container.parent().parent().nextUntil().filter(view === "timeline" ? ".dateContainer:first" : ".dateSection:first");
+                        container = $(nextContainer[0]).children("div.row").children("div");
 
-                shashin.printMessageToConsole("Looped " + index + " times finding metadata", { tag: "multiselect" });
+                        metadataIdArrayCopy = container.siblings().addBack().map(function () {
+                            return this.id.split("photoThumbnailContainer")[1];
+                        }).toArray();
 
-                let start = false;
-                let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
+                        found = metadataIdArrayCopy.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
 
-                const compareOne = direction === "down" ? lastSelectedMetadataId : metadataId;
-                const compareTwo = direction === "down" ? metadataId : lastSelectedMetadataId;
-
-                for (const currentMetadataId of selectedRowMetadataIds) {
-                    if (currentMetadataId === compareOne || start) {
-                        if (currentMetadataId === compareOne) {
-                            lastSelectedMetadataId = direction === "down" ? currentMetadataId : shashin.lastSelectedMetadataId;
-                            selectedMetadataIds.push(currentMetadataId);
-                            start = true;
-                            continue;
-                        }
-
-                        updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                        if (direction === "down") {
-                            lastSelectedMetadataId = currentMetadataId;
-                        }
-
-                        selectedMetadataIds.push(currentMetadataId);
+                        $.merge(selectedRowMetadataIds, metadataIdArrayCopy);
+                        index++;
                     }
 
-                    if (currentMetadataId === compareTwo) {
-                        selectedMetadataIds.push(currentMetadataId);
-                        updateImageSelection(metadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                        updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                        break;
+                    shashin.printMessageToConsole("Looped " + index + " times finding metadata", { tag: "multiselect" });
+
+                    let start = false;
+                    let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
+
+                    const compareOne = direction === "down" ? lastSelectedMetadataId : metadataId;
+                    const compareTwo = direction === "down" ? metadataId : lastSelectedMetadataId;
+
+                    for (const currentMetadataId of selectedRowMetadataIds) {
+                        if (currentMetadataId === compareOne || start) {
+                            if (currentMetadataId === compareOne) {
+                                lastSelectedMetadataId = direction === "down" ? currentMetadataId : shashin.lastSelectedMetadataId;
+                                start = true;
+                                continue;
+                            }
+
+                            updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
+                            if (direction === "down") {
+                                lastSelectedMetadataId = currentMetadataId;
+                            }
+                        }
+
+                        if (currentMetadataId === compareTwo) {
+                            updateImageSelection(metadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
+                            updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
+                            break;
+                        }
                     }
-                }
 
-                metadataIdArrayCopy = [];
-                $(".thumbnail-tl .bi-circle-fill").each(function (i, obj) {
-                    metadataIdArrayCopy.push(obj.id.substring(6, obj.id.length));
-                });
+                    metadataIdArrayCopy = [];
+                    $(".thumbnail-tl .bi-circle-fill").each(function (i, obj) {
+                        metadataIdArrayCopy.push(obj.id.substring(6, obj.id.length));
+                    });
 
-                metadataIdArrayCopy = [...new Set(metadataIdArrayCopy)];
-                shashin.addAllToMetadataIdList(metadataIdArrayCopy);
-                shashin.updateToolbarUI(view, metadataIdArrayCopy);
-                shashin.updateSelectionCount(metadataIdArrayCopy);
-                resetBorders();
-                applyBorderToLastSelected();
-                Util.showSpinner(false);
+                    metadataIdArrayCopy = [...new Set(metadataIdArrayCopy)];
+                    shashin.addAllToMetadataIdList(metadataIdArrayCopy);
+                    shashin.updateToolbarUI(view, metadataIdArrayCopy);
+                    shashin.updateSelectionCount(metadataIdArrayCopy);
+                    resetBorders();
+                    applyBorderToLastSelected();
+
+                    Util.showSpinner(false);
+                }, 0);
+
             } else if (["timeline", "accessed", "modified", "recent", "taken", "album"].includes(view) || !addBorder) {
                 shashin.printMessageToConsole("Select ranged metadata: " + view, { tag: "multiselect" });
 
@@ -151,8 +149,10 @@
 
                 if (version) url += `?v=${version}`;
 
-                http.ajax("get", url).then(data => {
-                    Util.showSpinner(true);
+                http.ajax("get", url, null, function () {
+                    // Fail
+                    Util.showSpinner(false);
+                }).then(data => {
                     if (data.hasOwnProperty("metadataIdArray")) {
                         const metadataIdArray = data.metadataIdArray;
 
@@ -187,6 +187,7 @@
                             }
                         }, 0);
                     }
+
                     Util.showSpinner(false);
                 });
 
