@@ -53,6 +53,8 @@
             if (view !== "timeline" && addBorder) {
                 // Non-timeline selection logic. No DB lookup...
 
+                Util.showSpinner(true);
+
                 // Get selection direction
                 const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
                 const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
@@ -130,6 +132,7 @@
                 shashin.updateSelectionCount(metadataIdArrayCopy);
                 resetBorders();
                 applyBorderToLastSelected();
+                Util.showSpinner(false);
             } else if (["timeline", "accessed", "modified", "recent", "taken", "album"].includes(view) || !addBorder) {
                 shashin.printMessageToConsole("Select ranged metadata: " + view, { tag: "multiselect" });
 
@@ -149,6 +152,7 @@
                 if (version) url += `?v=${version}`;
 
                 http.ajax("get", url).then(data => {
+                    Util.showSpinner(true);
                     if (data.hasOwnProperty("metadataIdArray")) {
                         const metadataIdArray = data.metadataIdArray;
 
@@ -183,6 +187,7 @@
                             }
                         }, 0);
                     }
+                    Util.showSpinner(false);
                 });
 
             } else {
