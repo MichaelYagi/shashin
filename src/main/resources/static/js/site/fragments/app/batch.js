@@ -2,6 +2,13 @@
     shashin.batchSelect = function(metadataId, view, addBorder = true, opaque = 0.3, transparent = 1.0) {
         shashin.printMessageToConsole("Select action", { tag: "multiselect" });
 
+        // Disable all links inside divs
+        $('#timelineAppTools a, #matchesAppTools a, #albumAppTools a, #comprefaceAppTools a').each(function() {
+            $(this).data('href', $(this).attr('href')); // Store original href
+            $(this).removeAttr('href'); // Remove href to disable
+            $(this).css('pointer-events', 'none'); // Optional: prevent clicking
+            $(this).css('color', 'gray'); // Optional: indicate disabled state
+        });
         Util.showSpinner(true);
 
         let metadataIdArrayCopy = shashin.getMetadataIdList();
@@ -128,6 +135,15 @@
                     resetBorders();
                     applyBorderToLastSelected();
 
+                    // Restore all links inside divs
+                    $('#timelineAppTools a, #matchesAppTools a, #albumAppTools a, #comprefaceAppTools a').each(function() {
+                        const originalHref = $(this).data('href');
+                        if (originalHref) {
+                            $(this).attr('href', originalHref); // Restore href
+                            $(this).css('pointer-events', 'auto'); // Re-enable clicking
+                            $(this).css('color', ''); // Reset color
+                        }
+                    });
                     Util.showSpinner(false);
                 }, 0);
 
@@ -151,6 +167,15 @@
 
                 http.ajax("get", url, null, function () {
                     // Fail
+                    // Restore all links inside divs
+                    $('#timelineAppTools a, #matchesAppTools a, #albumAppTools a, #comprefaceAppTools a').each(function() {
+                        const originalHref = $(this).data('href');
+                        if (originalHref) {
+                            $(this).attr('href', originalHref); // Restore href
+                            $(this).css('pointer-events', 'auto'); // Re-enable clicking
+                            $(this).css('color', ''); // Reset color
+                        }
+                    });
                     Util.showSpinner(false);
                 }).then(data => {
                     if (data.hasOwnProperty("metadataIdArray")) {
@@ -188,6 +213,15 @@
                         }, 0);
                     }
 
+                    // Restore all links inside divs
+                    $('#timelineAppTools a, #matchesAppTools a, #albumAppTools a, #comprefaceAppTools a').each(function() {
+                        const originalHref = $(this).data('href');
+                        if (originalHref) {
+                            $(this).attr('href', originalHref); // Restore href
+                            $(this).css('pointer-events', 'auto'); // Re-enable clicking
+                            $(this).css('color', ''); // Reset color
+                        }
+                    });
                     Util.showSpinner(false);
                 });
 
