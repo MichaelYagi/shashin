@@ -2,13 +2,37 @@
     shashin.batchSelect = function(metadataId, view, addBorder = true, opaque = 0.3, transparent = 1.0) {
         shashin.printMessageToConsole("Select action", { tag: "multiselect" });
 
+        function enableToolbar() {
+            // Restore all links inside divs
+            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").each(function() {
+                $(this).css({
+                    'pointer-events': 'auto',
+                    'cursor': 'pointer' // or '' to reset to default
+                });
+            });
+            $("#appToolsBatchEdit span, #appToolsBatchDownload span, #appToolsDeselectAll span, #albumAppToolsRemoveFavorites span, #albumAppToolsBatchDownload span, #albumAppToolsDeselectAll span, #albumAppToolsRemoveAlbum span").each(function() {
+                $(this).css({
+                    'color': '' // or use a specific color like '#000' if needed
+                });
+            });
+        }
+
+        function disableToolbar() {
+            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").each(function() {
+                $(this).css({
+                    'pointer-events': 'none',
+                    'cursor': 'default'
+                });
+            });
+            $("#appToolsBatchEdit span, #appToolsBatchDownload span, #appToolsDeselectAll span, #albumAppToolsRemoveFavorites span, #albumAppToolsBatchDownload span, #albumAppToolsDeselectAll span, #albumAppToolsRemoveAlbum span").each(function() {
+                $(this).css({
+                    'color': 'gray',
+                });
+            });
+        }
+
         // Disable all links inside divs
-        $('#timelineAppTools a, #matchesAppTools a, #albumAppTools a, #comprefaceAppTools a').each(function() {
-            $(this).data('href', $(this).attr('href')); // Store original href
-            $(this).removeAttr('href'); // Remove href to disable
-            $(this).css('pointer-events', 'none'); // Optional: prevent clicking
-            $(this).css('color', 'gray'); // Optional: indicate disabled state
-        });
+        disableToolbar();
         Util.showSpinner(true);
 
         let metadataIdArrayCopy = shashin.getMetadataIdList();
@@ -136,14 +160,7 @@
                     applyBorderToLastSelected();
 
                     // Restore all links inside divs
-                    $('#timelineAppTools a, #matchesAppTools a, #albumAppTools a, #comprefaceAppTools a').each(function() {
-                        const originalHref = $(this).data('href');
-                        if (originalHref) {
-                            $(this).attr('href', originalHref); // Restore href
-                            $(this).css('pointer-events', 'auto'); // Re-enable clicking
-                            $(this).css('color', ''); // Reset color
-                        }
-                    });
+                    enableToolbar();
                     Util.showSpinner(false);
                 }, 0);
 
@@ -168,14 +185,7 @@
                 http.ajax("get", url, null, function () {
                     // Fail
                     // Restore all links inside divs
-                    $('#timelineAppTools a, #matchesAppTools a, #albumAppTools a, #comprefaceAppTools a').each(function() {
-                        const originalHref = $(this).data('href');
-                        if (originalHref) {
-                            $(this).attr('href', originalHref); // Restore href
-                            $(this).css('pointer-events', 'auto'); // Re-enable clicking
-                            $(this).css('color', ''); // Reset color
-                        }
-                    });
+                    enableToolbar();
                     Util.showSpinner(false);
                 }).then(data => {
                     if (data.hasOwnProperty("metadataIdArray")) {
@@ -214,14 +224,7 @@
                     }
 
                     // Restore all links inside divs
-                    $('#timelineAppTools a, #matchesAppTools a, #albumAppTools a, #comprefaceAppTools a').each(function() {
-                        const originalHref = $(this).data('href');
-                        if (originalHref) {
-                            $(this).attr('href', originalHref); // Restore href
-                            $(this).css('pointer-events', 'auto'); // Re-enable clicking
-                            $(this).css('color', ''); // Reset color
-                        }
-                    });
+                    enableToolbar();
                     Util.showSpinner(false);
                 });
 
