@@ -15,6 +15,13 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [2.13.2] - 2025-09-04
+### Added
+- UI tweaks
+
+### Fixed
 - Double tap select images for mobile
 
 ### Security
