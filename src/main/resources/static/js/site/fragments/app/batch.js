@@ -87,155 +87,68 @@
         if (shashin.lastSelectedMetadataId && shashin.lastSelectedMetadataId !== metadataId) {
             shashin.printMessageToConsole("Select view: " + view, { tag: "multiselect" });
             shashin.printMessageToConsole("addBorder: " + addBorder, { tag: "multiselect" });
+            
+            const http = new Http("get ranged metadata");
+            let version = Util.getMetadataLocalStorage();
 
-            if (view !== "timeline" && addBorder) {
-                // Non-timeline selection logic. No DB lookup...
-                setTimeout(function () {
-                    // Get selection direction
-                    const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
-                    const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
-                    const direction = (pointerHash.y > selectionHash.y || (pointerHash.x > selectionHash.x && pointerHash.y >= selectionHash.y)) ? "down" : "up";
+            let url = `/metadata/range/${shashin.lastSelectedMetadataId}/${metadataId}/${view}/${shashin.mediaTypeFilter}`;
 
-                    shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify([selectionHash.x, selectionHash.y]), { tag: "multiselect" });
-                    shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify([pointerHash.x, pointerHash.y]), { tag: "multiselect" });
-                    shashin.printMessageToConsole("Select direction: " + direction, { tag: "multiselect" });
+            if (version === null || version === undefined) {
+                version = uuidv4();
+            }
 
-                    const whileLimit = 1000;
-                    let container = $("#photoThumbnailContainer" + (direction === "down" ? shashin.lastSelectedMetadataId : metadataId));
-                    let selectedRowMetadataIds = container.siblings().addBack().map(function () {
-                        return this.id.split("photoThumbnailContainer")[1];
-                    }).toArray();
+            if (view === "album") {
+                const albumId = $("#albumId").val();
+                url += `?albumId=${albumId}&v=${version}`;
+            } else {
+                url += `?v=${version}`;
+            }
 
-                    let found = selectedRowMetadataIds.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
-                    let index = 0;
+            http.ajax("get", url, null, function () {
+                // Fail
+                // Restore all links inside divs
+                enableToolbar();
+                Util.showSpinner(false);
+            }).then(data => {
+                if (data.hasOwnProperty("metadataIdArray")) {
+                    const metadataIdArray = data.metadataIdArray;
 
-                    while (!found && index < whileLimit) {
-                        let nextContainer = container.parent().parent().nextUntil().filter(view === "timeline" ? ".dateContainer:first" : ".dateSection:first");
-                        container = $(nextContainer[0]).children("div.row").children("div");
+                    setTimeout(function () {
+                        metadataIdArray.forEach(([id, filename, thumbnail]) => {
+                            updateImageSelection(id, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArray);
 
-                        metadataIdArrayCopy = container.siblings().addBack().map(function () {
-                            return this.id.split("photoThumbnailContainer")[1];
-                        }).toArray();
-
-                        found = metadataIdArrayCopy.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
-
-                        $.merge(selectedRowMetadataIds, metadataIdArrayCopy);
-                        index++;
-                    }
-
-                    shashin.printMessageToConsole("Looped " + index + " times finding metadata", { tag: "multiselect" });
-
-                    let start = false;
-                    let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
-
-                    const compareOne = direction === "down" ? lastSelectedMetadataId : metadataId;
-                    const compareTwo = direction === "down" ? metadataId : lastSelectedMetadataId;
-
-                    for (const currentMetadataId of selectedRowMetadataIds) {
-                        if (currentMetadataId === compareOne || start) {
-                            if (currentMetadataId === compareOne) {
-                                lastSelectedMetadataId = direction === "down" ? currentMetadataId : shashin.lastSelectedMetadataId;
-                                start = true;
-                                continue;
+                            if (shashin.lastSelectedMetadataSelected) {
+                                shashin.addToMetadataIdList(id);
+                                shashin.addToMetadataFilenamesList(filename);
+                                shashin.addToMetadataThumbnailsList(thumbnail);
+                            } else {
+                                shashin.removeFromMetadataIdList(id);
+                                shashin.removeFromMetadataFilenamesList(filename);
+                                shashin.removeFromMetadataThumbnailsList(thumbnail);
                             }
 
-                            updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                            if (direction === "down") {
-                                lastSelectedMetadataId = currentMetadataId;
+                            const imageId = $("#image" + id);
+                            if (imageId.length > 0) {
+                                const imageUrl = imageId.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+                                imageId.attr("src", imageUrl);
                             }
+                        });
+
+                        shashin.updateToolbarUI(view, shashin.getMetadataIdList());
+                        shashin.updateSelectionCount(shashin.getMetadataIdList());
+                        resetBorders();
+                        applyBorderToLastSelected();
+
+                        if (!addBorder) {
+                            shashin.lastSelectedMetadataId = "";
                         }
-
-                        if (currentMetadataId === compareTwo) {
-                            updateImageSelection(metadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                            updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                            break;
-                        }
-                    }
-
-                    metadataIdArrayCopy = [];
-                    $(".thumbnail-tl .bi-circle-fill").each(function (i, obj) {
-                        metadataIdArrayCopy.push(obj.id.substring(6, obj.id.length));
-                    });
-
-                    metadataIdArrayCopy = [...new Set(metadataIdArrayCopy)];
-                    shashin.addAllToMetadataIdList(metadataIdArrayCopy);
-                    shashin.updateToolbarUI(view, metadataIdArrayCopy);
-                    shashin.updateSelectionCount(metadataIdArrayCopy);
-                    resetBorders();
-                    applyBorderToLastSelected();
-
-                    // Restore all links inside divs
-                    enableToolbar();
-                    Util.showSpinner(false);
-                }, 0);
-
-            } else if (["timeline", "accessed", "modified", "recent", "taken", "album"].includes(view) || !addBorder) {
-                shashin.printMessageToConsole("Select ranged metadata: " + view, { tag: "multiselect" });
-
-                const http = new Http("get ranged metadata");
-                const version = Util.getMetadataLocalStorage();
-
-                let url = "";
-                if (view === "timeline") {
-                    url = `/metadata/range/${shashin.lastSelectedMetadataId}/${metadataId}/${shashin.mediaTypeFilter}`;
-                } else if (view === "album") {
-                    const albumId = $("#albumId").val();
-                    url = `/album/${albumId}/range/${metadataId}/${shashin.mediaTypeFilter}`;
-                } else {
-                    url = `/browse/range/${metadataId}/${view}/${shashin.mediaTypeFilter}`;
+                    }, 0);
                 }
 
-                if (version) url += `?v=${version}`;
-
-                http.ajax("get", url, null, function () {
-                    // Fail
-                    // Restore all links inside divs
-                    enableToolbar();
-                    Util.showSpinner(false);
-                }).then(data => {
-                    if (data.hasOwnProperty("metadataIdArray")) {
-                        const metadataIdArray = data.metadataIdArray;
-
-                        setTimeout(function () {
-                            metadataIdArray.forEach(([id, filename, thumbnail]) => {
-                                updateImageSelection(id, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArray);
-
-                                if (shashin.lastSelectedMetadataSelected) {
-                                    shashin.addToMetadataIdList(id);
-                                    shashin.addToMetadataFilenamesList(filename);
-                                    shashin.addToMetadataThumbnailsList(thumbnail);
-                                } else {
-                                    shashin.removeFromMetadataIdList(id);
-                                    shashin.removeFromMetadataFilenamesList(filename);
-                                    shashin.removeFromMetadataThumbnailsList(thumbnail);
-                                }
-
-                                const imageId = $("#image" + id);
-                                if (imageId.length > 0) {
-                                    const imageUrl = imageId.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
-                                    imageId.attr("src", imageUrl);
-                                }
-                            });
-
-                            shashin.updateToolbarUI(view, shashin.getMetadataIdList());
-                            shashin.updateSelectionCount(shashin.getMetadataIdList());
-                            resetBorders();
-                            applyBorderToLastSelected();
-
-                            if (!addBorder) {
-                                shashin.lastSelectedMetadataId = "";
-                            }
-                        }, 0);
-                    }
-
-                    // Restore all links inside divs
-                    enableToolbar();
-                    Util.showSpinner(false);
-                });
-
-            } else {
-                shashin.printMessageToConsole("lastSelectionPos undefined or null", { tag: "multiselect" });
-            }
+                // Restore all links inside divs
+                enableToolbar();
+                Util.showSpinner(false);
+            });
         } else {
             shashin.lastSelectedMetadataId = "";
             shashin.multiSelected = false;

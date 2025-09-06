@@ -12,6 +12,21 @@ interface AlbumRepository : CrudRepository<Album?, Int?> {
     @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE %:type% AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
     fun findAlbumMetadataByDateAndFilter(@Param("albumId") albumId: Int, @Param("type") type: String, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
 
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.hidden = 0 AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY m.taken_at DESC", nativeQuery = true)
+    fun findMetadataIdBetweenAlbum(@Param("albumId") albumId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', m.taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY m.taken_at DESC", nativeQuery = true)
+    fun findMetadataIdBetweenAlbumWithType(@Param("albumId") albumId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.hidden = 0 AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+    fun findMetadataIdBetweenAlbumNoCoord(@Param("albumId") albumId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.hidden = 0 AND m.hidden  AND m.description IS NOT NULL AND m.description != \"\" AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+    fun findMetadataIdBetweenAlbumByDesciption(@Param("albumId") albumId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m, albumphotocomment apc WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ap.album_id = apc.album_id AND apc.metadata_id = ap.metadata_id AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) AND m.hidden = 0 ORDER BY taken_at DESC", nativeQuery = true)
+    fun findMetadataIdBetweenAlbumByComments(@Param("albumId") albumId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
     @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
     fun findAlbumMetadataByDate(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
 
