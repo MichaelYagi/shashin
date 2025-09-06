@@ -87,7 +87,7 @@
         if (shashin.lastSelectedMetadataId && shashin.lastSelectedMetadataId !== metadataId) {
             shashin.printMessageToConsole("Select view: " + view, { tag: "multiselect" });
             shashin.printMessageToConsole("addBorder: " + addBorder, { tag: "multiselect" });
-            
+
             const http = new Http("get ranged metadata");
             let version = Util.getMetadataLocalStorage();
 

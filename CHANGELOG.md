@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
+- Simplified multi-select logic
+
 ### Deprecated
 ### Removed
 ### Fixed
