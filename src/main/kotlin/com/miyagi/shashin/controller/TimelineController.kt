@@ -124,9 +124,9 @@ class TimelineController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/metadata/range/{anchorId}/{selectId}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/range/{anchorId}/{selectId}/{view}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, locale: Locale): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<MutableList<String>>()
         val response = mutableMapOf<String, Any?>()
 
@@ -135,48 +135,130 @@ class TimelineController: BaseController() {
         response["metadataIdArray"] = mutableListOf<MutableList<String>>()
 
         if (anchorId !== null && anchorId !== "" && selectId !== null && selectId !== "" && anchorId !== selectId) {
+            val albumIdCopy = albumId.orElse(0)
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
-            val anchorYear = anchorMetadata?.getYear().toString()
-            val anchorSingleMonth = anchorMetadata?.getMonth().toString()
-            val anchorSingleDay = anchorMetadata?.getDay().toString()
-            val anchorMonth = if (anchorSingleMonth.toInt() > 9) anchorSingleMonth else "0$anchorSingleMonth"
-            val anchorDay = if (anchorSingleDay.toInt() > 9) anchorSingleDay else "0$anchorSingleDay"
-            val anchorTime = anchorMetadata?.getTime()
-            val anchorMetadataString = "$anchorYear-$anchorMonth-$anchorDay $anchorTime"
+            val anchorMetadataDateString: String = when (view) {
+                "accessed" -> anchorMetadata?.getLastAccessedAt().orEmpty()
+                "modified" -> anchorMetadata?.getModifiedAt().orEmpty()
+                "recent" -> anchorMetadata?.getAddedAt().orEmpty()
+                else -> {
+                    // Taken, albums or timeline view
+                    val year = anchorMetadata?.getYear()?.toString().orEmpty()
+                    val month = anchorMetadata?.getMonth()?.toString()?.padStart(2, '0').orEmpty()
+                    val day = anchorMetadata?.getDay()?.toString()?.padStart(2, '0').orEmpty()
+                    val time = anchorMetadata?.getTime().orEmpty()
+                    "$year-$month-$day $time"
+                }
+            }
 
-            val selectYear = selectMetadata?.getYear().toString()
-            val selectSingleMonth = selectMetadata?.getMonth().toString()
-            val selectSingleDay = selectMetadata?.getDay().toString()
-            val selectMonth = if (selectSingleMonth.toInt() > 9) selectSingleMonth else "0$selectSingleMonth"
-            val selectDay = if (selectSingleDay.toInt() > 9) selectSingleDay else "0$selectSingleDay"
-            val selectTime = selectMetadata?.getTime()
-            val selectMetadataString = "$selectYear-$selectMonth-$selectDay $selectTime"
+            val selectMetadataDateString: String = when (view) {
+                "accessed" -> selectMetadata?.getLastAccessedAt().orEmpty()
+                "modified" -> selectMetadata?.getModifiedAt().orEmpty()
+                "recent" -> selectMetadata?.getAddedAt().orEmpty()
+                else -> {
+                    // Taken, albums or timeline view
+                    val year = selectMetadata?.getYear()?.toString().orEmpty()
+                    val month = selectMetadata?.getMonth()?.toString()?.padStart(2, '0').orEmpty()
+                    val day = selectMetadata?.getDay()?.toString()?.padStart(2, '0').orEmpty()
+                    val time = selectMetadata?.getTime().orEmpty()
+                    "$year-$month-$day $time"
+                }
+            }
 
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val anchorMetadataDateObj = sdf.parse(anchorMetadataString)
-            val selectMetadataDateObj = sdf.parse(selectMetadataString)
+            val anchorMetadataDateObj = sdf.parse(anchorMetadataDateString)
+            val selectMetadataDateObj = sdf.parse(selectMetadataDateString)
 
-            var startDate = selectMetadataString
-            var endDate = anchorMetadataString
+            var startDate = selectMetadataDateString
+            var endDate = anchorMetadataDateString
             var direction = "down"
             if (anchorMetadataDateObj < selectMetadataDateObj) {
                 direction = "up"
-                startDate = anchorMetadataString
-                endDate = selectMetadataString
+                startDate = anchorMetadataDateString
+                endDate = selectMetadataDateString
             }
 
             // If timeline view
-            var metadatas: MutableList<Metadata>? = if (mediaType == "all") {
-                metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
-            } else if (mediaType == "nolatlng") {
-                metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
-            } else if (mediaType == "description") {
-                metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
-            } else {
-                metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(startDate, endDate, mediaType.toString())
-            }
+            val metadatas: MutableList<Metadata>? =
+                if (view === "taken" || view === "timeline") {
+                    if (mediaType == "all") {
+                        metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                    } else if (mediaType == "nolatlng") {
+                        metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
+                    } else if (mediaType == "description") {
+                        metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
+                    } else {
+                        metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(
+                            startDate,
+                            endDate,
+                            mediaType.toString()
+                        )
+                    }
+                } else if (view == "accessed") {
+                    if (mediaType == "all") {
+                        metadataRepository.findMetadataIdBetweenAccessedAt(startDate, endDate)
+                    } else if (mediaType == "nolatlng") {
+                        metadataRepository.findMetadataIdBetweenAccessAtNoCoord(startDate, endDate)
+                    } else if (mediaType == "description") {
+                        metadataRepository.findMetadataIdBetweenAccessAtByDescription(startDate, endDate)
+                    } else {
+                        metadataRepository.findMetadataIdBetweenAccessedAtWithType(startDate, endDate, mediaType.toString())
+                    }
+                } else if (view == "modified") {
+                    if (mediaType == "all") {
+                        metadataRepository.findMetadataIdBetweenModifiedAt(startDate, endDate)
+                    } else if (mediaType == "nolatlng") {
+                        metadataRepository.findMetadataIdBetweenModifiedAtNoCoord(startDate, endDate)
+                    } else if (mediaType == "description") {
+                        metadataRepository.findMetadataIdBetweenModifiedAtByDescription(startDate, endDate)
+                    } else {
+                        metadataRepository.findMetadataIdBetweenModifiedAtWithType(startDate, endDate, mediaType.toString())
+                    }
+                } else if (view == "recent") {
+                    if (mediaType == "all") {
+                        metadataRepository.findMetadataIdBetweenAddedAt(startDate, endDate)
+                    } else if (mediaType == "nolatlng") {
+                        metadataRepository.findMetadataIdBetweenAddedAtNoCoord(startDate, endDate)
+                    } else if (mediaType == "description") {
+                        metadataRepository.findMetadataIdBetweenAddedAtByDescription(startDate, endDate)
+                    } else {
+                        metadataRepository.findMetadataIdBetweenAddedAtWithType(startDate, endDate, mediaType.toString())
+                    }
+                } else if (view == "taken") {
+                    if (mediaType == "all") {
+                        metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                    } else if (mediaType == "nolatlng") {
+                        metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
+                    } else if (mediaType == "description") {
+                        metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
+                    } else {
+                        metadataRepository.findMetadataIdBetweenTakenAtWithType(
+                            startDate,
+                            endDate,
+                            mediaType.toString()
+                        )
+                    }
+                } else if (albumIdCopy > 0) {
+                    if (mediaType == "all") {
+                        albumRepository.findMetadataIdBetweenAlbum(albumIdCopy, startDate, endDate)
+                    } else if (mediaType == "nolatlng") {
+                        albumRepository.findMetadataIdBetweenAlbumNoCoord(albumIdCopy, startDate, endDate)
+                    } else if (mediaType == "description") {
+                        albumRepository.findMetadataIdBetweenAlbumByDesciption(albumIdCopy, startDate, endDate)
+                    } else if (mediaType == "comments") {
+                        albumRepository.findMetadataIdBetweenAlbumByComments(albumIdCopy, startDate, endDate)
+                    } else {
+                        albumRepository.findMetadataIdBetweenAlbumWithType(albumIdCopy, startDate, endDate, mediaType.toString())
+                    }
+                } else {
+                    if (mediaType == "all") {
+                        metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                    } else {
+                        metadataRepository.findMetadataIdBetweenTakenAtWithType(startDate, endDate, mediaType.toString())
+                    }
+                }
 
             if (metadatas != null && metadatas.isNotEmpty()) {
                 var startCaptured = false
