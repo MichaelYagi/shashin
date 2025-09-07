@@ -142,6 +142,8 @@
                             pendingUpdates.push(() => {
                                 updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
 
+                                shashin.setDateSection(id, view);
+
                                 const $image = $("#image" + id);
                                 if ($image.length > 0) {
                                     const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
