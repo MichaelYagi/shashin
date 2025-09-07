@@ -52,20 +52,23 @@
         };
 
         const updateImageSelection = (id, view, isSelected, opacityLevel, metadataArray) => {
-            if ($("#image" + id).length > 0) {
-                const imageUrl = $("#image" + id).attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+            const $image = $("#image" + id);
+            if ($image.length > 0) {
+                const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+                $image.attr("src", imageUrl).css("opacity", opacityLevel);
 
-                $("#image" + id).attr("src", imageUrl);
-
-                const iconClass = $("#tlicon" + id).attr("class");
+                const $icon = $("#tlicon" + id);
+                const iconClass = $icon.attr("class");
                 const shouldSelect = (isSelected && iconClass === "bi-circle") || (!isSelected && iconClass === "bi-circle-fill");
 
                 if (shouldSelect) {
                     shashin.selectClick(id, view, opaque, transparent, metadataArray, false);
-                    $("#image" + id).css("opacity", opacityLevel);
 
                     if (!isSelected && id !== metadataId && shashin.lastSelectedMetadataId !== id) {
                         $("#tntl" + id).css("display", "none");
+                        $image.attr("src", imageUrl).css("opacity", transparent);
+                    } else {
+                        $image.attr("src", imageUrl).css("opacity", opaque);
                     }
                 }
             }
@@ -110,28 +113,45 @@
                 enableToolbar();
                 Util.showSpinner(false);
             }).then(data => {
-                if (data.hasOwnProperty("metadataIdArray")) {
+                if (data.hasOwnProperty("metadataIdArray") &&
+                    data.hasOwnProperty("metadataFilenameArray") &&
+                    data.hasOwnProperty("metadataThumbnailArray")
+                ) {
                     const metadataIdArray = data.metadataIdArray;
+                    const metadataFilenameArray = data.metadataFilenameArray;
+                    const metadataThumbnailArray = data.metadataThumbnailArray;
+                    const isSelected = shashin.lastSelectedMetadataSelected;
+                    const pendingUpdates = [];
 
                     setTimeout(function () {
-                        metadataIdArray.forEach(([id, filename, thumbnail]) => {
-                            updateImageSelection(id, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArray);
+                        if (isSelected) {
+                            shashin.addAllToMetadataIdList(metadataIdArray, true);
+                            shashin.addAllToFilenameList(metadataFilenameArray, true);
+                            shashin.addAllToThumbnailList(metadataThumbnailArray, true);
+                        } else {
+                            shashin.removeMetadataIdListWithArray(metadataIdArray);
+                            shashin.removeMetadataFilenamesListWithArray(metadataFilenameArray);
+                            shashin.removeMetadataThumbnailsListWithArray(metadataThumbnailArray);
+                        }
 
-                            if (shashin.lastSelectedMetadataSelected) {
-                                shashin.addToMetadataIdList(id);
-                                shashin.addToMetadataFilenamesList(filename);
-                                shashin.addToMetadataThumbnailsList(thumbnail);
-                            } else {
-                                shashin.removeFromMetadataIdList(id);
-                                shashin.removeFromMetadataFilenamesList(filename);
-                                shashin.removeFromMetadataThumbnailsList(thumbnail);
-                            }
+                        for (let i = 0; i < metadataIdArray.length; i++) {
+                            const id = metadataIdArray[i];
+                            const isSelected = shashin.lastSelectedMetadataSelected;
+                            const opacityLevel = isSelected ? opaque : transparent;
 
-                            const imageId = $("#image" + id);
-                            if (imageId.length > 0) {
-                                const imageUrl = imageId.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
-                                imageId.attr("src", imageUrl);
-                            }
+                            pendingUpdates.push(() => {
+                                updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
+
+                                const $image = $("#image" + id);
+                                if ($image.length > 0) {
+                                    const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+                                    $image.attr("src", imageUrl);
+                                }
+                            });
+                        }
+
+                        requestAnimationFrame(() => {
+                            pendingUpdates.forEach(fn => fn());
                         });
 
                         shashin.updateToolbarUI(view, shashin.getMetadataIdList());
@@ -450,16 +470,4 @@
             }
         });
     };
-
-    function getElementLocation(el) {
-        if (el) {
-            const rect = el.getBoundingClientRect();
-            return {
-                x: rect.left + window.scrollX,
-                y: rect.top + window.scrollY
-            };
-        } else {
-            return {x: null,y: null};
-        }
-    }
 }( window.shashin = window.shashin || {}, jQuery ));
