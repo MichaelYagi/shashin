@@ -274,7 +274,7 @@ class TimelineController: BaseController() {
                         startCaptured = true
                     }
 
-                    if (startCaptured == true) {
+                    if (startCaptured) {
                         retMetadataIdArray.add(metadata.getId())
                         retMetadataFilenameArray.add(metadata.getFileName()!!)
                         retMetadataThumbnailArray.add("/api/v1/thumbnails/centered/"+metadata.getId())
