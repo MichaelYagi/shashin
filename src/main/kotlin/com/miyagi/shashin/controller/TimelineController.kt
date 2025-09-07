@@ -127,12 +127,16 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/metadata/range/{anchorId}/{selectId}/{view}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, locale: Locale): String {
-        val retMetadataIdArray = mutableListOf<MutableList<String>>()
+        val retMetadataIdArray = mutableListOf<String>()
+        val retMetadataFilenameArray = mutableListOf<String>()
+        val retMetadataThumbnailArray = mutableListOf<String>()
         val response = mutableMapOf<String, Any?>()
 
         response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
-        response["metadataIdArray"] = mutableListOf<MutableList<String>>()
+        response["metadataIdArray"] = mutableListOf<String>()
+        response["metadataFilenameArray"] = mutableListOf<String>()
+        response["metadataThumbnailArray"] = mutableListOf<String>()
 
         if (anchorId !== null && anchorId !== "" && selectId !== null && selectId !== "" && anchorId !== selectId) {
             val albumIdCopy = albumId.orElse(0)
@@ -271,7 +275,9 @@ class TimelineController: BaseController() {
                     }
 
                     if (startCaptured == true) {
-                        retMetadataIdArray.add(mutableListOf(metadata.getId(),metadata.getFileName()!!, "/api/v1/thumbnails/centered/"+metadata.getId()))
+                        retMetadataIdArray.add(metadata.getId())
+                        retMetadataFilenameArray.add(metadata.getFileName()!!)
+                        retMetadataThumbnailArray.add("/api/v1/thumbnails/centered/"+metadata.getId())
 
                         if (direction == "down" && metadata.getId() == selectId) {
                             break
@@ -284,6 +290,8 @@ class TimelineController: BaseController() {
                 response["msg"] = messageSource?.getMessage("main.success", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
                 response["metadataIdArray"] = retMetadataIdArray
+                response["metadataFilenameArray"] = retMetadataFilenameArray
+                response["metadataThumbnailArray"] = retMetadataThumbnailArray
             }
         }
 
