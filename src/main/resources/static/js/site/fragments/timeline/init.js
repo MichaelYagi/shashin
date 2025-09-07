@@ -169,6 +169,14 @@
         });
 
         $(window).bind("scrollStop", function() {
+            // Fill headers
+            const imageGroups = Util.elementsInViewport($(".image-group-padding"));
+            for (let i = 0; i < imageGroups.length; i++) {
+                const container = $(imageGroups[i]).children().eq(3).attr("id");
+                const metadataId = container.replace("photoThumbnailContainer", "");
+                shashin.setDateSection(metadataId, "timeline")
+            }
+
             firsthovered = true;
             timelineSettings.isScrolling = false;
 
