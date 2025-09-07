@@ -130,6 +130,7 @@ class TimelineController: BaseController() {
         val retMetadataIdArray = mutableListOf<String>()
         val retMetadataFilenameArray = mutableListOf<String>()
         val retMetadataThumbnailArray = mutableListOf<String>()
+        val retMetadataDatesArray = mutableListOf<String>()
         val response = mutableMapOf<String, Any?>()
 
         response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
@@ -137,6 +138,7 @@ class TimelineController: BaseController() {
         response["metadataIdArray"] = mutableListOf<String>()
         response["metadataFilenameArray"] = mutableListOf<String>()
         response["metadataThumbnailArray"] = mutableListOf<String>()
+        response["metadataDatesArray"] = mutableListOf<String>()
 
         if (anchorId !== null && anchorId !== "" && selectId !== null && selectId !== "" && anchorId !== selectId) {
             val albumIdCopy = albumId.orElse(0)
@@ -279,6 +281,18 @@ class TimelineController: BaseController() {
                         retMetadataFilenameArray.add(metadata.getFileName()!!)
                         retMetadataThumbnailArray.add("/api/v1/thumbnails/centered/"+metadata.getId())
 
+                        if (albumIdCopy > 0 || view == "timeline" || view == "taken") {
+                            retMetadataDatesArray.add(metadata.getTakenAt()!!)
+                        } else if (view == "accessed") {
+                            retMetadataDatesArray.add(metadata.getLastAccessedAt()!!)
+                        } else if (view == "modified") {
+                            retMetadataDatesArray.add(metadata.getModifiedAt()!!)
+                        } else if (view == "recent") {
+                            retMetadataDatesArray.add(metadata.getAddedAt()!!)
+                        } else {
+                            retMetadataDatesArray.add(metadata.getTakenAt()!!)
+                        }
+
                         if (direction == "down" && metadata.getId() == selectId) {
                             break
                         } else if (direction == "up" && metadata.getId() == anchorId) {
@@ -292,6 +306,7 @@ class TimelineController: BaseController() {
                 response["metadataIdArray"] = retMetadataIdArray
                 response["metadataFilenameArray"] = retMetadataFilenameArray
                 response["metadataThumbnailArray"] = retMetadataThumbnailArray
+                response["metadataDatesArray"] = retMetadataDatesArray
             }
         }
 

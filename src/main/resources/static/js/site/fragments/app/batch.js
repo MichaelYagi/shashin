@@ -115,11 +115,13 @@
             }).then(data => {
                 if (data.hasOwnProperty("metadataIdArray") &&
                     data.hasOwnProperty("metadataFilenameArray") &&
-                    data.hasOwnProperty("metadataThumbnailArray")
+                    data.hasOwnProperty("metadataThumbnailArray") &&
+                    data.hasOwnProperty("metadataDatesArray")
                 ) {
                     const metadataIdArray = data.metadataIdArray;
                     const metadataFilenameArray = data.metadataFilenameArray;
                     const metadataThumbnailArray = data.metadataThumbnailArray;
+                    const metadataDateArray = data.metadataDatesArray;
                     const isSelected = shashin.lastSelectedMetadataSelected;
                     const pendingUpdates = [];
 
@@ -134,15 +136,23 @@
                             shashin.removeMetadataThumbnailsListWithArray(metadataThumbnailArray);
                         }
 
+                        let lastDate = null;
                         for (let i = 0; i < metadataIdArray.length; i++) {
                             const id = metadataIdArray[i];
+                            const dateTime = metadataDateArray[i];
+                            const date = dateTime.split(" ")[0];
                             const isSelected = shashin.lastSelectedMetadataSelected;
                             const opacityLevel = isSelected ? opaque : transparent;
 
                             pendingUpdates.push(() => {
                                 updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
 
-                                shashin.setDateSection(id, view);
+                                if (lastDate !== date) {
+                                    setTimeout(function () {
+                                        lastDate = date;
+                                        shashin.setDateSection(id, view);
+                                    }, 0)
+                                }
 
                                 const $image = $("#image" + id);
                                 if ($image.length > 0) {
