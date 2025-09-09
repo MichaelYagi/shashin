@@ -102,6 +102,8 @@ $("#propBatchMetadata").on("keydown", async function (e) {
 async function saveBatchMetadata(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     if ($("#cameraBatchData").val() === "" && $("#lensBatchData").val() === "" &&
         $("#yearTakenBatchData").val() === "" && $("#monthTakenBatchData").val() === "" && $("#dayTakenBatchData").val() === "" && $("#offsetTakenBatchData").val() === "" &&
         $("#latlngBatchData").val() === "" && $("#keywordsBatchData").val() === "" && $("#albumNameInput").val() === "" && $("#tagBatchDataInput").val() === "" &&
@@ -370,6 +372,10 @@ $('#rescanBatchMetadataConfirmation').on('hide.bs.modal', function () {
     $("#metadataBatchModalCancel").prop("disabled", false);
     $("#saveBatchMetadata").prop("disabled", false);
     $("#metadataBatchModalStatus").removeClass('bi-x-circle').removeClass('bi-check-circle').removeClass('spinner-grow');
+});
+
+$('#metadataBatchModalCancel').on('click', function () {
+    shashin.stopRendering = true;
 });
 
 $('#propAddAlbum').on('hide.bs.modal', function () {
