@@ -122,7 +122,6 @@
                     const metadataFilenameArray = data.metadataFilenameArray;
                     const metadataThumbnailArray = data.metadataThumbnailArray;
                     const isSelected = shashin.lastSelectedMetadataSelected;
-                    const pendingUpdates = [];
 
                     setTimeout(function () {
                         if (isSelected) {
@@ -136,20 +135,36 @@
                         }
 
                         const opacityLevel = isSelected ? opaque : transparent;
-                        let currentIndex = metadataIdArray.length;
-
-                        const chunkSize = (view === "timeline") ? currentIndex:50;
+                        const chunkSize = (view === "timeline") ? shashin.getMetadataIdList() : 50;
                         let chunkComplete = false;
+                        const pendingUpdates = [];
 
-                        function processChunkReverse() {
-                            const startIndex = Math.max(currentIndex - chunkSize, 0);
-
-                            for (let i = currentIndex - 1; i >= startIndex; i--) {
+                        if (view === "timeline") {
+                            for (let i = 0; i < metadataIdArray.length; i++) {
                                 const id = metadataIdArray[i];
 
                                 pendingUpdates.push(() => {
                                     updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
+                                    const $image = $("#image" + id);
+                                    if ($image.length > 0) {
+                                        const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+                                        $image.attr("src", imageUrl);
+                                    }
+                                });
+                            }
+                            requestAnimationFrame(() => {
+                                pendingUpdates.forEach(fn => fn());
+                            });
 
+                            if (chunkComplete === false) {
+                                enableToolbar();
+                                Util.showSpinner(false);
+                                chunkComplete = true;
+                            }
+                        } else {
+                            function createUpdateFn(id) {
+                                return () => {
+                                    updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
                                     const $image = $("#image" + id);
                                     if ($image.length > 0) {
                                         const imageUrl = $image.attr("src").replace(
@@ -158,28 +173,49 @@
                                         );
                                         $image.attr("src", imageUrl);
                                     }
-                                });
+                                };
                             }
 
-                            // Stop in progress after 1st chunk
-                            if (chunkComplete === false) {
-                                chunkComplete = true;
-                                enableToolbar();
-                                Util.showSpinner(false);
-                            }
+                            // Build chunks outward to inward
+                            let start = 0;
+                            let end = metadataIdArray.length;
+                            let toggle = true;
 
-                            requestAnimationFrame(() => {
-                                pendingUpdates.forEach(fn => fn());
-                                pendingUpdates.length = 0;
-
-                                currentIndex = startIndex;
-                                if (currentIndex > 0) {
-                                    processChunkReverse(); // Continue with next chunk
+                            while (start < end) {
+                                if (toggle) {
+                                    // Push chunk from start
+                                    const chunk = metadataIdArray.slice(start, start + chunkSize);
+                                    chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
+                                    start += chunkSize;
+                                } else {
+                                    // Push chunk from end
+                                    const chunk = metadataIdArray.slice(Math.max(end - chunkSize, start), end).reverse();
+                                    chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
+                                    end -= chunkSize;
                                 }
-                            });
-                        }
+                                if (chunkComplete === false) {
+                                    enableToolbar();
+                                    Util.showSpinner(false);
+                                    chunkComplete = true;
+                                }
+                                toggle = !toggle;
+                            }
 
-                        processChunkReverse(); // Start from the end
+                            // Render in chunks
+                            function processChunks(index = 0) {
+                                const endIndex = Math.min(index + chunkSize, pendingUpdates.length);
+                                for (let i = index; i < endIndex; i++) {
+                                    pendingUpdates[i]();
+                                }
+
+                                if (endIndex < pendingUpdates.length) {
+                                    requestAnimationFrame(() => processChunks(endIndex));
+                                }
+                            }
+
+                            // Start rendering
+                            requestAnimationFrame(() => processChunks());
+                        }
 
                         shashin.updateToolbarUI(view, shashin.getMetadataIdList());
                         shashin.updateSelectionCount(shashin.getMetadataIdList());
