@@ -1,6 +1,8 @@
 $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     let thumbnailList = "";
     let metadataIdArray = shashin.getMetadataIdList();
     let metadataFilenamesArray = shashin.getMetadataFilenamesList();
@@ -89,6 +91,8 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
 $("#appToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     // Download items
     shashin.downloadSelected("appToolsBatchDownload");
 });
@@ -96,12 +100,16 @@ $("#appToolsBatchDownload").on("click", function(e) {
 $("#matchToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     // Download items
     shashin.downloadSelected("matchToolsBatchDownload");
 });
 
 $("#albumAppToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
+
+    shashin.stopRendering = true;
 
     // Download items
     shashin.downloadSelected("albumAppToolsBatchDownload");
