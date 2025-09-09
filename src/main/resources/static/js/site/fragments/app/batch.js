@@ -156,11 +156,8 @@
                                 pendingUpdates.forEach(fn => fn());
                             });
 
-                            if (chunkComplete === false) {
-                                enableToolbar();
-                                Util.showSpinner(false);
-                                chunkComplete = true;
-                            }
+                            enableToolbar();
+                            Util.showSpinner(false);
                         } else {
                             function createUpdateFn(id) {
                                 return () => {
@@ -176,22 +173,29 @@
                                 };
                             }
 
-                            // Build chunks outward to inward
+                            // Build outward-inward chunks starting from the bottom
                             let start = 0;
                             let end = metadataIdArray.length;
+                            let lower = end - chunkSize;
+                            let upper = lower - chunkSize;
                             let toggle = true;
 
-                            while (start < end) {
+                            // Push the bottom chunk first
+                            const bottomChunk = metadataIdArray.slice(lower, end).reverse();
+                            bottomChunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
+
+                            while (upper >= start) {
                                 if (toggle) {
-                                    // Push chunk from start
+                                    // Push chunk above the bottom
+                                    const chunk = metadataIdArray.slice(upper, lower).reverse();
+                                    chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
+                                    lower = upper;
+                                    upper -= chunkSize;
+                                } else {
+                                    // Push chunk from the top
                                     const chunk = metadataIdArray.slice(start, start + chunkSize);
                                     chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
                                     start += chunkSize;
-                                } else {
-                                    // Push chunk from end
-                                    const chunk = metadataIdArray.slice(Math.max(end - chunkSize, start), end).reverse();
-                                    chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
-                                    end -= chunkSize;
                                 }
                                 if (chunkComplete === false) {
                                     enableToolbar();
