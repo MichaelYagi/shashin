@@ -135,25 +135,59 @@
                             shashin.removeMetadataThumbnailsListWithArray(metadataThumbnailArray);
                         }
 
-                        const opacityLevel = isSelected ? opaque : transparent;
+                        if (view === "timeline") {
+                            const opacityLevel = isSelected ? opaque : transparent;
 
-                        for (let i = 0; i < metadataIdArray.length; i++) {
-                            const id = metadataIdArray[i];
+                            for (let i = 0; i < metadataIdArray.length; i++) {
+                                const id = metadataIdArray[i];
 
-                            pendingUpdates.push(() => {
-                                updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
+                                pendingUpdates.push(() => {
+                                    updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
 
-                                const $image = $("#image" + id);
-                                if ($image.length > 0) {
-                                    const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
-                                    $image.attr("src", imageUrl);
-                                }
+                                    const $image = $("#image" + id);
+                                    if ($image.length > 0) {
+                                        const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+                                        $image.attr("src", imageUrl);
+                                    }
+                                });
+                            }
+
+                            requestAnimationFrame(() => {
+                                pendingUpdates.forEach(fn => fn());
+                            });
+                        } else {
+                            function renderViewport() {
+                                const elements = Util.elementsInViewport($(".photo-thumbnail"));
+                                const opaque = 0.3;
+                                const transparent = 1.0;
+
+                                $.each(elements, function(index, value) {
+                                    const imageContainerId = $(value).attr('id');
+                                    const currentMetadataId = imageContainerId.replace("photoThumbnailContainer", "");
+                                    const isSelected = shashin.lastSelectedMetadataSelected;
+                                    const opacityLevel = isSelected ? opaque : transparent;
+
+                                    // Check if metadataId in metadataSelectList
+                                    if (shashin.getMetadataIdList().includes(currentMetadataId)) {
+                                        if ($("#tlicon"+currentMetadataId).hasClass("bi-circle-fill") === false) {
+                                            updateImageSelection(currentMetadataId, view, isSelected, opacityLevel, metadataIdArray);
+                                        }
+                                    } else {
+                                        if ($("#tlicon"+currentMetadataId).hasClass("bi-circle") === false) {
+                                            updateImageSelection(currentMetadataId, view, isSelected, opacityLevel, metadataIdArray);
+                                        }
+                                    }
+                                });
+                            }
+
+                            renderViewport();
+
+                            $("#container").on("scroll", () => {
+                                setTimeout(function () {
+                                    renderViewport();
+                                }, 200);
                             });
                         }
-
-                        requestAnimationFrame(() => {
-                            pendingUpdates.forEach(fn => fn());
-                        });
 
                         shashin.updateToolbarUI(view, shashin.getMetadataIdList());
                         shashin.updateSelectionCount(shashin.getMetadataIdList());
