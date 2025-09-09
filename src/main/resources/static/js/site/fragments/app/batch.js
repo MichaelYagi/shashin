@@ -256,6 +256,9 @@
                             requestAnimationFrame(() => processChunks());
                         }
 
+                        enableToolbar();
+                        Util.showSpinner(false);
+
                         shashin.stopRendering = false;
 
                         shashin.updateToolbarUI(view, shashin.getMetadataIdList());
