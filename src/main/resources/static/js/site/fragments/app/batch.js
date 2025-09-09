@@ -161,7 +161,7 @@
                                 });
                             }
 
-                            // Restore all links inside divs
+                            // Stop in progress after 1st chunk
                             if (chunkComplete === false) {
                                 chunkComplete = true;
                                 enableToolbar();
