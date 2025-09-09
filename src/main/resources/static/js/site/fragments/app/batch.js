@@ -186,29 +186,31 @@
 
                             while (upper >= start) {
                                 if (toggle) {
-                                    // Push chunk above the bottom
                                     const chunk = metadataIdArray.slice(upper, lower).reverse();
                                     chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
                                     lower = upper;
                                     upper -= chunkSize;
                                 } else {
-                                    // Push chunk from the top
                                     const chunk = metadataIdArray.slice(start, start + chunkSize);
                                     chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
                                     start += chunkSize;
                                 }
+                                toggle = !toggle;
+
                                 if (chunkComplete === false) {
                                     enableToolbar();
                                     Util.showSpinner(false);
                                     chunkComplete = true;
                                 }
-                                toggle = !toggle;
                             }
 
-                            // Render in chunks
+                            // Render in chunks with stop flag
                             function processChunks(index = 0) {
+                                if (shashin.stopRendering) return;
+
                                 const endIndex = Math.min(index + chunkSize, pendingUpdates.length);
                                 for (let i = index; i < endIndex; i++) {
+                                    if (shashin.stopRendering) return;
                                     pendingUpdates[i]();
                                 }
 
@@ -220,6 +222,8 @@
                             // Start rendering
                             requestAnimationFrame(() => processChunks());
                         }
+
+                        shashin.stopRendering = false;
 
                         shashin.updateToolbarUI(view, shashin.getMetadataIdList());
                         shashin.updateSelectionCount(shashin.getMetadataIdList());
