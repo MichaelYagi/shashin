@@ -116,12 +116,14 @@
                 if (data.hasOwnProperty("metadataIdArray") &&
                     data.hasOwnProperty("metadataFilenameArray") &&
                     data.hasOwnProperty("metadataThumbnailArray") &&
-                    data.hasOwnProperty("metadataDatesArray")
+                    data.hasOwnProperty("metadataDatesArray") &&
+                    data.hasOwnProperty("direction")
                 ) {
                     const metadataIdArray = data.metadataIdArray;
                     const metadataFilenameArray = data.metadataFilenameArray;
                     const metadataThumbnailArray = data.metadataThumbnailArray;
                     const isSelected = shashin.lastSelectedMetadataSelected;
+                    const direction = data.direction;
 
                     setTimeout(function () {
                         if (isSelected) {
@@ -178,6 +180,12 @@
                             let end = metadataIdArray.length;
                             let lower = end - chunkSize;
                             let upper = lower - chunkSize;
+                            if (direction === "down") {
+                                start = metadataIdArray.length;
+                                end = 0;
+                                lower = lower - chunkSize;
+                                upper = end - chunkSize;
+                            }
                             let toggle = true;
 
                             // Push the bottom chunk first

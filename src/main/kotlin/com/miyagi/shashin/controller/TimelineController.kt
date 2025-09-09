@@ -139,6 +139,7 @@ class TimelineController: BaseController() {
         response["metadataFilenameArray"] = mutableListOf<String>()
         response["metadataThumbnailArray"] = mutableListOf<String>()
         response["metadataDatesArray"] = mutableListOf<String>()
+        response["direction"] = "down"
 
         if (anchorId !== null && anchorId !== "" && selectId !== null && selectId !== "" && anchorId !== selectId) {
             val albumIdCopy = albumId.orElse(0)
@@ -303,6 +304,7 @@ class TimelineController: BaseController() {
 
                 response["msg"] = messageSource?.getMessage("main.success", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
+                response["direction"] = direction
                 response["metadataIdArray"] = retMetadataIdArray
                 response["metadataFilenameArray"] = retMetadataFilenameArray
                 response["metadataThumbnailArray"] = retMetadataThumbnailArray
