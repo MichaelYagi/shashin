@@ -135,10 +135,10 @@
                             shashin.removeMetadataThumbnailsListWithArray(metadataThumbnailArray);
                         }
 
+                        const opacityLevel = isSelected ? opaque : transparent;
+
                         for (let i = 0; i < metadataIdArray.length; i++) {
                             const id = metadataIdArray[i];
-                            const isSelected = shashin.lastSelectedMetadataSelected;
-                            const opacityLevel = isSelected ? opaque : transparent;
 
                             pendingUpdates.push(() => {
                                 updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
