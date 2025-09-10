@@ -141,6 +141,7 @@
                         let chunkComplete = false;
                         const pendingUpdates = [];
 
+                        // Do not use chunking since it uses dates as chunks
                         if (view === "timeline") {
                             for (let i = 0; i < metadataIdArray.length; i++) {
                                 const id = metadataIdArray[i];
@@ -175,65 +176,37 @@
                                 };
                             }
 
-                            // Build chunks outward-inward
-                            let start = 0;
-                            let end = metadataIdArray.length;
-                            let lower, upper, toggle = true;
-
-                            if (direction === "up") {
-                                // Start from top
-                                lower = chunkSize;
-                                upper = lower + chunkSize;
-
-                                const topChunk = metadataIdArray.slice(0, chunkSize);
-                                topChunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
-
-                                while (upper <= end) {
-                                    if (toggle) {
-                                        const chunk = metadataIdArray.slice(lower, upper);
-                                        chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
-                                        lower = upper;
-                                        upper += chunkSize;
-                                    } else {
-                                        const tailStart = Math.max(end - chunkSize, lower);
-                                        const chunk = metadataIdArray.slice(tailStart, end).reverse();
-                                        chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
-                                        end -= chunkSize;
-                                    }
-                                    toggle = !toggle;
-
-                                    if (!chunkComplete) {
-                                        enableToolbar();
-                                        Util.showSpinner(false);
-                                        chunkComplete = true;
-                                    }
+                            // Track processed IDs to avoid duplicates
+                            const processedIds = new Set();
+                            const safePush = id => {
+                                if (!processedIds.has(id)) {
+                                    pendingUpdates.push(createUpdateFn(id));
+                                    processedIds.add(id);
                                 }
-                            } else {
-                                // Start from bottom
-                                lower = end - chunkSize;
-                                upper = lower - chunkSize;
+                            };
 
-                                const bottomChunk = metadataIdArray.slice(lower, end).reverse();
-                                bottomChunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
+                            // Build chunks outward-inward
+                            let left = 0;
+                            let right = metadataIdArray.length - 1;
 
-                                while (upper >= start) {
-                                    if (toggle) {
-                                        const chunk = metadataIdArray.slice(upper, lower).reverse();
-                                        chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
-                                        lower = upper;
-                                        upper -= chunkSize;
-                                    } else {
-                                        const chunk = metadataIdArray.slice(start, start + chunkSize);
-                                        chunk.forEach(id => pendingUpdates.push(createUpdateFn(id)));
-                                        start += chunkSize;
-                                    }
-                                    toggle = !toggle;
+                            while (left <= right) {
+                                // Chunk from the left
+                                const leftChunk = metadataIdArray.slice(left, left + chunkSize);
+                                leftChunk.forEach(safePush);
+                                left += chunkSize;
 
-                                    if (!chunkComplete) {
-                                        enableToolbar();
-                                        Util.showSpinner(false);
-                                        chunkComplete = true;
-                                    }
+                                // Chunk from the right
+                                if (left <= right) {
+                                    const rightChunkStart = Math.max(right - chunkSize + 1, left);
+                                    const rightChunk = metadataIdArray.slice(rightChunkStart, right + 1).reverse();
+                                    rightChunk.forEach(safePush);
+                                    right -= chunkSize;
+                                }
+
+                                if (!chunkComplete) {
+                                    enableToolbar();
+                                    Util.showSpinner(false);
+                                    chunkComplete = true;
                                 }
                             }
 
