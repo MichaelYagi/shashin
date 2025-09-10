@@ -124,6 +124,10 @@
                     const metadataThumbnailArray = data.metadataThumbnailArray;
                     const isSelected = shashin.lastSelectedMetadataSelected;
                     const direction = data.direction;
+                    const opacityLevel = isSelected ? opaque : transparent;
+                    const chunkSize = (view === "timeline") ? shashin.getMetadataIdList() : 50;
+                    const pendingUpdates = [];
+                    let chunkComplete = false;
 
                     setTimeout(function () {
                         if (isSelected) {
@@ -136,47 +140,28 @@
                             shashin.removeMetadataThumbnailsListWithArray(metadataThumbnailArray);
                         }
 
-                        const opacityLevel = isSelected ? opaque : transparent;
-                        const chunkSize = (view === "timeline") ? shashin.getMetadataIdList() : 50;
-                        let chunkComplete = false;
-                        const pendingUpdates = [];
+                        // Shared update function
+                        const createUpdateFn = id => () => {
+                            updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
 
-                        // Do not use chunking since it uses dates as chunks
-                        if (view === "timeline") {
-                            for (let i = 0; i < metadataIdArray.length; i++) {
-                                const id = metadataIdArray[i];
-
-                                pendingUpdates.push(() => {
-                                    updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
-                                    const $image = $("#image" + id);
-                                    if ($image.length > 0) {
-                                        const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
-                                        $image.attr("src", imageUrl);
-                                    }
-                                });
+                            const $image = $("#image" + id);
+                            if ($image.length > 0) {
+                                const imageUrl = $image.attr("src").replace(
+                                    `/gif/${id}`,
+                                    `/${Util.isMobile() ? "100" : "225"}/${id}`
+                                );
+                                $image.attr("src", imageUrl);
                             }
+                        };
+
+                        if (view === "timeline") {
+                            metadataIdArray.forEach(id => pendingUpdates.push(createUpdateFn(id)));
                             requestAnimationFrame(() => {
                                 pendingUpdates.forEach(fn => fn());
+                                enableToolbar();
+                                Util.showSpinner(false);
                             });
-
-                            enableToolbar();
-                            Util.showSpinner(false);
                         } else {
-                            function createUpdateFn(id) {
-                                return () => {
-                                    updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
-                                    const $image = $("#image" + id);
-                                    if ($image.length > 0) {
-                                        const imageUrl = $image.attr("src").replace(
-                                            "/gif/" + id,
-                                            "/" + (Util.isMobile() ? "100" : "225") + "/" + id
-                                        );
-                                        $image.attr("src", imageUrl);
-                                    }
-                                };
-                            }
-
-                            // Track processed IDs to avoid duplicates
                             const processedIds = new Set();
                             const safePush = id => {
                                 if (!processedIds.has(id)) {
@@ -185,22 +170,31 @@
                                 }
                             };
 
-                            // Build chunks outward-inward
                             let left = 0;
                             let right = metadataIdArray.length - 1;
 
-                            while (left <= right) {
-                                // Chunk from the left
-                                const leftChunk = metadataIdArray.slice(left, left + chunkSize);
-                                leftChunk.forEach(safePush);
-                                left += chunkSize;
+                            // Flip start direction if needed
+                            const startFromLeft = direction === "up";
 
-                                // Chunk from the right
-                                if (left <= right) {
+                            while (left <= right) {
+                                if (startFromLeft) {
+                                    metadataIdArray.slice(left, left + chunkSize).forEach(safePush);
+                                    left += chunkSize;
+
+                                    if (left <= right) {
+                                        const rightChunkStart = Math.max(right - chunkSize + 1, left);
+                                        metadataIdArray.slice(rightChunkStart, right + 1).reverse().forEach(safePush);
+                                        right -= chunkSize;
+                                    }
+                                } else {
                                     const rightChunkStart = Math.max(right - chunkSize + 1, left);
-                                    const rightChunk = metadataIdArray.slice(rightChunkStart, right + 1).reverse();
-                                    rightChunk.forEach(safePush);
+                                    metadataIdArray.slice(rightChunkStart, right + 1).reverse().forEach(safePush);
                                     right -= chunkSize;
+
+                                    if (left <= right) {
+                                        metadataIdArray.slice(left, left + chunkSize).forEach(safePush);
+                                        left += chunkSize;
+                                    }
                                 }
 
                                 if (!chunkComplete) {
@@ -210,8 +204,7 @@
                                 }
                             }
 
-                            // Render in chunks with stop flag
-                            function processChunks(index = 0) {
+                            const processChunks = (index = 0) => {
                                 if (shashin.stopRendering) return;
 
                                 const endIndex = Math.min(index + chunkSize, pendingUpdates.length);
@@ -223,9 +216,8 @@
                                 if (endIndex < pendingUpdates.length) {
                                     requestAnimationFrame(() => processChunks(endIndex));
                                 }
-                            }
+                            };
 
-                            // Start rendering
                             requestAnimationFrame(() => processChunks());
                         }
 
