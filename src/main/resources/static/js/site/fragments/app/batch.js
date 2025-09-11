@@ -123,7 +123,7 @@
                     const metadataFilenameArray = data.metadataFilenameArray;
                     const metadataThumbnailArray = data.metadataThumbnailArray;
                     const isSelected = shashin.lastSelectedMetadataSelected;
-                    const direction = data.direction;
+                    shashin.batchSelectDirection = data.direction;
                     const opacityLevel = isSelected ? opaque : transparent;
                     const chunkSize = (view === "timeline") ? shashin.getMetadataIdList() : 50;
                     const pendingUpdates = [];
@@ -174,7 +174,7 @@
                             let right = metadataIdArray.length - 1;
 
                             // Flip start direction if needed
-                            const startFromLeft = direction === "up";
+                            const startFromLeft = shashin.batchSelectDirection === "up";
 
                             while (left <= right) {
                                 if (startFromLeft) {

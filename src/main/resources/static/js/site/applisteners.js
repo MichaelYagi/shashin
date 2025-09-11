@@ -11,25 +11,47 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
     if ($("#activePage").val() === "timeline") {
         metadataThumbnailsArrayLength = shashin.getMetadataThumbnailsList().length;
         if (metadataThumbnailsArrayLength >= 7) {
-            metadataThumbnailsArray = [
-                shashin.getMetadataThumbnailsList()[0],
-                shashin.getMetadataThumbnailsList()[1],
-                shashin.getMetadataThumbnailsList()[2],
-                shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
-                shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
-                shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1]
-            ];
+            if (shashin.batchSelectDirection === "down") {
+                metadataThumbnailsArray = [
+                    shashin.getMetadataThumbnailsList()[0],
+                    shashin.getMetadataThumbnailsList()[1],
+                    shashin.getMetadataThumbnailsList()[2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1]
+                ];
+            } else {
+                metadataThumbnailsArray = [
+                    shashin.getMetadataThumbnailsList()[0],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
+                    shashin.getMetadataThumbnailsList()[3],
+                    shashin.getMetadataThumbnailsList()[2],
+                    shashin.getMetadataThumbnailsList()[1]
+                ];
+            }
         }
     } else {
         if (metadataThumbnailsArrayLength >= 7) {
-            metadataThumbnailsArray = [
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
-            ];
+            if (shashin.batchSelectDirection === "down") {
+                metadataThumbnailsArray = [
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
+                ];
+            } else {
+                metadataThumbnailsArray = [
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
+                ];
+            }
         }
     }
     shashin.addAllToThumbnailList(metadataThumbnailsArray, false);
@@ -174,25 +196,47 @@ $("#appToolsAddAlbum").on("click", function(e) {
     if ($("#activePage").val() === "timeline") {
         metadataThumbnailsArrayLength = shashin.getMetadataThumbnailsList().length;
         if (metadataThumbnailsArrayLength >= 7) {
-            metadataThumbnailsArray = [
-                shashin.getMetadataThumbnailsList()[0],
-                shashin.getMetadataThumbnailsList()[1],
-                shashin.getMetadataThumbnailsList()[2],
-                shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
-                shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
-                shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1]
-            ];
+            if (shashin.batchSelectDirection === "down") {
+                metadataThumbnailsArray = [
+                    shashin.getMetadataThumbnailsList()[0],
+                    shashin.getMetadataThumbnailsList()[1],
+                    shashin.getMetadataThumbnailsList()[2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1]
+                ];
+            } else {
+                metadataThumbnailsArray = [
+                    shashin.getMetadataThumbnailsList()[0],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
+                    shashin.getMetadataThumbnailsList()[3],
+                    shashin.getMetadataThumbnailsList()[2],
+                    shashin.getMetadataThumbnailsList()[1]
+                ];
+            }
         }
     } else {
         if (metadataThumbnailsArrayLength >= 7) {
-            metadataThumbnailsArray = [
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
-                "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
-            ];
+            if (shashin.batchSelectDirection === "down") {
+                metadataThumbnailsArray = [
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
+                ];
+            } else {
+                metadataThumbnailsArray = [
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
+                ];
+            }
         }
     }
     shashin.addAllToThumbnailList(metadataThumbnailsArray, false);

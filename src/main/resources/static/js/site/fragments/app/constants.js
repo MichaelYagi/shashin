@@ -1,5 +1,6 @@
 (function( shashin, $, undefined ) {
     shashin.stopRendering = false;
+    shashin.batchSelectDirection = "down"
     shashin.openedInfoFromLG = false;
     shashin.showDebug = false;
     shashin.showTrace = false;

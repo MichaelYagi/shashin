@@ -1,11 +1,12 @@
 (function( shashin, $, undefined ) {
     function removeMiddleKeepEnds(arr) {
-        if (arr.length <= 6) {
-            return [...arr]; // If 6 or fewer elements, return a copy of the original array
-        }
-        const firstThree = arr.slice(0, 3);
-        const lastThree = arr.slice(-3);
-        return [...firstThree, ...lastThree];
+        return [...arr];
+        // if (arr.length <= 6) {
+        //     return [...arr]; // If 6 or fewer elements, return a copy of the original array
+        // }
+        // const firstThree = arr.slice(0, 3);
+        // const lastThree = arr.slice(-3);
+        // return [...firstThree, ...lastThree];
     }
 
     const session = "session";
