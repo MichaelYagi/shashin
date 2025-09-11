@@ -132,7 +132,7 @@
                     setTimeout(function () {
                         if (isSelected) {
                             shashin.addAllToMetadataIdList(metadataIdArray, true);
-                            shashin.addAllToFilenameList(metadataFilenameArray, true);
+                            // shashin.addAllToFilenameList(metadataFilenameArray, true);
                             shashin.addAllToThumbnailList(metadataThumbnailArray, true);
                         } else {
                             shashin.removeMetadataIdListWithArray(metadataIdArray);
@@ -288,8 +288,8 @@
     shashin.updateSelectionState = function(metadataId, isSelected, isVideo, view) {
         if (isSelected) {
             shashin.addToMetadataIdList(metadataId);
-            shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
-            shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+            // shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
+            // shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
             if (isVideo && !Util.isMobile()) {
                 const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
                 $("#image" + metadataId).attr("src", jpgUrl);

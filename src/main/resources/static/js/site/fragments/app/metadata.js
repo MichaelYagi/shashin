@@ -1,7 +1,5 @@
 (function( shashin, $, undefined ) {
     function removeMiddleKeepEnds(arr) {
-        return [...arr];
-
         if (arr.length <= 6) {
             return [...arr]; // If 6 or fewer elements, return a copy of the original array
         }
@@ -50,7 +48,7 @@
     const useSession = isStorageAvailable(session);
     const useLocal = isStorageAvailable(local);
 
-    const storageLimitKB = 5000; // Limit to 5 mb
+    const storageLimitKB = 10000; // Limit to 5 mb
     if (useSession) {
         sessionStorage.setItem("selectedMetadataIds", JSON.stringify([]));
         sessionStorage.setItem("selectedMetadataFilenames", JSON.stringify([]));
