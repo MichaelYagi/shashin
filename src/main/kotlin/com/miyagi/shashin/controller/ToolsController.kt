@@ -332,7 +332,8 @@ class ToolsController {
         metricsUtil.start("compreface endpoint")
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
-        if (settings?.getCompreFaceKey() != null &&
+        if (settings?.getFacialDetection() == true &&
+            settings.getCompreFaceKey() != null &&
             settings.getCompreFaceKey() != "" &&
             settings.getCompreFaceServer() != null &&
             settings.getCompreFaceServer() != "")

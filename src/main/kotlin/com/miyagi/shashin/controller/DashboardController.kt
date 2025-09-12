@@ -228,7 +228,8 @@ class DashboardController {
             metricsUtil.end()
 
             response["compreFaceAvailable"] = null
-            if (settings?.getCompreFaceKey() != null &&
+            if (settings?.getFacialDetection() == true &&
+                settings.getCompreFaceKey() != null &&
                 settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != null &&
                 settings.getCompreFaceServer() != ""
             ) {
