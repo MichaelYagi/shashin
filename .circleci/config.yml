@@ -49,11 +49,11 @@ workflows:
                   sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
             ## Install specific version
             ## https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
-#            - browser-tools/install-browser-tools:
-#                chrome-version: 127.0.6533.119
+            - browser-tools/install-browser-tools:
+                chrome-version: 132.0.6795.0-1
 #            # Install latest
-            - browser-tools/install-chrome
-            - browser-tools/install-chromedriver
+#            - browser-tools/install-chrome
+#            - browser-tools/install-chromedriver
             - run:
                 name: Check Chromedriver install
                 command: |
