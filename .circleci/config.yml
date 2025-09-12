@@ -50,15 +50,19 @@ workflows:
             ## Install specific version
             ## https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
             - browser-tools/install-browser-tools:
-                chrome-version: 127.0.6533.119
+#                chrome-version: 127.0.6533.119
+                firefox-version: 127.0.2
 #            # Install latest
 #            - browser-tools/install-chrome
 #            - browser-tools/install-chromedriver
             - run:
                 name: Check Chromedriver install
                 command: |
-                  google-chrome --version
-                  chromedriver --version
+#                  google-chrome --version
+#                  chromedriver --version
+#                  whereis chromedriver
+                  firefox --version
+                  geckodriver --version
                   whereis chromedriver
           post-steps: # steps to run after steps
             - run:
