@@ -269,6 +269,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         startTime = System.currentTimeMillis()
         var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
         val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         albumEditNameButton.click()
         this.logger.log(Level.INFO, "Changed album name as admin.")
         while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
