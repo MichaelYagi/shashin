@@ -152,11 +152,7 @@ class TimelineController: BaseController() {
                 "recent" -> anchorMetadata?.getAddedAt().orEmpty()
                 else -> {
                     // Taken, albums or timeline view
-                    val year = anchorMetadata?.getYear()?.toString().orEmpty()
-                    val month = anchorMetadata?.getMonth()?.toString()?.padStart(2, '0').orEmpty()
-                    val day = anchorMetadata?.getDay()?.toString()?.padStart(2, '0').orEmpty()
-                    val time = anchorMetadata?.getTime().orEmpty()
-                    "$year-$month-$day $time"
+                    anchorMetadata?.getTakenAt().orEmpty()
                 }
             }
 
@@ -166,11 +162,7 @@ class TimelineController: BaseController() {
                 "recent" -> selectMetadata?.getAddedAt().orEmpty()
                 else -> {
                     // Taken, albums or timeline view
-                    val year = selectMetadata?.getYear()?.toString().orEmpty()
-                    val month = selectMetadata?.getMonth()?.toString()?.padStart(2, '0').orEmpty()
-                    val day = selectMetadata?.getDay()?.toString()?.padStart(2, '0').orEmpty()
-                    val time = selectMetadata?.getTime().orEmpty()
-                    "$year-$month-$day $time"
+                    selectMetadata?.getTakenAt().orEmpty()
                 }
             }
 
