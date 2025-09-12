@@ -8,9 +8,11 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
 
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
     let metadataThumbnailsArrayLength = $('.thumbnail-tl .bi-circle-fill').length;
+
     if ($("#activePage").val() === "timeline") {
         metadataThumbnailsArrayLength = shashin.getMetadataThumbnailsList().length;
-        if (metadataThumbnailsArrayLength >= 7) {
+
+        if (metadataThumbnailsArrayLength >= 6) {
             if (shashin.batchSelectDirection === "down") {
                 metadataThumbnailsArray = [
                     shashin.getMetadataThumbnailsList()[0],
@@ -22,17 +24,17 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
                 ];
             } else {
                 metadataThumbnailsArray = [
-                    shashin.getMetadataThumbnailsList()[0],
                     shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1],
                     shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
-                    shashin.getMetadataThumbnailsList()[3],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
                     shashin.getMetadataThumbnailsList()[2],
-                    shashin.getMetadataThumbnailsList()[1]
+                    shashin.getMetadataThumbnailsList()[1],
+                    shashin.getMetadataThumbnailsList()[0]
                 ];
             }
         }
     } else {
-        if (metadataThumbnailsArrayLength >= 7) {
+        if (metadataThumbnailsArrayLength >= 6) {
             if (shashin.batchSelectDirection === "down") {
                 metadataThumbnailsArray = [
                     "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
@@ -195,7 +197,7 @@ $("#appToolsAddAlbum").on("click", function(e) {
     let metadataThumbnailsArrayLength = $('.thumbnail-tl .bi-circle-fill').length;
     if ($("#activePage").val() === "timeline") {
         metadataThumbnailsArrayLength = shashin.getMetadataThumbnailsList().length;
-        if (metadataThumbnailsArrayLength >= 7) {
+        if (metadataThumbnailsArrayLength >= 6) {
             if (shashin.batchSelectDirection === "down") {
                 metadataThumbnailsArray = [
                     shashin.getMetadataThumbnailsList()[0],
@@ -207,17 +209,17 @@ $("#appToolsAddAlbum").on("click", function(e) {
                 ];
             } else {
                 metadataThumbnailsArray = [
-                    shashin.getMetadataThumbnailsList()[0],
                     shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1],
                     shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
-                    shashin.getMetadataThumbnailsList()[3],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
                     shashin.getMetadataThumbnailsList()[2],
-                    shashin.getMetadataThumbnailsList()[1]
+                    shashin.getMetadataThumbnailsList()[1],
+                    shashin.getMetadataThumbnailsList()[0]
                 ];
             }
         }
     } else {
-        if (metadataThumbnailsArrayLength >= 7) {
+        if (metadataThumbnailsArrayLength >= 6) {
             if (shashin.batchSelectDirection === "down") {
                 metadataThumbnailsArray = [
                     "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
