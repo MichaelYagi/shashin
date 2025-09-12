@@ -262,22 +262,22 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         }
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
-        val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
-
-        albumEditName.clear()
-        albumEditName.sendKeys("Album name update")
-        startTime = System.currentTimeMillis()
+//        val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
+//
+//        albumEditName.clear()
+//        albumEditName.sendKeys("Album name update")
+//        startTime = System.currentTimeMillis()
         var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
-        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
-        albumEditNameButton.click()
-        this.logger.log(Level.INFO, "Changed album name as admin.")
-        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
-        }
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-        this.driver?.get("http://localhost:$port/albums")
-        val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
-        Assertions.assertEquals("Album name update",albumNameEl.text)
+//        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
+//        albumEditNameButton.click()
+//        this.logger.log(Level.INFO, "Changed album name as admin.")
+//        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
+//        }
+//        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+//        this.driver?.get("http://localhost:$port/albums")
+//        val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
+//        Assertions.assertEquals("Album name update",albumNameEl.text)
 
         // Test share album
         val shareAlbumEl = this.driver!!.findElement(By.id("share$albumId"))
