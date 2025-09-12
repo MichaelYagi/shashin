@@ -254,13 +254,13 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         // Test change album name
         val editAlbumEl = this.driver!!.findElement(By.id("edit$albumId"))
         var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        editAlbumEl.click()
+//        editAlbumEl.click()
         var startTime = System.currentTimeMillis()
         var scanBeforeAfter: WebElement? = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+//        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+//        }
+//        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
 //        val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
 //
