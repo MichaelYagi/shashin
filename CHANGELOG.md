@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 ### Security
+- Bump org.springframework.security:spring-security-core from 6.4.4 to 6.4.10
 
 ## [2.13.3] - 2025-09-15
 ### Changed
