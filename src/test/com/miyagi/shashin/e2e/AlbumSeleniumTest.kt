@@ -270,6 +270,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
         val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
 
+        // Same problem as above
 //        albumEditNameButton.click()
         albumEditNameButton.sendKeys(Keys.RETURN)
 
