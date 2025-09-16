@@ -254,30 +254,33 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         // Test change album name
         val editAlbumEl = this.driver!!.findElement(By.id("edit$albumId"))
         var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-//        editAlbumEl.click()
+        editAlbumEl.click()
         var startTime = System.currentTimeMillis()
         var scanBeforeAfter: WebElement? = null
-//        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-//            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-//        }
-//        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
-//        val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
-//
-//        albumEditName.clear()
-//        albumEditName.sendKeys("Album name update")
-//        startTime = System.currentTimeMillis()
+        val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
+
+        albumEditName.clear()
+        albumEditName.sendKeys("Album name update")
+        startTime = System.currentTimeMillis()
         var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
-//        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
+        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
+
 //        albumEditNameButton.click()
-//        this.logger.log(Level.INFO, "Changed album name as admin.")
-//        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-//            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
-//        }
-//        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-//        this.driver?.get("http://localhost:$port/albums")
-//        val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
-//        Assertions.assertEquals("Album name update",albumNameEl.text)
+        albumEditNameButton.sendKeys(Keys.RETURN)
+
+        this.logger.log(Level.INFO, "Changed album name as admin.")
+        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
+        }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+        this.driver?.get("http://localhost:$port/albums")
+        val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
+        Assertions.assertEquals("Album name update",albumNameEl.text)
 
         // Test share album
         val shareAlbumEl = this.driver!!.findElement(By.id("share$albumId"))
@@ -309,8 +312,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val linkEl = fullShareLink.findElement(By.xpath("./a[1]"))
         this.driver?.get(linkEl.text)
 
-//        val titleHeader = this.driver!!.findElement(By.id("albumNameTitle"))
-//        Assertions.assertEquals("Album name update",titleHeader.text)
+        val titleHeader = this.driver!!.findElement(By.id("albumNameTitle"))
+        Assertions.assertEquals("Album name update",titleHeader.text)
 
         this.driver?.get("http://localhost:$port/notifications")
 
