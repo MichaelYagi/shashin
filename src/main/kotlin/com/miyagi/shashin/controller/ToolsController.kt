@@ -235,7 +235,12 @@ class ToolsController {
         var status = true
         var message = ""
 
-        if (settings != null && currentUserObj != null && currentUserObj.getAuthority() != null && (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER")) {
+        if (settings != null &&
+            settings.getFacialDetection() == true &&
+            currentUserObj != null &&
+            currentUserObj.getAuthority() != null &&
+            (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER")
+        ) {
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                 settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
@@ -327,7 +332,8 @@ class ToolsController {
         metricsUtil.start("compreface endpoint")
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
-        if (settings?.getCompreFaceKey() != null &&
+        if (settings?.getFacialDetection() == true &&
+            settings.getCompreFaceKey() != null &&
             settings.getCompreFaceKey() != "" &&
             settings.getCompreFaceServer() != null &&
             settings.getCompreFaceServer() != "")

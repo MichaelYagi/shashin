@@ -578,7 +578,7 @@ class SettingsController {
         }
 
         if (settings != null) {
-            settingsRepository.save(settings)
+            settingsRepository?.save(settings)
             model["settings"] = settings
 
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())

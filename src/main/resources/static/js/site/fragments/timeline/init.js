@@ -169,6 +169,19 @@
         });
 
         $(window).bind("scrollStop", function() {
+            // Fill headers
+            let imageGroups = Util.elementsInViewport($(".image-group-padding"));
+
+            if (Util.isMobile()) {
+                imageGroups = Util.elementsInViewport($(".row .ms-0"));
+            }
+
+            for (let i = 0; i < imageGroups.length; i++) {
+                const container = $(imageGroups[i]).children().eq(3).attr("id");
+                const metadataId = container.replace("photoThumbnailContainer", "");
+                shashin.setDateSection(metadataId, "timeline")
+            }
+
             firsthovered = true;
             timelineSettings.isScrolling = false;
 
@@ -422,7 +435,7 @@
             // Nudge if bottoms out and not the end
             setTimeout(function () {
                 let checkViewPort = Util.elementsInViewport($(".scrollspy"));
-                if (Util.isInViewport($footer) && $(checkViewPort[checkViewPort.length-1])[0].hasAttribute("id") && $(checkViewPort[checkViewPort.length-1]).attr("id").replace("tail_", "") !== (finalDate.year + "-" + finalDate.month + "-" + finalDate.day)) {
+                if (Util.isInViewport($footer) && $(checkViewPort[checkViewPort.length-1]).length > 0 && $(checkViewPort[checkViewPort.length-1])[0].hasAttribute("id") && $(checkViewPort[checkViewPort.length-1]).attr("id").replace("tail_", "") !== (finalDate.year + "-" + finalDate.month + "-" + finalDate.day)) {
                     timelineSettings.scrollByN(-1);
                 }
             }, 2000);
