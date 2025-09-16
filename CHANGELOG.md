@@ -12,12 +12,17 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
-- Simplified multi-select logic
-
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [2.13.3] - 2025-09-15
+### Changed
+- Simplified multi-select logic
+
+### Fixed
+- Notification page from crashing due to length limit
 
 ## [2.13.2] - 2025-09-04
 ### Added
