@@ -73,6 +73,7 @@ import org.springframework.data.jpa.repository.Modifying
 import java.security.Principal
 import java.util.Locale
 import java.util.stream.Collectors
+import kotlin.collections.set
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.math.floor
@@ -1648,6 +1649,12 @@ class SettingsController {
                     var deleteCount = 0
                     var deletedList = mutableListOf<String>()
 
+                    val tempCurrentMediaCount = currentMediaCount
+                    val tempTotalMediaCount = totalMediaCount
+
+                    currentMediaCount = 15
+                    totalMediaCount = 100
+
                     for (metadata in metadataList) {
                         if (shouldStop.get()) {
                             FileUtils.writeToThreadFileAndLogMessage(messageSource?.getMessage("main.pages.scan.stopped", null, locale).toString(), threadFile)
@@ -1903,6 +1910,9 @@ class SettingsController {
                             }
                         }
                     }
+
+                    currentMediaCount = tempCurrentMediaCount
+                    totalMediaCount = tempTotalMediaCount
 
                     if (deleteCount > 0) {
                         // Set notification for scanCount and date and link to /recent
