@@ -5,7 +5,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     // Start slideshow
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
-        
+
         $("#slideshowProgress").css("transition", "width "+slideshow.const.pollTimeout+"ms ease-in-out");
         $("#slideshowProgressContainer").css("z-index", 999999);
 
@@ -940,7 +940,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         }
     });
 
-    $("body").on("dblclick", function (e) {
+    $("#slideshowContainer").on("dblclick", function (e) {
         e.preventDefault();
 
         if (Util.isMobile() === true && $("#slideshowContainer").css("display") === "block") {
@@ -948,8 +948,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         }
     });
 
-    $("body").on("pointerup", shashin.detectDoubleTap(200));
-    $("body").on('doubletap', function(e) {
+    $("#slideshowContainer").on("pointerup", shashin.detectDoubleTap(200));
+    $("#slideshowContainer").on("doubletap", function(e) {
         e.preventDefault();
 
         if (Util.isMobile() === true && $("#slideshowContainer").css("display") === "block") {

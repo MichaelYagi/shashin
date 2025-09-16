@@ -2,6 +2,44 @@
     shashin.batchSelect = function(metadataId, view, addBorder = true, opaque = 0.3, transparent = 1.0) {
         shashin.printMessageToConsole("Select action", { tag: "multiselect" });
 
+        function enableToolbar() {
+            // Restore all links inside divs
+            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").each(function() {
+                $(this).css({
+                    'pointer-events': 'auto',
+                    'cursor': 'pointer' // or '' to reset to default
+                });
+            });
+            $("#appToolsBatchEdit span, #appToolsBatchDownload span, #appToolsDeselectAll span, #albumAppToolsRemoveFavorites span, #albumAppToolsBatchDownload span, #albumAppToolsDeselectAll span, #albumAppToolsRemoveAlbum span").each(function() {
+                $(this).css({
+                    'color': '' // or use a specific color like '#000' if needed
+                });
+            });
+            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").off('click.disableClick');
+        }
+
+        function disableToolbar() {
+            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").each(function () {
+                $(this).css({
+                    'pointer-events': 'none',
+                    'cursor': 'default'
+                });
+            });
+            $("#appToolsBatchEdit span, #appToolsBatchDownload span, #appToolsDeselectAll span, #albumAppToolsRemoveFavorites span, #albumAppToolsBatchDownload span, #albumAppToolsDeselectAll span, #albumAppToolsRemoveAlbum span").each(function () {
+                $(this).css({
+                    'color': 'gray',
+                });
+            });
+            $("#appToolsBatchEdit, #appToolsBatchDownload, #appToolsDeselectAll, #albumAppToolsRemoveFavorites, #albumAppToolsBatchDownload, #albumAppToolsDeselectAll, #albumAppToolsRemoveAlbum").on('click.disableClick', function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            });
+        }
+
+        // Disable all links inside divs
+        disableToolbar();
+        Util.showSpinner(true);
+
         let metadataIdArrayCopy = shashin.getMetadataIdList();
 
         if (metadataIdArrayCopy.length === 0) {
@@ -14,20 +52,23 @@
         };
 
         const updateImageSelection = (id, view, isSelected, opacityLevel, metadataArray) => {
-            if ($("#image" + id).length > 0) {
-                const imageUrl = $("#image" + id).attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+            const $image = $("#image" + id);
+            if ($image.length > 0) {
+                const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+                $image.attr("src", imageUrl).css("opacity", opacityLevel);
 
-                $("#image" + id).attr("src", imageUrl);
-
-                const iconClass = $("#tlicon" + id).attr("class");
+                const $icon = $("#tlicon" + id);
+                const iconClass = $icon.attr("class");
                 const shouldSelect = (isSelected && iconClass === "bi-circle") || (!isSelected && iconClass === "bi-circle-fill");
 
                 if (shouldSelect) {
                     shashin.selectClick(id, view, opaque, transparent, metadataArray, false);
-                    $("#image" + id).css("opacity", opacityLevel);
 
                     if (!isSelected && id !== metadataId && shashin.lastSelectedMetadataId !== id) {
                         $("#tntl" + id).css("display", "none");
+                        $image.attr("src", imageUrl).css("opacity", transparent);
+                    } else {
+                        $image.attr("src", imageUrl).css("opacity", opaque);
                     }
                 }
             }
@@ -50,143 +91,152 @@
             shashin.printMessageToConsole("Select view: " + view, { tag: "multiselect" });
             shashin.printMessageToConsole("addBorder: " + addBorder, { tag: "multiselect" });
 
-            if (view !== "timeline" && addBorder) {
-                // Non-timeline selection logic. No DB lookup...
+            const http = new Http("get ranged metadata");
+            let version = Util.getMetadataLocalStorage();
 
-                // Get selection direction
-                const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
-                const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
-                const direction = (pointerHash.y > selectionHash.y || (pointerHash.x > selectionHash.x && pointerHash.y >= selectionHash.y)) ? "down" : "up";
+            let url = `/metadata/range/${shashin.lastSelectedMetadataId}/${metadataId}/${view}/${shashin.mediaTypeFilter}`;
 
-                shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify([selectionHash.x, selectionHash.y]), { tag: "multiselect" });
-                shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify([pointerHash.x, pointerHash.y]), { tag: "multiselect" });
-                shashin.printMessageToConsole("Select direction: " + direction, { tag: "multiselect" });
-
-                const whileLimit = 1000;
-                let selectedMetadataIds = [];
-                let container = $("#photoThumbnailContainer" + (direction === "down" ? shashin.lastSelectedMetadataId : metadataId));
-                let selectedRowMetadataIds = container.siblings().addBack().map(function () {
-                    return this.id.split("photoThumbnailContainer")[1];
-                }).toArray();
-
-                let found = selectedRowMetadataIds.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
-                let index = 0;
-
-                while (!found && index < whileLimit) {
-                    let nextContainer = container.parent().parent().nextUntil().filter(view === "timeline" ? ".dateContainer:first" : ".dateSection:first");
-                    container = $(nextContainer[0]).children("div.row").children("div");
-
-                    metadataIdArrayCopy = container.siblings().addBack().map(function () {
-                        return this.id.split("photoThumbnailContainer")[1];
-                    }).toArray();
-
-                    found = metadataIdArrayCopy.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
-
-                    $.merge(selectedRowMetadataIds, metadataIdArrayCopy);
-                    index++;
-                }
-
-                shashin.printMessageToConsole("Looped " + index + " times finding metadata", { tag: "multiselect" });
-
-                let start = false;
-                let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
-
-                const compareOne = direction === "down" ? lastSelectedMetadataId : metadataId;
-                const compareTwo = direction === "down" ? metadataId : lastSelectedMetadataId;
-
-                for (const currentMetadataId of selectedRowMetadataIds) {
-                    if (currentMetadataId === compareOne || start) {
-                        if (currentMetadataId === compareOne) {
-                            lastSelectedMetadataId = direction === "down" ? currentMetadataId : shashin.lastSelectedMetadataId;
-                            selectedMetadataIds.push(currentMetadataId);
-                            start = true;
-                            continue;
-                        }
-
-                        updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                        if (direction === "down") {
-                            lastSelectedMetadataId = currentMetadataId;
-                        }
-
-                        selectedMetadataIds.push(currentMetadataId);
-                    }
-
-                    if (currentMetadataId === compareTwo) {
-                        selectedMetadataIds.push(currentMetadataId);
-                        updateImageSelection(metadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                        updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
-                        break;
-                    }
-                }
-
-                metadataIdArrayCopy = [];
-                $(".thumbnail-tl .bi-circle-fill").each(function (i, obj) {
-                    metadataIdArrayCopy.push(obj.id.substring(6, obj.id.length));
-                });
-
-                metadataIdArrayCopy = [...new Set(metadataIdArrayCopy)];
-                shashin.addAllToMetadataIdList(metadataIdArrayCopy);
-                shashin.updateToolbarUI(view, metadataIdArrayCopy);
-                shashin.updateSelectionCount(metadataIdArrayCopy);
-                resetBorders();
-                applyBorderToLastSelected();
-            } else if (["timeline", "accessed", "modified", "recent", "taken", "album"].includes(view) || !addBorder) {
-                shashin.printMessageToConsole("Select ranged metadata: " + view, { tag: "multiselect" });
-
-                const http = new Http("get ranged metadata");
-                const version = Util.getMetadataLocalStorage();
-
-                let url = "";
-                if (view === "timeline") {
-                    url = `/metadata/range/${shashin.lastSelectedMetadataId}/${metadataId}/${shashin.mediaTypeFilter}`;
-                } else if (view === "album") {
-                    const albumId = $("#albumId").val();
-                    url = `/album/${albumId}/range/${metadataId}/${shashin.mediaTypeFilter}`;
-                } else {
-                    url = `/browse/range/${metadataId}/${view}/${shashin.mediaTypeFilter}`;
-                }
-
-                if (version) url += `?v=${version}`;
-
-                http.ajax("get", url).then(data => {
-                    if (data.hasOwnProperty("metadataIdArray")) {
-                        const metadataIdArray = data.metadataIdArray;
-
-                        setTimeout(function () {
-                            metadataIdArray.forEach(([id, filename, thumbnail]) => {
-                                updateImageSelection(id, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArray);
-
-                                if (shashin.lastSelectedMetadataSelected) {
-                                    shashin.addToMetadataIdList(id);
-                                    shashin.addToMetadataFilenamesList(filename);
-                                    shashin.addToMetadataThumbnailsList(thumbnail);
-                                } else {
-                                    shashin.removeFromMetadataIdList(id);
-                                    shashin.removeFromMetadataFilenamesList(filename);
-                                    shashin.removeFromMetadataThumbnailsList(thumbnail);
-                                }
-
-                                const imageId = $("#image" + id);
-                                if (imageId.length > 0) {
-                                    const imageUrl = imageId.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
-                                    imageId.attr("src", imageUrl);
-                                }
-                            });
-
-                            shashin.updateToolbarUI(view, shashin.getMetadataIdList());
-                            shashin.updateSelectionCount(shashin.getMetadataIdList());
-                            resetBorders();
-                            applyBorderToLastSelected();
-
-                            if (!addBorder) {
-                                shashin.lastSelectedMetadataId = "";
-                            }
-                        }, 0);
-                    }
-                });
-            } else {
-                shashin.printMessageToConsole("lastSelectionPos undefined or null", { tag: "multiselect" });
+            if (version === null || version === undefined) {
+                version = uuidv4();
             }
+
+            if (view === "album") {
+                const albumId = $("#albumId").val();
+                url += `?albumId=${albumId}&v=${version}`;
+            } else {
+                url += `?v=${version}`;
+            }
+
+            http.ajax("get", url, null, function () {
+                // Fail
+                // Restore all links inside divs
+                enableToolbar();
+                Util.showSpinner(false);
+            }).then(data => {
+                if (data.hasOwnProperty("metadataIdArray") &&
+                    data.hasOwnProperty("metadataFilenameArray") &&
+                    data.hasOwnProperty("metadataThumbnailArray") &&
+                    data.hasOwnProperty("metadataDatesArray") &&
+                    data.hasOwnProperty("direction")
+                ) {
+                    const metadataIdArray = data.metadataIdArray;
+                    const metadataFilenameArray = data.metadataFilenameArray;
+                    const metadataThumbnailArray = data.metadataThumbnailArray;
+                    const isSelected = shashin.lastSelectedMetadataSelected;
+                    shashin.batchSelectDirection = data.direction;
+                    const opacityLevel = isSelected ? opaque : transparent;
+                    const chunkSize = (view === "timeline") ? shashin.getMetadataIdList() : 50;
+                    const pendingUpdates = [];
+                    let chunkComplete = false;
+
+                    setTimeout(function () {
+                        if (isSelected) {
+                            shashin.addAllToMetadataIdList(metadataIdArray, true);
+                            // shashin.addAllToFilenameList(metadataFilenameArray, true);
+                            shashin.addAllToThumbnailList(metadataThumbnailArray, true);
+                        } else {
+                            shashin.removeMetadataIdListWithArray(metadataIdArray);
+                            shashin.removeMetadataFilenamesListWithArray(metadataFilenameArray);
+                            shashin.removeMetadataThumbnailsListWithArray(metadataThumbnailArray);
+                        }
+
+                        // Shared update function
+                        const createUpdateFn = id => () => {
+                            updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
+
+                            const $image = $("#image" + id);
+                            if ($image.length > 0) {
+                                const imageUrl = $image.attr("src").replace(
+                                    `/gif/${id}`,
+                                    `/${Util.isMobile() ? "100" : "225"}/${id}`
+                                );
+                                $image.attr("src", imageUrl);
+                            }
+                        };
+
+                        if (view === "timeline") {
+                            metadataIdArray.forEach(id => pendingUpdates.push(createUpdateFn(id)));
+                            requestAnimationFrame(() => {
+                                pendingUpdates.forEach(fn => fn());
+                                enableToolbar();
+                                Util.showSpinner(false);
+                            });
+                        } else {
+                            const processedIds = new Set();
+                            const safePush = id => {
+                                if (!processedIds.has(id)) {
+                                    pendingUpdates.push(createUpdateFn(id));
+                                    processedIds.add(id);
+                                }
+                            };
+
+                            let left = 0;
+                            let right = metadataIdArray.length - 1;
+
+                            // Flip start direction if needed
+                            const startFromLeft = shashin.batchSelectDirection === "up";
+
+                            while (left <= right) {
+                                if (startFromLeft) {
+                                    metadataIdArray.slice(left, left + chunkSize).forEach(safePush);
+                                    left += chunkSize;
+
+                                    if (left <= right) {
+                                        const rightChunkStart = Math.max(right - chunkSize + 1, left);
+                                        metadataIdArray.slice(rightChunkStart, right + 1).reverse().forEach(safePush);
+                                        right -= chunkSize;
+                                    }
+                                } else {
+                                    const rightChunkStart = Math.max(right - chunkSize + 1, left);
+                                    metadataIdArray.slice(rightChunkStart, right + 1).reverse().forEach(safePush);
+                                    right -= chunkSize;
+
+                                    if (left <= right) {
+                                        metadataIdArray.slice(left, left + chunkSize).forEach(safePush);
+                                        left += chunkSize;
+                                    }
+                                }
+
+                                if (!chunkComplete) {
+                                    enableToolbar();
+                                    Util.showSpinner(false);
+                                    chunkComplete = true;
+                                }
+                            }
+
+                            const processChunks = (index = 0) => {
+                                if (shashin.stopRendering) return;
+
+                                const endIndex = Math.min(index + chunkSize, pendingUpdates.length);
+                                for (let i = index; i < endIndex; i++) {
+                                    if (shashin.stopRendering) return;
+                                    pendingUpdates[i]();
+                                }
+
+                                if (endIndex < pendingUpdates.length) {
+                                    requestAnimationFrame(() => processChunks(endIndex));
+                                }
+                            };
+
+                            requestAnimationFrame(() => processChunks());
+                        }
+
+                        enableToolbar();
+                        Util.showSpinner(false);
+
+                        shashin.stopRendering = false;
+
+                        shashin.updateToolbarUI(view, shashin.getMetadataIdList());
+                        shashin.updateSelectionCount(shashin.getMetadataIdList());
+                        resetBorders();
+                        applyBorderToLastSelected();
+
+                        if (!addBorder) {
+                            shashin.lastSelectedMetadataId = "";
+                        }
+                    }, 0);
+                }
+            });
         } else {
             shashin.lastSelectedMetadataId = "";
             shashin.multiSelected = false;
@@ -238,8 +288,8 @@
     shashin.updateSelectionState = function(metadataId, isSelected, isVideo, view) {
         if (isSelected) {
             shashin.addToMetadataIdList(metadataId);
-            shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
-            shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+            // shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
+            // shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
             if (isVideo && !Util.isMobile()) {
                 const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
                 $("#image" + metadataId).attr("src", jpgUrl);
@@ -488,16 +538,4 @@
             }
         });
     };
-
-    function getElementLocation(el) {
-        if (el) {
-            const rect = el.getBoundingClientRect();
-            return {
-                x: rect.left + window.scrollX,
-                y: rect.top + window.scrollY
-            };
-        } else {
-            return {x: null,y: null};
-        }
-    }
 }( window.shashin = window.shashin || {}, jQuery ));

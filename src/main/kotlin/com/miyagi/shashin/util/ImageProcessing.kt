@@ -643,7 +643,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             uploadResponse["msg"] = ""
             uploadResponse["status"] = ApiResponse.FAIL.status
 
-            if (NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+            if (settings.getFacialDetection() == true && NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
                 val response: String?
 
                 if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
@@ -755,7 +755,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             recognitionResponse["msg"] = ""
             recognitionResponse["status"] = ApiResponse.FAIL.status
 
-            if (NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+            if (settings.getFacialDetection() == true && NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
 
                 val response: String?
 
@@ -809,7 +809,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             var recognitionCount = 0
 
             if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
-                if (NetworkUtils.checkCompreFaceConnection(
+                if (settings.getFacialDetection() == true &&
+                    NetworkUtils.checkCompreFaceConnection(
                         settings.getCompreFaceServer(),
                         settings.getCompreFaceKey()
                     )

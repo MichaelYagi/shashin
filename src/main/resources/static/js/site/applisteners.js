@@ -1,25 +1,77 @@
 $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     let thumbnailList = "";
     let metadataIdArray = shashin.getMetadataIdList();
-    let metadataFilenamesArray = shashin.getMetadataFilenamesList();
+
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
+    let metadataThumbnailsArrayLength = $('.thumbnail-tl .bi-circle-fill').length;
+
+    if ($("#activePage").val() === "timeline") {
+        metadataThumbnailsArrayLength = shashin.getMetadataThumbnailsList().length;
+
+        if (metadataThumbnailsArrayLength >= 6) {
+            if (shashin.batchSelectDirection === "down") {
+                metadataThumbnailsArray = [
+                    shashin.getMetadataThumbnailsList()[0],
+                    shashin.getMetadataThumbnailsList()[1],
+                    shashin.getMetadataThumbnailsList()[2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1]
+                ];
+            } else {
+                metadataThumbnailsArray = [
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
+                    shashin.getMetadataThumbnailsList()[2],
+                    shashin.getMetadataThumbnailsList()[1],
+                    shashin.getMetadataThumbnailsList()[0]
+                ];
+            }
+        }
+    } else {
+        if (metadataThumbnailsArrayLength >= 6) {
+            if (shashin.batchSelectDirection === "down") {
+                metadataThumbnailsArray = [
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
+                ];
+            } else {
+                metadataThumbnailsArray = [
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
+                ];
+            }
+        }
+    }
+    shashin.addAllToThumbnailList(metadataThumbnailsArray, false);
 
     if (Util.isMobile() && metadataThumbnailsArray.length > 3) {
-        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[0] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[0] + '" draggable="false">';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[0] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" draggable="false">';
         thumbnailList += '<span class="bi-arrow-left ms-1 me-1 display-6 align-middle"></span><span class="display-6 align-middle">'+(metadataIdArray.length-2).toString()+'</span><span class="bi-arrow-right ms-1 me-1 display-6 align-middle"></span>';
-        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[metadataThumbnailsArray.length-1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-1] + '" draggable="false">';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[metadataThumbnailsArray.length-1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" draggable="false">';
     } else if (Util.isMobile() === false && metadataThumbnailsArray.length > 5) {
-        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[0] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[0] + '" draggable="false">';
-        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[1] + '" draggable="false">';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[0] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" draggable="false">';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" draggable="false">';
         thumbnailList += '<span class="bi-arrow-left ms-1 me-1 display-6 align-middle"></span><span class="display-6 align-middle">'+(metadataIdArray.length-4).toString()+'</span><span class="bi-arrow-right ms-1 me-1 display-6 align-middle"></span>';
-        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[metadataThumbnailsArray.length-2] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-2] + '" draggable="false">';
-        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[metadataThumbnailsArray.length-1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-1] + '" draggable="false">';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[metadataThumbnailsArray.length-2] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" draggable="false">';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[metadataThumbnailsArray.length-1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" draggable="false">';
     } else {
         for (let index in metadataThumbnailsArray) {
             const metadataThumnailUrl = metadataThumbnailsArray[index];
-            thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumnailUrl + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[index] + '" draggable="false">';
+            thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumnailUrl + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" draggable="false">';
         }
     }
 
@@ -89,12 +141,16 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
 $("#appToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     // Download items
     shashin.downloadSelected("appToolsBatchDownload");
 });
 
 $("#matchToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
+
+    shashin.stopRendering = true;
 
     // Download items
     shashin.downloadSelected("matchToolsBatchDownload");
@@ -103,6 +159,8 @@ $("#matchToolsBatchDownload").on("click", function(e) {
 $("#albumAppToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     // Download items
     shashin.downloadSelected("albumAppToolsBatchDownload");
 });
@@ -110,17 +168,23 @@ $("#albumAppToolsBatchDownload").on("click", function(e) {
 $("#appToolsDeselectAll").on("click", function(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     shashin.clearSelection("timeline");
 });
 
 $("#albumAppToolsDeselectAll").on("click", function(e) {
     e.preventDefault();
 
+    shashin.stopRendering = true;
+
     shashin.clearSelection("album");
 });
 
 $("#comprefaceDeselectAll").on("click", function(e) {
     e.preventDefault();
+
+    shashin.stopRendering = true;
 
     shashin.clearSelection("timeline");
 });
@@ -129,11 +193,59 @@ $("#appToolsAddAlbum").on("click", function(e) {
     e.preventDefault();
 
     let thumbnailList = "";
-    let metadataFilenamesArray = shashin.getMetadataFilenamesList();
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
+    let metadataThumbnailsArrayLength = $('.thumbnail-tl .bi-circle-fill').length;
+    if ($("#activePage").val() === "timeline") {
+        metadataThumbnailsArrayLength = shashin.getMetadataThumbnailsList().length;
+        if (metadataThumbnailsArrayLength >= 6) {
+            if (shashin.batchSelectDirection === "down") {
+                metadataThumbnailsArray = [
+                    shashin.getMetadataThumbnailsList()[0],
+                    shashin.getMetadataThumbnailsList()[1],
+                    shashin.getMetadataThumbnailsList()[2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1]
+                ];
+            } else {
+                metadataThumbnailsArray = [
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-1],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-2],
+                    shashin.getMetadataThumbnailsList()[shashin.getMetadataThumbnailsList().length-3],
+                    shashin.getMetadataThumbnailsList()[2],
+                    shashin.getMetadataThumbnailsList()[1],
+                    shashin.getMetadataThumbnailsList()[0]
+                ];
+            }
+        }
+    } else {
+        if (metadataThumbnailsArrayLength >= 6) {
+            if (shashin.batchSelectDirection === "down") {
+                metadataThumbnailsArray = [
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
+                ];
+            } else {
+                metadataThumbnailsArray = [
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[$('.thumbnail-tl .bi-circle-fill').length - 3]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[2]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[1]).attr("id").replace("tlicon", ""),
+                    "/api/v1/thumbnails/centered/" + $($('.thumbnail-tl .bi-circle-fill')[0]).attr("id").replace("tlicon", ""),
+                ];
+            }
+        }
+    }
+    shashin.addAllToThumbnailList(metadataThumbnailsArray, false);
+
     for (let index in metadataThumbnailsArray) {
         const metadataThumnailUrl = metadataThumbnailsArray[index];
-        thumbnailList += '<img loading="lazy" src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'" draggable="false">';
+        thumbnailList += '<img loading="lazy" src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" draggable="false">';
     }
 
     if (thumbnailList !== "") {
