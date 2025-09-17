@@ -17,7 +17,7 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 
 @ActiveProfiles("test")
-class VideoImageTest {
+class VideoImageTests {
 
     var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
 

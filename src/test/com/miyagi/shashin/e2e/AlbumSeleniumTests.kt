@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
@@ -29,7 +28,7 @@ import java.util.logging.Level
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class AlbumSeleniumTest: BaseSeleniumTests() {
+class AlbumSeleniumTests: BaseSeleniumTests() {
 
     private var metadataId: String? = null
     private var superId: Int? = null
