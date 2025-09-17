@@ -1,5 +1,6 @@
 package com.miyagi.shashin.e2e
 
+import ai.djl.Model
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
@@ -18,7 +19,10 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.ui.set
+import org.springframework.util.StringUtils
 import org.springframework.web.context.WebApplicationContext
+import org.springframework.web.servlet.support.RequestContextUtils
 import java.io.IOException
 import java.util.Locale
 import kotlin.text.get
@@ -88,10 +92,10 @@ class UITests: BaseSeleniumTests() {
     @Test
     @Throws(Exception::class)
     fun jsAndKotlinTranslationsMatch() {
-        val properties = java.util.Properties()
+        val enProperties = java.util.Properties()
         try {
             java.io.FileInputStream("src/main/resources/messages.properties").use { fis ->
-                properties.load(fis)
+                enProperties.load(fis)
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -102,8 +106,9 @@ class UITests: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/test")
         val js: JavascriptExecutor = this.driver as JavascriptExecutor
 
+        // English
         var index = 0
-        for (key in properties.stringPropertyNames()) {
+        for (key in enProperties.stringPropertyNames()) {
             index++
 //            var value = properties.getProperty(key)
 //            println("Key: $key, Value: $value")
@@ -174,7 +179,130 @@ class UITests: BaseSeleniumTests() {
 //            println("--------------")
         }
 
-        Assertions.assertTrue(index > 0 && index == properties.stringPropertyNames().size)
+        Assertions.assertTrue(index > 0 && index == enProperties.stringPropertyNames().size)
+
+        // German
+        val deProperties = java.util.Properties()
+        try {
+            java.io.FileInputStream("src/main/resources/messages_de.properties").use { fis ->
+                deProperties.load(fis)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        for (key in deProperties.stringPropertyNames()) {
+            val regex = Regex("""\{(\d+)}""")
+            var deValue = deProperties.getProperty(key)
+            var enValue = enProperties.getProperty(key)
+            var matches = regex.findAll(deValue)
+            val deCount = matches.count()
+            matches = regex.findAll(enValue)
+            val enCount = matches.count()
+
+            Assertions.assertEquals(enCount, deCount)
+            Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
+        }
+
+        // Spanish
+        val esProperties = java.util.Properties()
+        try {
+            java.io.FileInputStream("src/main/resources/messages_es.properties").use { fis ->
+                esProperties.load(fis)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        for (key in esProperties.stringPropertyNames()) {
+            val regex = Regex("""\{(\d+)}""")
+            var esValue = esProperties.getProperty(key)
+            var enValue = enProperties.getProperty(key)
+            var matches = regex.findAll(esValue)
+            val esCount = matches.count()
+            matches = regex.findAll(enValue)
+            val enCount = matches.count()
+
+            Assertions.assertEquals(enCount, esCount)
+            Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
+        }
+
+        // French
+        val frProperties = java.util.Properties()
+        try {
+            java.io.FileInputStream("src/main/resources/messages_fr.properties").use { fis ->
+                esProperties.load(fis)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        for (key in frProperties.stringPropertyNames()) {
+            val regex = Regex("""\{(\d+)}""")
+            var frValue = frProperties.getProperty(key)
+            var enValue = enProperties.getProperty(key)
+            var matches = regex.findAll(frValue)
+            val frCount = matches.count()
+            matches = regex.findAll(enValue)
+            val enCount = matches.count()
+
+            Assertions.assertEquals(enCount, frCount)
+            Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
+        }
+
+        // Japanese
+        val jaProperties = java.util.Properties()
+        try {
+            java.io.FileInputStream("src/main/resources/messages_ja.properties").use { fis ->
+                jaProperties.load(fis)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        for (key in jaProperties.stringPropertyNames()) {
+            val regex = Regex("""\{(\d+)}""")
+            var jpValue = jaProperties.getProperty(key)
+            var enValue = enProperties.getProperty(key)
+            var matches = regex.findAll(jpValue)
+            val jpCount = matches.count()
+            matches = regex.findAll(enValue)
+            val enCount = matches.count()
+
+            // Japanese doesn't have to worry about singular vs plural
+            if (key != "main.pages.albums.photo" &&
+                key != "main.pages.people.items" &&
+                key != "main.pages.albums.video" &&
+                key != "main.pages.map.modal.result"
+            ) {
+                Assertions.assertEquals(enCount, jpCount)
+            }
+
+            Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
+        }
+
+        // Portuguese
+        val ptProperties = java.util.Properties()
+        try {
+            java.io.FileInputStream("src/main/resources/messages_pt.properties").use { fis ->
+                ptProperties.load(fis)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        for (key in ptProperties.stringPropertyNames()) {
+            val regex = Regex("""\{(\d+)}""")
+            var ptValue = ptProperties.getProperty(key)
+            var enValue = enProperties.getProperty(key)
+            var matches = regex.findAll(ptValue)
+            val ptCount = matches.count()
+            matches = regex.findAll(enValue)
+            val enCount = matches.count()
+
+            Assertions.assertEquals(enCount, ptCount)
+            Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
+        }
     }
 
     @Test
