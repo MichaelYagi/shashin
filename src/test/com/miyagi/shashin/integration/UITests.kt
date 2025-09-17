@@ -291,12 +291,14 @@ class UITests: BaseSeleniumTests() {
             matches = regex.findAll(enValue)
             val enValueCount = matches.count()
 
-            // Japanese doesn't have to worry about singular vs plural
-            if (key != "main.pages.albums.photo" &&
-                key != "main.pages.people.items" &&
-                key != "main.pages.albums.video" &&
-                key != "main.pages.map.modal.result"
+            // Japanese singular only
+            if (key == "main.pages.albums.photo" ||
+                key == "main.pages.people.items" ||
+                key == "main.pages.albums.video" ||
+                key == "main.pages.map.modal.result"
             ) {
+                Assertions.assertEquals(1, jpValueCount)
+            } else {
                 Assertions.assertEquals(enValueCount, jpValueCount)
             }
 
