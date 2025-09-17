@@ -11,6 +11,7 @@ import org.openqa.selenium.JavascriptExecutor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.MessageSource
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
@@ -18,6 +19,9 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.io.IOException
+import java.util.Locale
+import kotlin.text.get
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -36,6 +40,8 @@ class UITests: BaseSeleniumTests() {
     @Autowired
     private val userRepository: UserRepository? = null
 
+    @Autowired
+    var messageSource: MessageSource? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -77,6 +83,94 @@ class UITests: BaseSeleniumTests() {
         login.click()
 
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun jsAndKotlinTranslationsMatch() {
+        val properties = java.util.Properties()
+        try {
+            java.io.FileInputStream("src/main/resources/messages.properties").use { fis ->
+                properties.load(fis)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        var locale = Locale("en")
+
+        this.driver!!.get("http://localhost:$port/test")
+        val js: JavascriptExecutor = this.driver as JavascriptExecutor
+        
+        for (key in properties.stringPropertyNames()) {
+//            var value = properties.getProperty(key)
+//            println("Key: $key, Value: $value")
+
+            var val1a = "Bob"
+            var val1b = 5
+            var val2 = "Alice"
+            var val3 = "Max"
+            var val4 = "Linda"
+            var val5 = "Joe"
+            var val6 = "Matthew"
+            var val7 = "Jacob"
+            var val8 = "Mike"
+            var val9 = "Irene"
+
+            var useInt = false
+
+            if (key == "main.pages.albums.photo" ||
+                key == "main.pages.people.items" ||
+                key == "main.pages.albums.video" ||
+                key == "main.pages.map.modal.result"
+            ) {
+                useInt = true
+            }
+
+            var jsTranslation = if (key == "main.pages.scan.training.similarity" || key == "main.pages.scan.training.similarity.label") {
+                js.executeScript("const translatedValue = shashin.getTranslatedValue('" + key + "', '" + val1a + "', '" + val2 + "', '" + val3 + "', '" + val4 + "', '" + val5 + "', '" + val6 + "', '" + val7 + "', '" + val8 + "', '" + val9 + "'); return translatedValue;")
+            } else if (key == "main.toast.topnav.selected" || key == "main.pages.match.info") {
+                js.executeScript("const translatedValue = shashin.getTranslatedValue('" + key + "', " + val1b + "); return translatedValue;")
+            } else if (key == "main.notification.comments.photo.commented") {
+                js.executeScript("const translatedValue = shashin.getTranslatedValue('" + key + "', '" + val1a + "', '" + val2 + "', '" + val3 + "', '" + val4 + "'); return translatedValue;")
+            } else if (key == "main.notification.comments.commented") {
+                js.executeScript("const translatedValue = shashin.getTranslatedValue('"+key+"', '"+val1b+"', '"+val2+"', '"+val3+"'); return translatedValue;")
+            } else if (key == "main.pages.matching.processing" || key == "main.notification.album.shared.access") {
+                js.executeScript("const translatedValue = shashin.getTranslatedValue('"+key+"', '"+val1a+"', '"+val2+"', "+val1b+"); return translatedValue;")
+            } else if (useInt) {
+                js.executeScript("const translatedValue = shashin.getTranslatedValue('"+key+"', '"+val1b+"', '"+val2+"'); return translatedValue;")
+            } else {
+                js.executeScript("const translatedValue = shashin.getTranslatedValue('"+key+"', '"+val1a+"', '"+val2+"'); return translatedValue;")
+            }
+
+//            println("JS translation:"+jsTranslation)
+
+            var kotlinTranslation = if (key == "main.pages.scan.training.similarity" || key == "main.pages.scan.training.similarity.label") {
+                messageSource?.getMessage(key, arrayOf(val1a, val2, val3, val4, val5, val6, val7, val8, val9), locale)
+            } else if (key == "main.toast.topnav.selected" || key == "main.pages.match.info") {
+                messageSource?.getMessage(key, arrayOf(val1b), locale)
+            } else if (key == "main.notification.comments.photo.commented") {
+                messageSource?.getMessage(key, arrayOf(val1a, val2, val3, val4), locale)
+            } else if (key == "main.notification.comments.commented") {
+                messageSource?.getMessage(key, arrayOf(val1b, val2, val3), locale)
+            } else if (key == "main.pages.matching.processing" || key == "main.notification.album.shared.access") {
+                messageSource?.getMessage(key, arrayOf(val1a, val2, val1b), locale)
+            } else if (useInt) {
+                val mixedArray: Array<Any> = arrayOf(val1b, val2)
+                messageSource?.getMessage(key, mixedArray, locale)
+            } else {
+                messageSource?.getMessage(key, arrayOf(val1a, val2), locale)
+            }
+//            println("kotlinTranslation:"+kotlinTranslation)
+
+//            if (jsTranslation != kotlinTranslation) {
+//                println("translations do not match")
+//            }
+
+            Assertions.assertEquals(jsTranslation, kotlinTranslation)
+
+//            println("--------------")
+        }
     }
 
     @Test
