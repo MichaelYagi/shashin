@@ -196,11 +196,11 @@ class UITests: BaseSeleniumTests() {
             var deValue = deProperties.getProperty(key)
             var enValue = enProperties.getProperty(key)
             var matches = regex.findAll(deValue)
-            val deCount = matches.count()
+            val deValueCount = matches.count()
             matches = regex.findAll(enValue)
-            val enCount = matches.count()
+            val enValueCount = matches.count()
 
-            Assertions.assertEquals(enCount, deCount)
+            Assertions.assertEquals(enValueCount, deValueCount)
             Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
         }
 
@@ -242,11 +242,11 @@ class UITests: BaseSeleniumTests() {
             var frValue = frProperties.getProperty(key)
             var enValue = enProperties.getProperty(key)
             var matches = regex.findAll(frValue)
-            val frCount = matches.count()
+            val frValueCount = matches.count()
             matches = regex.findAll(enValue)
-            val enCount = matches.count()
+            val enValueCount = matches.count()
 
-            Assertions.assertEquals(enCount, frCount)
+            Assertions.assertEquals(enValueCount, frValueCount)
             Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
         }
 
@@ -265,9 +265,9 @@ class UITests: BaseSeleniumTests() {
             var jpValue = jaProperties.getProperty(key)
             var enValue = enProperties.getProperty(key)
             var matches = regex.findAll(jpValue)
-            val jpCount = matches.count()
+            val jpValueCount = matches.count()
             matches = regex.findAll(enValue)
-            val enCount = matches.count()
+            val enValueCount = matches.count()
 
             // Japanese doesn't have to worry about singular vs plural
             if (key != "main.pages.albums.photo" &&
@@ -275,7 +275,7 @@ class UITests: BaseSeleniumTests() {
                 key != "main.pages.albums.video" &&
                 key != "main.pages.map.modal.result"
             ) {
-                Assertions.assertEquals(enCount, jpCount)
+                Assertions.assertEquals(enValueCount, jpValueCount)
             }
 
             Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
@@ -296,11 +296,11 @@ class UITests: BaseSeleniumTests() {
             var ptValue = ptProperties.getProperty(key)
             var enValue = enProperties.getProperty(key)
             var matches = regex.findAll(ptValue)
-            val ptCount = matches.count()
+            val ptValueCount = matches.count()
             matches = regex.findAll(enValue)
-            val enCount = matches.count()
+            val enValueCount = matches.count()
 
-            Assertions.assertEquals(enCount, ptCount)
+            Assertions.assertEquals(enValueCount, ptValueCount)
             Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
         }
     }
