@@ -101,8 +101,10 @@ class UITests: BaseSeleniumTests() {
 
         this.driver!!.get("http://localhost:$port/test")
         val js: JavascriptExecutor = this.driver as JavascriptExecutor
-        
+
+        var index = 0
         for (key in properties.stringPropertyNames()) {
+            index++
 //            var value = properties.getProperty(key)
 //            println("Key: $key, Value: $value")
 
@@ -137,7 +139,7 @@ class UITests: BaseSeleniumTests() {
                 js.executeScript("const translatedValue = shashin.getTranslatedValue('"+key+"', '"+val1b+"', '"+val2+"', '"+val3+"'); return translatedValue;")
             } else if (key == "main.pages.matching.processing" || key == "main.notification.album.shared.access") {
                 js.executeScript("const translatedValue = shashin.getTranslatedValue('"+key+"', '"+val1a+"', '"+val2+"', "+val1b+"); return translatedValue;")
-            } else if (useInt) {
+            } else if (key == "main.pages.albums.photo" || key == "main.pages.people.items" || key == "main.pages.albums.video" || key == "main.pages.map.modal.result") {
                 js.executeScript("const translatedValue = shashin.getTranslatedValue('"+key+"', '"+val1b+"', '"+val2+"'); return translatedValue;")
             } else {
                 js.executeScript("const translatedValue = shashin.getTranslatedValue('"+key+"', '"+val1a+"', '"+val2+"'); return translatedValue;")
@@ -155,7 +157,7 @@ class UITests: BaseSeleniumTests() {
                 messageSource?.getMessage(key, arrayOf(val1b, val2, val3), locale)
             } else if (key == "main.pages.matching.processing" || key == "main.notification.album.shared.access") {
                 messageSource?.getMessage(key, arrayOf(val1a, val2, val1b), locale)
-            } else if (useInt) {
+            } else if (key == "main.pages.albums.photo" || key == "main.pages.people.items" || key == "main.pages.albums.video" || key == "main.pages.map.modal.result") {
                 val mixedArray: Array<Any> = arrayOf(val1b, val2)
                 messageSource?.getMessage(key, mixedArray, locale)
             } else {
@@ -171,6 +173,8 @@ class UITests: BaseSeleniumTests() {
 
 //            println("--------------")
         }
+
+        Assertions.assertTrue(index > 0 && index == properties.stringPropertyNames().size)
     }
 
     @Test
