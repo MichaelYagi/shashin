@@ -315,5 +315,32 @@ class TextTests: BaseSeleniumTests() {
             Assertions.assertEquals(enValueCount, ptValueCount)
             Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
         }
+
+        // Russian
+        val ruProperties = java.util.Properties()
+        try {
+            java.io.FileInputStream("src/main/resources/messages_ru.properties").use { fis ->
+                ptProperties.load(fis)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        Assertions.assertEquals(keyValTranslation.size, ruProperties.stringPropertyNames().size)
+        Assertions.assertEquals((keyValTranslation.keys - ruProperties.stringPropertyNames()).size, 0)
+        Assertions.assertEquals((ruProperties.stringPropertyNames() - keyValTranslation.keys).size, 0)
+
+        for (key in ruProperties.stringPropertyNames()) {
+            val regex = Regex("""\{(\d+)}""")
+            var ruValue = ruProperties.getProperty(key)
+            var enValue = enProperties.getProperty(key)
+            var matches = regex.findAll(ruValue)
+            val ruValueCount = matches.count()
+            matches = regex.findAll(enValue)
+            val enValueCount = matches.count()
+
+            Assertions.assertEquals(enValueCount, ruValueCount)
+            Assertions.assertTrue(enProperties.stringPropertyNames().contains(key))
+        }
     }
 }
