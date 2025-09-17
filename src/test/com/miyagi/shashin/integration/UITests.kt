@@ -106,6 +106,12 @@ class UITests: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/test")
         val js: JavascriptExecutor = this.driver as JavascriptExecutor
 
+        val keyValTranslation: Map<String, String> = js.executeScript("return shashini18n;") as Map<String, String>
+        Assertions.assertEquals(keyValTranslation.size, enProperties.stringPropertyNames().size)
+        // Keys not present in either map
+        Assertions.assertEquals((keyValTranslation.keys - enProperties.stringPropertyNames()).size, 0)
+        Assertions.assertEquals((enProperties.stringPropertyNames() - keyValTranslation.keys).size, 0)
+
         // English
         var index = 0
         for (key in enProperties.stringPropertyNames()) {
@@ -191,6 +197,10 @@ class UITests: BaseSeleniumTests() {
             e.printStackTrace()
         }
 
+        Assertions.assertEquals(keyValTranslation.size, deProperties.stringPropertyNames().size)
+        Assertions.assertEquals((keyValTranslation.keys - deProperties.stringPropertyNames()).size, 0)
+        Assertions.assertEquals((deProperties.stringPropertyNames() - keyValTranslation.keys).size, 0)
+
         for (key in deProperties.stringPropertyNames()) {
             val regex = Regex("""\{(\d+)}""")
             var deValue = deProperties.getProperty(key)
@@ -214,6 +224,10 @@ class UITests: BaseSeleniumTests() {
             e.printStackTrace()
         }
 
+        Assertions.assertEquals(keyValTranslation.size, esProperties.stringPropertyNames().size)
+        Assertions.assertEquals((keyValTranslation.keys - esProperties.stringPropertyNames()).size, 0)
+        Assertions.assertEquals((esProperties.stringPropertyNames() - keyValTranslation.keys).size, 0)
+
         for (key in esProperties.stringPropertyNames()) {
             val regex = Regex("""\{(\d+)}""")
             var esValue = esProperties.getProperty(key)
@@ -231,11 +245,15 @@ class UITests: BaseSeleniumTests() {
         val frProperties = java.util.Properties()
         try {
             java.io.FileInputStream("src/main/resources/messages_fr.properties").use { fis ->
-                esProperties.load(fis)
+                frProperties.load(fis)
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
+        Assertions.assertEquals(keyValTranslation.size, frProperties.stringPropertyNames().size)
+        Assertions.assertEquals((keyValTranslation.keys - frProperties.stringPropertyNames()).size, 0)
+        Assertions.assertEquals((frProperties.stringPropertyNames() - keyValTranslation.keys).size, 0)
 
         for (key in frProperties.stringPropertyNames()) {
             val regex = Regex("""\{(\d+)}""")
@@ -259,6 +277,10 @@ class UITests: BaseSeleniumTests() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
+        Assertions.assertEquals(keyValTranslation.size, jaProperties.stringPropertyNames().size)
+        Assertions.assertEquals((keyValTranslation.keys - jaProperties.stringPropertyNames()).size, 0)
+        Assertions.assertEquals((jaProperties.stringPropertyNames() - keyValTranslation.keys).size, 0)
 
         for (key in jaProperties.stringPropertyNames()) {
             val regex = Regex("""\{(\d+)}""")
@@ -290,6 +312,10 @@ class UITests: BaseSeleniumTests() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
+        Assertions.assertEquals(keyValTranslation.size, ptProperties.stringPropertyNames().size)
+        Assertions.assertEquals((keyValTranslation.keys - ptProperties.stringPropertyNames()).size, 0)
+        Assertions.assertEquals((ptProperties.stringPropertyNames() - keyValTranslation.keys).size, 0)
 
         for (key in ptProperties.stringPropertyNames()) {
             val regex = Regex("""\{(\d+)}""")
