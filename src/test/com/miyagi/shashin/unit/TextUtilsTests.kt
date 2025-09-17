@@ -5,14 +5,13 @@ import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.openqa.selenium.JavascriptExecutor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("test")
-class TextUtilsTest {
+class TextUtilsTests {
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
 

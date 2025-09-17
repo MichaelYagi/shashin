@@ -30,7 +30,7 @@ import javax.imageio.ImageIO
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class TimelineSeleniumTest: BaseSeleniumTests() {
+class TimelineSeleniumTests: BaseSeleniumTests() {
 
     private var metadataId: String? = null
     private var adminId: Int? = null

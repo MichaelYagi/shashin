@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import java.lang.Thread.sleep
 
 @ActiveProfiles("test")
-class MetricsUtilTest {
+class MetricsUtilTests {
     @Test
     fun timingTestsTest() {
         val metricsUtil = MetricsUtil()

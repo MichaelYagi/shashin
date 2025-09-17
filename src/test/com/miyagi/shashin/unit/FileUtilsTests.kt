@@ -8,7 +8,7 @@ import java.io.File
 import java.net.URL
 
 @ActiveProfiles("test")
-class FileUtilsTest {
+class FileUtilsTests {
     @Test
     fun parseBase64Test() {
         var byteArray = FileUtils.parseBase64("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII")

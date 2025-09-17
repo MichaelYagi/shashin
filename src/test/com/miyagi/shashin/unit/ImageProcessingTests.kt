@@ -1,16 +1,14 @@
 package com.miyagi.shashin.unit
 
 import com.miyagi.shashin.util.ImageProcessing
-import com.miyagi.shashin.util.TextUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import java.net.URL
 
 @SpringBootTest
 @ActiveProfiles("test")
-class ImageProcessingTest {
+class ImageProcessingTests {
     @Test
     fun isDupeImageTest() {
         val classLoader = javaClass.classLoader
