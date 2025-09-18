@@ -321,7 +321,7 @@ class TextTests: BaseSeleniumTests() {
         val ruProperties = java.util.Properties()
         try {
             java.io.FileInputStream("src/main/resources/messages_ru.properties").use { fis ->
-                ptProperties.load(fis)
+                ruProperties.load(fis)
             }
         } catch (e: IOException) {
             e.printStackTrace()

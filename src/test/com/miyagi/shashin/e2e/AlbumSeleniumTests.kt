@@ -179,25 +179,25 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         this.logger.log(Level.INFO, "3 sec sleep.")
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
-//        val timelineBottomLeft = "tnbl$metadataId"
-//        val timelineBottomLeftEl = this.driver!!.findElement(By.id(timelineBottomLeft))
-//        val metadataModalEdit = this.driver!!.findElement(By.id("metadataModalEdit$metadataId"))
-//
-//        //Creating object of an Actions class
-//        val action = Actions(this.driver!!)
-//
-//        //Performing the mouse hover action on the target element.
-//        action.moveToElement(imageEl).perform()
-//        action.moveToElement(timelineBottomLeftEl).perform()
-//        action.moveToElement(metadataModalEdit).perform()
-//        metadataModalEdit.click()
+        val timelineBottomLeft = "tnbl$metadataId"
+        val timelineBottomLeftEl = this.driver!!.findElement(By.id(timelineBottomLeft))
+        val metadataModalEdit = this.driver!!.findElement(By.id("metadataModalEdit$metadataId"))
 
-        val js: JavascriptExecutor = this.driver as JavascriptExecutor
-        js.executeScript("document.getElementById('image"+metadataId+"').dispatchEvent(new MouseEvent('mouseover', { view:window,bubbles:true,cancelable:false }));" +
-                "document.getElementById('tnbl"+metadataId+"').dispatchEvent(new MouseEvent('mouseover', { view:window,bubbles:true,cancelable:false }));" +
-                "document.getElementById('metadataModalEdit"+metadataId+"').dispatchEvent(new MouseEvent('mouseover', { view:window,bubbles:true,cancelable:false }));" +
-                "document.getElementById('metadataModalEdit"+metadataId+"').dispatchEvent(new MouseEvent('click', { view:window,bubbles:true,cancelable:false }));"
-        )
+        //Creating object of an Actions class
+        val action = Actions(this.driver!!)
+
+        //Performing the mouse hover action on the target element.
+        action.moveToElement(imageEl).perform()
+        action.moveToElement(timelineBottomLeftEl).perform()
+        action.moveToElement(metadataModalEdit).perform()
+        metadataModalEdit.click()
+
+//        val js: JavascriptExecutor = this.driver as JavascriptExecutor
+//        js.executeScript("document.getElementById('image$metadataId').dispatchEvent(new MouseEvent('mouseover', { view:window,bubbles:true,cancelable:false }));" +
+//                "document.getElementById('tnbl$metadataId').dispatchEvent(new MouseEvent('mouseover', { view:window,bubbles:true,cancelable:false }));" +
+//                "document.getElementById('metadataModalEdit$metadataId').dispatchEvent(new MouseEvent('mouseover', { view:window,bubbles:true,cancelable:false }));" +
+//                "document.getElementById('metadataModalEdit$metadataId').dispatchEvent(new MouseEvent('click', { view:window,bubbles:true,cancelable:false }));"
+//        )
 
         this.logger.log(Level.INFO, "Timeline edit button clicked.")
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("metadataModalTitle")))
@@ -205,7 +205,9 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         //Save album in timeline
         val albumNamesInput = this.driver!!.findElement(By.id("albumnames"))
         albumNamesInput.sendKeys("testalbum")
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.elementToBeClickable(By.id("saveMetadata"))).click()
+        val saveMetadata = this.driver!!.findElement(By.id("saveMetadata"))
+        saveMetadata.sendKeys(Keys.RETURN)
+//        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.elementToBeClickable(By.id("saveMetadata"))).click()
 
 //        println(this.driver?.pageSource)
 
