@@ -50,7 +50,7 @@ workflows:
             ## Install specific version
             ## https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
             - browser-tools/install-browser-tools:
-                chrome-version: 130.0.6681.0
+                chrome-version: 128.0.6613.137
 #            # Install latest
 #            - browser-tools/install-chrome
 #            - browser-tools/install-chromedriver

@@ -86,7 +86,7 @@ abstract class BaseSeleniumTests {
         deleteRecords()
 
 //        println(os)
-        WebDriverManager.chromedriver().browserVersion("130.0.6681.0").setup()
+        WebDriverManager.chromedriver().browserVersion("128.0.6613.137").setup()
 //        val capabilities = DesiredCapabilities.chrome()
         val options = ChromeOptions()
         options.addArguments("--no-sandbox") // Bypass OS security model, MUST BE THE VERY FIRST OPTION
@@ -113,8 +113,8 @@ abstract class BaseSeleniumTests {
         } else if (os.contains("windows", ignoreCase = true)) {
             // Drivers to run locally
             // https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
-            // https://storage.googleapis.com/chrome-for-testing-public/130.0.6723.58/win64/chrome-win64.zip
-            // https://storage.googleapis.com/chrome-for-testing-public/130.0.6723.58/win64/chromedriver-win64.zip
+            // https://storage.googleapis.com/chrome-for-testing-public/128.0.6613.137/win64/chrome-win64.zip
+            // https://storage.googleapis.com/chrome-for-testing-public/128.0.6613.137/win64/chromedriver-win64.zip
             // CircleCI downloads from here:
             // https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.58-1_amd64.deb
 
