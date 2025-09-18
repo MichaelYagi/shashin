@@ -90,6 +90,7 @@ class TextTests: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/test")
         val js: JavascriptExecutor = this.driver as JavascriptExecutor
 
+        @Suppress("UNCHECKED_CAST")
         val keyValTranslation: Map<String, String> = js.executeScript("return shashini18n;") as Map<String, String>
         Assertions.assertEquals(keyValTranslation.size, enProperties.stringPropertyNames().size)
         // Keys not present in either map
