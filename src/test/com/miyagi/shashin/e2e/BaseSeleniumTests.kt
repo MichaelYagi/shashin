@@ -118,8 +118,8 @@ abstract class BaseSeleniumTests {
             // CircleCI downloads from here:
             // https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.58-1_amd64.deb
 
-//            options.setBinary("C:\\Users\\Michael\\Downloads\\chrome-win64\\chrome-win64\\chrome.exe")
-//            System.setProperty("webdriver.chrome.driver", "C:\\Users\\Michael\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe")
+            options.setBinary("C:\\Users\\Michael\\Downloads\\chrome-win64\\chrome-win64\\chrome.exe")
+            System.setProperty("webdriver.chrome.driver", "C:\\Users\\Michael\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe")
         }
 
         driver = ChromeDriver(options)

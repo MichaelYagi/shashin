@@ -1,6 +1,7 @@
-package com.miyagi.shashin.e2e
+package com.miyagi.shashin.integration
 
 import ai.djl.Model
+import com.miyagi.shashin.e2e.BaseSeleniumTests
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
