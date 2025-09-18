@@ -119,6 +119,7 @@ class APITests: BaseSeleniumTests() {
         val testImageFile = File(testImageUrl.file)
 
         val mediaDirTextAreaText = testImageFile.parent+"/subdir"
+
         var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.click()
         mediaDirTextArea.sendKeys(mediaDirTextAreaText)
