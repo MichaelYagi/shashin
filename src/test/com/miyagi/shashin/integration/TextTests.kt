@@ -19,8 +19,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.io.FileInputStream
 import java.io.IOException
 import java.util.Locale
+import java.util.Properties
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -76,9 +78,9 @@ class TextTests: BaseSeleniumTests() {
     @Test
     @Throws(Exception::class)
     fun jsAndKotlinTranslationsMatch() {
-        val enProperties = java.util.Properties()
+        val enProperties = Properties()
         try {
-            java.io.FileInputStream("src/main/resources/messages.properties").use { fis ->
+            FileInputStream("src/main/resources/messages.properties").use { fis ->
                 enProperties.load(fis)
             }
         } catch (e: IOException) {
@@ -173,9 +175,9 @@ class TextTests: BaseSeleniumTests() {
         Assertions.assertTrue(index > 0 && index == enProperties.stringPropertyNames().size)
 
         // German
-        val deProperties = java.util.Properties()
+        val deProperties = Properties()
         try {
-            java.io.FileInputStream("src/main/resources/messages_de.properties").use { fis ->
+            FileInputStream("src/main/resources/messages_de.properties").use { fis ->
                 deProperties.load(fis)
             }
         } catch (e: IOException) {
@@ -200,9 +202,9 @@ class TextTests: BaseSeleniumTests() {
         }
 
         // Spanish
-        val esProperties = java.util.Properties()
+        val esProperties = Properties()
         try {
-            java.io.FileInputStream("src/main/resources/messages_es.properties").use { fis ->
+            FileInputStream("src/main/resources/messages_es.properties").use { fis ->
                 esProperties.load(fis)
             }
         } catch (e: IOException) {
@@ -227,9 +229,9 @@ class TextTests: BaseSeleniumTests() {
         }
 
         // French
-        val frProperties = java.util.Properties()
+        val frProperties = Properties()
         try {
-            java.io.FileInputStream("src/main/resources/messages_fr.properties").use { fis ->
+            FileInputStream("src/main/resources/messages_fr.properties").use { fis ->
                 frProperties.load(fis)
             }
         } catch (e: IOException) {
@@ -254,9 +256,9 @@ class TextTests: BaseSeleniumTests() {
         }
 
         // Japanese
-        val jaProperties = java.util.Properties()
+        val jaProperties = Properties()
         try {
-            java.io.FileInputStream("src/main/resources/messages_ja.properties").use { fis ->
+            FileInputStream("src/main/resources/messages_ja.properties").use { fis ->
                 jaProperties.load(fis)
             }
         } catch (e: IOException) {
@@ -291,9 +293,9 @@ class TextTests: BaseSeleniumTests() {
         }
 
         // Portuguese
-        val ptProperties = java.util.Properties()
+        val ptProperties = Properties()
         try {
-            java.io.FileInputStream("src/main/resources/messages_pt.properties").use { fis ->
+            FileInputStream("src/main/resources/messages_pt.properties").use { fis ->
                 ptProperties.load(fis)
             }
         } catch (e: IOException) {
@@ -318,9 +320,9 @@ class TextTests: BaseSeleniumTests() {
         }
 
         // Russian
-        val ruProperties = java.util.Properties()
+        val ruProperties = Properties()
         try {
-            java.io.FileInputStream("src/main/resources/messages_ru.properties").use { fis ->
+            FileInputStream("src/main/resources/messages_ru.properties").use { fis ->
                 ruProperties.load(fis)
             }
         } catch (e: IOException) {
