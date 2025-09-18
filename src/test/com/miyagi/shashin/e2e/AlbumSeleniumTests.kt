@@ -187,7 +187,7 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
 
         //Performing the mouse hover action on the target element.
         action.moveToElement(imageEl).perform()
-        action.moveToElement(timelineBottomLeftEl).perform()
+//        action.moveToElement(timelineBottomLeftEl).perform()
         action.moveToElement(metadataModalEdit).perform()
         metadataModalEdit.click()
 
