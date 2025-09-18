@@ -662,16 +662,19 @@ class UserController {
     }
 
     @GetMapping("/users/login")
+    @Transactional
     fun getLoginUser(model: Model, session: HttpSession, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?, locale: Locale): String {
         val module = "login"
 
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = rootPath + relativeSidecarDir
+        Thread {
+            val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+            val sidecarDir = rootPath + relativeSidecarDir
 
-        var sidecarSize = FileUtils.sidecarDiskUsed(sidecarDir)
-        val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
-        sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
-        settingsRepository?.save(sidecarSizeUpdate!!)
+            var sidecarSize = FileUtils.sidecarDiskUsed(sidecarDir)
+            val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
+            sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
+            settingsRepository?.save(sidecarSizeUpdate!!)
+        }.start()
 
         val userCount = userRepository?.count()
         if ((userCount != null) && (userCount.toInt() == 0)) {
