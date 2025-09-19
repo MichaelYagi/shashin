@@ -95,6 +95,13 @@ class TestController {
     private var activeLink = ""
     val mapper = ObjectMapper()
 
+    @GetMapping("/testgrounds")
+    fun testPage(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["activePage"] = "testgrounds"
+
+        return "testgrounds"
+    }
+
     @Secured("ROLE_SUPER")
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
