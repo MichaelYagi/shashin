@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <main role="main" class="col overflow-auto h-100">
+            <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>
