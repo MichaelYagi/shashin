@@ -1,4 +1,4 @@
-package com.miyagi.shashin.util
+package com.miyagi.shashin.service
 
 import ai.djl.Application
 import ai.djl.engine.Engine
@@ -15,10 +15,12 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
 import com.miyagi.shashin.ShashinApplication
-import com.miyagi.shashin.component.DjlFaceRecognizer
-import com.miyagi.shashin.component.DuplicateImageChecker
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.NetworkUtils
+import com.miyagi.shashin.util.TextUtils
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
@@ -45,12 +47,10 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import kotlin.collections.ArrayList
-import kotlin.io.path.Path
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.sin
-import kotlin.text.split
 
 
 @Suppress("UNCHECKED_CAST")
@@ -86,7 +86,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         "Orientation", "Rotation" -> {
                             if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4" || directory.name == "QuickTime") {
                                 val digit = tag.description.filter { it.isDigit() }
-                                if (TextUtils.isInteger(digit)) {
+                                if (TextUtils.Companion.isInteger(digit)) {
                                     rotation = digit.toInt()
                                     rotationFromExif = true
                                 }
@@ -144,14 +144,14 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         }
 
         // Map path to sidecar file
-        val fileRootDir: String = FileUtils.getRootDir(file)
-        val supportedImageFormats = FileUtils.allowableImageFiles()
-        val supportedVideoFormats = FileUtils.allowableVideoFiles()
-        var mediaExtension = FileUtils.probeFileExtension(file)
+        val fileRootDir: String = FileUtils.Companion.getRootDir(file)
+        val supportedImageFormats = FileUtils.Companion.allowableImageFiles()
+        val supportedVideoFormats = FileUtils.Companion.allowableVideoFiles()
+        var mediaExtension = FileUtils.Companion.probeFileExtension(file)
         var extension = "jpg"
 
         var img: BufferedImage? = null
-        if (FileUtils.isRaw(mediaExtension)) {
+        if (FileUtils.Companion.isRaw(mediaExtension)) {
             try {
                 img = ImageIO.read(file)
                 if (rotation != 0) {
@@ -209,7 +209,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             _metadataObj = setThumbnails(
                 img,
                 _metadataObj,
-                (FileUtils.isRaw(mediaExtension) || supportedVideoFormats.contains(mediaExtension)),
+                (FileUtils.Companion.isRaw(mediaExtension) || supportedVideoFormats.contains(mediaExtension)),
                 extension
             )
         } else {
@@ -228,17 +228,17 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         overwriteThumbnails: Boolean = false
     ): Metadata {
         if (file.exists()) {
-            val mediaExtension = FileUtils.probeFileExtension(file)
+            val mediaExtension = FileUtils.Companion.probeFileExtension(file)
 
             val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
-            val fileRootDir: String = FileUtils.getRootDir(file)
+            val fileRootDir: String = FileUtils.Companion.getRootDir(file)
 
             // Raw file to image conversion
             var thumbnailFileStr: String
             var tnFile: File?
             if (isRawOrVideo) {
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original." + extension
-                tnFile = FileUtils.createFile(
+                tnFile = FileUtils.Companion.createFile(
                     thumbnailFileStr,
                     overwriteThumbnails
                 )
@@ -253,8 +253,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             // Gallery small thumbnails
             thumbnailFileStr =
-                thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension
-            tnFile = FileUtils.createFile(
+                thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.Companion.thumbnailHeight() + "." + extension
+            tnFile = FileUtils.Companion.createFile(
                 thumbnailFileStr,
                 overwriteThumbnails
             )
@@ -272,10 +272,10 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 if (img.width > img.height * 2) {
                     thumbnails
                         .crop(Positions.CENTER)
-                        .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
+                        .size(FileUtils.Companion.thumbnailHeight(), FileUtils.Companion.thumbnailHeight())
                 } else {
                     thumbnails
-                        .height(FileUtils.thumbnailHeight())
+                        .height(FileUtils.Companion.thumbnailHeight())
                 }
                 thumbnails.toFile(tempFile)
 
@@ -287,7 +287,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     metadataObj.setThumbnailSmallHeight(scaledImage.height)
                     metadataObj.setThumbnailSmallWidth(scaledImage.width)
                     metadataObj.setThumbnailPathSmall(thumbnailFileStr)
-                    metadataObj.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension)
+                    metadataObj.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.Companion.thumbnailHeight() + "." + extension)
                     logger.log(Level.INFO, "Small thumbnail created: " + file.path)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
@@ -338,7 +338,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
-            tnFile = FileUtils.createFile(
+            tnFile = FileUtils.Companion.createFile(
                 thumbnailFileStr,
                 overwriteThumbnails
             )
@@ -365,7 +365,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             // Map marker thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker." + extension
-            tnFile = FileUtils.createFile(
+            tnFile = FileUtils.Companion.createFile(
                 thumbnailFileStr,
                 overwriteThumbnails
             )
@@ -504,8 +504,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             if (keywordObj == null) {
                 keywordObj = Keyword()
                 keywordObj.setKeyword(objSubject)
-                keywordObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                keywordObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                keywordObj.setCreatedAt(TextUtils.Companion.getCurrentTimestamp())
+                keywordObj.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
                 keywordRepository.save(keywordObj)
             }
 
@@ -518,10 +518,10 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val keywordPhotoObj = KeywordPhoto()
                 keywordPhotoObj.setKeywordId(keywordObj.getId())
                 keywordPhotoObj.setMetadataId(metadataObj.getId())
-                keywordPhotoObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                keywordPhotoObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                keywordPhotoObj.setCreatedAt(TextUtils.Companion.getCurrentTimestamp())
+                keywordPhotoObj.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
                 keywordPhotoRepository.save(keywordPhotoObj)
-                metadataObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                metadataObj.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
                 metadataRepository.save(metadataObj)
             }
         }
@@ -562,7 +562,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                             keywordMap[objSubject] = objProbability
 
                                             if (threadFile != null) {
-                                                FileUtils.writeToThreadFileAndLogMessage(
+                                                FileUtils.Companion.writeToThreadFileAndLogMessage(
                                                     if (messageSource == null) "Objects identified for " + metadataObj.getPath() else messageSource.getMessage("main.pages.matching.identified", arrayOf(metadataObj.getPath()), locale).toString() + ": S-" + objSubject + " P-" + objProbability,
                                                     threadFile
                                                 )
@@ -574,7 +574,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                             )
                                         } else {
                                             if (threadFile != null) {
-                                                FileUtils.writeToThreadFileAndLogMessage(
+                                                FileUtils.Companion.writeToThreadFileAndLogMessage(
                                                     if (messageSource == null) "Objects identified for " + metadataObj.getPath() else messageSource.getMessage("main.pages.matching.identified", arrayOf(metadataObj.getPath()), locale).toString() + ": S-" + objSubject + " P-" + objProbability,
                                                     threadFile
                                                 )
@@ -643,7 +643,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             uploadResponse["msg"] = ""
             uploadResponse["status"] = ApiResponse.FAIL.status
 
-            if (settings.getFacialDetection() == true && NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+            if (settings.getFacialDetection() == true && NetworkUtils.Companion.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
                 val response: String?
 
                 if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
@@ -755,7 +755,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             recognitionResponse["msg"] = ""
             recognitionResponse["status"] = ApiResponse.FAIL.status
 
-            if (settings.getFacialDetection() == true && NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+            if (settings.getFacialDetection() == true && NetworkUtils.Companion.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
 
                 val response: String?
 
@@ -810,7 +810,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
                 if (settings.getFacialDetection() == true &&
-                    NetworkUtils.checkCompreFaceConnection(
+                    NetworkUtils.Companion.checkCompreFaceConnection(
                         settings.getCompreFaceServer(),
                         settings.getCompreFaceKey()
                     )
@@ -855,12 +855,12 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             )
                         } catch (e: Exception) {
                             val recognitionLabelRecord =
-                                recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
+                                recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.Companion.getObjectName())
                             var recognitionLabelObj = RecognitionLabel()
                             if (recognitionLabelRecord == null) {
-                                recognitionLabelObj.setName(TextUtils.getObjectName())
-                                recognitionLabelObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                                recognitionLabelObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                                recognitionLabelObj.setName(TextUtils.Companion.getObjectName())
+                                recognitionLabelObj.setCreatedAt(TextUtils.Companion.getCurrentTimestamp())
+                                recognitionLabelObj.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
                                 recognitionLabelRepository?.save(recognitionLabelObj)
                             } else {
                                 recognitionLabelObj = recognitionLabelRecord
@@ -910,7 +910,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                             }
 
                                             if (threadFile != null) {
-                                                FileUtils.writeToThreadFileAndLogMessage(
+                                                FileUtils.Companion.writeToThreadFileAndLogMessage(
                                                     messageSource?.getMessage("main.pages.matching.analyzing", arrayOf(subject,metadataObj.getPath()), locale).toString(),
                                                     threadFile
                                                 )
@@ -1001,11 +1001,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                                             recognitionLabelPhotoObj
                                                         )
 
-                                                        metadataObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                                                        metadataObj.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
                                                         metadataRepository.save(metadataObj)
 
                                                         if (threadFile != null) {
-                                                            FileUtils.writeToThreadFileAndLogMessage(
+                                                            FileUtils.Companion.writeToThreadFileAndLogMessage(
                                                                 messageSource?.getMessage("main.pages.matching.processing", arrayOf(subject,metadataObj.getPath(),similarity.toString()), locale).toString(),
                                                                 threadFile
                                                             )
@@ -1062,7 +1062,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             "Missing lib files for DJL face scan"
                         )
                         if (threadFile != null) {
-                            FileUtils.writeToThreadFileAndLogMessage(
+                            FileUtils.Companion.writeToThreadFileAndLogMessage(
                                 messageSource?.getMessage("main.notification.people.missing", null, locale).toString(),
                                 threadFile
                             )

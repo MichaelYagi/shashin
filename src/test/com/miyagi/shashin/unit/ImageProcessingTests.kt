@@ -1,6 +1,6 @@
 package com.miyagi.shashin.unit
 
-import com.miyagi.shashin.util.ImageProcessing
+import com.miyagi.shashin.service.ImageProcessing
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

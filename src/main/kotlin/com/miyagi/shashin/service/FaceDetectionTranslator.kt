@@ -1,4 +1,4 @@
-package com.miyagi.shashin.component
+package com.miyagi.shashin.service
 
 import ai.djl.modality.cv.Image
 import ai.djl.modality.cv.output.*

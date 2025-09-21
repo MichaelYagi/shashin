@@ -7,7 +7,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.MetadataProcessing
+import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -45,8 +45,6 @@ import org.springframework.web.multipart.MultipartFile
 import kotlin.collections.count
 import kotlin.io.path.isDirectory
 import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.round
 
 
 @Suppress("UNCHECKED_CAST")

@@ -1,5 +1,9 @@
-package com.miyagi.shashin.util
+package com.miyagi.shashin.service
 
+import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.GifSequenceWriter
+import com.miyagi.shashin.util.MetricsUtil
+import com.miyagi.shashin.util.TextUtils
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import org.bytedeco.ffmpeg.global.avutil
@@ -42,7 +46,7 @@ class VideoProcessing(private val videoFile: File) {
 
         val rotationFiltered = rotationInt.toString().filter { it.isDigit() }
 
-        if (TextUtils.isInteger(rotationFiltered)) {
+        if (TextUtils.Companion.isInteger(rotationFiltered)) {
             rotation = rotationFiltered.toDouble()
         }
 
@@ -63,7 +67,7 @@ class VideoProcessing(private val videoFile: File) {
             val rotation = getVideoRotation()
 
             if (rotation != 0.0 && bi != null) {
-                bi = ImageProcessing.rotateImage(bi, rotation)
+                bi = ImageProcessing.Companion.rotateImage(bi, rotation)
             }
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Could not capture screenshot for video ${videoFile.name}: ${e.message}")
@@ -115,7 +119,7 @@ class VideoProcessing(private val videoFile: File) {
                     if (bi != null) {
                         val rotation = getVideoRotation()
                         if (rotation != 0.0) {
-                            bi = ImageProcessing.rotateImage(bi, rotation)
+                            bi = ImageProcessing.Companion.rotateImage(bi, rotation)
                         }
 
                         val thumbnails = Thumbnails.of(bi)
@@ -124,10 +128,10 @@ class VideoProcessing(private val videoFile: File) {
                         if (bi.width > bi.height * 2) {
                             thumbnails
                                 .crop(Positions.CENTER)
-                                .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
+                                .size(FileUtils.Companion.thumbnailHeight(), FileUtils.Companion.thumbnailHeight())
                         } else {
                             thumbnails
-                                .height(FileUtils.thumbnailHeight())
+                                .height(FileUtils.Companion.thumbnailHeight())
                         }
 
                         writer.writeToSequence(thumbnails.asBufferedImage())

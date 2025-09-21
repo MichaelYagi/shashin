@@ -8,8 +8,9 @@ import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.*
-import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
+import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -223,7 +224,7 @@ class PeopleController: BaseController() {
             if (threadFile != null) {
                 var recognitionCount = 0
                 if (settings.getFacialDetection() == true) {
-                    recognitionCount = ImageProcessing.subjectRecognizer(
+                    recognitionCount = ImageProcessing.Companion.subjectRecognizer(
                         metadataRepository,
                         recognitionLabelRepository,
                         recognitionLabelPhotoRepository,
@@ -278,7 +279,7 @@ class PeopleController: BaseController() {
                                 val metadataWithoutKeywordsObj =
                                     metadataRepository?.findById(withoutKeyword.getId())?.get()
 
-                                val keywordMap = ImageProcessing.objectRecognizer(
+                                val keywordMap = ImageProcessing.Companion.objectRecognizer(
                                     metadataWithoutKeywordsObj!!,
                                     criteria,
                                     threshold.toString().toDouble(),
@@ -288,7 +289,7 @@ class PeopleController: BaseController() {
                                     locale
                                 )
 
-                                ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
+                                ImageProcessing.Companion.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
                             }
                         }
                     }
@@ -1102,7 +1103,7 @@ class PeopleController: BaseController() {
 
                         if (recognitionLabelPhotoCount == 0) {
                             val uploadResp = mapper.writeValueAsString(
-                                ImageProcessing.buildPersonUpload(
+                                ImageProcessing.Companion.buildPersonUpload(
                                     model.getAttribute("settings") as Settings,
                                     recognitionLabelString.trim(),
                                     metadata?.get(),
@@ -1253,7 +1254,7 @@ class PeopleController: BaseController() {
 
     fun personUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) {
         Thread {
-            ImageProcessing.buildPersonUpload(
+            ImageProcessing.Companion.buildPersonUpload(
                 settings,
                 personName,
                 metadata,
@@ -1279,6 +1280,6 @@ class PeopleController: BaseController() {
                 metadata = metadataOpt
             }
         }
-        return mapper.writeValueAsString(ImageProcessing.buildPersonRecognition(model.getAttribute("settings") as Settings, metadata))
+        return mapper.writeValueAsString(ImageProcessing.Companion.buildPersonRecognition(model.getAttribute("settings") as Settings, metadata))
     }
 }

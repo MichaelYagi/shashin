@@ -1,4 +1,4 @@
-package com.miyagi.shashin.util
+package com.miyagi.shashin.service
 
 import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -6,6 +6,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.lang3.StringUtils
 import java.io.File
@@ -17,7 +19,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import kotlin.io.path.Path
 
 
 class MetadataProcessing() {
@@ -48,7 +49,7 @@ class MetadataProcessing() {
             BasicFileAttributes::class.java
         )
 
-        val datePattern = TextUtils.getCommonDateFormat()
+        val datePattern = TextUtils.Companion.getCommonDateFormat()
         val sourceFormatMS = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
         val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
         val destFormat = SimpleDateFormat(datePattern, Locale.ENGLISH)
@@ -123,7 +124,7 @@ class MetadataProcessing() {
                                 if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4" || directory.name == "QuickTime") {
                                     val digit = tag.description.filter { it.isDigit() }
 
-                                    if (TextUtils.isInteger(digit)) {
+                                    if (TextUtils.Companion.isInteger(digit)) {
                                         rotation = digit.toInt()
                                     }
                                 }
@@ -180,10 +181,10 @@ class MetadataProcessing() {
                                     var formattedDate = destFormat.format(date)
 
                                     // When a file or folder doesn't have a timestamp, it defaults to the epoch date
-                                    val gmtPattern = TextUtils.getCommonDateFormat()
+                                    val gmtPattern = TextUtils.Companion.getCommonDateFormat()
                                     val gmtFormat = SimpleDateFormat(gmtPattern, Locale.ENGLISH)
                                     gmtFormat.timeZone = TimeZone.getTimeZone("GMT")
-                                    if (gmtFormat.format(date) == TextUtils.getEpochDateTime() || gmtFormat.format(date) == TextUtils.getExifDateTimeDefault()) {
+                                    if (gmtFormat.format(date) == TextUtils.Companion.getEpochDateTime() || gmtFormat.format(date) == TextUtils.Companion.getExifDateTimeDefault()) {
                                         formattedDate = getCurrentTimestamp()
                                         logger.log(
                                             Level.INFO,
@@ -382,7 +383,7 @@ class MetadataProcessing() {
                                 var fraction = exposureArray[0]
                                 if (fraction.contains(".")) {
                                     val exposureTime = exposureArray[0].toDouble()
-                                    fraction = TextUtils.convertDecimalToFraction(exposureTime)
+                                    fraction = TextUtils.Companion.convertDecimalToFraction(exposureTime)
                                 }
                                 this.metadataObj.setExposure(fraction)
                                 logger.log(
@@ -538,10 +539,10 @@ class MetadataProcessing() {
 
         saveExifdata(exifMap, sidecarDir, file.path)
 
-        this.metadataObj.setAddedAt(TextUtils.getCurrentTimestamp())
+        this.metadataObj.setAddedAt(getCurrentTimestamp())
 
         this.metadataObj.setId(
-            TextUtils.generateUUID(
+            TextUtils.Companion.generateUUID(
                 file.path,
                 this.metadataObj.getCreatedAt(),
                 this.metadataObj.getType(),
@@ -551,9 +552,9 @@ class MetadataProcessing() {
             ).toString()
         )
 
-        val supportedImageFormats = FileUtils.allowableImageFiles()
-        val supportedVideoFormats = FileUtils.allowableVideoFiles()
-        val mediaExtension = FileUtils.probeFileExtension(file)
+        val supportedImageFormats = FileUtils.Companion.allowableImageFiles()
+        val supportedVideoFormats = FileUtils.Companion.allowableVideoFiles()
+        val mediaExtension = FileUtils.Companion.probeFileExtension(file)
 
         if (supportedImageFormats.contains(mediaExtension)) {
             this.metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/image/${this.metadataObj.getId()}")
@@ -568,8 +569,8 @@ class MetadataProcessing() {
             // Update Exif file
             val metadataDirectory = _sidecarDir.dropLast(1) + "/metadata"
             val photoFile = File(path)
-            val fileRootDir: String = FileUtils.getRootDir(photoFile)
-            val exifFile = FileUtils.createFile(
+            val fileRootDir: String = FileUtils.Companion.getRootDir(photoFile)
+            val exifFile = FileUtils.Companion.createFile(
                 "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml"
             )
             if (exifFile != null) {

@@ -11,7 +11,6 @@ import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.*
-import com.miyagi.shashin.util.ImageProcessing.Companion.rotateImage
 import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired

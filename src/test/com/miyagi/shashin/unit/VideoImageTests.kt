@@ -2,12 +2,12 @@ package com.miyagi.shashin.unit
 
 import ai.djl.modality.cv.ImageFactory
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.component.DjlFaceRecognizer
+import com.miyagi.shashin.service.DjlFaceRecognizer
 import com.miyagi.shashin.e2e.BaseSeleniumTests
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.util.ImageProcessing
-import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
-import com.miyagi.shashin.util.VideoProcessing
+import com.miyagi.shashin.service.ImageProcessing
+import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
+import com.miyagi.shashin.service.VideoProcessing
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles

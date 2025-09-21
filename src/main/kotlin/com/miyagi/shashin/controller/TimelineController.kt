@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.ImageProcessing
+import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
@@ -1146,7 +1148,8 @@ class TimelineController: BaseController() {
                                 )
                                 metadataCopy = metadataProcessing.populateMetadata()
 
-                                val imageProcessing = ImageProcessing(apiVersion, File(metadataPath), sidecarDir, metadataCopy)
+                                val imageProcessing =
+                                    ImageProcessing(apiVersion, File(metadataPath), sidecarDir, metadataCopy)
                                 metadataCopy = imageProcessing.createThumbnails()!!
 
                                 metadataCopy.setModifiedAt(getCurrentTimestamp())
@@ -1296,7 +1299,7 @@ class TimelineController: BaseController() {
         if (metadataIdArray != null) {
             Thread {
                 for (metadataId in metadataIdArray) {
-                    ImageProcessing.createVideoGif(metadataId, metadataRepository, overwrite)
+                    ImageProcessing.Companion.createVideoGif(metadataId, metadataRepository, overwrite)
                 }
             }.start()
         }
@@ -1583,10 +1586,10 @@ class TimelineController: BaseController() {
                 if (currentAlbumIdList.isNotEmpty()) {
                     var albumListString = ""
                     for (albumId in currentAlbumIdList) {
-                        val count = MetadataProcessing.deleteAlbumPhoto(metadataRepository, albumRepository, albumPhotoRepository, metadataId, albumId)
+                        val count = MetadataProcessing.Companion.deleteAlbumPhoto(metadataRepository, albumRepository, albumPhotoRepository, metadataId, albumId)
 
                         if (count != null && count.toInt() == 0) {
-                            MetadataProcessing.deleteAlbum(
+                            MetadataProcessing.Companion.deleteAlbum(
                                 albumRepository,
                                 albumPhotoRepository,
                                 userAlbumRepository,
@@ -3335,7 +3338,7 @@ class TimelineController: BaseController() {
 
     fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) {
         Thread {
-            ImageProcessing.buildPersonUpload(
+            ImageProcessing.Companion.buildPersonUpload(
                 settings,
                 recognitionLabel,
                 metadataObj,
