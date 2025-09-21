@@ -10,16 +10,17 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.ShashinApplication
-import com.miyagi.shashin.component.DjlFaceRecognizer
+import com.miyagi.shashin.service.DjlFaceRecognizer
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.service.CustomUserPrincipal
+import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
-import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
+import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
+import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Autowired
@@ -76,7 +77,6 @@ import java.util.stream.Collectors
 import kotlin.collections.set
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
-import kotlin.math.floor
 import kotlin.math.round
 
 
@@ -2373,7 +2373,7 @@ class SettingsController {
                         if (settings?.getObjectDetection() == true && criteria != null) {
                             val threshold = settings.getObjectRecognitionConfidenceThreshold()
 
-                            val keywordMap = ImageProcessing.objectRecognizer(
+                            val keywordMap = ImageProcessing.Companion.objectRecognizer(
                                 metadataObj,
                                 criteria,
                                 threshold.toString().toDouble(),
@@ -2383,7 +2383,7 @@ class SettingsController {
                                 locale
                             )
 
-                            ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
+                            ImageProcessing.Companion.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
                         }
 
                         threadText = messageSource?.getMessage("main.pages.scan.pathindexed", arrayOf(metadataObj.getPath()), locale).toString()
@@ -2396,7 +2396,7 @@ class SettingsController {
                     }
                     FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                 }
-                ImageProcessing.createVideoGif(metadataId, metadataRepository)
+                ImageProcessing.Companion.createVideoGif(metadataId, metadataRepository)
 
                 val completedPercent: Double = ((index+1).toDouble() / metadataArrayCount.toDouble()) * 100
 
@@ -2501,7 +2501,8 @@ class SettingsController {
 
                         if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(mediaExtension)) {
                             // Process metadata
-                            val metadataProcessing = MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
+                            val metadataProcessing =
+                                MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
                             metadataObj = metadataProcessing.populateMetadata()
                             if (metadataObj.getId().isNotEmpty()) {
                                 // Check for duplicate entry

@@ -1,4 +1,4 @@
-package com.miyagi.shashin.component
+package com.miyagi.shashin.service
 
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
