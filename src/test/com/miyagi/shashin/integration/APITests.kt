@@ -6,10 +6,14 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import org.hamcrest.CoreMatchers.containsString
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.FileSystemResource
@@ -29,6 +33,7 @@ import java.io.File
 
 @SpringBootTest
 @ActiveProfiles("test")
+@TestInstance(Lifecycle.PER_CLASS)
 class APITests {
 
     private var superId: Int? = null
@@ -101,7 +106,7 @@ class APITests {
 
     private var bcrypt = BCryptPasswordEncoder()
 
-    @BeforeEach
+    @BeforeAll
     fun setup() {
         val superObj = User()
         superObj.setUsername("testsuper")
@@ -142,7 +147,7 @@ class APITests {
             .build()
     }
 
-    @AfterEach
+    @AfterAll
     fun tearDown() {
         userRepository?.deleteAll()
         metadataRepository?.deleteAll()
@@ -199,6 +204,17 @@ class APITests {
     @Test
     @Throws(Exception::class)
     fun shouldReturn403WhenSendingRequestToTimelineApiWithInvalidAuthority() {
+        val userObj = User()
+        userObj.setUsername("testuser")
+        val encodedPassword = bcrypt.encode("testuser")
+        userObj.setPassword(encodedPassword)
+        userObj.setAuthority("ROLE_USER")
+        userObj.setIsAuthorized(true)
+        userKey = "00000000-00000000-00000000-00000002"
+        userObj.setApikey(userKey)
+        userRepository?.save(userObj)
+        userId = userObj.getId()
+
         val response = mockMvc!!.perform(
             get("/api/v1/timeline/0")
                 .header("Content-Type", "application/json")
@@ -261,6 +277,17 @@ class APITests {
     @Test
     @Throws(Exception::class)
     fun shouldReturnProperEndpointsForAdmin() {
+        val adminObj = User()
+        adminObj.setUsername("testadmin")
+        val encodedPassword = bcrypt.encode("testadmin")
+        adminObj.setPassword(encodedPassword)
+        adminObj.setAuthority("ROLE_ADMIN")
+        adminObj.setIsAuthorized(true)
+        adminKey = "00000000-00000000-00000000-00000001"
+        adminObj.setApikey(adminKey)
+        userRepository?.save(adminObj)
+        adminId = adminObj.getId()
+
         val response = mockMvc!!.perform(
             get("/api/v1/endpoints")
                 .header("Content-Type", "application/json")
@@ -291,12 +318,16 @@ class APITests {
     @Test
     @Throws(Exception::class)
     fun shouldReturnProperEndpointsForUser() {
+        val userObj: User? = userRepository?.findByApikey(userKey)
+        userObj?.setIsAuthorized(true)
+        userRepository?.save(userObj!!)
+
         val response = mockMvc!!.perform(
             get("/api/v1/endpoints")
                 .header("Content-Type", "application/json")
                 .header("X-Api-Key", userKey)
         )
-//        println(response.andReturn().response.contentAsString)
+
         response
             .andExpect(status().isOk)
             .andExpect(content().string(containsString("user")))
