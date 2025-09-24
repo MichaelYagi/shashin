@@ -165,6 +165,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    fun countAllByLatIsNullAndLngIsNull(): Int
 
+   @Query("SELECT SUBSTR(place_name, 1, INSTR(place_name, ';') - 1) as placename, COUNT(*) as count FROM metadata WHERE place_name IS NOT NULL GROUP BY SUBSTR(place_name, 1, INSTR(place_name, ';') - 1) ORDER BY count DESC", nativeQuery = true)
+   fun countByLocation(): MutableIterable<LocationCount>
+
    @Query("SELECT camera, COUNT(*) AS count FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY count DESC", nativeQuery = true)
    fun countByCameraType(): MutableIterable<CameraTypeCount>
 

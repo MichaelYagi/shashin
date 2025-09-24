@@ -313,6 +313,26 @@ class DashboardController {
             response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
             response["cameraTotalCount"] = cameraTotals
 
+            // Placename stats
+            val placenameCounts = metadataRepository.countByLocation()
+            val placenameCountList = ArrayList<HashMap<String, Any>>()
+            var placenameTotals = 0
+            if (placenameCounts.count() > 0) {
+                val maxplacenameCount = placenameCounts.toList()[0].getCount()
+                for (placenameCount in placenameCounts) {
+                    placenameTotals++
+                    if (placenameCount.getPlacename() != null && placenameCount.getCount() != null && placenameCount.getCount()!! > maxplacenameCount!! * 0.03) {
+                        val placenameCountMap = HashMap<String, Any>()
+                        var placeName = placenameCount.getPlacename().toString()
+                        placenameCountMap["y"] = placeName
+                        placenameCountMap["x"] = placenameCount.getCount().toString().toInt()
+                        placenameCountList.add(placenameCountMap)
+                    }
+                }
+            }
+            response["placenameCountJson"] = mapper.writeValueAsString(placenameCountList)
+            response["placenameTotalCount"] = placenameTotals
+
             val browserCount = useragentRepository.countDistinctAgentName()
             val osCount = useragentRepository.countDistinctOsName()
             response["browserTotalCount"] = browserCount

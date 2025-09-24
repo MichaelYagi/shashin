@@ -206,6 +206,69 @@ class Dashboard {
         });
     }
 
+    displayPlacenameChart(data) {
+        const ctx = $('#placenameChart');
+        const placenameCountObj = JSON.parse(data.placenameCountJson);
+        const placenameChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                datasets: [{
+                    data: placenameCountObj,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 1)'
+                    ]
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        ticks: {
+                            // Truncate ticks
+                            callback: function (index) {
+                                let labelValue = placenameCountObj[index].y;
+                                if (labelValue.length > 24) {
+                                    labelValue = labelValue.substring(0, 25) + "...";
+                                }
+                                return labelValue;
+                            },
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    },
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                },
+                plugins: {
+                    legend: false
+                },
+                maintainAspectRatio: false
+            }
+        });
+
+        // Click label
+        $('#placenameChart').on('click', function (evt) {
+            let point = Chart.helpers.getRelativePosition(evt, placenameChart);
+            let datasetIndex = placenameChart.scales.y.getValueForPixel(point.y);
+            if (datasetIndex >= 0) {
+                let label = placenameCountObj[datasetIndex].y;
+                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
+                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
+                }
+            }
+        });
+        $('#placenameChart').on('mouseenter', function (e) {
+            e.target.style.cursor = 'pointer';
+        });
+        $('#placenameChart').on('mouseleave', function (e) {
+            e.target.style.cursor = 'default';
+        });
+    }
+
     displayUserChart(data) {
         const ctx = $('#userChart');
 
