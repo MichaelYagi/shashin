@@ -289,15 +289,15 @@
         if (isSelected) {
             shashin.addToMetadataIdList(metadataId);
             // shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
-            // shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+            shashin.addToMetadataThumbnailsList("/api/v1/thumbnails/centered/"+metadataId);
             if (isVideo && !Util.isMobile()) {
                 const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
                 $("#image" + metadataId).attr("src", jpgUrl);
             }
         } else {
             shashin.removeFromMetadataIdList(metadataId);
-            shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
-            shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+            // shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
+            shashin.removeFromMetadataThumbnailsList("/api/v1/thumbnails/centered/"+metadataId);
             if (isVideo && !Util.isMobile() && (view !== "timeline" || (timelineSettings && !timelineSettings.isScrolling))) {
                 const gifUrl = $("#image" + metadataId).attr("src").replace("/225/" + metadataId, "/gif/" + metadataId);
                 $("#image" + metadataId).attr("src", gifUrl);
