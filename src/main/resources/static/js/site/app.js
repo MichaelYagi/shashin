@@ -666,6 +666,8 @@
         $("#matchToolsBatchEdit").on("click", function(e) {
             e.preventDefault();
 
+            $("#editPhotosNamesModalLabel").html("");
+
             let metadataIdList = [];
             let metadataFilenamesArray = shashin.getMetadataFilenamesList();
             let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();

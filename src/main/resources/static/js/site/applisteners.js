@@ -3,6 +3,8 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
 
     shashin.stopRendering = true;
 
+    $("#editPhotosNamesModalLabel").html("");
+
     let thumbnailList = "";
     let metadataIdArray = shashin.getMetadataIdList();
 
