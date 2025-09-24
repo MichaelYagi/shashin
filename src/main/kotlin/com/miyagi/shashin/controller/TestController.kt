@@ -51,6 +51,9 @@ class TestController {
     @Autowired
     private lateinit var testRepository: TestRepository
 
+    @Autowired
+    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
 
@@ -77,6 +80,14 @@ class TestController {
         model["activePage"] = "test"
         model["mike"] = "Mike"
         model["noah"] = "Noah"
+
+        println("recognitionLabelPhotoCount:")
+        val recognitionLabelPhotoCount =
+            recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                2,
+                "18f15435-a2da-3492-a62e-a27d113b7655"
+            )
+        println(recognitionLabelPhotoCount)
 
         model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
         model["defaultTZ"] = ZoneId.systemDefault()

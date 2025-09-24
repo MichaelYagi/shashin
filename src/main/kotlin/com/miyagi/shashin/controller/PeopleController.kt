@@ -915,21 +915,28 @@ class PeopleController: BaseController() {
                     response["recognitionLabels"] = recognitionLabels
                 }
 
-                metadataList = if (module == "person") {
-                    metadataRepository?.findMetadataByPersonByModified(
-                        settings.getRecognitionConfidenceThreshold()!!,
-                        personId,
-                        pageValue,
-                        size
-                    )
-                } else {
-                    metadataRepository?.findMetadataByPerson(
-                        settings.getRecognitionConfidenceThreshold()!!,
-                        personId,
-                        pageValue,
-                        size
-                    )
-                }
+//                metadataList = if (module == "person") {
+//                    metadataRepository?.findMetadataByPersonByModified(
+//                        settings.getRecognitionConfidenceThreshold()!!,
+//                        personId,
+//                        pageValue,
+//                        size
+//                    )
+//                } else {
+//                    metadataRepository?.findMetadataByPerson(
+//                        settings.getRecognitionConfidenceThreshold()!!,
+//                        personId,
+//                        pageValue,
+//                        size
+//                    )
+//                }
+
+                metadataList = metadataRepository?.findMetadataByPerson(
+                    settings.getRecognitionConfidenceThreshold()!!,
+                    personId,
+                    pageValue,
+                    size
+                )
             }
 
             val albumList = albumRepository?.findAllOrderByAlbumName()

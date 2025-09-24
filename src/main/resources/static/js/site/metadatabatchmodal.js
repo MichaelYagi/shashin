@@ -122,7 +122,7 @@ async function saveBatchMetadata(e) {
     }
 
     $("#metadataBatchModalCancel").prop("disabled", true);
-    $("saveBatchMetadata").prop("disabled", true);
+    $("#saveBatchMetadata").prop("disabled", true);
     $("#msgBatchMetadata").html("");
     $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
     $("#metadataBatchModalStatus").visible();
@@ -154,6 +154,7 @@ async function saveBatchMetadata(e) {
         }
     }
 
+console.log("test1zzz");
     if ($("#batchrescan").prop("checked")) {
         $("#rescanBatchMetadataConfirmation").modal('show');
     } else if (Util.validateMetadataInputs(
@@ -165,6 +166,7 @@ async function saveBatchMetadata(e) {
         $("#latlngBatchData").val(),
         ""
     ) === true) {
+console.log("test2zzz");
         if ($("#batchisobject").is(':checked')) {
             $("#batchisobject").val("on");
         }
@@ -231,7 +233,7 @@ async function saveBatchMetadata(e) {
                 }, 0);
             }
         }
-
+console.log(data);
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data.status === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("keywords") && data.keywords !== "") {
@@ -355,12 +357,12 @@ async function saveBatchMetadata(e) {
             $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataBatchModalCancel").prop("disabled", false);
         }
-        $("saveBatchMetadata").prop("disabled", false);
+        $("#saveBatchMetadata").prop("disabled", false);
         propBatchMetadataModal._config.backdrop = true;
         propBatchMetadataModal._config.keyboard = true;
     } else {
         $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-        $("saveBatchMetadata").prop("disabled", false);
+        $("#saveBatchMetadata").prop("disabled", false);
         propBatchMetadataModal._config.backdrop = true;
         propBatchMetadataModal._config.keyboard = true;
     }

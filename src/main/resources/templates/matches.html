@@ -17,6 +17,7 @@
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
+            <input type="hidden" id="personId" name="personId" th:value="${parameter}">
 
 <!--            <h1 th:inline="text">[[${personInfo.name}]]</h1>-->
             <div class="mt-2" id="matchesMessage"></div>
@@ -93,7 +94,6 @@
         //     shashin.jumpToLightGalleryIndex(e.detail.index);
         // })
 
-        shashin.matchingListeners();
         // Util.checkErrorImage();
     });
 </script>

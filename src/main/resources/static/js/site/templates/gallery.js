@@ -5,6 +5,7 @@ class GalleryTemplates {
             <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+metadata.id}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':"/api/v1/thumbnails/112/"+metadata.id}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${isMobile?120:metadata.thumbnailSmallWidth}" height="${isMobile?120:metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${"/api/v1/thumbnails/centered/"+metadata.id}">
+            <input type="hidden" name="dateTaken${metadata.id}" id="dateTaken${metadata.id}" value="${metadata.year}-${metadata.month}-${metadata.day}">
             
             ${(activePage === "share")?
             `<div class="thumbnail-bl" id="tnbl${metadata.id}">
