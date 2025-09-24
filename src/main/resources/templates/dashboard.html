@@ -208,6 +208,23 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col pb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 id="placenameCount"></h2>
+                            <p class="text-muted"><th:block th:text="#{main.pages.dashboard.placenames}"></th:block></p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.placenamestats}"></th:block></h5>
+                            <p class="card-text">
+                                <canvas id="placenameChart" height="600"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
@@ -352,6 +369,7 @@
                     $("#sidecarUsableSizeText").html("<small class='text-muted'>" + data["sidecarUsableSizeText"] + " " + shashin.getTranslatedValue("main.pages.dashboard.usablespace") + "</small>");
                     $("#mediaCount").text(numberWithCommas(parseInt(data["photoCount"]) + parseInt(data["videoCount"])));
                     $("#cameraCount").text(numberWithCommas(parseInt(data["cameraTotalCount"])));
+                    $("#placenameCount").text(numberWithCommas(parseInt(data["placenameTotalCount"])));
                     $("#keywordCount").text(numberWithCommas(parseInt(data["keywordTotalCount"])));
 
                     const siteStatChartData = {};
@@ -377,6 +395,9 @@
                     const cameraChartData = {};
                     cameraChartData["cameraCountJson"] = data["cameraCountJson"];
 
+                    const placenameChartData = {};
+                    placenameChartData["placenameCountJson"] = data["placenameCountJson"];
+
                     const agentNameChartData = {};
                     agentNameChartData["agentNameCountJson"] = data["agentNameCountJson"];
 
@@ -391,6 +412,7 @@
                     dashboard.displayUserChart(userChartData);
                     dashboard.displayMediaChart(mediaChartData);
                     dashboard.displayCameraChart(cameraChartData);
+                    dashboard.displayPlacenameChart(placenameChartData)
                     dashboard.displayAgentNameChart(agentNameChartData);
                     dashboard.displayOsNameChart(osNameChartData);
                     dashboard.displayKeywordChart(keywordChartData);
