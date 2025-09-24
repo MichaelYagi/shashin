@@ -131,12 +131,17 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/metadata/range/{anchorId}/{selectId}/{view}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, locale: Locale): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, @RequestParam personId: Optional<Int>, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<String>()
         val retMetadataFilenameArray = mutableListOf<String>()
         val retMetadataThumbnailArray = mutableListOf<String>()
         val retMetadataDatesArray = mutableListOf<String>()
         val response = mutableMapOf<String, Any?>()
+        val settings = model.getAttribute("settings") as Settings
+        var currentUserObj: User? = null
+        if (model.getAttribute("currentUser") != "") {
+            currentUserObj = model.getAttribute("currentUser") as User?
+        }
 
         response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
@@ -148,6 +153,7 @@ class TimelineController: BaseController() {
 
         if (anchorId !== null && anchorId !== "" && selectId !== null && selectId !== "" && anchorId !== selectId) {
             val albumIdCopy = albumId.orElse(0)
+            val personIdCopy = personId.orElse(0)
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
@@ -156,7 +162,7 @@ class TimelineController: BaseController() {
                 "modified" -> anchorMetadata?.getModifiedAt().orEmpty()
                 "recent" -> anchorMetadata?.getAddedAt().orEmpty()
                 else -> {
-                    // Taken, albums or timeline view
+                    // Taken, albums, person, matches or timeline view
                     anchorMetadata?.getTakenAt().orEmpty()
                 }
             }
@@ -166,7 +172,7 @@ class TimelineController: BaseController() {
                 "modified" -> selectMetadata?.getModifiedAt().orEmpty()
                 "recent" -> selectMetadata?.getAddedAt().orEmpty()
                 else -> {
-                    // Taken, albums or timeline view
+                    // Taken, albums, person, matches or timeline view
                     selectMetadata?.getTakenAt().orEmpty()
                 }
             }
@@ -242,6 +248,24 @@ class TimelineController: BaseController() {
                             startDate,
                             endDate,
                             mediaType.toString()
+                        )
+                    }
+                } else if (view == "matches" && personIdCopy > 0) {
+                    metadataRepository.findLowMatchesByPersonAndDate(startDate, endDate, personIdCopy, settings.getRecognitionConfidenceThreshold()!!)
+                } else if (view == "person" && personIdCopy > 0) {
+                    if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
+                        metadataRepository.findAlbumPhotoByPersonAndDate(
+                            startDate,
+                            endDate,
+                            settings.getRecognitionConfidenceThreshold()!!,
+                            personIdCopy,
+                            currentUserObj.getId()
+                        )
+                    } else {
+                        metadataRepository.findMetadataByPersonAndDate(
+                            startDate, endDate,
+                            settings.getRecognitionConfidenceThreshold()!!,
+                            personIdCopy
                         )
                     }
                 } else if (albumIdCopy > 0) {

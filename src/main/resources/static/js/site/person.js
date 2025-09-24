@@ -29,7 +29,6 @@ class Person {
         setTimeout(async () => {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList, this.activePage);
         }, 0);
-        shashin.matchingListeners();
 
         $('#savePersonModal').on("click", async function (e) {
 

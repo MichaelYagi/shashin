@@ -10,8 +10,6 @@
 
 <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
 
-<div th:replace="~{fragments/infosidebar :: infosidebar(${currentUser})}"></div>
-
 <div th:replace="~{fragments/persongroup :: person(${activePage},${parameter},${counts},${faceRecogServicesAvailable},${authority},${settings.facialDetection})}"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto mt-2">
@@ -39,6 +37,7 @@
                                 <img loading="lazy" draggable="false" th:src="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}">
                                 <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
                                 <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
+                                <input type="hidden" th:name="'dateTaken'+${metadata.id}" th:id="'dateTaken'+${metadata.id}" th:value="${metadata.year+'-'+metadata.month+'-'+metadata.day}">
 
                                 <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},${(authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER') and labelPhotoMap.get(metadata.id).get('isTagged')})}"></div>
 

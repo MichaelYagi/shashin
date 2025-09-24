@@ -103,6 +103,9 @@
             if (view === "album") {
                 const albumId = $("#albumId").val();
                 url += `?albumId=${albumId}&v=${version}`;
+            } else if (view === "person" || view === "matches") {
+                const personId = $("#personId").val();
+                url += `?personId=${personId}&v=${version}`;
             } else {
                 url += `?v=${version}`;
             }
@@ -324,7 +327,7 @@
         };
 
         if (hasSelection) {
-            if (["album", "favorites", "archived"].includes(view)) {
+            if (["album", "favorites", "archived", "matches", "person"].includes(view)) {
                 showTools("#albumAppTools", view === "album" ? "#albumTools" : null);
             } else if (["timeline", "recent", "accessed", "modified", "taken", "folder", "search"].includes(view)) {
                 showTools("#timelineAppTools", ["timeline", "folder"].includes(view) ? "#timelineTools" : null);
@@ -388,13 +391,23 @@
 
     shashin.setDateSection = function(metadataId, view) {
         setTimeout(function () {
-            const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
+            let date = "";
+            if (view === "matches" || view === "person") {
+                date = $("#dateTaken"+metadataId).val();
+            } else {
+                const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
+                date = rowId.replace("row", "").replace("dateBody", "");
+            }
 
-            let date = rowId.replace("row", "");
-            date = date.replace("dateBody", "");
             const selectedMetadata = shashin.getMetadataIdList();
 
-            if (view === "timeline" || view === "taken" || view === "album" || view === "accessed" || view === "modified" || view === "recent") {
+            if (view === "timeline" ||
+                view === "taken" ||
+                view === "album" ||
+                view === "accessed" ||
+                view === "modified" ||
+                view === "recent"
+            ) {
                 let url = "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata";
                 if (view === "album") {
                     const albumId = $("#albumId").val();
