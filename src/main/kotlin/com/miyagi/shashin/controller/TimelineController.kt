@@ -41,8 +41,11 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
+import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import kotlin.String
 import kotlin.collections.ArrayList
 import kotlin.collections.set
@@ -1147,6 +1150,33 @@ class TimelineController: BaseController() {
                                     geocodeUrl!!
                                 )
                                 metadataCopy = metadataProcessing.populateMetadata()
+
+                                if (!metadataCopy.getLat().isNullOrBlank() && !metadataCopy.getLng().isNullOrBlank()) {
+                                    val lat = metadataCopy.getLat().toString()
+                                    val lng = metadataCopy.getLng().toString()
+                                    val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
+
+                                    val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
+                                    if (buildPlace.isNotBlank()) {
+                                        metadataCopy.setPlaceName(buildPlace)
+
+                                        val engine = TimeZoneEngine.initialize()
+                                        val maybeZoneId: Optional<ZoneId> =
+                                            engine.query(
+                                                lat.toString().toDouble(),
+                                                lng.toString().toDouble()
+                                            )
+                                        val zone = ZoneId.of(maybeZoneId.get().id)
+                                        val dt = LocalDateTime.now()
+                                        val zdt: ZonedDateTime = dt.atZone(zone)
+                                        val offset = zdt.offset
+                                        metadataCopy.setTimeZone(offset.toString())
+                                        logger.log(
+                                            Level.INFO,
+                                            "Place set for " + metadataCopy.getFileName()
+                                        )
+                                    }
+                                }
 
                                 val imageProcessing =
                                     ImageProcessing(apiVersion, File(metadataPath), sidecarDir, metadataCopy)
