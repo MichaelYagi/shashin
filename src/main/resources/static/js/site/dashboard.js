@@ -718,9 +718,7 @@ class Dashboard {
                     // Reload page if NaN, 0 or greater than 1
                     if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
                         shashin.printMessageToConsole("Crossed threshold for invalid system stat counter values. Reloading page.",{tag:"dashboard"});
-                        //Dashboard.handleHardReload(window.location.href).then(null);
-                        disconnect();
-                        connect();
+                        Dashboard.handleHardReload(window.location.href).then(null);
                     }
 
                     const processCpuLoadPercent = Math.ceil(systemStats.processCpuLoadPercentDouble*100)|0;
@@ -778,11 +776,7 @@ class Dashboard {
 
         function sendMessage() {
             if (stompClient !== null) {
-                try {
-                    stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
-                } catch (_) {
-                    connect();
-                }
+                stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
             } else {
                 shashin.printMessageToConsole("Trying to send message but STOMP client is null", {
                     consoleType: shashin.consoleTypes.error
