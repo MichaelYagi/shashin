@@ -2,6 +2,7 @@ package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.FavoriteCount
+import com.miyagi.shashin.model.Metadata
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -16,6 +17,14 @@ interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     fun countAllByUserId(@Param("userId") userId: Int): Int?
     @Query("SELECT f.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByUserIdAndOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Favorite?>?
+    @Query("SELECT m.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId AND m.hidden = 0 AND m.taken_at >= :startDate AND m.taken_at <= :endDate ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAllByUserIdAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("userId") userId: Int): MutableList<Metadata>?
+    @Query("SELECT m.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId AND m.hidden = 0 AND m.taken_at >= :startDate AND m.taken_at <= :endDate AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAllByUserIdAndDateNoCoord(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("userId") userId: Int): MutableList<Metadata>?
+    @Query("SELECT m.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId AND m.hidden = 0 AND m.taken_at >= :startDate AND m.taken_at <= :endDate AND m.description IS NOT NULL AND m.description != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAllByUserIdAndDateByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("userId") userId: Int): MutableList<Metadata>?
+    @Query("SELECT m.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId AND m.hidden = 0 AND m.taken_at >= :startDate AND m.taken_at <= :endDate AND m.type LIKE %:type% ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAllByUserIdAndDateByMediaType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("userId") userId: Int, @Param("type") type: String): MutableList<Metadata>?
     @Query("SELECT f.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId AND m.type LIKE %:type% AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByUserIdAndMediaTypeAndOffsetAndLimit(@Param("userId") userId: Int, @Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Favorite?>?
     @Query("SELECT COUNT(f.metadata_id) FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId AND m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)

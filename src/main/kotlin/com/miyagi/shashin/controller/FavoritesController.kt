@@ -59,6 +59,48 @@ class FavoritesController: BaseController() {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/favorites/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getFavouriteMetadataListFromDate(model: Model, @PathVariable date: String, @PathVariable mediaType: String, locale: Locale): String? {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataList"] = mutableListOf<Metadata>()
+        val dateArray = date.split("-")
+
+        if (dateArray.size == 3) {
+            val year = dateArray[0].toInt()
+            val month = dateArray[1].toInt()
+            val day = dateArray[2].toInt()
+
+            val dbDate = year.toString() + "-" + (if (month > 9) month.toString() else "0$month") + "-" + (if (day > 9) day.toString() else "0$day")
+            val startDate = "$dbDate 00:00:00"
+            val endDate = "$dbDate 23:59:59"
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+            var metadataList: MutableList<Metadata>? = mutableListOf<Metadata>()
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null) {
+                metadataList = if (mediaType == "all") {
+                    favoriteRepository.findAllByUserIdAndDate(startDate, endDate, currentUserObj.getId())
+                } else if (mediaType == "nolatlng") {
+                    favoriteRepository.findAllByUserIdAndDateNoCoord(startDate, endDate, currentUserObj.getId())
+                } else if (mediaType == "description") {
+                    favoriteRepository.findAllByUserIdAndDateByDescription(startDate, endDate, currentUserObj.getId())
+                } else {
+                    favoriteRepository.findAllByUserIdAndDateByMediaType(startDate, endDate, currentUserObj.getId(), mediaType.toString())
+                }
+            }
+
+            response["metadataList"] = metadataList
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/favorites", "/favorites/{mediaType}"], method = [RequestMethod.GET])
     fun getFavorites(model: Model,@PathVariable(required = false) mediaType: String?, locale: Locale): String {
         val module = "favorites"
