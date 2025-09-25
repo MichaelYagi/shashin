@@ -716,7 +716,10 @@ class Dashboard {
                     // Reload page if NaN, 0 or greater than 1
                     if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
                         shashin.printMessageToConsole("Crossed threshold for invalid system stat counter values. Reloading page.",{tag:"dashboard"});
-                        Dashboard.handleHardReload(window.location.href).then(null);
+                        //Dashboard.handleHardReload(window.location.href).then(null);
+                        disconnect();
+                        connect();
+                        scanRefresh();
                     }
 
                     const processCpuLoadPercent = Math.ceil(systemStats.processCpuLoadPercentDouble*100)|0;
