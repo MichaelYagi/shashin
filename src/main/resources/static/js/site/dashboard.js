@@ -778,7 +778,11 @@ class Dashboard {
 
         function sendMessage() {
             if (stompClient !== null) {
-                stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
+                try {
+                    stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
+                } catch (_) {
+                    connect();
+                }
             } else {
                 shashin.printMessageToConsole("Trying to send message but STOMP client is null", {
                     consoleType: shashin.consoleTypes.error
