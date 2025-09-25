@@ -103,13 +103,13 @@
             if (view === "album") {
                 const albumId = $("#albumId").val();
                 url += `?albumId=${albumId}&v=${version}`;
-            } else if (view === "person" || view === "matches") {
+            } else if (view === "person" || view === "matches" || view === "favorites") {
                 const personId = $("#personId").val();
                 url += `?personId=${personId}&v=${version}`;
             } else {
                 url += `?v=${version}`;
             }
-
+console.log(url)
             http.ajax("get", url, null, function () {
                 // Fail
                 // Restore all links inside divs
@@ -131,7 +131,7 @@
                     const chunkSize = (view === "timeline") ? shashin.getMetadataIdList() : 50;
                     const pendingUpdates = [];
                     let chunkComplete = false;
-
+console.log(metadataIdArray)
                     setTimeout(function () {
                         if (isSelected) {
                             shashin.addAllToMetadataIdList(metadataIdArray, true);
@@ -327,14 +327,6 @@
         };
 
         if (hasSelection) {
-            // if (["album", "favorites", "archived", "matches", "person"].includes(view)) {
-            //     showTools("#albumAppTools", view === "album" ? "#albumTools" : null);
-            // } else if (["timeline", "recent", "accessed", "modified", "taken", "folder", "search"].includes(view)) {
-            //     showTools("#albumAppTools", ["timeline", "folder"].includes(view) ? "#timelineTools" : null);
-            // } else if (["matches", "person", "compreface"].includes(view)) {
-            //     showTools("#albumAppTools", "#timelineTools");
-            // }
-
             showTools("#albumAppTools");
 
             $(".thumbnail-br, .thumbnail-bl, .thumbnail-centered").hide();
@@ -342,14 +334,6 @@
             $(".photo-thumbnail-container").removeClass("border border-3 border-primary");
             $(".photo-thumbnail-image").removeClass("pb-1");
             shashin.multiSelected = false;
-            $("#timelineAppTools, #albumAppTools, #matchesAppTools").hide();
-
-            // if (["timeline", "folder", "matches", "person", "compreface"].includes(view)) {
-            //     $("#timelineTools").show();
-            // } else if (view === "album") {
-            //     $("#albumTools").show();
-            // }
-
             $("#albumTools").show();
         }
     };
@@ -410,6 +394,7 @@
                 view === "album" ||
                 view === "accessed" ||
                 view === "modified" ||
+                view === "favorites" ||
                 view === "recent"
             ) {
                 let url = "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata";
@@ -418,6 +403,8 @@
                     url = "/album/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/" + albumId;
                 } else if (view === "accessed" || view === "modified" || view === "recent" || view === "taken") {
                     url = "/browse/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/" + view;
+                } else if (view === "favorites") {
+                    url = "/favorites/mediatype/" + shashin.mediaTypeFilter + "/date/" + date;
                 }
 
                 const http = new Http("get month data");

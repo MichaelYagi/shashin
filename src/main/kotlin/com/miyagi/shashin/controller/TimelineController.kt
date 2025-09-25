@@ -250,6 +250,16 @@ class TimelineController: BaseController() {
                             mediaType.toString()
                         )
                     }
+                } else if (view == "favorites" && personIdCopy > 0) {
+                    if (mediaType == "all") {
+                        favoriteRepository.findAllByUserIdAndDate(startDate, endDate, personIdCopy)
+                    } else if (mediaType == "nolatlng") {
+                        favoriteRepository.findAllByUserIdAndDateNoCoord(startDate, endDate, personIdCopy)
+                    } else if (mediaType == "description") {
+                        favoriteRepository.findAllByUserIdAndDateByDescription(startDate, endDate, personIdCopy)
+                    } else {
+                        favoriteRepository.findAllByUserIdAndDateByMediaType(startDate, endDate, personIdCopy, mediaType.toString())
+                    }
                 } else if (view == "matches" && personIdCopy > 0) {
                     metadataRepository.findLowMatchesByPersonAndDate(startDate, endDate, personIdCopy, settings.getRecognitionConfidenceThreshold()!!)
                 } else if (view == "person" && personIdCopy > 0) {

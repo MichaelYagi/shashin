@@ -17,6 +17,7 @@
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
+            <input type="hidden" id="personId" name="personId" th:value="${currentUser.id}">
 
             <div id="favoritesMessage"></div>
             <div id="infinite-scroll-gallery">
