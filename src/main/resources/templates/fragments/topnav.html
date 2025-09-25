@@ -131,7 +131,9 @@
             <th:block th:if="${activePage == 'timeline' || activePage == 'archived' || activePage == 'favorites' || activePage == 'recent' || activePage == 'modified' || activePage == 'taken' || activePage == 'accessed' || activePage == 'folder' || activePage == 'search' || activePage == 'album' || activePage == 'person' || activePage == 'matches'}">
                 <div id="albumAppTools">
                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
-                        <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.modal.batch.header}"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                        <th:block th:unless="${activePage == 'archived'}">
+                            <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.modal.batch.header}"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                        </th:block>
                         <th:block th:if="${activePage == 'album'}">
                             <a href="#" id="albumAppToolsRemoveAlbum" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.removealbum}"><span th:class="'bi-bookmark-x placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
                         </th:block>

@@ -96,7 +96,7 @@
         });
 
         // Multiselect doubletap logic
-        if (Util.isMobile() === true && view !== "folder" && view !== "archived") {
+        if (Util.isMobile() === true) {
             $("#photoThumbnailContainer" + metadata.id).on("pointerup", shashin.detectDoubleTap(200));
             $("#photoThumbnailContainer" + metadata.id).on("doubletap", function(e) {
                 e.preventDefault();
@@ -107,48 +107,46 @@
             });
         }
 
-        if (view !== "folder" && view !== "archived") {
-            $("#photoThumbnailContainer" + metadata.id).hover(function (e) {
+        $("#photoThumbnailContainer" + metadata.id).hover(function (e) {
+            e.preventDefault();
+
+            // Multi select
+            $(document).bind("keydown", function (e) {
                 e.preventDefault();
 
-                // Multi select
-                $(document).bind("keydown", function (e) {
-                    e.preventDefault();
+                // Shift key may not be available for Mac
+                if (Util.getOS() === "MacOS" && (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83)) {
+                    shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
 
-                    // Shift key may not be available for Mac
-                    if (Util.getOS() === "MacOS" && (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83)) {
-                        shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
-
-                        metadataIdArray = shashin.batchSelect(metadata.id, view);
-                    }
-
-                    if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.which === 16 || e.keyCode === 16) {
-                        shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
-
-                        metadataIdArray = shashin.batchSelect(metadata.id, view);
-                    }
-                });
-
-                if (metadata.type.includes("video") && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
-                ) {
-                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                        const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
-                        $("#image" + metadata.id).attr("src", gifUrl);
-                    } else if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
-                        const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
-                        $("#image" + metadata.id).attr("src", jpgUrl);
-                    }
+                    metadataIdArray = shashin.batchSelect(metadata.id, view);
                 }
-            }, function () {
-                $(document).unbind("keydown");
-                $(document).unbind("dblclick");
 
-                if (metadata.type.includes("video") && Util.isMobile() === false) {
+                if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.which === 16 || e.keyCode === 16) {
+                    shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
+
+                    metadataIdArray = shashin.batchSelect(metadata.id, view);
+                }
+            });
+
+            if (metadata.type.includes("video") && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+            ) {
+                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                    const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
+                    $("#image" + metadata.id).attr("src", gifUrl);
+                } else if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
                     const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
                     $("#image" + metadata.id).attr("src", jpgUrl);
                 }
-            });
-        }
+            }
+        }, function () {
+            $(document).unbind("keydown");
+            $(document).unbind("dblclick");
+
+            if (metadata.type.includes("video") && Util.isMobile() === false) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+        });
 
         $("#image" + metadata.id).hover(function () {
             // Only show overlays when scrolling stopped in timeline view

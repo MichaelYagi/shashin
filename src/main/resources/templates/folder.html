@@ -11,6 +11,7 @@
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
+            <input type="hidden" id="folderName" name="folderName" th:value="${folder}">
 
             <div th:replace="~{fragments/metadatamodal :: metadatamodal(${currentUser})}"></div>
 

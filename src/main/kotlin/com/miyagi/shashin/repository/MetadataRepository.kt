@@ -177,6 +177,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT lens FROM metadata WHERE lens IS NOT NULL GROUP BY lens ORDER BY lens COLLATE NOCASE ASC", nativeQuery = true)
    fun findByLensTypeAlphabetical(): MutableIterable<String>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 1 AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   fun findAllByHiddenByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
    @Query("SELECT * FROM metadata WHERE hidden = 1 ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByHiddenAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
@@ -356,6 +359,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT * FROM metadata WHERE folder = :folder AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByFolderOffsetAndLimit(@Param("folder") folder: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT * FROM metadata WHERE folder = :folder AND hidden = 0 AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   fun findAllByFolderBeDates(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("folder") folder: String): MutableList<Metadata>?
 
    @Query("SELECT COUNT(*) FROM metadata WHERE folder = :folder AND hidden = 0", nativeQuery = true)
    fun countFolder(@Param("folder") folder: String): Int

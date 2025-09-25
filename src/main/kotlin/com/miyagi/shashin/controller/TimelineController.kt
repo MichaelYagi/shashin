@@ -9,6 +9,7 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.*
+import com.miyagi.shashin.util.TextUtils.Companion.getCommonDateFormat
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import io.swagger.v3.oas.annotations.Operation
@@ -46,6 +47,7 @@ import org.springframework.context.MessageSource
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.String
 import kotlin.collections.ArrayList
 import kotlin.collections.set
@@ -131,7 +133,7 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/metadata/range/{anchorId}/{selectId}/{view}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, @RequestParam personId: Optional<Int>, locale: Locale): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, @RequestParam personId: Optional<Int>, @RequestParam folderName: Optional<String>, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<String>()
         val retMetadataFilenameArray = mutableListOf<String>()
         val retMetadataThumbnailArray = mutableListOf<String>()
@@ -154,6 +156,7 @@ class TimelineController: BaseController() {
         if (anchorId !== null && anchorId !== "" && selectId !== null && selectId !== "" && anchorId !== selectId) {
             val albumIdCopy = albumId.orElse(0)
             val personIdCopy = personId.orElse(0)
+            val folderNameCopy = folderName.orElse("")
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
@@ -161,6 +164,7 @@ class TimelineController: BaseController() {
                 "accessed" -> anchorMetadata?.getLastAccessedAt().orEmpty()
                 "modified" -> anchorMetadata?.getModifiedAt().orEmpty()
                 "recent" -> anchorMetadata?.getAddedAt().orEmpty()
+                "archived" -> anchorMetadata?.getModifiedAt().orEmpty()
                 else -> {
                     // Taken, albums, person, matches or timeline view
                     anchorMetadata?.getTakenAt().orEmpty()
@@ -171,6 +175,7 @@ class TimelineController: BaseController() {
                 "accessed" -> selectMetadata?.getLastAccessedAt().orEmpty()
                 "modified" -> selectMetadata?.getModifiedAt().orEmpty()
                 "recent" -> selectMetadata?.getAddedAt().orEmpty()
+                "archived" -> selectMetadata?.getModifiedAt().orEmpty()
                 else -> {
                     // Taken, albums, person, matches or timeline view
                     selectMetadata?.getTakenAt().orEmpty()
@@ -250,6 +255,10 @@ class TimelineController: BaseController() {
                             mediaType.toString()
                         )
                     }
+                } else if (view == "archived") {
+                    metadataRepository.findAllByHiddenByDate(startDate, endDate)
+                } else if (view == "folder" && folderNameCopy.isNotEmpty()) {
+                    metadataRepository.findAllByFolderBeDates(startDate, endDate, folderNameCopy)
                 } else if (view == "favorites" && personIdCopy > 0) {
                     if (mediaType == "all") {
                         favoriteRepository.findAllByUserIdAndDate(startDate, endDate, personIdCopy)
@@ -2172,12 +2181,18 @@ class TimelineController: BaseController() {
         if (!idArray.isNullOrEmpty()) {
             val metadataList: ArrayList<Metadata> = ArrayList()
 
+            var index = 0
             for (id in idArray) {
+                index++
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
                 val metadata = metadataObj.get()
 
                 if (isHidden) {
-                    metadata.setModifiedAt(getCurrentTimestamp())
+                    val dtf = DateTimeFormatter.ofPattern(getCommonDateFormat())
+                    val now = LocalDateTime.now()
+                    val adjustedNow = now.plusSeconds(index.toLong())
+
+                    metadata.setModifiedAt(dtf.format(adjustedNow))
                     metadata.setHidden(true)
                     removeMetadata(id, locale)
                 }

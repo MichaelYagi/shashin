@@ -106,10 +106,13 @@
             } else if (view === "person" || view === "matches" || view === "favorites") {
                 const personId = $("#personId").val();
                 url += `?personId=${personId}&v=${version}`;
+            } else if (view === "folder") {
+                const folderName = $("#folderName").val();
+                url += `?folderName=${folderName}&v=${version}`;
             } else {
                 url += `?v=${version}`;
             }
-console.log(url)
+
             http.ajax("get", url, null, function () {
                 // Fail
                 // Restore all links inside divs
@@ -131,7 +134,7 @@ console.log(url)
                     const chunkSize = (view === "timeline") ? shashin.getMetadataIdList() : 50;
                     const pendingUpdates = [];
                     let chunkComplete = false;
-console.log(metadataIdArray)
+
                     setTimeout(function () {
                         if (isSelected) {
                             shashin.addAllToMetadataIdList(metadataIdArray, true);

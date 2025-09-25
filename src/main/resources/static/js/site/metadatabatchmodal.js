@@ -154,7 +154,6 @@ async function saveBatchMetadata(e) {
         }
     }
 
-console.log("test1zzz");
     if ($("#batchrescan").prop("checked")) {
         $("#rescanBatchMetadataConfirmation").modal('show');
     } else if (Util.validateMetadataInputs(
@@ -166,7 +165,6 @@ console.log("test1zzz");
         $("#latlngBatchData").val(),
         ""
     ) === true) {
-console.log("test2zzz");
         if ($("#batchisobject").is(':checked')) {
             $("#batchisobject").val("on");
         }
@@ -233,7 +231,7 @@ console.log("test2zzz");
                 }, 0);
             }
         }
-console.log(data);
+
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data.status === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("keywords") && data.keywords !== "") {
