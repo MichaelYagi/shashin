@@ -684,6 +684,8 @@ class Dashboard {
             sendMessage();
             elapsedMS += refreshRateMS;
             setTimeout(scanRefresh, refreshRateMS);
+            $('#cpuChart').load(document.URL + ' #cpuChart');
+            $('#memoryChart').load(document.URL + ' #memoryChart');
         }
 
         let counter = 0;
@@ -716,10 +718,7 @@ class Dashboard {
                     // Reload page if NaN, 0 or greater than 1
                     if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
                         shashin.printMessageToConsole("Crossed threshold for invalid system stat counter values. Reloading page.",{tag:"dashboard"});
-                        //Dashboard.handleHardReload(window.location.href).then(null);
-                        disconnect();
-                        connect();
-                        scanRefresh();
+                        Dashboard.handleHardReload(window.location.href).then(null);
                     }
 
                     const processCpuLoadPercent = Math.ceil(systemStats.processCpuLoadPercentDouble*100)|0;
