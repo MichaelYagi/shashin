@@ -2898,7 +2898,8 @@ class TimelineController: BaseController() {
                     val accessBrowser = freeFormObj.getBrowser()
                     val accessRequestResourceType = freeFormObj.getRequestResourceType()
                     val accessOS = freeFormObj.getOperatingSystem()
-                    val accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
+                    val accessPage = freeFormObj.getViewPage()
+                    val accessInfoString = " $accessPage - $accessOS $accessBrowser $accessRequestResourceType"
 
                     val uploadedByUserId = metadataRecord.get().getUploadedBy()
                     if (uploadedByUserId != null && uploadedByUserId > 0) {

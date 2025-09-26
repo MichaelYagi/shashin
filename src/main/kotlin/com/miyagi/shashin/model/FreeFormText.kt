@@ -5,6 +5,7 @@ class FreeFormText {
     private var browser: String? = null
     private var requestResourceType: String? = null
     private var operatingSystem: String? = null
+    private var viewPage: String? = null
 
     fun setClientIP(clientIP: String?) {
         this.clientIP = clientIP
@@ -18,6 +19,9 @@ class FreeFormText {
     fun setOperatingSystem(operatingSystem: String?) {
         this.operatingSystem = operatingSystem
     }
+    fun setViewPage(viewPage: String?) {
+        this.viewPage = viewPage
+    }
     fun getClientIP(): String? {
         return this.clientIP
     }
@@ -29,5 +33,8 @@ class FreeFormText {
     }
     fun getOperatingSystem(): String? {
         return this.operatingSystem
+    }
+    fun getViewPage(): String? {
+        return this.viewPage
     }
 }
