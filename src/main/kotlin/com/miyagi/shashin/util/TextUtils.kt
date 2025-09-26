@@ -96,8 +96,30 @@ class TextUtils {
             return "shashinobject"
         }
 
-        fun getMetadataFreeformString(model: Model): String {
-            return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()+"|"+model.getAttribute("agentOS").toString()
+        fun getMetadataFreeformString(model: Model, request: HttpServletRequest): String {
+            var referer = request.getHeader("Referer")
+            if (referer == null) {
+                referer = ""
+            } else {
+                try {
+                    val url = URL(referer);
+                    referer = url.path
+                } catch (e: MalformedURLException) {
+                    logger.log(
+                        Level.WARNING,
+                        e.message
+                    )
+                    referer = ""
+                }
+            }
+
+            val cookies = request.cookies
+            val preference = cookies?.firstOrNull { it.name == "activePage" }?.value
+            if (preference != null) {
+                referer = preference.toString()
+            }
+
+            return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()+"|"+model.getAttribute("agentOS").toString()+"|"+referer
         }
 
         fun parseMetadataFreeformString(freeformString: String?): FreeFormText? {
@@ -106,10 +128,27 @@ class TextUtils {
 
             if (infoArray != null && infoArray.size > 1) {
                 val freeForm = FreeFormText()
-                freeForm.setClientIP(infoArray[0])
-                freeForm.setBrowser(infoArray[1])
-                freeForm.setRequestResourceType(infoArray[2])
-                freeForm.setOperatingSystem(infoArray[3])
+                var elementExists = (infoArray.getOrNull(0))
+                if (elementExists != null) {
+                    freeForm.setClientIP(infoArray[0])
+                }
+                elementExists = (infoArray.getOrNull(1))
+                if (elementExists != null) {
+                    freeForm.setBrowser(infoArray[1])
+                }
+                elementExists = (infoArray.getOrNull(2))
+                if (elementExists != null) {
+                    freeForm.setRequestResourceType(infoArray[2])
+                }
+                elementExists = (infoArray.getOrNull(3))
+                if (elementExists != null) {
+                    freeForm.setOperatingSystem(infoArray[3])
+                }
+                freeForm.setViewPage("")
+                elementExists = (infoArray.getOrNull(4))
+                if (elementExists != null) {
+                    freeForm.setViewPage(infoArray[4])
+                }
                 freeFormText = freeForm
             }
 

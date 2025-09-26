@@ -392,7 +392,7 @@ class MediaServiceController {
         } else {
             metadataObj.setLastAccessedBy(0)
         }
-        metadataObj.setFreeFormString(TextUtils.getMetadataFreeformString(model))
+        metadataObj.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
         metadataRepository.save(metadataObj)
 
         var resource = FileSystemResource(path)
@@ -459,7 +459,7 @@ class MediaServiceController {
             } else {
                 metadata.setLastAccessedBy(0)
             }
-            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
+            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
             metadataRepository.save(metadata)
         }
 
@@ -499,7 +499,7 @@ class MediaServiceController {
             val metadata = metadataRepository.findByMetadataId(metadataId)
 
             if (metadata != null) {
-                updateLastAccessed(model, currentUser.getId(), metadata)
+                updateLastAccessed(model, request, currentUser.getId(), metadata)
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(metadata.getId())
                 resp["metadata"] = metadata
@@ -513,11 +513,11 @@ class MediaServiceController {
         return mapper.writeValueAsString(resp)
     }
 
-    fun updateLastAccessed(model: Model, userId: Int, metadata: Metadata) {
+    fun updateLastAccessed(model: Model, request: HttpServletRequest, userId: Int, metadata: Metadata) {
         Thread {
             metadata.setLastAccessedAt(getCurrentTimestamp())
             metadata.setLastAccessedBy(userId)
-            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
+            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
             metadataRepository.save(metadata)
         }.start()
     }
@@ -554,7 +554,7 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
-                updateLastAccessed(model, currentUser.getId(), randomMetadata)
+                updateLastAccessed(model, request, currentUser.getId(), randomMetadata)
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
@@ -660,7 +660,7 @@ class MediaServiceController {
                 })
 
             if (randomMetadata != null) {
-                updateLastAccessed(model, currentUser.getId(), randomMetadata)
+                updateLastAccessed(model, request, currentUser.getId(), randomMetadata)
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
@@ -740,7 +740,7 @@ class MediaServiceController {
                 }
 
             if (randomMetadata != null) {
-                updateLastAccessed(model, currentUser.getId(), randomMetadata)
+                updateLastAccessed(model, request, currentUser.getId(), randomMetadata)
 
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
@@ -931,7 +931,8 @@ class MediaServiceController {
             } else {
                 metadata.setLastAccessedBy(0)
             }
-            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
+
+            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
             metadataRepository.save(metadata)
 
             var path = metadataObj.get().getPath()!!

@@ -6,6 +6,16 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
 
+        const cookieName = "activePage";
+        const cookieValue = "slideshow";
+        const expirationDays = 30;
+
+        const date = new Date();
+        date.setTime(date.getTime() + (expirationDays * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+
+        document.cookie = `${cookieName}=${cookieValue}; ${expires}; path=/`;
+
         $("#slideshowProgress").css("transition", "width "+slideshow.const.pollTimeout+"ms ease-in-out");
         $("#slideshowProgressContainer").css("z-index", 999999);
 
@@ -606,6 +616,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     }
 
     function exitSlideshowGallery() {
+        document.cookie = "activePage=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
         document.body.style.overflow = 'visible';
 
         $("#slideshowContainer").css({
