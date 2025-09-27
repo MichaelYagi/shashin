@@ -55,6 +55,7 @@
             const $image = $("#image" + id);
             if ($image.length > 0) {
                 const imageUrl = $image.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+
                 $image.attr("src", imageUrl).css("opacity", opacityLevel);
 
                 const $icon = $("#tlicon" + id);
@@ -64,7 +65,7 @@
                 if (shouldSelect) {
                     shashin.selectClick(id, view, opaque, transparent, metadataArray, false);
 
-                    if (!isSelected && id !== metadataId && shashin.lastSelectedMetadataId !== id) {
+                    if (!isSelected && (shashin.lastSelectedMetadataId.trim().length === 0  || (id !== metadataId && shashin.lastSelectedMetadataId !== id))) {
                         $("#tntl" + id).css("display", "none");
                         $image.attr("src", imageUrl).css("opacity", transparent);
                     } else {
@@ -128,7 +129,7 @@
                     const metadataIdArray = data.metadataIdArray;
                     const metadataFilenameArray = data.metadataFilenameArray;
                     const metadataThumbnailArray = data.metadataThumbnailArray;
-                    const isSelected = shashin.lastSelectedMetadataSelected;
+                    const isSelected = shashin.lastSelectedMetadataSelected && shashin.lastSelectedMetadataId.trim().length > 0;
                     shashin.batchSelectDirection = data.direction;
                     const opacityLevel = isSelected ? opaque : transparent;
                     const chunkSize = (view === "timeline") ? shashin.getMetadataIdList() : 50;
@@ -255,7 +256,7 @@
         const isSelected = $("#tlicon" + metadataId).attr("class") === "bi-circle";
         const isVideo = $("#photoThumbnailContainer" + metadataId).hasClass("is-video");
 
-        shashin.updateSelectionUI(metadataId, isSelected, opaque, clicked);
+        shashin.updateSelectionUI(metadataId, isSelected, opaque, transparent, clicked);
         shashin.updateSelectionState(metadataId, isSelected, isVideo, view);
         if (clicked) {
             shashin.lastSelectedMetadataId = metadataId;
@@ -274,7 +275,8 @@
         shashin.setDateSection(metadataId, view);
     };
 
-    shashin.updateSelectionUI = function(metadataId, isSelected, opaque, clicked) {
+    shashin.updateSelectionUI = function(metadataId, isSelected, opaque, transparent, clicked) {
+        const opacityLevel = isSelected ? opaque : transparent;
         if (isSelected === false && clicked === false) {
             $("#tntl" + metadataId).hide();
         } else {
@@ -287,8 +289,7 @@
         $("#tlicon" + metadataId)
             .toggleClass('bi-circle-fill', isSelected)
             .toggleClass('bi-circle', !isSelected);
-        $("#image" + metadataId).css("opacity", opaque);
-
+        $("#image" + metadataId).css("opacity", opacityLevel);
     };
 
     shashin.updateSelectionState = function(metadataId, isSelected, isVideo, view) {
