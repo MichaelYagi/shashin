@@ -324,20 +324,14 @@
         const hasSelection = $('.bi-circle-fill').length > 0 || metadataIdArray.length > 0;
         $("#appSearch").toggle(!hasSelection);
 
-        const showTools = (selector, hideSelector) => {
-            $(selector).show();
-            if (hideSelector) $(hideSelector).hide();
-        };
-
         if (hasSelection) {
-            showTools("#albumAppTools");
-
+            $("#albumAppTools").show();
             $(".thumbnail-br, .thumbnail-bl, .thumbnail-centered").hide();
         } else {
             $(".photo-thumbnail-container").removeClass("border border-3 border-primary");
             $(".photo-thumbnail-image").removeClass("pb-1");
             shashin.multiSelected = false;
-            $("#albumTools").show();
+            $("#albumAppTools").hide();
         }
     };
 
