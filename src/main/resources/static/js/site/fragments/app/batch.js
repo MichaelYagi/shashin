@@ -110,6 +110,9 @@
             } else if (view === "folder") {
                 const folderName = $("#folderName").val();
                 url += `?folderName=${folderName}&v=${version}`;
+            } else if (view === "search") {
+                const searchTerm = $("#searchTerm").val();
+                url += `?searchTerm=${searchTerm}&v=${version}`;
             } else {
                 url += `?v=${version}`;
             }
