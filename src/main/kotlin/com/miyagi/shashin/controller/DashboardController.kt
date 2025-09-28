@@ -207,6 +207,8 @@ class DashboardController {
     private fun buildDashboardData(model: Model, settings: Settings?, simplified: Boolean = false): MutableMap<String, Any?> {
         var response = mutableMapOf<String, Any?>()
 
+        val showLimit = 15
+
         val metricsUtil = MetricsUtil()
         metricsUtil.start("file stats")
         // Files stats
@@ -301,7 +303,7 @@ class DashboardController {
                 val maxCameraCount = cameraCounts.toList()[0].getCount()
                 for (cameraCount in cameraCounts) {
                     cameraTotals++
-                    if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! > maxCameraCount!! * 0.03) {
+                    if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraTotals <= showLimit /*cameraCount.getCount()!! > maxCameraCount!! * 0.05*/) {
                         val cameraCountMap = HashMap<String, Any>()
                         var cameraName = cameraCount.getCamera().toString()
                         cameraCountMap["y"] = cameraName
@@ -318,10 +320,10 @@ class DashboardController {
             val placenameCountList = ArrayList<HashMap<String, Any>>()
             var placenameTotals = 0
             if (placenameCounts.count() > 0) {
-                val maxplacenameCount = placenameCounts.toList()[0].getCount()
+                val maxPlacenameCount = placenameCounts.toList()[0].getCount()
                 for (placenameCount in placenameCounts) {
                     placenameTotals++
-                    if (placenameCount.getPlacename() != null && placenameCount.getCount() != null && placenameCount.getCount()!! > maxplacenameCount!! * 0.03) {
+                    if (placenameCount.getPlacename() != null && placenameCount.getCount() != null && placenameTotals <= showLimit /*placenameCount.getCount()!! > maxPlacenameCount!! * 0.05*/) {
                         val placenameCountMap = HashMap<String, Any>()
                         var placeName = placenameCount.getPlacename().toString()
                         placenameCountMap["y"] = placeName
@@ -339,6 +341,28 @@ class DashboardController {
             response["osTotalCount"] = osCount
             metricsUtil.end()
 
+            // Keyword stats
+            metricsUtil.start("keyword stats")
+            val keywordCounts = keywordRepository.countByKeyword()
+            val keywordCountList = ArrayList<HashMap<String, Any>>()
+            var keywordCount = 0
+            if (keywordCounts.count() > 0) {
+                val maxKwCount = keywordCounts.toList()[0].getCount()
+                for (kwCount in keywordCounts) {
+                    keywordCount++
+                    if (kwCount.getCount() != null && keywordCount <= showLimit /*kwCount.getCount()!! > maxKwCount!! * showLimit*/) {
+                        val keywordCountMap = HashMap<String, Any>()
+                        val keyword = kwCount.getKeyword().toString()
+                        keywordCountMap["y"] = keyword
+                        keywordCountMap["x"] = kwCount.getCount().toString().toInt()
+                        keywordCountList.add(keywordCountMap)
+                    }
+                }
+            }
+            response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
+            response["keywordTotalCount"] = keywordCount
+            metricsUtil.end()
+
             // User stats
             metricsUtil.start("user stats")
             val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
@@ -353,28 +377,6 @@ class DashboardController {
             response["notAllowedAdminCount"] = notAllowedAdminCount
             response["allowedSuperCount"] = allowedSuperCount
             response["notAllowedSuperCount"] = notAllowedSuperCount
-            metricsUtil.end()
-
-            // Keyword stats
-            metricsUtil.start("keyword stats")
-            val keywordCounts = keywordRepository.countByKeyword()
-            val keywordCountList = ArrayList<HashMap<String, Any>>()
-            var keywordCount = 0
-            if (keywordCounts.count() > 0) {
-                val maxKwCount = keywordCounts.toList()[0].getCount()
-                for (kwCount in keywordCounts) {
-                    keywordCount++
-                    if (kwCount.getCount() != null && kwCount.getCount()!! > maxKwCount!!*0.03) {
-                        val keywordCountMap = HashMap<String, Any>()
-                        val keyword = kwCount.getKeyword().toString()
-                        keywordCountMap["y"] = keyword
-                        keywordCountMap["x"] = kwCount.getCount().toString().toInt()
-                        keywordCountList.add(keywordCountMap)
-                    }
-                }
-            }
-            response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
-            response["keywordTotalCount"] = keywordCount
             metricsUtil.end()
 
             metricsUtil.start("image status check")
