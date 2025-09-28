@@ -207,7 +207,7 @@ class DashboardController {
     private fun buildDashboardData(model: Model, settings: Settings?, simplified: Boolean = false): MutableMap<String, Any?> {
         var response = mutableMapOf<String, Any?>()
 
-        val showLimit = 35
+        val showLimit = 40
 
         val metricsUtil = MetricsUtil()
         metricsUtil.start("file stats")
