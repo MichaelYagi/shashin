@@ -207,6 +207,8 @@ class DashboardController {
     private fun buildDashboardData(model: Model, settings: Settings?, simplified: Boolean = false): MutableMap<String, Any?> {
         var response = mutableMapOf<String, Any?>()
 
+        val showLimit = 35
+
         val metricsUtil = MetricsUtil()
         metricsUtil.start("file stats")
         // Files stats
@@ -301,7 +303,7 @@ class DashboardController {
                 val maxCameraCount = cameraCounts.toList()[0].getCount()
                 for (cameraCount in cameraCounts) {
                     cameraTotals++
-                    if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! >= 20 /*cameraTotals <= 15*/ /*cameraCount.getCount()!! > maxCameraCount!! * 0.05*/) {
+                    if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! >= showLimit /*cameraTotals <= 15*/ /*cameraCount.getCount()!! > maxCameraCount!! * 0.05*/) {
                         val cameraCountMap = HashMap<String, Any>()
                         var cameraName = cameraCount.getCamera().toString()
                         cameraCountMap["y"] = cameraName
@@ -321,7 +323,7 @@ class DashboardController {
                 val maxPlacenameCount = placenameCounts.toList()[0].getCount()
                 for (placenameCount in placenameCounts) {
                     placenameTotals++
-                    if (placenameCount.getPlacename() != null && placenameCount.getCount() != null && placenameCount.getCount()!! >= 20 /*placenameTotals <= 20*/ /*placenameCount.getCount()!! > maxPlacenameCount!! * 0.05*/) {
+                    if (placenameCount.getPlacename() != null && placenameCount.getCount() != null && placenameCount.getCount()!! >= showLimit /*placenameTotals <= 20*/ /*placenameCount.getCount()!! > maxPlacenameCount!! * 0.05*/) {
                         val placenameCountMap = HashMap<String, Any>()
                         var placeName = placenameCount.getPlacename().toString()
                         placenameCountMap["y"] = placeName
@@ -348,7 +350,7 @@ class DashboardController {
                 val maxKwCount = keywordCounts.toList()[0].getCount()
                 for (kwCount in keywordCounts) {
                     keywordCount++
-                    if (kwCount.getCount() != null && kwCount.getCount()!! >= 20 /*keywordCount <= 15*/ /*kwCount.getCount()!! > maxKwCount!! * showLimit*/) {
+                    if (kwCount.getCount() != null && kwCount.getCount()!! >= showLimit /*keywordCount <= 15*/ /*kwCount.getCount()!! > maxKwCount!! * showLimit*/) {
                         val keywordCountMap = HashMap<String, Any>()
                         val keyword = kwCount.getKeyword().toString()
                         keywordCountMap["y"] = keyword
