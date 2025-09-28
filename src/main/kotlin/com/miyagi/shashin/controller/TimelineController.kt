@@ -96,6 +96,9 @@ class TimelineController: BaseController() {
     private lateinit var keywordPhotoRepository: KeywordPhotoRepository
 
     @Autowired
+    private lateinit var searchRepository: SearchRepository
+
+    @Autowired
     private var recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
@@ -133,7 +136,7 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/metadata/range/{anchorId}/{selectId}/{view}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, @RequestParam personId: Optional<Int>, @RequestParam folderName: Optional<String>, locale: Locale): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, @RequestParam personId: Optional<Int>, @RequestParam folderName: Optional<String>, @RequestParam searchTerm: Optional<String>, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<String>()
         val retMetadataFilenameArray = mutableListOf<String>()
         val retMetadataThumbnailArray = mutableListOf<String>()
@@ -157,6 +160,7 @@ class TimelineController: BaseController() {
             val albumIdCopy = albumId.orElse(0)
             val personIdCopy = personId.orElse(0)
             val folderNameCopy = folderName.orElse("")
+            val searchTermCopy = searchTerm.orElse("")
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
@@ -258,7 +262,9 @@ class TimelineController: BaseController() {
                 } else if (view == "archived") {
                     metadataRepository.findAllByHiddenByDate(startDate, endDate)
                 } else if (view == "folder" && folderNameCopy.isNotEmpty()) {
-                    metadataRepository.findAllByFolderBeDates(startDate, endDate, folderNameCopy)
+                    metadataRepository.findAllByFolderByDates(startDate, endDate, folderNameCopy)
+                } else if (view == "search" && searchTermCopy.isNotEmpty()) {
+                    searchRepository.findMetadataBySearchTermByDate(startDate, endDate, searchTermCopy)
                 } else if (view == "favorites" && personIdCopy > 0) {
                     if (mediaType == "all") {
                         favoriteRepository.findAllByUserIdAndDate(startDate, endDate, personIdCopy)
