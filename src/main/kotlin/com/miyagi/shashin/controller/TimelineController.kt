@@ -3396,7 +3396,13 @@ class TimelineController: BaseController() {
                                 metadataId
                             )
 
-                        if (recognitionLabelPhotoCount == 0) {
+                        if (recognitionLabelPhotoCount == 0 || addPerson) {
+                            if (recognitionLabelPhotoCount != null && addPerson && recognitionLabelPhotoCount > 0) {
+                                recognitionLabelPhotoRepository?.deleteByRecognitionLabelIdAndMetadataId(
+                                    recognitionLabelObj.getId(),
+                                    metadataId
+                                )
+                            }
                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                             recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())

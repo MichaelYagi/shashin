@@ -27,6 +27,8 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
 
     fun deleteByMetadataId(metadataId: String): Int
 
+    fun deleteByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): Int
+
     fun findByMetadataId(metadataId: String): MutableIterable<RecognitionLabelPhoto>
 
     fun findByCompreFaceImageId(compreFaceImageId: String): RecognitionLabelPhoto?
