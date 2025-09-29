@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 - Fixed add to existing people checkbox for batch edits
+- Multi-select bugs
 ### Security
 - Bump org.springframework.security:spring-security-core from 6.4.4 to 6.4.10
 
