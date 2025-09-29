@@ -3397,6 +3397,7 @@ class TimelineController: BaseController() {
                             )
 
                         if (recognitionLabelPhotoCount == 0 || addPerson) {
+                            // Delete person before adding to existing list of people
                             if (recognitionLabelPhotoCount != null && addPerson && recognitionLabelPhotoCount > 0) {
                                 recognitionLabelPhotoRepository?.deleteByRecognitionLabelIdAndMetadataId(
                                     recognitionLabelObj.getId(),
@@ -3406,8 +3407,9 @@ class TimelineController: BaseController() {
                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                             recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
-                            //recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
+                            // 0.0 confirmed recognition by user
                             recognitionLabelPhotoObj.setConfidence("0.0")
+                            //recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
                             recognitionLabelPhotoList.add(recognitionLabelPhotoObj)
 
                             buildPersonUpload(
