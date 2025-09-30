@@ -15,8 +15,16 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [2.13.4] - 2025-09-30
+### Added
+- Location stats in Dashboard
+
+### Fixed
 - Fixed add to existing people checkbox for batch edits
 - Multi-select bugs
+
 ### Security
 - Bump org.springframework.security:spring-security-core from 6.4.4 to 6.4.10
 
