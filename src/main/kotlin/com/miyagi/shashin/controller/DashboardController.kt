@@ -323,12 +323,18 @@ class DashboardController {
                 val maxPlacenameCount = placenameCounts.toList()[0].getCount()
                 for (placenameCount in placenameCounts) {
                     placenameTotals++
-                    if (placenameCount.getPlacename() != null && placenameCount.getCount() != null && (placenameTotals <= 10 || placenameCount.getCount()!! >= showLimit) /*placenameTotals <= 20*/ /*placenameCount.getCount()!! > maxPlacenameCount!! * 0.05*/) {
-                        val placenameCountMap = HashMap<String, Any>()
-                        var placeName = placenameCount.getPlacename().toString()
-                        placenameCountMap["y"] = placeName
-                        placenameCountMap["x"] = placenameCount.getCount().toString().toInt()
-                        placenameCountList.add(placenameCountMap)
+                    if (placenameCount.getCity() != null && placenameCount.getCity()!!.isNotEmpty() &&
+                        placenameCount.getProvince() != null && placenameCount.getProvince()!!.isNotEmpty() &&
+                        placenameCount.getCountry() != null && placenameCount.getCountry()!!.isNotEmpty()
+                    ) {
+                        val placeName =
+                            placenameCount.getCity() + ", " + placenameCount.getProvince() + ", " + placenameCount.getCountry()
+                        if (placenameCount.getCount() != null && (placenameTotals <= 10 || placenameCount.getCount()!! >= showLimit) /*placenameTotals <= 20*/ /*placenameCount.getCount()!! > maxPlacenameCount!! * 0.05*/) {
+                            val placenameCountMap = HashMap<String, Any>()
+                            placenameCountMap["y"] = placeName
+                            placenameCountMap["x"] = placenameCount.getCount().toString().toInt()
+                            placenameCountList.add(placenameCountMap)
+                        }
                     }
                 }
             }

@@ -616,6 +616,7 @@ class TextUtils {
 
                     if (!addressObj.isNull) {
                         var name = ""
+                        // Name of location
                         if (addressObj.has("name") && addressObj.get("name") != null &&
                             addressObj.get("name").textValue() != ""
                         ) {
@@ -624,6 +625,7 @@ class TextUtils {
                             logger.log(Level.INFO, "name found: ${addressObj.get("name").textValue()}")
                         }
 
+                        // Address of location
                         if (addressObj.has("address")) {
                             if (addressObj.get("address").has("house_number") && addressObj.get("address")
                                     .get("house_number") != null && addressObj.get("address").get("house_number")
@@ -665,6 +667,7 @@ class TextUtils {
                                 )
                             }
 
+                            // Hamlet, Village, town, etc
                             if (addressObj.get("address").has("hamlet") && addressObj.get("address")
                                     .get("hamlet") != null && addressObj.get("address").get("hamlet")
                                     .textValue() != ""
@@ -733,6 +736,7 @@ class TextUtils {
                                 )
                             }
 
+                            // Province/state
                             if (addressObj.get("address").has("province") && addressObj.get("address")
                                     .get("province") != null && addressObj.get("address").get("province")
                                     .textValue() != ""
@@ -752,6 +756,7 @@ class TextUtils {
                                 )
                             }
 
+                            // Country
                             if (addressObj.get("address").has("country") && addressObj.get("address")
                                     .get("country") != null && addressObj.get("address").get("country")
                                     .textValue() != ""
