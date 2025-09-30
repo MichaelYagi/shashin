@@ -165,7 +165,34 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    fun countAllByLatIsNullAndLngIsNull(): Int
 
-   @Query("SELECT SUBSTR(place_name, 1, INSTR(place_name, ';') - 1) as placename, COUNT(*) as count FROM metadata WHERE place_name IS NOT NULL GROUP BY SUBSTR(place_name, 1, INSTR(place_name, ';') - 1) ORDER BY count DESC", nativeQuery = true)
+   @Query("SELECT" +
+           "    TRIM(SUBSTR(" +
+           "            place_name," +
+           "            INSTR(place_name, ';') - INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ',') + 1," +
+           "            INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ',') - 1" +
+           "    )) AS country," +
+           "    TRIM(SUBSTR(" +
+           "            place_name," +
+           "            INSTR(place_name, ';') - INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ',') - INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1 - INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ','))), ',') + 1," +
+           "            INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1 - INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ','))), ',') - 1" +
+           "    )) AS province," +
+           "    TRIM(SUBSTR(" +
+           "            place_name," +
+           "            INSTR(place_name, ';') -" +
+           "            INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ',') -" +
+           "            INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1 - INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ','))), ',') -" +
+           "            INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1 -" +
+           "                                                INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ',') -" +
+           "                                                INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1 - INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ','))), ','))), ',') + 1," +
+           "            INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1 -" +
+           "                                                INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ',') -" +
+           "                                                INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1 - INSTR(REVERSE(SUBSTR(place_name, 1, INSTR(place_name, ';') - 1)), ','))), ','))), ',') - 1" +
+           "    )) AS city," +
+           "    COUNT(*) AS count " +
+           "FROM metadata " +
+           "WHERE place_name IS NOT NULL AND city != \"\" AND city != \",\" " +
+           "GROUP BY country, province, city " +
+           "ORDER BY count DESC", nativeQuery = true)
    fun countByLocation(): MutableIterable<LocationCount>
 
    @Query("SELECT camera, COUNT(*) AS count FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY count DESC", nativeQuery = true)
