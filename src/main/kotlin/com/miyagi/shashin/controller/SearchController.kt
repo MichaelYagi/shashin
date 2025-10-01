@@ -24,6 +24,10 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
+import kotlin.math.ceil
 
 
 @Controller
@@ -57,6 +61,7 @@ class SearchController: BaseController() {
 
         getAllAttributeData(model)
 
+        model["pageParam"] = 0
         model["term"] = response["term"]!!
         model["favorites"] = response["favorites"]!!
         model["metadataSearchList"] = response["metadataSearchList"]!!
@@ -81,12 +86,32 @@ class SearchController: BaseController() {
         return mapper.writeValueAsString(buildSearchData(model,term,page))
     }
 
+    @GetMapping("/search/{page}/term/{term}")
+    fun getPaginationSearch(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable term: String): String {
+        val module = "search"
+
+        val response = buildSearchData(model,term,page)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        model["currentPage"] = (page+1)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
     private fun buildSearchData(model: Model,term: String?, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["term"] = ""
         response["metadataSearchList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
         response["favorites"] = mutableMapOf<String, String>()
+        response["page"] = page
+        val size = model.getAttribute("queryLimit").toString().toInt()
+        response["size"] = size
+        response["totalPages"] = 0
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (!term.isNullOrBlank()) {
@@ -112,6 +137,7 @@ class SearchController: BaseController() {
             ) {
                 metadataList = searchRepository?.findMetadataBySearchTerm(updatedTerm, pageValue, queryLimit)
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+                response["totalPages"] = ceil((searchRepository?.countAllByHiddenIsFalse(updatedTerm)!!.toDouble()) / size.toDouble()).toInt()
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 if (currentUserObj != null) {
                     metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
@@ -121,6 +147,7 @@ class SearchController: BaseController() {
                         queryLimit
                     )
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+                    response["totalPages"] = ceil((searchRepository?.countAllByHiddenIsFalseAndUserId(updatedTerm, currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
                 }
             }
 
