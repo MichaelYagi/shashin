@@ -562,7 +562,7 @@
                     if (activePage === "folders") {
                         link = '/' + activePage + '/' + index;
                     } else if (activePage === "search") {
-                        link = '/' + activePage + '/' + index + '/term/' + encodeURIComponent(encodeURIComponent(mediaTypeFilter)).replace(";", "%3B");
+                        link = '/' + activePage + '/' + index + '/term/' + mediaTypeFilter;
                     } else if (activePage === "folder") {
                         link = '/' + activePage + '/' + encodeURIComponent(encodeURIComponent(identifier)).replace(";", "%3B") + '/' + index;
                     } else if (shareId !== "" && identifier > 0) {
