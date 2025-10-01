@@ -101,6 +101,7 @@
                 version = uuidv4();
             }
 
+            // Multi-select between metadata in a range
             if (view === "album") {
                 const albumId = $("#albumId").val();
                 url += `?albumId=${albumId}&v=${version}`;
@@ -390,6 +391,7 @@
 
             const selectedMetadata = shashin.getMetadataIdList();
 
+            // Multi-select a day when clicking day header
             if (view === "timeline" ||
                 view === "taken" ||
                 view === "album" ||
