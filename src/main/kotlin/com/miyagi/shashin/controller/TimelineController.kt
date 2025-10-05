@@ -1081,6 +1081,68 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
+    fun deleteThumbnails(metadata: Metadata) {
+        val possibleExtension = metadata.getFileName()?.substringAfterLast('.', "")?.lowercase()
+
+        // Re-process thumbnails
+        var thumbnailFile = metadata.getThumbnailPathCentered()
+        if (!thumbnailFile.isNullOrBlank()) {
+            val centeredTnFile = File(metadata.getThumbnailPathCentered()!!)
+            if (centeredTnFile.exists()) {
+                centeredTnFile.delete()
+                logger.log(Level.INFO, "Centered thumbnail deleted: " + metadata.getThumbnailPathCentered())
+            }
+            val altCenteredTnFile = File(metadata.getThumbnailPathCentered()!!.substringBeforeLast(".") + "." + possibleExtension)
+            if (altCenteredTnFile.exists()) {
+                altCenteredTnFile.delete()
+                logger.log(Level.INFO, "Alt centered thumbnail deleted: " + metadata.getThumbnailPathCentered())
+            }
+        } else {
+            logger.log(Level.WARNING, "Centered path blank: " + metadata.getThumbnailPathCentered())
+        }
+
+        thumbnailFile = metadata.getMapMarkerPath()
+        if (!thumbnailFile.isNullOrBlank()) {
+            val mapTnFile = File(metadata.getMapMarkerPath()!!)
+            if (mapTnFile.exists()) {
+                mapTnFile.delete()
+                logger.log(Level.INFO, "Map thumbnail deleted: " + metadata.getMapMarkerPath())
+            }
+            val altMapTnFile = File(metadata.getMapMarkerPath()!!.substringBeforeLast(".") + "." + possibleExtension)
+            if (altMapTnFile.exists()) {
+                altMapTnFile.delete()
+                logger.log(Level.INFO, "Alt thumbnail deleted: " + metadata.getMapMarkerPath())
+            }
+        } else {
+            logger.log(Level.WARNING, "Map path blank: " + metadata.getMapMarkerPath())
+        }
+
+        thumbnailFile = metadata.getThumbnailPathSmall()
+        if (!thumbnailFile.isNullOrBlank()) {
+            val smallTnFile = File(metadata.getThumbnailPathSmall()!!)
+            if (smallTnFile.exists()) {
+                smallTnFile.delete()
+                logger.log(Level.INFO, "Small thumbnail deleted: " + metadata.getThumbnailPathSmall())
+            }
+            val altSmallTnFile = File(metadata.getThumbnailPathSmall()!!.substringBeforeLast(".") + "." + possibleExtension)
+            if (altSmallTnFile.exists()) {
+                altSmallTnFile.delete()
+                logger.log(Level.INFO, "Alt small thumbnail deleted: " + metadata.getThumbnailPathSmall())
+            }
+        } else {
+            logger.log(Level.WARNING, "Small thumbnail path blank: " + metadata.getThumbnailPathSmall())
+        }
+
+        val originalTnFile =
+            File(metadata.getThumbnailPathCentered()?.replace("_centered.", "_original.")!!)
+        if (originalTnFile.exists()) {
+            originalTnFile.delete()
+            logger.log(Level.INFO, "Original thumbnail deleted: " + metadata.getThumbnailPathCentered()?.replace("_centered.", "_original.")!!)
+        } else {
+            logger.log(Level.WARNING, "Original thumbnail not deleted: " + metadata.getThumbnailPathCentered()?.replace("_centered.", "_original.")!!)
+        }
+    }
+
     @RouterOperation(
         operation =
         Operation(
@@ -1130,10 +1192,8 @@ class TimelineController: BaseController() {
 
                 for (metadataId in metadataIdArray) {
                     val metadataObj = metadataRepository.findById(metadataId)
-
                     if (metadataObj.isPresent) {
                         val metadata = metadataObj.get()
-
                         val stringMetadata = Gson().toJson(metadata, Metadata::class.java)
                         var metadataCopy = Gson().fromJson(stringMetadata, Metadata::class.java)
 
@@ -1144,47 +1204,7 @@ class TimelineController: BaseController() {
 
                         if (exifFile != null && exifFile.exists()) {
                             if (exifFile.delete()) {
-                                // Re-process thumbnails
-                                var thumbnailFile = metadataCopy.getThumbnailPathCentered()
-                                if (!thumbnailFile.isNullOrBlank()) {
-                                    val centeredTnFile = File(metadataCopy.getThumbnailPathCentered()!!)
-                                    if (centeredTnFile.exists()) {
-                                        centeredTnFile.delete()
-                                        logger.log(Level.INFO, "Centered thumbnail deleted: " + metadataCopy.getThumbnailPathCentered())
-                                    }
-                                }
-                                thumbnailFile = metadataCopy.getMapMarkerPath()
-                                if (!thumbnailFile.isNullOrBlank()) {
-                                    val mapTnFile = File(metadataCopy.getMapMarkerPath()!!)
-                                    if (mapTnFile.exists()) {
-                                        mapTnFile.delete()
-                                        logger.log(Level.INFO, "Map thumbnail deleted: " + metadataCopy.getMapMarkerPath())
-                                    }
-                                }
-                                thumbnailFile = metadataCopy.getThumbnailPathSmall()
-                                if (!thumbnailFile.isNullOrBlank()) {
-                                    val smallTnFile = File(metadataCopy.getThumbnailPathSmall()!!)
-                                    if (smallTnFile.exists()) {
-                                        smallTnFile.delete()
-                                        logger.log(Level.INFO, "Small thumbnail deleted: " + metadataCopy.getThumbnailPathSmall())
-                                    }
-                                }
-                                thumbnailFile = metadataCopy.getThumbnailPathExtraSmall()
-                                if (!thumbnailFile.isNullOrBlank()) {
-                                    val extraSmallTnFile = File(metadataCopy.getThumbnailPathExtraSmall()!!)
-                                    if (extraSmallTnFile.exists()) {
-                                        extraSmallTnFile.delete()
-                                        logger.log(Level.INFO, "Extra Small thumbnail deleted: " + metadataCopy.getThumbnailPathExtraSmall())
-                                    }
-                                }
-                                if (metadataCopy.getType()!!.contains("video")) {
-                                    val originalTnFile =
-                                        File(metadataCopy.getThumbnailPathCentered()?.replace("_centered.", "_original.")!!)
-                                    if (originalTnFile.exists()) {
-                                        originalTnFile.delete()
-                                        logger.log(Level.INFO, "Original thumbnail deleted: " + metadataCopy.getThumbnailPathCentered())
-                                    }
-                                }
+                                deleteThumbnails(metadataCopy)
 
                                 val metadataPath = metadataCopy.getPath()!!
 
@@ -3228,17 +3248,118 @@ class TimelineController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
-    @RequestMapping(value = ["/metadata/update/videothumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/edit/thumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun updateVideoThumbs(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
+    fun editThumbs(model: Model, @RequestBody requestBody: JsonNode, @RequestParam restore: Optional<Boolean>, locale: Locale): String? {
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         if (metadataMap.containsKey("metadataId") &&
-            metadataMap.containsKey("base64Data")
+            metadataMap.containsKey("rotation") &&
+            metadataMap.containsKey("flipX") &&
+            metadataMap.containsKey("flipY")
+        ) {
+            val metadataId = metadataMap["metadataId"] as String
+            val rotation = metadataMap["rotation"] as Int
+            val flipX = metadataMap["flipX"] as Boolean
+            val flipY = metadataMap["flipY"] as Boolean
+            val restoreImages = restore.orElse(false)
+
+            val metadataObj = metadataRepository.findById(metadataId)
+
+            if (metadataObj.isPresent) {
+                var metadata: Metadata = metadataObj.get()
+                val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                val sidecarDir = rootPath + relativeSidecarDir
+
+                var edited = false
+
+                var path = metadataObj.get().getPath()!!
+                if (!restoreImages && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
+                    path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
+                }
+
+                var imageFile = File(path)
+                val bufferedImage = ImageIO.read(imageFile)
+                var editedImage = bufferedImage
+
+                if (!restoreImages) {
+                    if (flipX) {
+                        editedImage = ImageProcessing.flipHorizontally(editedImage)
+                        edited = true
+                    }
+
+                    if (flipY) {
+                        editedImage = ImageProcessing.flipVertically(editedImage)
+                        edited = true
+                    }
+
+                    editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
+                    if (editedImage.height != metadata.getOriginalImageHeight() && editedImage.width != metadata.getOriginalImageWidth()) {
+                        val setWidth = metadata.getOriginalImageHeight()
+                        val setHeight = metadata.getOriginalImageWidth()
+                        metadata.setOriginalImageWidth(setWidth)
+                        metadata.setOriginalImageHeight(setHeight)
+
+                        val setSmallWidth = metadata.getThumbnailSmallHeight()
+                        val setSmallHeight = metadata.getThumbnailSmallWidth()
+                        metadata.setThumbnailSmallWidth(setSmallWidth)
+                        metadata.setThumbnailSmallHeight(setSmallHeight)
+
+                        edited = true
+                    } else if (rotation % 360 != 0) {
+                        edited = true
+                    }
+                } else {
+                    edited = true
+                }
+
+                if (edited) {
+                    deleteThumbnails(metadata)
+                    val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                    val sidecarDir = rootPath + relativeSidecarDir
+                    val imageProcessing = ImageProcessing(apiVersion, File(metadata.getPath()!!), sidecarDir, metadata)
+                    metadata = imageProcessing.setThumbnails(
+                        editedImage,
+                        metadata,
+                        !restoreImages,
+                        metadata.getExpectedExtension().toString(),
+                        true
+                    )
+                    if (restoreImages) {
+                        metadata.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadata.getId()}")
+                    }
+                    metadata.setModifiedAt(getCurrentTimestamp())
+                    metadataRepository.save(metadata)
+                }
+
+                resp["metadata"] = metadata
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
+                resp["status"] = ApiResponse.SUCCESS.status
+                return mapper.writeValueAsString(resp)
+            }
+        }
+
+        resp["metadata"] = null
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
+        resp["status"] = ApiResponse.FAIL.status
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/metadata/update/thumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    fun updateThumbs(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("metadataId") &&
+            metadataMap.containsKey("base64Data") &&
+            metadataMap.containsKey("isImage")
         ) {
             val metadataId = metadataMap["metadataId"] as String
             val base64Data = metadataMap["base64Data"] as String
+            val isImage = metadataMap["isImage"] as Boolean
 
             val metadataObj = metadataRepository.findById(metadataId)
 
@@ -3251,7 +3372,13 @@ class TimelineController: BaseController() {
                     val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                     val sidecarDir = rootPath + relativeSidecarDir
                     val imageProcessing = ImageProcessing(apiVersion, File(metadata.getPath()!!), sidecarDir, metadata)
-                    metadata = imageProcessing.setThumbnails(img, metadata, true, "jpg", true)
+
+                    var extension = "jpg"
+                    if (isImage) {
+                        extension = metadata.getExpectedExtension().toString()
+                    }
+
+                    metadata = imageProcessing.setThumbnails(img, metadata, true, extension, true)
                     metadata.setModifiedAt(getCurrentTimestamp())
 
                     metadataRepository.save(metadata)

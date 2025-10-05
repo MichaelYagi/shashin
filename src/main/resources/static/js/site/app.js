@@ -38,7 +38,7 @@
             mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/225/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download";
         } else {
-            mediaContent.src = "/api/v1/image/"+metadata.id;
+            mediaContent.src = "/api/v1/image/"+metadata.id+"?v="+uuidv4();
             mediaContent.downloadUrl = "/api/v1/image/"+metadata.id + "/download";
         }
 
@@ -295,6 +295,82 @@
         }
     };
 
+    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, callback) {
+        const http = new Http("update edited photo metadata");
+        const version = Util.getMetadataLocalStorage();
+        const json = {
+            metadataId: metadataId,
+            rotation: rotation,
+            flipX: isFlippedVertically,
+            flipY: isFlippedHorizontally
+        };
+
+        http.ajax("post", "/metadata/edit/thumbs" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
+            if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("metadata")) {
+                const metadata = data.metadata;
+                const metadataId = metadata.id;
+
+                const thumbnailSmallHeight = metadata.thumbnailSmallHeight;
+                const thumbnailSmallWidth = metadata.thumbnailSmallWidth;
+
+                // Refresh image
+                Util.setMetadataLocalStorage();
+                const version = Util.getMetadataLocalStorage();
+                $("#photoThumbnailContainer" + metadataId).css({
+                    "width": thumbnailSmallWidth + "px",
+                    "height": thumbnailSmallHeight + "px"
+                });
+                $("#image" + metadataId).attr("src", $("#image" + metadataId).attr("src") + "?v=" + uuidv4());
+                $("#image" + metadataId).attr("width", thumbnailSmallWidth);
+                $("#image" + metadataId).attr("height", thumbnailSmallHeight);
+
+                // Refresh lightgallery
+                const mediaContentList = shashin.getLightGallery().galleryItems;
+
+                if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null  && typeof shashin.getLightGallery().refresh === 'function' && mediaContentList.length > 0) {
+                    lightGalleryIndex = parseInt(lightGalleryIndex);
+
+                    const mediaContent = mediaContentList[lightGalleryIndex];
+
+                    if (mediaContent.hasOwnProperty("downloadUrl") &&
+                        mediaContent.downloadUrl.includes(metadataId)
+                    ) {
+                        mediaContentList[lightGalleryIndex].src = mediaContentList[lightGalleryIndex].src + "?v=" + uuidv4();
+                        const mediaLinkId = "#mediaLink"+metadataId;
+                        if ($(mediaLinkId).length > 0) {
+                            $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + uuidv4());
+                            if (parseInt($("img.lg-object.lg-image").attr("data-index")) === lightGalleryIndex) {
+                                $("img.lg-object.lg-image").attr("src", ($("img.lg-object.lg-image").attr("src") + "?v=" + uuidv4()));
+                            }
+                        }
+                    }
+
+                    shashin.getLightGallery().refresh(mediaContentList);
+                }
+
+                $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
+
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.upload"), shashin.getTranslatedValue("main.toast.app.image.upload"), {
+                    icon: "bi-info-circle",
+                    iconColor: "#777777",
+                    delay: 2000,
+                    borderColor:"success"
+                });
+
+                callback(true);
+            } else {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
+                });
+                $(".lg-current").css("background-color", "transparent");
+
+                callback(false);
+            }
+        });
+    };
+
     shashin.processVideoThumbnail = function(metadataId, lightGalleryId, lightGalleryIndex) {
         const mediaContentList = shashin.getLightGallery().galleryItems;
 
@@ -336,9 +412,10 @@
                     const version = Util.getMetadataLocalStorage();
                     const json = {
                         metadataId: metadataId,
-                        base64Data: image
+                        base64Data: image,
+                        isImage: false
                     };
-                    http.ajax("post", "/metadata/update/videothumbs" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
+                    http.ajax("post", "/metadata/update/thumbs" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
                         if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("posterUrl")) {
                             // Refresh image
                             Util.setMetadataLocalStorage();

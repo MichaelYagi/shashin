@@ -726,6 +726,54 @@ class Util {
                     }
                 }
 
+                setTimeout(function () {
+                    const mediaContentList = shashin.getLightGallery().galleryItems;
+
+                    for (let i = 0; i < metadataKeys.length; i++) {
+                        const metadata = metadataMap[metadataKeys[i]];
+
+                        const thumbnailSmallHeight = metadata.thumbnailSmallHeight;
+                        const thumbnailSmallWidth = metadata.thumbnailSmallWidth;
+
+                        // Refresh image
+                        Util.setMetadataLocalStorage();
+                        const version = Util.getMetadataLocalStorage();
+                        $("#photoThumbnailContainer" + metadata.id).css({
+                            "width": thumbnailSmallWidth + "px",
+                            "height": thumbnailSmallHeight + "px"
+                        });
+                        $("#image" + metadata.id).attr("src", $("#image" + metadata.id).attr("src") + (version === "" ? "" : "?v=" + version));
+                        $("#image" + metadata.id).attr("width", thumbnailSmallWidth);
+                        $("#image" + metadata.id).attr("height", thumbnailSmallHeight);
+
+                        // Refresh lightgallery
+                        if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null  && typeof shashin.getLightGallery().refresh === 'function' && mediaContentList.length > 0) {
+                            let lightGalleryIndex = $("#lgIndex").val();
+
+                            if (/^-?\d+$/.test(lightGalleryIndex)) {
+                                lightGalleryIndex = parseInt(lightGalleryIndex);
+
+                                const mediaContent = mediaContentList[lightGalleryIndex];
+
+                                if (mediaContent.hasOwnProperty("downloadUrl") &&
+                                    mediaContent.downloadUrl.includes(metadata.id)
+                                ) {
+                                    mediaContentList[lightGalleryIndex].src = mediaContentList[lightGalleryIndex].src + "?v=" + Util.getMetadataLocalStorage();
+                                    const mediaLinkId = "#mediaLink" + metadata.id;
+                                    if ($(mediaLinkId).length > 0) {
+                                        $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + Util.getMetadataLocalStorage());
+                                        if (parseInt($("img.lg-object.lg-image").attr("data-index")) === lightGalleryIndex) {
+                                            $("img.lg-object.lg-image").attr("src", ($("img.lg-object.lg-image").attr("src") + "?v=" + Util.getMetadataLocalStorage()));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    shashin.getLightGallery().refresh(mediaContentList);
+                }, 0);
+
                 if (data.status === shashin.apiResponse.SUCCESS) {
                     shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.rescan.title"), shashin.getTranslatedValue("main.toast.metadata.rescan.body.success"), {
                         icon: "bi-info-circle",

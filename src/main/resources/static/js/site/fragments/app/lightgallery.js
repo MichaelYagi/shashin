@@ -104,6 +104,28 @@
                             closeButton: false
                         });
                     }
+
+                    if (galleryItem.hasOwnProperty("src")) {
+                        shashin.lg.galleryItems[currentIndex].src = shashin.lg.galleryItems[currentIndex].src+"?v="+uuidv4();
+
+                        if (galleryItem.hasOwnProperty("metadataId")) {
+                            const metadataId = galleryItem.metadataId;
+                            $("#metadataId").val(metadataId);
+                            $("#lgIndex").val(currentIndex);
+
+                            if ($("#image"+metadataId).length > 0 && ($("#image"+metadataId).attr("src")).indexOf("?v=") < 0) {
+                                $("#image"+metadataId).attr("src", $("#image"+metadataId).attr("src")+"?v="+uuidv4());
+                            }
+
+                            const mediaLinkId = "#mediaLink" + metadataId;
+                            if ($(mediaLinkId).length > 0) {
+                                $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + Util.getMetadataLocalStorage());
+                                if (parseInt($("img.lg-object.lg-image").attr("data-index")) === parseInt(currentIndex)) {
+                                    $("img.lg-object.lg-image").attr("src", ($("img.lg-object.lg-image").attr("src") + "?v=" + Util.getMetadataLocalStorage()));
+                                }
+                            }
+                        }
+                    }
                 }
             });
 
@@ -146,13 +168,14 @@
         // shashin.autoplayVideo = $("#autoplayVideoSwitch").is(':checked');
 
         const configs = {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate, lgCastMedia],
+            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate, lgCastMedia, lgShashinEditor],
             videojs: false,
             hideBarsDelay: 5000,
             showBarsAfter: 5000,
             allowMediaOverlap: true,
             counter: false,
             castMedia: true,
+            shashinEditor: true,
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,
