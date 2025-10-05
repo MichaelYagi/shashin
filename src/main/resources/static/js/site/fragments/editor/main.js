@@ -7,7 +7,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorBlock").css({
         "position": "absolute",
         "height": "150px",
-        "width": "300px",
+        "width": "370px",
         "right": "0"
     });
     styleControl("#editorTitle", "2rem", "23px", "left", `30px`);
@@ -21,12 +21,12 @@ function initializeEditor(editMetadataObj, lgIndex) {
     styleControl("#editorRotateLeftActionButton", "2rem", "23px", "right", sideValue+"px");
     sideValue += 58;
     styleControl("#editorRotateRightActionButton", "2rem", "23px", "right", sideValue+"px");
-    sideValue = 19;
-    styleControl("#editorResetActionButton", "2rem", "75px", "right", sideValue+"px");
-    sideValue += 51;
-    styleControl("#editorRestoreActionButton", "2rem", "75px", "right", sideValue+"px");
     sideValue += 58;
-    styleControl("#editorSaveActionButton", "2rem", "75px", "right", sideValue+"px");
+    styleControl("#editorSaveActionButton", "2rem", "23px", "right", sideValue+"px");
+    sideValue = 71;
+    styleControl("#editorResetActionButton", "2rem", "75px", "right", sideValue+"px");
+    sideValue += 58;
+    styleControl("#editorRestoreActionButton", "2rem", "75px", "right", sideValue+"px");
     sideValue += 58;
     styleControl("#editorSpinner", "2rem", "85px", "right", sideValue+"px");
 
