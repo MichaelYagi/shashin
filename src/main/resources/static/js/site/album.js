@@ -52,7 +52,7 @@
             return albumSettings.eol;
         }
 
-        $("#deleteComment").on("click", function (e) {
+        $("#deleteComment").off("click").on("click", function (e) {
             e.preventDefault();
             const commentId = $("#commentCommentId").val();
             const metadataId = $("#commentMetadataId").val();
@@ -333,7 +333,7 @@
     };
 
     albumSettings.albumCommentsDeleteEditModalListener = function(commentId, metadataId) {
-        $("#deletecomment" + commentId).on("click", function (e) {
+        $("#deletecomment" + commentId).off("click").on("click", function (e) {
             e.preventDefault();
             $("#commentMetadataId").val(metadataId);
             $("#commentCommentId").val(commentId);
@@ -346,7 +346,7 @@
             }
         });
 
-        $("#editcomment" + commentId).on("click", function (e) {
+        $("#editcomment" + commentId).off("click").on("click", function (e) {
             e.preventDefault();
             albumSettings.editComment(commentId, metadataId);
             let currentCount = parseInt($("#brcommentcount" + metadataId).text());
@@ -362,7 +362,7 @@
         $("#updateCommentMetadata"+metadata.id).hide();
         $("#cancelEditCommentMetadata"+metadata.id).hide();
 
-        $("#cancelEditCommentMetadata"+metadata.id).on("click", function (e) {
+        $("#cancelEditCommentMetadata"+metadata.id).off("click").on("click", function (e) {
             e.preventDefault();
 
             const currentCommentId = $("#currentCommentId" + metadata.id).val();
@@ -383,7 +383,7 @@
             }
         });
 
-        $("#updateCommentMetadata"+metadata.id).on("click", async function (e) {
+        $("#updateCommentMetadata"+metadata.id).off("click").on("click", async function (e) {
             e.preventDefault();
 
             const currentCommentId = $("#currentCommentId" + metadata.id).val();
@@ -438,7 +438,7 @@
             }
         });
 
-        $("#saveCommentMetadata"+metadata.id).on("click", async function (e) {
+        $("#saveCommentMetadata"+metadata.id).off("click").on("click", async function (e) {
             e.preventDefault();
 
             let comment = $.trim($("#commentText" + metadata.id).val());
@@ -467,14 +467,14 @@
                         canEdit: canEdit
                     }));
 
-                    $("#deletecomment" + commentId).on("click", function (e) {
+                    $("#deletecomment" + commentId).off("click").on("click", function (e) {
                         e.preventDefault();
                         $("#commentMetadataId").val(metadata.id);
                         $("#commentCommentId").val(commentId);
                         $("#proptrashcomment").modal('show');
                     });
 
-                    $("#editcomment" + commentId).on("click", function (e) {
+                    $("#editcomment" + commentId).off("click").on("click", function (e) {
                         e.preventDefault();
                         albumSettings.editComment(commentId, metadata.id);
                     });

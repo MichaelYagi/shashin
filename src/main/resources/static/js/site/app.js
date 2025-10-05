@@ -50,7 +50,7 @@
     };
 
     shashin.updateFavorites = function(listenerPrefix, iconPrefix, countPrefix, metadataId) {
-        $(listenerPrefix+metadataId).on("click", async function (e) {
+        $(listenerPrefix+metadataId).off("click").on("click", async function (e) {
             e.preventDefault();
 
             if ($(iconPrefix + metadataId).hasClass("bi-suit-heart")) {
@@ -797,7 +797,7 @@
                 shashin.syncCheckboxInputs("#albumNameInput", "albums");
 
                 $("#albumBatchSelectionList").html(batchHtml);
-                $("#albumBatchNameData").on("click", function (e) {
+                $("#albumBatchNameData").off("click").on("click", function (e) {
                     e.preventDefault();
                     shashin.createBatchModalMultiselect("album");
                 });
@@ -858,7 +858,7 @@
                 shashin.syncCheckboxInputs("#tagBatchDataInput", "recognitionLabel");
 
                 $("#peopleBatchSelectionList").html(batchHtml);
-                $("#peopleBatchNameData").on("click", function (e) {
+                $("#peopleBatchNameData").off("click").on("click", function (e) {
                     e.preventDefault();
                     shashin.createBatchModalMultiselect("people");
                 });

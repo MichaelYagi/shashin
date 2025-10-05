@@ -45,7 +45,7 @@
     };
 }( window.metadataBatchModal = window.metadataBatchModal || {}, jQuery ));
 
-$("#batchMapTabLink").on("click", function (e) {
+$("#batchMapTabLink").off("click").on("click", function (e) {
     e.preventDefault();
 
     const propBatchMetadataModal = document.getElementById('propBatchMetadata');
@@ -59,7 +59,7 @@ $("#batchMapTabLink").on("click", function (e) {
     }
 });
 
-$("#batchrescan").on("click", async function (e) {
+$("#batchrescan").off("click").on("click", async function (e) {
     if ($("#batchrescan").prop("checked")) {
         $("#batchhidden").prop("checked", false);
         $("#saveBatchData :input").prop("disabled", true);
@@ -70,7 +70,7 @@ $("#batchrescan").on("click", async function (e) {
     }
 });
 
-$("#batchhidden").on("click", async function (e) {
+$("#batchhidden").off("click").on("click", async function (e) {
     if ($("#batchhidden").prop("checked")) {
         $("#batchrescan").prop("checked", false);
         $("#saveBatchData :input").prop("disabled", true);
@@ -81,7 +81,7 @@ $("#batchhidden").on("click", async function (e) {
     }
 });
 
-$("#confirmRescanBatchMetadata").on("click", function (e) {
+$("#confirmRescanBatchMetadata").off("click").on("click", function (e) {
     e.preventDefault();
 
     const metadataIds = JSON.parse($("#batchMetadataIds").val());
@@ -89,11 +89,11 @@ $("#confirmRescanBatchMetadata").on("click", function (e) {
     Util.rescanMetadata(metadataIds, "propBatchMetadata");
 });
 
-$("#saveBatchMetadata").on("click", async function (e) {
+$("#saveBatchMetadata").off("click").on("click", async function (e) {
     await saveBatchMetadata(e);
 });
 
-$("#propBatchMetadata").on("keydown", async function (e) {
+$("#propBatchMetadata").off("keydown").on("keydown", async function (e) {
     if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
         await saveBatchMetadata(e);
     }
@@ -374,7 +374,7 @@ $('#rescanBatchMetadataConfirmation').on('hide.bs.modal', function () {
     $("#metadataBatchModalStatus").removeClass('bi-x-circle').removeClass('bi-check-circle').removeClass('spinner-grow');
 });
 
-$('#metadataBatchModalCancel').on('click', function () {
+$('#metadataBatchModalCancel').off("click").on('click', function () {
     shashin.stopRendering = true;
 });
 
@@ -388,7 +388,7 @@ $('#propAddAlbum').bind('keypress', function() {
     $("#albumResponseMsg").html("");
 });
 
-$("#batchisobject").on("click", function (e) {
+$("#batchisobject").off("click").on("click", function (e) {
     metadataBatchModal.closeBatchTagPeopleDropdown();
     if($(this).prop("checked") === true) {
         $("#tagBatchDataInput").val("");
@@ -443,7 +443,7 @@ $("#collapseBatchMetadata").on("shown.bs.collapse", function (e) {
     }, 1000);
 });
 
-$('body').on("click", function(event) {
+$('body').off("click").on("click", function(event) {
     if (!$(event.target).closest("#tagalbumdropdown").length && !$(event.target).closest("#albumNameList").length && $("#tagalbumdropdown").hasClass("show")) {
         metadataBatchModal.toggleBatchTagAlbumDropdown();
     }

@@ -197,7 +197,7 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
     });
 
     if (activePage === "settings") {
-        $('body').on("click", function () {
+        $('body').off("click").on("click", function () {
             shashin.closeToastMessages();
         });
     }

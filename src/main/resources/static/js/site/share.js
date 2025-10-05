@@ -149,7 +149,7 @@ class ShareAlbum {
         const albumId = this.albumId;
         const shareLink = this.shareLink;
 
-        $("#clearMultiSelect").on("click", function() {
+        $("#clearMultiSelect").off("click").on("click", function() {
             shashin.clearSelection("album");
             $("#clearMultiSelect").hide();
             $("#albumNumberSelected").hide();

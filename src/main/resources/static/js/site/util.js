@@ -1321,7 +1321,7 @@ class Util {
                 $("#darkmodeSwitch").prop('checked', true);
             }
 
-            $('#darkmodeSwitch').on("click", function () {
+            $('#darkmodeSwitch').off("click").on("click", function () {
                 let html = $("html");
                 html.hide();
 

@@ -91,7 +91,7 @@
                                     albumModal.renderAlbumCommentsModal({id:[[${album.id}]]},{id:[[${metadata.id}]],fileName:[[${metadata.fileName}]]},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{},/*[[${canEdit}]]*/false)
                                     albumSettings.activateAlbumListeners({id:[[${metadata.id}]]})
                                     $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
-                                    $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
+                                    $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").off("click").on("click", function(e) {
                                         e.preventDefault();
                                         shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                                     });

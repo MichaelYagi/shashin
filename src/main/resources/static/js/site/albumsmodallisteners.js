@@ -50,7 +50,7 @@
             $("#proptrashalbums").off();
         });
 
-        $("#deleteAlbum").on("click", async function (e) {
+        $("#deleteAlbum").off("click").on("click", async function (e) {
             e.preventDefault();
             await deleteAlbum();
         });
@@ -88,12 +88,12 @@
             $("#originalAlbumName").val("");
         });
 
-        $("#editAlbum").on("click", async function (e) {
+        $("#editAlbum").off("click").on("click", async function (e) {
             e.preventDefault();
             await editAlbum();
         });
 
-        $("#editAlbumsModal").on("keypress", async function (e) {
+        $("#editAlbumsModal").off("keypress").on("keypress", async function (e) {
             const albumName = $("#albumEditName").val();
             const originalAlbumName = $("#originalAlbumName").val();
 
@@ -103,7 +103,7 @@
             }
         });
 
-        $("#albumEditName").on("keyup", async function (e) {
+        $("#albumEditName").off("keyup").on("keyup", async function (e) {
             const albumName = $("#albumEditName").val();
             const originalAlbumName = $("#originalAlbumName").val();
 

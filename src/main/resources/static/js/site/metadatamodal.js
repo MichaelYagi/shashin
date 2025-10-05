@@ -55,7 +55,7 @@ $("#description").on("input paste", function () {
     $("#descriptionCharacterCount").text(500-$(this).val().length);
 });
 
-$("#confirmRescanMetadata").on("click", function (e) {
+$("#confirmRescanMetadata").off("click").on("click", function (e) {
     e.preventDefault();
 
     const metadataId = $("#metadataId").val();
@@ -65,7 +65,7 @@ $("#confirmRescanMetadata").on("click", function (e) {
     Util.rescanMetadata(metadataIdArray,"propMetadata");
 });
 
-$("#rescan").on("click", async function (e) {
+$("#rescan").off("click").on("click", async function (e) {
     if ($("#rescan").prop("checked")) {
         $("#hidden").prop("checked", false);
         $("#saveTimelineModalForm :input").prop("disabled", true);
@@ -76,7 +76,7 @@ $("#rescan").on("click", async function (e) {
     }
 });
 
-$("#hidden").on("click", async function (e) {
+$("#hidden").off("click").on("click", async function (e) {
     if ($("#hidden").prop("checked")) {
         $("#rescan").prop("checked", false);
         $("#saveTimelineModalForm :input").prop("disabled", true);
@@ -87,11 +87,11 @@ $("#hidden").on("click", async function (e) {
     }
 });
 
-$("#saveMetadata").on("click", async function (e) {
+$("#saveMetadata").off("click").on("click", async function (e) {
     await saveMetadata(e);
 });
 
-$("#propMetadata").on("keydown", async function (e) {
+$("#propMetadata").off("keydown").on("keydown", async function (e) {
     if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
         await saveMetadata(e);
     }
@@ -542,7 +542,7 @@ $('#propMetadata').find(':input').bind('keypress', function() {
     $("#metadataModalMsg").html("");
 });
 
-$("#refreshTakenDate").on("click", function (e) {
+$("#refreshTakenDate").off("click").on("click", function (e) {
     e.preventDefault();
 
     const originalTakenAtDate = $(".takenAtDetails").first().text();
@@ -557,7 +557,7 @@ $("#refreshTakenDate").on("click", function (e) {
     }
 });
 
-$("#detailsTabLink").on("click", function (e) {
+$("#detailsTabLink").off("click").on("click", function (e) {
     e.preventDefault();
 
     $("#yearTaken").attr("max", new Date().getFullYear());
@@ -572,7 +572,7 @@ $("#detailsTabLink").on("click", function (e) {
     });
 });
 
-$("#mapTabLink").on("click", function (e) {
+$("#mapTabLink").off("click").on("click", function (e) {
     e.preventDefault();
 
     const propMetadataModal = document.getElementById('propMetadata');
@@ -589,7 +589,7 @@ $("#mapTabLink").on("click", function (e) {
     }
 });
 
-$("#exifTabLink").on("click", async function (e) {
+$("#exifTabLink").off("click").on("click", async function (e) {
     e.preventDefault();
 
     const propMetadataModal = document.getElementById('propMetadata');
@@ -613,7 +613,7 @@ $("#exifTabLink").on("click", async function (e) {
     }
 });
 
-$("#generalTabLink").on("click", function (e) {
+$("#generalTabLink").off("click").on("click", function (e) {
     e.preventDefault();
 
     const propMetadataModal = document.getElementById('propMetadata');
@@ -621,7 +621,7 @@ $("#generalTabLink").on("click", function (e) {
     modal.handleUpdate();
 });
 
-$("#isobject").on("click", function (e) {
+$("#isobject").off("click").on("click", function (e) {
     const metadataId = $("#metadataId").val();
 
     metadataModal.closeTagPeopleDropdown(metadataId);
@@ -643,7 +643,7 @@ $("#collapseMetadata").on("shown.bs.collapse", function (e) {
     }, 1000);
 });
 
-$('body').on("click", function(event) {
+$('body').off("click").on("click", function(event) {
     const metadataId = $("#metadataId").val();
 
     if (!$(event.target).closest("#albumdropdown"+metadataId).length && !$(event.target).closest("#albumsList").length && $("#albumdropdown"+metadataId).hasClass("show")) {
