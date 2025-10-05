@@ -15,22 +15,22 @@ function initializeEditor(editMetadataObj, lgIndex) {
     styleControl("#editorTitle", "2rem", "23px", "left", "30px");
 
     // Upper buttons
-    let sideValue = 13;
+    let sideValue = 8;
     const upperButtons = [
         { id: "#editorCloseActionButton", fontSize: "3rem", top: "10px" },
         { id: "#editorFlipHorizontalActionButton", fontSize: "2rem", top: "22px" },
         { id: "#editorFlipVerticalActionButton", fontSize: "2rem", top: "22px" },
         { id: "#editorRotateLeftActionButton", fontSize: "2rem", top: "23px" },
-        { id: "#editorRotateRightActionButton", fontSize: "2rem", top: "23px" },
-        { id: "#editorSaveActionButton", fontSize: "2rem", top: "23px" }
+        { id: "#editorRotateRightActionButton", fontSize: "2rem", top: "23px" }
     ];
     applyStyles(upperButtons, sideValue, "right");
 
     // Lower buttons
-    sideValue = 71;
+    sideValue = 13;
     const lowerButtons = [
-        { id: "#editorResetActionButton", fontSize: "2rem", top: "75px" },
+        { id: "#editorSaveActionButton", fontSize: "2rem", top: "75px" },
         { id: "#editorRestoreActionButton", fontSize: "2rem", top: "75px" },
+        { id: "#editorResetActionButton", fontSize: "2rem", top: "75px" },
         { id: "#editorSpinner", fontSize: "2rem", top: "85px" }
     ];
     applyStyles(lowerButtons, sideValue, "right");
