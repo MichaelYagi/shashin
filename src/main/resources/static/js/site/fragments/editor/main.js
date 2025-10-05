@@ -10,25 +10,49 @@ function initializeEditor(editMetadataObj, lgIndex) {
         "width": "370px",
         "right": "0"
     });
-    styleControl("#editorTitle", "2rem", "23px", "left", `30px`);
+
+    // Title
+    styleControl("#editorTitle", "2rem", "23px", "left", "30px");
+
+    // Upper buttons
     let sideValue = 13;
-    styleControl("#editorCloseActionButton", "3rem", "10px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorFlipHorizontalActionButton", "2rem", "22px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorFlipVerticalActionButton", "2rem", "22px", "right",sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorRotateLeftActionButton", "2rem", "23px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorRotateRightActionButton", "2rem", "23px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorSaveActionButton", "2rem", "23px", "right", sideValue+"px");
+    const upperButtons = [
+        { id: "#editorCloseActionButton", fontSize: "3rem", top: "10px" },
+        { id: "#editorFlipHorizontalActionButton", fontSize: "2rem", top: "22px" },
+        { id: "#editorFlipVerticalActionButton", fontSize: "2rem", top: "22px" },
+        { id: "#editorRotateLeftActionButton", fontSize: "2rem", top: "23px" },
+        { id: "#editorRotateRightActionButton", fontSize: "2rem", top: "23px" },
+        { id: "#editorSaveActionButton", fontSize: "2rem", top: "23px" }
+    ];
+    applyStyles(upperButtons, sideValue, "right");
+
+    // Lower buttons
     sideValue = 71;
-    styleControl("#editorResetActionButton", "2rem", "75px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorRestoreActionButton", "2rem", "75px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorSpinner", "2rem", "85px", "right", sideValue+"px");
+    const lowerButtons = [
+        { id: "#editorResetActionButton", fontSize: "2rem", top: "75px" },
+        { id: "#editorRestoreActionButton", fontSize: "2rem", top: "75px" },
+        { id: "#editorSpinner", fontSize: "2rem", top: "85px" }
+    ];
+    applyStyles(lowerButtons, sideValue, "right");
+
+    function styleControl(id, fontSize, top, side, sideValue) {
+        $(id).css({
+            "font-size": fontSize,
+            "color": "#FFFFFF",
+            "z-index": 99998,
+            "position": "absolute",
+            "top": top,
+            [side]: sideValue
+        });
+    }
+
+    function applyStyles(buttons, startValue, side) {
+        let offset = startValue;
+        for (const { id, fontSize, top } of buttons) {
+            styleControl(id, fontSize, top, side, offset + "px");
+            offset += 58;
+        }
+    }
 
     let rotation = 0;
     let isFlippedHorizontally = false;
@@ -239,16 +263,5 @@ function initializeEditor(editMetadataObj, lgIndex) {
         visualRotation = 0;
         isFlippedHorizontally = false;
         isFlippedVertically = false;
-    }
-
-    function styleControl(id, fontSize, top, side, sideValue) {
-        $(id).css({
-            "font-size": fontSize,
-            "color": "#FFFFFF",
-            "z-index": 99998,
-            "position": "absolute",
-            "top": top,
-            [side]: sideValue
-        });
     }
 }
