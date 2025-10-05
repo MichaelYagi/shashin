@@ -65,97 +65,64 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
+    function updateTransform() {
+        const flipX = isFlippedHorizontally ? -1 : 1;
+        const flipY = isFlippedVertically ? -1 : 1;
+        const isEvenRotation = rotation % 180 === 0;
+
+        $("#editShashinImage").css({
+            "transition": "transform 0.3s ease-in-out",
+            "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
+            "max-width": isEvenRotation ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
+            "max-height": isEvenRotation ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
+        });
+    }
+
+    function isSpinnerHidden() {
+        return $("#editorSpinner").css("display") === "none";
+    }
+
+    function normalizedRotation() {
+        return Math.abs(((rotation % 360) + 360) % 360);
+    }
+
     $("#editorRotateRightActionButton").off("click").on("click", function (e) {
         e.preventDefault();
-
-        if ($("#editorSpinner").css("display") === "none") {
+        if (isSpinnerHidden()) {
             rotation += 90;
-            const flipX = isFlippedHorizontally ? -1 : 1;
-            const flipY = isFlippedVertically ? -1 : 1;
-
-            $("#editShashinImage").css({
-                "transition": "transform 0.3s ease-in-out",
-                "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
-                "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
-                "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
-            });
+            updateTransform();
         }
     });
 
     $("#editorRotateLeftActionButton").off("click").on("click", function (e) {
         e.preventDefault();
-
-        if ($("#editorSpinner").css("display") === "none") {
+        if (isSpinnerHidden()) {
             rotation -= 90;
-            const flipX = isFlippedHorizontally ? -1 : 1;
-            const flipY = isFlippedVertically ? -1 : 1;
-
-            $("#editShashinImage").css({
-                "transition": "transform 0.3s ease-in-out",
-                "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
-                "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
-                "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
-            });
+            updateTransform();
         }
     });
 
     $("#editorFlipVerticalActionButton").off("click").on("click", function (e) {
         e.preventDefault();
-        //const normalizedRotation = ((rotation % 360) + 360) % 360;
-        if ($("#editorSpinner").css("display") === "none") {
-            if (Math.abs(((rotation % 360) + 360) % 360) === 90 || Math.abs(((rotation % 360) + 360) % 360) === 270) {
+        if (isSpinnerHidden()) {
+            if (normalizedRotation() === 90 || normalizedRotation() === 270) {
                 isFlippedVertically = !isFlippedVertically;
-                const flipVertically = isFlippedVertically ? -1 : 1;
-                const flipHorizontally = isFlippedHorizontally ? -1 : 1;
-
-                $("#editShashinImage").css({
-                    "transition": "transform 0.3s ease-in-out",
-                    "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipHorizontally}, ${flipVertically})`,
-                    "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
-                    "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
-                });
             } else {
                 isFlippedHorizontally = !isFlippedHorizontally;
-                const flipHorizontally = isFlippedHorizontally ? -1 : 1;
-                const flipVertically = isFlippedVertically ? -1 : 1;
-
-                $("#editShashinImage").css({
-                    "transition": "transform 0.3s ease-in-out",
-                    "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipHorizontally}, ${flipVertically})`,
-                    "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
-                    "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
-                });
             }
+            updateTransform();
         }
     });
 
     $("#editorFlipHorizontalActionButton").off("click").on("click", function (e) {
         e.preventDefault();
-
-        if ($("#editorSpinner").css("display") === "none") {
-            if (Math.abs(((rotation % 360) + 360) % 360) === 90 || Math.abs(((rotation % 360) + 360) % 360) === 270) {
+        if (isSpinnerHidden()) {
+            if (normalizedRotation() === 90 || normalizedRotation() === 270) {
                 isFlippedHorizontally = !isFlippedHorizontally;
-                const flipHorizontally = isFlippedHorizontally ? -1 : 1;
-                const flipVertically = isFlippedVertically ? -1 : 1;
-
-                $("#editShashinImage").css({
-                    "transition": "transform 0.3s ease-in-out",
-                    "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipHorizontally}, ${flipVertically})`,
-                    "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
-                    "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
-                });
             } else {
                 isFlippedVertically = !isFlippedVertically;
-                const flipVertically = isFlippedVertically ? -1 : 1;
-                const flipHorizontally = isFlippedHorizontally ? -1 : 1;
-
-                $("#editShashinImage").css({
-                    "transition": "transform 0.3s ease-in-out",
-                    "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipHorizontally}, ${flipVertically})`,
-                    "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
-                    "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
-                });
             }
+            updateTransform();
         }
     });
 
