@@ -22,11 +22,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
     sideValue += 58;
     styleControl("#editorRotateRightActionButton", "2rem", "23px", "right", sideValue+"px");
     sideValue = 19;
+    styleControl("#editorResetActionButton", "2rem", "75px", "right", sideValue+"px");
+    sideValue += 51;
     styleControl("#editorRestoreActionButton", "2rem", "75px", "right", sideValue+"px");
     sideValue += 58;
     styleControl("#editorSaveActionButton", "2rem", "75px", "right", sideValue+"px");
     sideValue += 58;
-    styleControl("#editorSpinner", "2rem", "33px", "right", sideValue+"px");
+    styleControl("#editorSpinner", "2rem", "85px", "right", sideValue+"px");
 
     let rotation = 0;
     let isFlippedHorizontally = false;
@@ -57,7 +59,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorContainer").off("click").on('click', function(event) {
         event.preventDefault();
 
-        if (!$(event.target).closest('#editorCloseActionButton, #editorFlipHorizontalActionButton, #editorFlipVerticalActionButton, #editorRotateRightActionButton, #editorRotateLeftActionButton, #editorRestoreActionButton, #editorSaveActionButton, #editorBlock').length) {
+        if (!$(event.target).closest('#editorCloseActionButton, #editorFlipHorizontalActionButton, #editorFlipVerticalActionButton, #editorRotateRightActionButton, #editorRotateLeftActionButton, #editorRestoreActionButton, #editorSaveActionButton, #editorResetActionButton, #editorBlock').length) {
             if ($("#editorSpinner").css("display") === "none") {
                 hideModule();
             }
@@ -129,6 +131,18 @@ function initializeEditor(editMetadataObj, lgIndex) {
             } else {
                 isFlippedVertically = !isFlippedVertically;
             }
+            updateTransform();
+        }
+    });
+
+    $("#editorResetActionButton").off("click").on("click", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
+            rotation = 0;
+            isFlippedHorizontally = false;
+            isFlippedVertically = false;
+
             updateTransform();
         }
     });
