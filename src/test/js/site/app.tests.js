@@ -23,6 +23,7 @@ global.lgCastMedia = require('../../../main/resources/static/js/lg-cast-media');
 global.lgRelativeCaption = require('../../../main/resources/static/js/lg-relative-caption.min');
 global.lgFullscreen = require('../../../main/resources/static/js/lg-fullscreen');
 global.lgRotate = require('../../../main/resources/static/js/lg-rotate.min');
+global.lgShashinEditor = require('../../../main/resources/static/js/lg-shashin-editor');
 global.Worker = require('../../../main/resources/static/js/subworkers');
 global.ol = require('../../../main/resources/static/js/ol.min');
 global.Util = require('../../../main/resources/static/js/site/util');
