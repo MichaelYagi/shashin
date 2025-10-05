@@ -6,8 +6,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     let sideValue = 19;
     styleControl("#editorCloseActionButton", "3rem", "10px", "right", sideValue+"px");
-    // sideValue += 58;
-    // styleControl("#editorFlipHorizontalActionButton", "2rem", "22px", "right", sideValue+"px");
+    sideValue += 58;
+    styleControl("#editorFlipHorizontalActionButton", "2rem", "22px", "right", sideValue+"px");
     sideValue += 58;
     styleControl("#editorFlipVerticalActionButton", "2rem", "22px", "right",sideValue+"px");
     sideValue += 58;
@@ -22,7 +22,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
     styleControl("#editorSpinner", "2rem", "32px", "right", sideValue+"px");
 
     let rotation = 0;
-    let visualRotation = 0;
     let isFlippedHorizontally = false;
     let isFlippedVertically = false;
     const editMetadataId = editMetadataObj.id;
@@ -70,13 +69,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if ($("#editorSpinner").css("display") === "none") {
-            rotation = (rotation + 90) % 360;
-            visualRotation += 90;
-            const flipVertically = isFlippedVertically ? -1 : 1;
+            rotation += 90;
+            const flipX = isFlippedHorizontally ? -1 : 1;
+            const flipY = isFlippedVertically ? -1 : 1;
 
             $("#editShashinImage").css({
                 "transition": "transform 0.3s ease-in-out",
-                "transform": `translate(-50%, -50%) rotate(${visualRotation}deg) scaleX(${flipVertically})`,
+                "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
                 "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
                 "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
             });
@@ -87,13 +86,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if ($("#editorSpinner").css("display") === "none") {
-            rotation = (rotation - 90) % 360;
-            visualRotation -= 90;
-            const flipVertically = isFlippedVertically ? -1 : 1;
+            rotation -= 90;
+            const flipX = isFlippedHorizontally ? -1 : 1;
+            const flipY = isFlippedVertically ? -1 : 1;
 
             $("#editShashinImage").css({
                 "transition": "transform 0.3s ease-in-out",
-                "transform": `translate(-50%, -50%) rotate(${visualRotation}deg) scaleX(${flipVertically})`,
+                "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
                 "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
                 "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
             });
@@ -102,25 +101,31 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorFlipVerticalActionButton").off("click").on("click", function (e) {
         e.preventDefault();
-
+        //const normalizedRotation = ((rotation % 360) + 360) % 360;
         if ($("#editorSpinner").css("display") === "none") {
-            // if (Math.abs(rotation%360%180) === 0) {
+            if (Math.abs(((rotation % 360) + 360) % 360) === 90 || Math.abs(((rotation % 360) + 360) % 360) === 270) {
                 isFlippedVertically = !isFlippedVertically;
+                const flipVertically = isFlippedVertically ? -1 : 1;
+                const flipHorizontally = isFlippedHorizontally ? -1 : 1;
+
+                $("#editShashinImage").css({
+                    "transition": "transform 0.3s ease-in-out",
+                    "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipHorizontally}, ${flipVertically})`,
+                    "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
+                    "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
+                });
+            } else {
+                isFlippedHorizontally = !isFlippedHorizontally;
+                const flipHorizontally = isFlippedHorizontally ? -1 : 1;
                 const flipVertically = isFlippedVertically ? -1 : 1;
 
                 $("#editShashinImage").css({
                     "transition": "transform 0.3s ease-in-out",
-                    "transform": "translate(-50%, -50%) rotate(" + visualRotation + "deg) scaleX(" + flipVertically + ")"
+                    "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipHorizontally}, ${flipVertically})`,
+                    "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
+                    "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
                 });
-            // } else {
-            //     isFlippedHorizontally = !isFlippedHorizontally;
-            //     const flipHorizontally = isFlippedHorizontally ? -1 : 1;
-            //
-            //     $("#editShashinImage").css({
-            //         "transition": "transform 0.3s ease-in-out",
-            //         "transform": "translate(-50%, -50%) rotate(" + visualRotation + "deg) scaleY(" + flipHorizontally + ")"
-            //     });
-            // }
+            }
         }
     });
 
@@ -128,21 +133,27 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if ($("#editorSpinner").css("display") === "none") {
-            if (Math.abs(rotation%360%180) === 0) {
+            if (Math.abs(((rotation % 360) + 360) % 360) === 90 || Math.abs(((rotation % 360) + 360) % 360) === 270) {
                 isFlippedHorizontally = !isFlippedHorizontally;
                 const flipHorizontally = isFlippedHorizontally ? -1 : 1;
-
-                $("#editShashinImage").css({
-                    "transition": "transform 0.3s ease-in-out",
-                    "transform": "translate(-50%, -50%) rotate(" + visualRotation + "deg) scaleY(" + flipHorizontally + ")"
-                });
-            } else {
-                isFlippedVertically = !isFlippedVertically;
                 const flipVertically = isFlippedVertically ? -1 : 1;
 
                 $("#editShashinImage").css({
                     "transition": "transform 0.3s ease-in-out",
-                    "transform": "translate(-50%, -50%) rotate(" + visualRotation + "deg) scaleX(" + flipVertically + ")"
+                    "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipHorizontally}, ${flipVertically})`,
+                    "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
+                    "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
+                });
+            } else {
+                isFlippedVertically = !isFlippedVertically;
+                const flipVertically = isFlippedVertically ? -1 : 1;
+                const flipHorizontally = isFlippedHorizontally ? -1 : 1;
+
+                $("#editShashinImage").css({
+                    "transition": "transform 0.3s ease-in-out",
+                    "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipHorizontally}, ${flipVertically})`,
+                    "max-width": rotation % 180 === 0 ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
+                    "max-height": rotation % 180 === 0 ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
                 });
             }
         }
@@ -221,8 +232,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         $("#editorSpinner").css("display", "block");
+        const normalizedRotation = ((rotation % 360) + 360) % 360;
 
-        shashin.processEditedThumbnail($("#metadataId").val(), lgIndex, rotation, isFlippedHorizontally, isFlippedVertically, function (success) {
+        shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation, isFlippedVertically, isFlippedHorizontally, function (success) {
             shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
 
             $("#editorSpinner").css("display", "none");
