@@ -1081,7 +1081,7 @@ async function showMap(mapdata, keywordMap, locale) {
         if (window.history && window.history.pushState) {
             window.history.pushState('forward', null, "");
 
-            $(window).on('popstate', function() {
+            $(window).off("click").on('popstate', function() {
                 dynamicGallery.closeGallery();
             });
 

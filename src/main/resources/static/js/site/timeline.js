@@ -1336,7 +1336,7 @@
             const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle";
             $("#tnbl" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomLeftOverlay({metadata:metadata,editIcon:editIcon}));
             $("#metadataModalEdit" + metadata.id).attr("tag", metadata.id);
-            $("#metadataModalEdit" + metadata.id).on("click", function (e) {
+            $("#metadataModalEdit" + metadata.id).off("click").on("click", function (e) {
                 e.preventDefault();
                 shashin.openEditMetadataModal(metadata.id);
             });
@@ -1758,7 +1758,7 @@
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));
 
 // Hack to close TOC canvas
-$(document).on("click", function(event) {
+$(document).off("click").on("click", function(event) {
     const $target = $(event.target);
     if (!$target.closest('#offcanvasToc').length &&
         !$target.closest('#timelineTocToggle').length &&

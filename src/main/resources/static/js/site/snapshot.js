@@ -25,7 +25,7 @@ class Snapshot {
             }
         });
 
-        $("#import").on("click", function() {
+        $("#import").off("click").on("click", function() {
             $("#msg").text("Importing data.");
             shashin.showToastMessage(shashin.getTranslatedValue("main.toast.snapshot.import.title"), shashin.getTranslatedValue("main.toast.snapshot.import.body"), {tag:"importexport", icon:"bi-info-circle", iconColor:"#777777", autohide:false});
         });
@@ -35,7 +35,7 @@ class Snapshot {
         const tokenDbBackupName = this.tokenDbBackupName;
         let downloadTimer;
 
-        $("#export").on("click", function() {
+        $("#export").off("click").on("click", function() {
             let attempts = this.configuredAttempts;
 
             // $("#msg").text("Exporting data.");

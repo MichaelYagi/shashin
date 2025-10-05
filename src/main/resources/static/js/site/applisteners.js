@@ -1,4 +1,4 @@
-$("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
+$("#appToolsBatchEdit,#matchToolsBatchEdit").off("click").on("click", function(e) {
     e.preventDefault();
 
     shashin.stopRendering = true;
@@ -112,7 +112,7 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
         if (albumcheckedBoxes.length > 0) {
             $("#albumBatchNameData").css("display", "block");
 
-            $("#albumBatchNameData").on("click", function (e) {
+            $("#albumBatchNameData").off("click").on("click", function (e) {
                 e.preventDefault();
                 shashin.createBatchModalMultiselect("album");
             });
@@ -128,7 +128,7 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
         if (peoplecheckedBoxes.length > 0) {
             $("#peopleBatchNameData").css("display", "block");
 
-            $("#peopleBatchNameData").on("click", function (e) {
+            $("#peopleBatchNameData").off("click").on("click", function (e) {
                 e.preventDefault();
                 shashin.createBatchModalMultiselect("people");
             });
@@ -140,7 +140,7 @@ $("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
     $("#propBatchMetadata").modal('show');
 });
 
-$("#appToolsBatchDownload").on("click", function(e) {
+$("#appToolsBatchDownload").off("click").on("click", function(e) {
     e.preventDefault();
 
     shashin.stopRendering = true;

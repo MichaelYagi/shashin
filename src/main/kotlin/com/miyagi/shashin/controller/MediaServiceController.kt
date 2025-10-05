@@ -464,6 +464,13 @@ class MediaServiceController {
             metadataRepository.save(metadata)
         }
 
+        // Generate a random UUID
+        val randomUuid: UUID = UUID.randomUUID()
+
+        // Convert the UUID to its string representation
+        val uuidString: String = randomUuid.toString()
+
+        model["uuid"] = uuidString
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
