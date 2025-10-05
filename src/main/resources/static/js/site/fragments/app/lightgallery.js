@@ -168,7 +168,7 @@
         // shashin.autoplayVideo = $("#autoplayVideoSwitch").is(':checked');
 
         const configs = {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate, lgCastMedia, lgShashinEditor],
+            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, /*lgRotate,*/ lgCastMedia, lgShashinEditor],
             videojs: false,
             hideBarsDelay: 5000,
             showBarsAfter: 5000,

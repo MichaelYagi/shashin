@@ -4,22 +4,24 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // console.log(editMetadataObj);
     // console.log(lgIndex);
 
-    let sideValue = 19;
-    styleControl("#editorCloseActionButton", "3rem", "10px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorFlipHorizontalActionButton", "2rem", "22px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorFlipVerticalActionButton", "2rem", "22px", "right",sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorRotateLeftActionButton", "2rem", "23px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorRotateRightActionButton", "2rem", "23px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorRestoreActionButton", "2rem", "23px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorSaveActionButton", "2rem", "23px", "right", sideValue+"px");
-    sideValue += 58;
-    styleControl("#editorSpinner", "2rem", "32px", "right", sideValue+"px");
+    styleControl("#editorTitle", "2rem", "23px", "left", `30px`);
+
+    const sideStart = 30;
+    const spacing = 58;
+
+    [
+        { selector: "#editorCloseActionButton", size: "3rem", offset: "10px" },
+        { selector: "#editorFlipHorizontalActionButton", size: "2rem", offset: "22px" },
+        { selector: "#editorFlipVerticalActionButton", size: "2rem", offset: "22px" },
+        { selector: "#editorRotateLeftActionButton", size: "2rem", offset: "23px" },
+        { selector: "#editorRotateRightActionButton", size: "2rem", offset: "23px" },
+        { selector: "#editorRestoreActionButton", size: "2rem", offset: "23px" },
+        { selector: "#editorSaveActionButton", size: "2rem", offset: "23px" },
+        { selector: "#editorSpinner", size: "2rem", offset: "32px" }
+    ].forEach(({ selector, size, offset }, index) => {
+        const sideValue = sideStart + spacing * index;
+        styleControl(selector, size, offset, "right", `${sideValue}px`);
+    });
 
     let rotation = 0;
     let isFlippedHorizontally = false;
