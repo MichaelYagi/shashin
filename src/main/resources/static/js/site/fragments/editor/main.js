@@ -74,17 +74,23 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    function updateTransform() {
+    function updateTransform(showTransition = true) {
         const flipX = isFlippedHorizontally ? -1 : 1;
         const flipY = isFlippedVertically ? -1 : 1;
         const isEvenRotation = rotation % 180 === 0;
 
-        $("#editShashinImage").css({
-            "transition": "transform 0.3s ease-in-out",
+        let style = {
             "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
             "max-width": isEvenRotation ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
             "max-height": isEvenRotation ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
-        });
+        };
+        if (showTransition === true) {
+            style.transition = "transform 0.3s ease-in-out";
+        } else {
+            style.transition = "none";
+        }
+
+        $("#editShashinImage").css(style);
     }
 
     function isSpinnerHidden() {
@@ -143,7 +149,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             isFlippedHorizontally = false;
             isFlippedVertically = false;
 
-            updateTransform();
+            updateTransform(false);
         }
     });
 
@@ -212,11 +218,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     function showModule() {
         $("#editorContainer").css("display", "block");
-        $("#editorToolContainer").css("display", "block");
-        $("#editorBlock").css("display", "block");
 
         $("#editorMedia").css("display", "block");
         $("#editorMedia").html("<img class='centerFit' id='editShashinImage' src='/api/v1/image/"+editMetadataId+"?v="+uuidv4()+"'>");
+        $("#editShashinImage").on('load', function() {
+            $("#editorToolContainer").css("display", "block");
+            $("#editorBlock").css("display", "block");
+        });
     }
 
     function hideModule() {
