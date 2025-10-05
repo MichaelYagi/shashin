@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="editor()">
+
+<!--Editor Container-->
+<div id="editorContainer" class="editorbox" style="display: none;z-index: 999999;">
+    <div id="editorToolContainer" style="display: none;">
+        <span type="button" id="editorSaveActionButton" th:title="#{main.modal.save}"><span class="bi-save" id="editorSaveAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
+        <span type="button" id="editorRestoreActionButton" th:title="#{main.pages.map.modal.restore}"><span class="bi-skip-backward" id="editorRestoreAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
+        <span type="button" id="editorRotateRightActionButton" th:title="#{main.pages.lg.plugins.editor.rotateright}"><span class="bi-arrow-clockwise" id="editorRotateRightAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
+        <span type="button" id="editorRotateLeftActionButton" th:title="#{main.pages.lg.plugins.editor.rotateleft}"><span class="bi-arrow-counterclockwise" id="editorRotateLeftAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
+<!--        <span type="button" id="editorFlipHorizontalActionButton" th:title="#{main.pages.lg.plugins.editor.flipx}"><span class="bi-symmetry-horizontal" id="editorFlipHorizontalAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>-->
+        <span type="button" id="editorFlipVerticalActionButton" th:title="#{main.pages.lg.plugins.editor.flipy}"><span class="bi-symmetry-vertical" id="editorFlipVerticalAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
+        <span type="button" id="editorCloseActionButton" th:title="#{main.modal.close}"><span class="bi-x" id="editorCloseAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
+        <div class="spinner-border" id="editorSpinner" role="status" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <span id="editorMedia" style="display: none;"></span>
+</div>

@@ -35,6 +35,8 @@ import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.RenderingHints
+import java.awt.geom.AffineTransform
+import java.awt.image.AffineTransformOp
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImageOp
 import java.awt.image.ConvolveOp
@@ -232,6 +234,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
             val fileRootDir: String = FileUtils.Companion.getRootDir(file)
+            val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
 
             // Raw file to image conversion
             var thumbnailFileStr: String
@@ -260,8 +263,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             )
 
             if (tnFile != null) {
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
-
                 val thumbnails = Thumbnails.of(img)
                     .outputQuality(1.0)
                 if (mediaExtension == "gif") {
@@ -279,18 +280,22 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 }
                 thumbnails.toFile(tempFile)
 
-                val scaledImage: BufferedImage?
-                try {
-                    scaledImage = sharpenAndBrightenImage(ImageIO.read(tempFile))
-                    tempFile.delete()
-                    ImageIO.write(scaledImage, "jpg", tnFile)
-                    metadataObj.setThumbnailSmallHeight(scaledImage.height)
-                    metadataObj.setThumbnailSmallWidth(scaledImage.width)
-                    metadataObj.setThumbnailPathSmall(thumbnailFileStr)
-                    metadataObj.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.Companion.thumbnailHeight() + "." + extension)
-                    logger.log(Level.INFO, "Small thumbnail created: " + file.path)
-                } catch (e: IOException) {
-                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+                if (tempFile.exists()) {
+                    val scaledImage: BufferedImage?
+                    try {
+                        val bi = ImageIO.read(tempFile)
+                        scaledImage = sharpenAndBrightenImage(bi)
+                        ImageIO.write(scaledImage, "jpg", tnFile)
+                        metadataObj.setThumbnailSmallHeight(scaledImage.height)
+                        metadataObj.setThumbnailSmallWidth(scaledImage.width)
+                        metadataObj.setThumbnailPathSmall(thumbnailFileStr)
+                        metadataObj.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.Companion.thumbnailHeight() + "." + extension)
+                        logger.log(Level.INFO, "Small thumbnail created: " + file.path)
+                    } catch (e: IOException) {
+                        logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+                    }
+                } else {
+                    logger.log(Level.WARNING, "File DNE: " + tnFile.path)
                 }
             }
 
@@ -343,23 +348,26 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 overwriteThumbnails
             )
             if (tnFile != null) {
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 Thumbnails.of(img)
                     .crop(Positions.CENTER)
                     .size(209, 209)
                     .outputQuality(1.0)
                     .toFile(tempFile)
 
-                val scaledImage: BufferedImage?
-                try {
-                    scaledImage = sharpenAndBrightenImage(ImageIO.read(tempFile))
-                    tempFile.delete()
-                    ImageIO.write(scaledImage, "jpg", tnFile)
-                    metadataObj.setThumbnailPathCentered(thumbnailFileStr)
-                    metadataObj.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
-                    logger.log(Level.INFO, "Centered thumbnail created: " + file.path)
-                } catch (e: IOException) {
-                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+                if (tempFile.exists()) {
+                    val scaledImage: BufferedImage?
+                    try {
+                        val bi = ImageIO.read(tempFile)
+                        scaledImage = sharpenAndBrightenImage(bi)
+                        ImageIO.write(scaledImage, "jpg", tnFile)
+                        metadataObj.setThumbnailPathCentered(thumbnailFileStr)
+                        metadataObj.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
+                        logger.log(Level.INFO, "Centered thumbnail created: " + file.path)
+                    } catch (e: IOException) {
+                        logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+                    }
+                } else {
+                    logger.log(Level.WARNING, "File DNE: " + tnFile.path)
                 }
             }
 
@@ -370,27 +378,31 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 overwriteThumbnails
             )
             if (tnFile != null) {
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 Thumbnails.of(img)
                     .crop(Positions.CENTER)
                     .size(45, 45)
                     .outputQuality(1.0)
                     .toFile(tempFile)
 
-                var scaledImage: BufferedImage?
-                try {
-                    scaledImage = ImageIO.read(tempFile)
-                    scaledImage = sharpenAndBrightenImage(scaledImage)
-                    scaledImage = borderImage(scaledImage)
-                    tempFile.delete()
-                    ImageIO.write(scaledImage, "jpg", tnFile)
-                    metadataObj.setMapMarkerPath(thumbnailFileStr)
-                    metadataObj.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
-                    logger.log(Level.INFO, "Map thumbnail created: " + file.path)
-                } catch (e: IOException) {
-                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+                if (tempFile.exists()) {
+                    var scaledImage: BufferedImage?
+                    try {
+                        scaledImage = ImageIO.read(tempFile)
+                        scaledImage = sharpenAndBrightenImage(scaledImage)
+                        scaledImage = borderImage(scaledImage)
+                        ImageIO.write(scaledImage, "jpg", tnFile)
+                        metadataObj.setMapMarkerPath(thumbnailFileStr)
+                        metadataObj.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
+                        logger.log(Level.INFO, "Map thumbnail created: " + file.path)
+                    } catch (e: IOException) {
+                        logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+                    }
+                } else {
+                    logger.log(Level.WARNING, "File DNE: " + tnFile.path)
                 }
             }
+
+            tempFile.delete()
         } else {
             logger.log(Level.WARNING, "File " + file.path + " does not exist.")
         }
@@ -446,6 +458,20 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     }
                 }
             }
+        }
+
+        fun flipVertically(buffImage: BufferedImage): BufferedImage {
+            val tx = AffineTransform.getScaleInstance(1.0, -1.0)
+            tx.translate(0.0, -buffImage.height.toDouble())
+            val op = AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+            return op.filter(buffImage, null)
+        }
+
+        fun flipHorizontally(buffImage: BufferedImage): BufferedImage {
+            val tx = AffineTransform.getScaleInstance(-1.0, 1.0)
+            tx.translate(-buffImage.width.toDouble(), 0.0)
+            val op = AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+            return op.filter(buffImage, null)
         }
 
         fun rotateImage(buffImage: BufferedImage, angle: Double): BufferedImage {

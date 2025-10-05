@@ -209,7 +209,7 @@ class GalleryTemplates {
                 `
                 :
                 `
-                <a class="mediaLink" id="mediaLink${id}" data-src="${"/api/v1/image/"+data.metadata.id}" href="${"/api/v1/image/"+data.metadata.id}"
+                <a class="mediaLink" id="mediaLink${id}" data-src="${"/api/v1/image/"+data.metadata.id}" href="${"/api/v1/image/"+data.metadata.id+"?v="+uuidv4()}"
                     data-download-url="${"/api/v1/image/"+data.metadata.id}/download"
                     data-metadata-id="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>

@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
 import java.io.IOException
+import java.net.URL
 import javax.imageio.ImageIO
 import kotlin.text.split
 
@@ -919,6 +920,8 @@ class MediaServiceController {
 
     private fun getImageFactory(model: Model,request: HttpServletRequest, response: HttpServletResponse, metadataId: String?, attachFile: Boolean = false, locale: Locale): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId!!)
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = rootPath + relativeSidecarDir
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
             // Updated viewed date
@@ -935,12 +938,17 @@ class MediaServiceController {
             metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
             metadataRepository.save(metadata)
 
+            // Check if an edited file
             var path = metadataObj.get().getPath()!!
+            if (!metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
+                path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
+            }
+
             var resource = FileSystemResource(path)
             var type = metadataObj.get().getType()
             val headers = HttpHeaders()
 
-            // If raw, use metadata image
+            // If raw or edited, use metadata image
             if (metadata.getExpectedExtension() in FileUtils.allowableRawImageFiles()) {
                 path = metadata.getThumbnailPathSmall()!!.replace("_225.jpg","_original.jpg")
                 resource = FileSystemResource(path)

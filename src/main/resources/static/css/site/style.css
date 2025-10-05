@@ -479,7 +479,7 @@ footer {
   margin-left: 7px;
 }
 
-.imgbox {
+.imgbox, .editorbox {
   position: absolute;
   left: 50%;
   top: 50%;
