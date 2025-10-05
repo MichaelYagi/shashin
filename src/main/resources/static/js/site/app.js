@@ -295,7 +295,7 @@
         }
     };
 
-    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, callback) {
+    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, restore, callback) {
         const http = new Http("update edited photo metadata");
         const version = Util.getMetadataLocalStorage();
         const json = {
@@ -304,9 +304,10 @@
             flipX: isFlippedVertically,
             flipY: isFlippedHorizontally
         };
-
-        http.ajax("post", "/metadata/edit/thumbs" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
+console.log(json);
+        http.ajax("post", "/metadata/edit/thumbs" + ((restore === true) ? (version === "" ? "?restore=true" : "?v=" + version + "&restore=true") : (version === "" ? "" : "?v=" + version)), JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("metadata")) {
+console.log(data);
                 const metadata = data.metadata;
                 const metadataId = metadata.id;
 
@@ -315,7 +316,6 @@
 
                 // Refresh image
                 Util.setMetadataLocalStorage();
-                const version = Util.getMetadataLocalStorage();
                 $("#photoThumbnailContainer" + metadataId).css({
                     "width": thumbnailSmallWidth + "px",
                     "height": thumbnailSmallHeight + "px"
@@ -323,6 +323,7 @@
                 $("#image" + metadataId).attr("src", $("#image" + metadataId).attr("src") + "?v=" + uuidv4());
                 $("#image" + metadataId).attr("width", thumbnailSmallWidth);
                 $("#image" + metadataId).attr("height", thumbnailSmallHeight);
+                $("#editShashinImage").attr("src", "/api/v1/image/"+metadataId+"?v="+uuidv4());
 
                 // Refresh lightgallery
                 const mediaContentList = shashin.getLightGallery().galleryItems;
@@ -350,20 +351,8 @@
 
                 $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
 
-                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.upload"), shashin.getTranslatedValue("main.toast.app.image.upload"), {
-                    icon: "bi-info-circle",
-                    iconColor: "#777777",
-                    delay: 2000,
-                    borderColor:"success"
-                });
-
                 callback(true);
             } else {
-                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
-                    icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000",
-                    borderColor:"danger"
-                });
                 $(".lg-current").css("background-color", "transparent");
 
                 callback(false);

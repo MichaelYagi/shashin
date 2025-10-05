@@ -4,24 +4,29 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // console.log(editMetadataObj);
     // console.log(lgIndex);
 
-    styleControl("#editorTitle", "2rem", "23px", "left", `30px`);
-
-    const sideStart = 30;
-    const spacing = 58;
-
-    [
-        { selector: "#editorCloseActionButton", size: "3rem", offset: "10px" },
-        { selector: "#editorFlipHorizontalActionButton", size: "2rem", offset: "22px" },
-        { selector: "#editorFlipVerticalActionButton", size: "2rem", offset: "22px" },
-        { selector: "#editorRotateLeftActionButton", size: "2rem", offset: "23px" },
-        { selector: "#editorRotateRightActionButton", size: "2rem", offset: "23px" },
-        { selector: "#editorRestoreActionButton", size: "2rem", offset: "23px" },
-        { selector: "#editorSaveActionButton", size: "2rem", offset: "23px" },
-        { selector: "#editorSpinner", size: "2rem", offset: "32px" }
-    ].forEach(({ selector, size, offset }, index) => {
-        const sideValue = sideStart + spacing * index;
-        styleControl(selector, size, offset, "right", `${sideValue}px`);
+    $("#editorBlock").css({
+        "position": "absolute",
+        "height": "150px",
+        "width": "300px",
+        "right": "0"
     });
+    styleControl("#editorTitle", "2rem", "23px", "left", `30px`);
+    let sideValue = 13;
+    styleControl("#editorCloseActionButton", "3rem", "10px", "right", sideValue+"px");
+    sideValue += 58;
+    styleControl("#editorFlipHorizontalActionButton", "2rem", "22px", "right", sideValue+"px");
+    sideValue += 58;
+    styleControl("#editorFlipVerticalActionButton", "2rem", "22px", "right",sideValue+"px");
+    sideValue += 58;
+    styleControl("#editorRotateLeftActionButton", "2rem", "23px", "right", sideValue+"px");
+    sideValue += 58;
+    styleControl("#editorRotateRightActionButton", "2rem", "23px", "right", sideValue+"px");
+    sideValue = 19;
+    styleControl("#editorRestoreActionButton", "2rem", "75px", "right", sideValue+"px");
+    sideValue += 58;
+    styleControl("#editorSaveActionButton", "2rem", "75px", "right", sideValue+"px");
+    sideValue += 58;
+    styleControl("#editorSpinner", "2rem", "33px", "right", sideValue+"px");
 
     let rotation = 0;
     let isFlippedHorizontally = false;
@@ -52,7 +57,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorContainer").off("click").on('click', function(event) {
         event.preventDefault();
 
-        if (!$(event.target).closest('#editorCloseActionButton, #editorFlipHorizontalActionButton, #editorFlipVerticalActionButton, #editorRotateRightActionButton, #editorRotateLeftActionButton, #editorRestoreActionButton, #editorSaveActionButton').length) {
+        if (!$(event.target).closest('#editorCloseActionButton, #editorFlipHorizontalActionButton, #editorFlipVerticalActionButton, #editorRotateRightActionButton, #editorRotateLeftActionButton, #editorRestoreActionButton, #editorSaveActionButton, #editorBlock').length) {
             if ($("#editorSpinner").css("display") === "none") {
                 hideModule();
             }
@@ -133,66 +138,31 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         if ($("#editorSpinner").css("display") === "none") {
             $("#editorSpinner").css("display", "block");
+
             rotation = 0;
-            visualRotation = 0;
             isFlippedHorizontally = false;
             isFlippedVertically = false;
 
-            const http = new Http("Restore thumbnail");
-            const version = Util.getMetadataLocalStorage();
+            shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedVertically, isFlippedHorizontally, true,  function (success) {
+                shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
 
-            const json = {
-                metadataId: editMetadataObj.id, //$("#metadataId").val(),
-                rotation: 0,
-                flipX: false,
-                flipY: false
-            };
-
-            http.ajax("post", "/metadata/edit/thumbs" + (version === "" ? "?restore=true" : "?v=" + version + "&restore=true"), JSON.stringify(json)).then(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    Util.setMetadataLocalStorage();
-
-                    const retMetadata = data.metadata;
-                    // Refresh image
-                    const version = Util.getMetadataLocalStorage();
-                    $("#photoThumbnailContainer" + retMetadata.id).css({
-                        "width": retMetadata.thumbnailSmallWidth + "px",
-                        "height": retMetadata.thumbnailSmallHeight + "px"
+                if (success === true) {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.pages.map.modal.restored"), shashin.getTranslatedValue("main.pages.map.modal.restored"), {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        delay: 2000,
+                        borderColor: "success"
                     });
-                    $("#image" + retMetadata.id).attr("src", $("#image" + retMetadata.id).attr("src") + "?v=" + uuidv4());
-                    $("#image" + retMetadata.id).attr("width", retMetadata.thumbnailSmallWidth);
-                    $("#image" + retMetadata.id).attr("height", retMetadata.thumbnailSmallHeight);
-                    $("#editShashinImage").attr("src", "/api/v1/image/"+retMetadata.id+"?v="+uuidv4());
-
-                    // Refresh lightgallery
-                    const mediaContentList = shashin.getLightGallery().galleryItems;
-
-                    if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null  && typeof shashin.getLightGallery().refresh === 'function' && mediaContentList.length > 0) {
-                        let lightGalleryIndex = lgIndex;
-
-                        if (/^-?\d+$/.test(lightGalleryIndex)) {
-                            lightGalleryIndex = parseInt(lightGalleryIndex);
-                            const mediaContent = mediaContentList[lightGalleryIndex];
-
-                            if (mediaContent.hasOwnProperty("downloadUrl") &&
-                                mediaContent.downloadUrl.includes(retMetadata.id)
-                            ) {
-                                mediaContentList[lightGalleryIndex].src = mediaContentList[lightGalleryIndex].src + "?v=" + Util.getMetadataLocalStorage();
-                                const mediaLinkId = "#mediaLink" + retMetadata.id;
-                                if ($(mediaLinkId).length > 0) {
-                                    $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + uuidv4());
-                                    if (parseInt($("img.lg-object.lg-image").attr("data-index")) === lightGalleryIndex) {
-                                        $("img.lg-object.lg-image").attr("src", ($("img.lg-object.lg-image").attr("src") + "?v=" + uuidv4()));
-                                    }
-                                }
-                            }
-                        }
-
-                        shashin.getLightGallery().refresh(mediaContentList);
-                    }
-
-                    $("#editorSpinner").css("display", "none");
+                } else {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail.body"), shashin.getTranslatedValue("main.toast.account.profile.fail.body"), {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000",
+                        borderColor:"danger"
+                    });
                 }
+
+                $("#editorSpinner").css("display", "none");
+                hideModule();
             });
         }
     });
@@ -203,8 +173,23 @@ function initializeEditor(editMetadataObj, lgIndex) {
         $("#editorSpinner").css("display", "block");
         const normalizedRotation = ((rotation % 360) + 360) % 360;
 
-        shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation, isFlippedVertically, isFlippedHorizontally, function (success) {
+        shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation, isFlippedVertically, isFlippedHorizontally, false,  function (success) {
             shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
+
+            if (success === true) {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.upload"), shashin.getTranslatedValue("main.toast.app.image.upload"), {
+                    icon: "bi-info-circle",
+                    iconColor: "#777777",
+                    delay: 2000,
+                    borderColor: "success"
+                });
+            } else {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
+                });
+            }
 
             $("#editorSpinner").css("display", "none");
             hideModule();
@@ -214,6 +199,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     function showModule() {
         $("#editorContainer").css("display", "block");
         $("#editorToolContainer").css("display", "block");
+        $("#editorBlock").css("display", "block");
 
         $("#editorMedia").css("display", "block");
         $("#editorMedia").html("<img class='centerFit' id='editShashinImage' src='/api/v1/image/"+editMetadataId+"?v="+uuidv4()+"'>");
@@ -222,6 +208,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     function hideModule() {
         $("#editorContainer").css("display", "none");
         $("#editorToolContainer").css("display", "none");
+        $("#editorBlock").css("display", "none");
 
         $("#editorMedia").css("display", "none");
         $("#editorMedia").html("");
