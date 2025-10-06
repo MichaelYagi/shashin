@@ -68,7 +68,7 @@
                 this.plugin();
             }
 
-            this.core.LGel.on('lgBeforeSlide', (e) => {
+            this.core.LGel.off('lgBeforeSlide').on('lgBeforeSlide', (e) => {
                 console.log("You are on slide " + e.detail.index);
             });
 
@@ -76,6 +76,7 @@
             this.core.outer
                 .find('.'+menuIcon)
                 .first()
+                .off('click.lg')
                 .on('click.lg', () => {
                     alert("This is a template for setting up a plugin!");
 
