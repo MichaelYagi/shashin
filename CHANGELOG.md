@@ -11,12 +11,15 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Simple editing module to rotate and flip photos
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [2.14.0] - 2025-10-05
+### Added
+- Simple editing module to rotate and flip photos
 
 ## [2.13.4] - 2025-09-30
 ### Added
