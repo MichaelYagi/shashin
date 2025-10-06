@@ -59,9 +59,10 @@
             // TODO: Initialize the plugin icon
             const menuIcon = "bi-0-circle";
 
+            // TODO: Get from pluginSettings variable
             if (this.settings.pluginSettingAttribute) {
                 // TODO: Initialize the plugin button
-                const pluginMenuItem = '<button type="button" aria-label="Plugin Name" title="Plugin Name" id="captureThumbnail" class="'+menuIcon+' lg-icon"></button>';
+                const pluginMenuItem = '<button type="button" aria-label="Plugin Name" title="Plugin Name" id="captureThumbnail" class="'+menuIcon+' lg-icon" style="font-size: 1rem;"></button>';
 
                 this.core.$toolbar.append(pluginMenuItem);
 
@@ -90,18 +91,18 @@
                         shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgplugin.title"), shashin.getTranslatedValue("main.toast.lgplugin.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                     }
                 });
-        }
+        };
 
         // TODO: Call after button element attached
         Plugin.prototype.plugin = function (e) {
 
-            return ""
-        }
+            return "";
+        };
 
         // TODO: Define cleanup procedures
         Plugin.prototype.destroy = function() {
             // Call to clean up stuff
-        }
+        };
 
         return Plugin;
     }());
