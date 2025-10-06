@@ -304,10 +304,9 @@
             flipX: isFlippedVertically,
             flipY: isFlippedHorizontally
         };
-console.log(json);
+
         http.ajax("post", "/metadata/edit/thumbs" + ((restore === true) ? (version === "" ? "?restore=true" : "?v=" + version + "&restore=true") : (version === "" ? "" : "?v=" + version)), JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("metadata")) {
-console.log(data);
                 const metadata = data.metadata;
                 const metadataId = metadata.id;
 
