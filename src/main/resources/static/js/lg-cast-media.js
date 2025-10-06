@@ -87,6 +87,7 @@
             this.core.outer
                 .find('.bi-cast, .bi-stop-circle')
                 .first()
+                .off('click.lg')
                 .on('click.lg', () => {
                     if (cjs !== null && cjs.available) {
                         if ($("#chromecasting").hasClass("bi-stop-circle")) {
@@ -100,7 +101,7 @@
                                 this.settings.dynamicEl : this.core.galleryItems;
 
                             // Play slide show too if casting and playing
-                            this.core.LGel.on('lgBeforeSlide', (e) => {
+                            this.core.LGel.off('lgBeforeSlide').on('lgBeforeSlide', (e) => {
                                 if (shashin) {
                                     shashin.printMessageToConsole("lgBeforeSlide state: "+cjs.state, {
                                         tag: "cast"
@@ -121,7 +122,7 @@
                                 }
                             });
 
-                            this.core.LGel.on('lgBeforeClose', (e) => {
+                            this.core.LGel.off('lgBeforeClose').on('lgBeforeClose', (e) => {
                                 cjs.disconnect();
                                 this.core.LGel.off('lgBeforeSlide');
                             });
