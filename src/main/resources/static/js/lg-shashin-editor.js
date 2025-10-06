@@ -98,7 +98,7 @@
             // TODO: Get from pluginSettings variable
             if (this.settings.shashinEditor) {
                 // TODO: Initialize the plugin button
-                const pluginMenuItem = '<button type="button" aria-label="Edit Media" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.editor.msg")+'" id="shashineditor" class="'+menuIcon+' lg-icon" style="font-size: 1rem;display: none"></button>';
+                const pluginMenuItem = '<button type="button" aria-label="'+shashin.getTranslatedValue("main.pages.lg.plugins.editor.msg")+'" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.editor.msg")+'" id="shashineditor" class="'+menuIcon+' lg-icon" style="font-size: 1rem;display: none"></button>';
 
                 this.core.$toolbar.append(pluginMenuItem);
 

@@ -270,16 +270,18 @@ function initializeEditor(editMetadataObj, lgIndex) {
     }
 
     function hideModule() {
-        $("#editorContainer").css("display", "none");
-        $("#editorToolContainer").css("display", "none");
-        $("#editorBlock").css("display", "none");
+        $(".lg-object.lg-image").on('load', function() {
+            $("#editorContainer").css("display", "none");
+            $("#editorToolContainer").css("display", "none");
+            $("#editorBlock").css("display", "none");
 
-        $("#editorMedia").css("display", "none");
-        $("#editorMedia").html("");
+            $("#editorMedia").css("display", "none");
+            $("#editorMedia").html("");
 
-        rotation = 0;
-        isFlippedHorizontally = false;
-        isFlippedVertically = false;
+            rotation = 0;
+            isFlippedHorizontally = false;
+            isFlippedVertically = false;
+        });
 
         // Show lightgallery toolbar
         $(".lg-toolbar").css("display", "block");
