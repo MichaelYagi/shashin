@@ -31,6 +31,7 @@
             this.core.outer
                 .find('.bi-info-circle')
                 .first()
+                .off('click.lg')
                 .on('click.lg', () => {
                     const funObject = Util.getLgFunction(this, "metadataDetailFun");
 

@@ -86,7 +86,7 @@
             }
 
             // Get the media type
-            this.core.LGel.on('lgAfterSlide', (e) => {
+            this.core.LGel.off('lgAfterSlide').on('lgAfterSlide', (e) => {
 
                 const currentDynamicEl = this.settings.dynamicEl[e.detail.index] && this.settings.dynamicEl[e.detail.index].hasOwnProperty("args") ?
                     this.settings.dynamicEl : this.core.galleryItems;
@@ -115,6 +115,7 @@
             this.core.outer
                 .find('.bi-sliders')
                 .first()
+                .off('click.lg')
                 .on('click.lg', () => {
                     if (metadataObj !== null) {
                         let lgIndex = this.core.index;
