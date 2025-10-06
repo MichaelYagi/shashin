@@ -4,13 +4,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // console.log(editMetadataObj);
     // console.log(lgIndex);
 
-    $("#editorBlock").css({
-        "position": "absolute",
-        "height": "150px",
-        "width": "370px",
-        "right": "0"
-    });
-
     // Title
     styleControl("#editorTitle", "2rem", "23px", "left", "30px");
 
@@ -23,7 +16,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         { id: "#editorRotateLeftActionButton", fontSize: "2rem", top: "23px" },
         { id: "#editorRotateRightActionButton", fontSize: "2rem", top: "23px" }
     ];
-    applyStyles(upperButtons, sideValue, "right");
+    const upperMenuHeightWidth = applyStyles(upperButtons, sideValue, "right");
 
     // Lower buttons
     sideValue = 13;
@@ -33,7 +26,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
         { id: "#editorResetActionButton", fontSize: "2rem", top: "75px" },
         { id: "#editorSpinner", fontSize: "2rem", top: "85px" }
     ];
-    applyStyles(lowerButtons, sideValue, "right");
+    const lowerMenuHeightWidth = applyStyles(lowerButtons, sideValue, "right");
+
+    let blockWidth = upperMenuHeightWidth[0];
+    if (lowerMenuHeightWidth[0] > upperMenuHeightWidth[0]) {
+        blockWidth = lowerMenuHeightWidth[0];
+    }
+
+    let blockHeight = upperMenuHeightWidth[1] + lowerMenuHeightWidth[1];
 
     function styleControl(id, fontSize, top, side, sideValue) {
         $(id).css({
@@ -48,11 +48,25 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     function applyStyles(buttons, startValue, side) {
         let offset = startValue;
+        let maxTop = 0;
         for (const { id, fontSize, top } of buttons) {
             styleControl(id, fontSize, top, side, offset + "px");
+            const topPixels = parseInt(top.replace("px", ""));
+            if (topPixels > maxTop) {
+                maxTop = topPixels;
+            }
             offset += 58;
         }
+
+        return [offset, maxTop];
     }
+
+    $("#editorBlock").css({
+        "position": "absolute",
+        "height": (blockHeight+25)+"px",
+        "width": (blockWidth+5)+"px",
+        "right": "0"
+    });
 
     let rotation = 0;
     let isFlippedHorizontally = false;
@@ -260,8 +274,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
         $("#editorMedia").html("");
 
         rotation = 0;
-        visualRotation = 0;
         isFlippedHorizontally = false;
         isFlippedVertically = false;
+
+        // Show lightgallery toolbar
+        $(".lg-toolbar").css("display", "block");
+        $(".lg-outer").removeClass("lg-hide-items");
     }
 }
