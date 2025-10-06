@@ -201,7 +201,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             isFlippedHorizontally = false;
             isFlippedVertically = false;
 
-            shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedVertically, isFlippedHorizontally, true,  function (success) {
+            shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedHorizontally, isFlippedVertically, true,  function (success) {
                 shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
 
                 if (success === true) {
@@ -231,7 +231,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
         $("#editorSpinner").css("display", "block");
         const normalizedRotation = ((rotation % 360) + 360) % 360;
 
-        shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation, isFlippedVertically, isFlippedHorizontally, false,  function (success) {
+        const swapFlip = isFlippedVertically;
+        isFlippedVertically = isFlippedHorizontally;
+        isFlippedHorizontally = swapFlip;
+
+        shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation, isFlippedHorizontally, isFlippedVertically, false,  function (success) {
             shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
 
             if (success === true) {
