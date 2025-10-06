@@ -1,29 +1,36 @@
-/**
- * MY - Added Oct 2 2025
- * - Created this module to edit media
- */
+! function(_window, pluginFunction) {
+    // TODO: Define the plugin name here
+    let pluginName = "lgShashinEditor";
 
-! function(e, l) {
-    "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgShashinEditor = l()
-}(this, (function() {
+    if ("object" == typeof exports && "undefined" != typeof module) {
+        module.exports = l();
+    } else if ("function" == typeof define && define.amd) {
+        define(pluginFunction);
+    } else {
+        (_window = "undefined" != typeof globalThis ? globalThis : _window || self)[pluginName] = pluginFunction();
+    }
+} (this, (function() {
     "use strict";
+    let __assign = function () {
+        __assign = Object.assign || function __assign(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign.apply(this, arguments);
+    };
+
+    // TODO: Define attributes to be used in setting
+    const pluginSettings = {
+        shashinEditor: true
+    };
 
     let metadataId = null;
     let metadataObj = null;
 
-    var e = function() {
-            return (e = Object.assign || function(e) {
-                for (var l, n = 1, t = arguments.length; n < t; n++)
-                    for (var c in l = arguments[n])
-                        Object.prototype.hasOwnProperty.call(l, c) && (e[c] = l[c]);
-                return e
-            }).apply(this, arguments)
-        },
-        l = {
-            shashinEditor: !0
-        };
-
-    return function() {
+    return (function() {
         function editMedia(metadata, lgIndex) {
             if (metadata !== null && metadata.hasOwnProperty("id")) {
                 // Open editor
@@ -70,24 +77,35 @@
             return metadataId;
         }
 
-        function n(n, t) {
-            return this.core = n,
-                this.$LG = t,
-                this.settings = e(e({}, l), this.core.settings),
-                this
+        // TODO: Define class
+        function Plugin(instance, $LG) {
+            // get lightGallery core plugin instance
+            this.core = instance;
+
+            this.$LG = $LG;
+
+            // TODO: Extend module default settings with lightGallery core settings
+            this.settings = __assign(__assign({}, pluginSettings), this.core.settings);
+
+            return this;
         }
 
-        return n.prototype.init = function() {
-            var e = "";
+        // TODO: Initialize the plugin
+        Plugin.prototype.init = function () {
+            // TODO: Initialize the plugin icon
+            const menuIcon = "bi-sliders";
+
+            // TODO: Get from pluginSettings variable
             if (this.settings.shashinEditor) {
-                e = '<button type="button" aria-label="Edit Media" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.editor.msg")+'" id="shashineditor" class="bi-sliders lg-icon" style="font-size: 1rem;display: none;"></button>',
-                    this.core.$toolbar.append(e),
-                    this.shashinEditor()
+                // TODO: Initialize the plugin button
+                const pluginMenuItem = '<button type="button" aria-label="Edit Media" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.editor.msg")+'" id="shashineditor" class="'+menuIcon+' lg-icon" style="font-size: 1rem;display: none"></button>';
+
+                this.core.$toolbar.append(pluginMenuItem);
+
+                this.plugin();
             }
 
-            // Get the media type
             this.core.LGel.off('lgAfterSlide').on('lgAfterSlide', (e) => {
-
                 const currentDynamicEl = this.settings.dynamicEl[e.detail.index] && this.settings.dynamicEl[e.detail.index].hasOwnProperty("args") ?
                     this.settings.dynamicEl : this.core.galleryItems;
                 if (shashin) {
@@ -112,8 +130,9 @@
                 }
             });
 
+            // TODO: Define what happens when clicking the menu button
             this.core.outer
-                .find('.bi-sliders')
+                .find('.'+menuIcon)
                 .first()
                 .off('click.lg')
                 .on('click.lg', () => {
@@ -125,12 +144,19 @@
                         editMedia(metadataObj, lgIndex);
                     }
                 });
-        },
-            n.prototype.shashinEditor = function() {
-                // Chromecast
-                return ""
-            },
-            n.prototype.destroy = function() {},
-            n
-    }()
+        };
+
+        // TODO: Call after button element attached
+        Plugin.prototype.plugin = function (e) {
+
+            return "";
+        };
+
+        // TODO: Define cleanup procedures
+        Plugin.prototype.destroy = function() {
+            // Call to clean up stuff
+        };
+
+        return Plugin;
+    }());
 }));
