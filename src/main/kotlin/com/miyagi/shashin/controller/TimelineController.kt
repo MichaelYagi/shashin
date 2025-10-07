@@ -3257,12 +3257,16 @@ class TimelineController: BaseController() {
         if (metadataMap.containsKey("metadataId") &&
             metadataMap.containsKey("rotation") &&
             metadataMap.containsKey("flipX") &&
-            metadataMap.containsKey("flipY")
+            metadataMap.containsKey("flipY") &&
+            metadataMap.containsKey("brightness") &&
+            metadataMap.containsKey("contrast")
         ) {
             val metadataId = metadataMap["metadataId"] as String
             val rotation = metadataMap["rotation"] as Int
             val flipX = metadataMap["flipX"] as Boolean
             val flipY = metadataMap["flipY"] as Boolean
+            val brightness = metadataMap["brightness"].toString().toDouble()
+            val contrast = metadataMap["contrast"].toString().toDouble()
             val restoreImages = restore.orElse(false)
 
             val metadataObj = metadataRepository.findById(metadataId)
@@ -3291,6 +3295,18 @@ class TimelineController: BaseController() {
 
                     if (flipY) {
                         editedImage = ImageProcessing.flipVertically(editedImage)
+                        edited = true
+                    }
+
+                    if (metadata.getBrightness() == null || (metadata.getBrightness() != null && brightness != metadata.getBrightness().toString().toDouble())) {
+                        metadata.setBrightness(brightness.toString())
+                        editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
+                        edited = true
+                    }
+
+                    if (metadata.getContrast() == null || (metadata.getContrast() != null && contrast != metadata.getContrast().toString().toDouble())) {
+                        metadata.setContrast(contrast.toString())
+                        editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
                         edited = true
                     }
 
@@ -3328,6 +3344,8 @@ class TimelineController: BaseController() {
                     )
                     if (restoreImages) {
                         metadata.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadata.getId()}")
+                        metadata.setBrightness("1.0")
+                        metadata.setContrast("1.0")
                     }
                     metadata.setModifiedAt(getCurrentTimestamp())
                     metadataRepository.save(metadata)

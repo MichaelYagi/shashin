@@ -56,10 +56,18 @@ class Metadata {
     private var lastAccessedBy: Int? = null
     private var uploadedBy: Int? = null
     private var freeFormString: String? = null
+    private var brightness: String? = null
+    private var contrast: String? = null
 
     // Without a default constructor, Jackson will throw an exception
     fun Metadata() {}
 
+    fun setBrightness(brightness: String?) {
+        this.brightness = brightness
+    }
+    fun setContrast(contrast: String?) {
+        this.contrast = contrast
+    }
     fun setPath(path: String?) {
         this.path = path
     }
@@ -202,6 +210,12 @@ class Metadata {
         this.lastAccessedAt = lastAccessedAt
     }
 
+    fun getBrightness(): String? {
+        return this.brightness
+    }
+    fun getContrast(): String? {
+        return this.contrast
+    }
     fun getPath(): String? {
         return this.path
     }
@@ -402,6 +416,8 @@ class Metadata {
         map["lastAccessedBy"] = this.lastAccessedBy
         map["uploadedBy"] = this.uploadedBy
         map["freeFormString"] = this.freeFormString
+        map["brightness"] = this.brightness
+        map["contrast"] = this.contrast
 
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

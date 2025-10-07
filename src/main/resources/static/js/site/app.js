@@ -295,14 +295,16 @@
         }
     };
 
-    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, restore, callback) {
+    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, restore, callback) {
         const http = new Http("update edited photo metadata");
         const version = Util.getMetadataLocalStorage();
         const json = {
             metadataId: metadataId,
             rotation: rotation,
             flipX: isFlippedVertically,
-            flipY: isFlippedHorizontally
+            flipY: isFlippedHorizontally,
+            brightness: brightness,
+            contrast: contrast
         };
 
         http.ajax("post", "/metadata/edit/thumbs" + ((restore === true) ? (version === "" ? "?restore=true" : "?v=" + version + "&restore=true") : (version === "" ? "" : "?v=" + version)), JSON.stringify(json)).then(function (data) {
