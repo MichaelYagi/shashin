@@ -498,6 +498,38 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return rotatedImage
         }
 
+        fun adjustBrightness(image: BufferedImage, brightness: Double): BufferedImage {
+            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
+
+            for (y in 0 until image.height) {
+                for (x in 0 until image.width) {
+                    val color = Color(image.getRGB(x, y))
+                    val r = (color.red * brightness).toInt().coerceIn(0, 255)
+                    val g = (color.green * brightness).toInt().coerceIn(0, 255)
+                    val b = (color.blue * brightness).toInt().coerceIn(0, 255)
+                    result.setRGB(x, y, Color(r, g, b).rgb)
+                }
+            }
+
+            return result
+        }
+
+        fun adjustContrast(image: BufferedImage, contrast: Double): BufferedImage {
+            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
+
+            for (y in 0 until image.height) {
+                for (x in 0 until image.width) {
+                    val color = Color(image.getRGB(x, y))
+                    val r = ((color.red - 128) * contrast + 128).toInt().coerceIn(0, 255)
+                    val g = ((color.green - 128) * contrast + 128).toInt().coerceIn(0, 255)
+                    val b = ((color.blue - 128) * contrast + 128).toInt().coerceIn(0, 255)
+                    result.setRGB(x, y, Color(r, g, b).rgb)
+                }
+            }
+
+            return result
+        }
+
         fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
 //        -0.15f, -0.15f, -0.15f,
 //        -0.15f, 2.2f, -0.15f,

@@ -45,6 +45,8 @@ CREATE TABLE `metadata` (
                             `fstopNumber` REAL(10) DEFAULT NULL,
                             `focalLength` REAL(10) DEFAULT NULL,
                             `compressionType` VARCHAR(255) DEFAULT NULL,
+                            `brightness` VARCHAR(10) NOT NULL DEFAULT '1.0',
+                            `contrast` VARCHAR(10) NOT NULL DEFAULT '1.0',
                             `hidden` BOOLEAN NOT NULL DEFAULT FALSE,
                             `addedAt` DATETIME DEFAULT NULL,
                             `takenAt` DATETIME DEFAULT NULL,
