@@ -580,12 +580,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
         $("#editorMedia").css("display", "none");
         $("#editorMedia").html("");
 
-        editMetadataObj.rotation = normalizedRotation(rotation);
-        editMetadataObj.brightness = brightness;
-        editMetadataObj.contrast = contrast;
-        editMetadataObj.flipHorizontally = isFlippedHorizontally;
-        editMetadataObj.flipVertically = isFlippedVertically;
-
         rotation = 0;
         brightness = 1.3;
         contrast = 1.3;
