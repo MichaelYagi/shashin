@@ -52,6 +52,7 @@ import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
+import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
@@ -543,8 +544,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         ): BufferedImage {
             val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
 
-            fun gammaDecode(v: Int): Double = Math.pow(v / 255.0, gamma)
-            fun gammaEncode(v: Double): Int = (Math.pow(v, 1.0 / gamma) * 255.0).toInt().coerceIn(0, 255)
+            fun gammaDecode(v: Int): Double = (v / 255.0).pow(gamma)
+            fun gammaEncode(v: Double): Int = (v.pow(1.0 / gamma) * 255.0).toInt().coerceIn(0, 255)
 
             for (y in 0 until image.height) {
                 for (x in 0 until image.width) {
