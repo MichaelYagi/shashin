@@ -253,6 +253,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             enableButtons();
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
+            shashin.closeToastMessages({tag:"editor"});
         } else {
             img.onload = () => {
                 canvas.width = img.width;
@@ -276,6 +277,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 enableButtons();
                 $("#editorSpinner").css("display", "none");
                 $("#editorCloseActionButton").css("display", "block");
+                shashin.closeToastMessages({tag:"editor"});
             };
         }
 
@@ -283,6 +285,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             enableButtons();
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
+            shashin.closeToastMessages({tag:"editor"});
         };
     }
 
