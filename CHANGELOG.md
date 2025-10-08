@@ -11,10 +11,12 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
+- Added Saturation
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+- Improvements to image editor
 ### Security
 
 ## [2.14.0] - 2025-10-05
