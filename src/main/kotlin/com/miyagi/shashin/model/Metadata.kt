@@ -58,6 +58,7 @@ class Metadata {
     private var freeFormString: String? = null
     private var brightness: String? = null
     private var contrast: String? = null
+    private var saturation: String? = null
     private var flipHorizontally: Boolean? = null
     private var flipVertically: Boolean? = null
     private var rotation: Int? = null
@@ -79,6 +80,9 @@ class Metadata {
     }
     fun setContrast(contrast: String?) {
         this.contrast = contrast
+    }
+    fun setSaturation(saturation: String?) {
+        this.saturation = saturation
     }
     fun setPath(path: String?) {
         this.path = path
@@ -236,6 +240,9 @@ class Metadata {
     }
     fun getContrast(): String? {
         return this.contrast
+    }
+    fun getSaturation(): String? {
+        return this.saturation
     }
     fun getPath(): String? {
         return this.path
@@ -439,6 +446,7 @@ class Metadata {
         map["freeFormString"] = this.freeFormString
         map["brightness"] = this.brightness
         map["contrast"] = this.contrast
+        map["saturation"] = this.saturation
         map["flipVertically"] = this.flipVertically
         map["flipHorizontally"] = this.flipHorizontally
         map["rotation"] = this.rotation

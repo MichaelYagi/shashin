@@ -3259,7 +3259,8 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("flipX") &&
             metadataMap.containsKey("flipY") &&
             metadataMap.containsKey("brightness") &&
-            metadataMap.containsKey("contrast")
+            metadataMap.containsKey("contrast") &&
+            metadataMap.containsKey("saturation")
         ) {
             val metadataId = metadataMap["metadataId"] as String
             val rotation = metadataMap["rotation"] as Int
@@ -3267,6 +3268,7 @@ class TimelineController: BaseController() {
             val flipY = metadataMap["flipY"] as Boolean
             val brightness = metadataMap["brightness"].toString().toDouble()
             val contrast = metadataMap["contrast"].toString().toDouble()
+            val saturation = metadataMap["saturation"].toString().toDouble()
             val restoreImages = restore.orElse(false)
 
             val metadataObj = metadataRepository.findById(metadataId)
@@ -3296,15 +3298,21 @@ class TimelineController: BaseController() {
                         metadata.setFlipVertically(false)
                     }
 
-                    if (metadata.getBrightness() == null || brightness in 0.5..1.5) {
+                    if (metadata.getBrightness() == null || brightness in 0.9..1.9) {
                         metadata.setBrightness(brightness.toString())
                     }
 
-                    if (metadata.getContrast() == null || contrast in 0.5..1.5) {
+                    if (metadata.getContrast() == null || contrast in 0.9..1.9) {
                         metadata.setContrast(contrast.toString())
                     }
 
+                    if (metadata.getSaturation() == null || saturation in 0.9..1.9) {
+                        metadata.setSaturation(saturation.toString())
+                    }
+
                     editedImage = ImageProcessing.adjustBrightnessContrast(editedImage, brightness, contrast)
+
+                    editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
 
                     editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
                     metadata.setRotation(rotation)

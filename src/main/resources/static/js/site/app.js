@@ -295,7 +295,7 @@
         }
     };
 
-    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, restore, callback) {
+    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, restore, callback) {
         const http = new Http("update edited photo metadata");
         const version = Util.getMetadataLocalStorage();
         const json = {
@@ -304,7 +304,8 @@
             flipX: isFlippedHorizontally,
             flipY: isFlippedVertically,
             brightness: brightness,
-            contrast: contrast
+            contrast: contrast,
+            saturation: saturation
         };
 
         http.ajax("post", "/metadata/edit/thumbs" + ((restore === true) ? (version === "" ? "?restore=true" : "?v=" + version + "&restore=true") : (version === "" ? "" : "?v=" + version)), JSON.stringify(json)).then(function (data) {
