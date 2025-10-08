@@ -26,6 +26,16 @@
     return function() {
         function editMedia(metadata, lgIndex) {
             if (metadata !== null && metadata.hasOwnProperty("id")) {
+                if (shashin) {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.dashboard.title"), shashin.getTranslatedValue("main.toast.dashboard.title"), {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        delay: 2000,
+                        borderColor:"success",
+                        tag: "editor"
+                    });
+                }
+
                 // Open editor
                 initializeEditor(metadata, lgIndex);
             }
