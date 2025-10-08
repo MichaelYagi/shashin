@@ -19,7 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [2.14.0] - 2025-10-05
 ### Added
-- Simple editing module to adjust rotate, flip, brightness and contract photos
+- Simple editing module to rotate, flip, adjust contrast and brightness in photos
 
 ## [2.13.4] - 2025-09-30
 ### Added
