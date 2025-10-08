@@ -20,8 +20,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorSpinner").css("display", "block");
     $("#editorCloseActionButton").css("display", "none");
     applyDefaultTransformations();
-    $("#editorSpinner").css("display", "none");
-    $("#editorCloseActionButton").css("display", "block");
 
     // console.log("initializeEditor after applying transitions");
     // console.log("rotation:"+rotation);
@@ -230,6 +228,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
 
     function applyBrightContrastCanvas(brightnessInput, contrastInput, applyTransformation = false) {
+        disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
 
@@ -244,6 +243,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         img.src = "/api/v1/image/original/"+editMetadataObj.id+"?v="+uuidv4();
 
         if (img.complete) {
+            enableButtons();
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
         } else {
@@ -266,12 +266,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     updateTransform(false);
                 }
 
+                enableButtons();
                 $("#editorSpinner").css("display", "none");
                 $("#editorCloseActionButton").css("display", "block");
             };
         }
 
         img.onerror = () => {
+            enableButtons();
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
         };
@@ -425,6 +427,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if ($("#editorSpinner").css("display") === "none") {
+            disableButtons();
             $("#editorSpinner").css("display", "block");
             $("#editorCloseActionButton").css("display", "none");
 
@@ -460,6 +463,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     });
                 }
 
+                enableButtons();
                 $("#editorSpinner").css("display", "none");
                 $("#editorCloseActionButton").css("display", "block");
                 hideModule();
@@ -470,6 +474,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorSaveActionButton").off("click").on("click", function (e) {
         e.preventDefault();
 
+        disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
         const swapFlip = isFlippedVertically;
@@ -500,18 +505,63 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 });
             }
 
+            enableButtons();
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
             hideModule();
         });
     });
 
+    function enableButtons() {
+        const buttonIds = [
+            "editorSaveAction",
+            "editorBrightnessAction",
+            "editorContrastAction",
+            "editorRestoreAction",
+            "editorResetAction",
+            "editorRotateRightAction",
+            "editorRotateLeftAction",
+            "editorFlipHorizontalAction",
+            "editorFlipVerticalAction",
+            "editorBrightnessIcon",
+            "editorContrastIcon"
+        ];
+
+        buttonIds.forEach(id => {
+            $('#' + id)
+                .prop('disabled', false)
+                .css({'color': "#FFFFFF", "text-shadow": "#EDEBEB 1px 0 10px"});
+        });
+    }
+
+    function disableButtons() {
+        const buttonIds = [
+            "editorSaveAction",
+            "editorBrightnessAction",
+            "editorContrastAction",
+            "editorRestoreAction",
+            "editorResetAction",
+            "editorRotateRightAction",
+            "editorRotateLeftAction",
+            "editorFlipHorizontalAction",
+            "editorFlipVerticalAction",
+            "editorBrightnessIcon",
+            "editorContrastIcon"
+        ];
+
+        buttonIds.forEach(id => {
+            $('#' + id)
+                .prop('disabled', true)
+                .css({'color': "#808080", "text-shadow": "#969595 1px 0 10px"});
+        });
+    }
+
     function showModule() {
         $("#editorContainer").css("display", "block");
 
         $("#editorMedia").css("display", "block");
-        $("#editorMedia").html("<img class='centerFit' id='editShashinImage' src='/api/v1/image/"+editMetadataObj.id+"?v="+uuidv4()+"'>");
-        $("#editShashinImage").on('load', function() {
+        $("#editorMedia").html("<img class='centerFit' id='editShashinImage' src='/api/v1/image/" + editMetadataObj.id + "?v=" + uuidv4() + "'>");
+        $("#editShashinImage").on('load', function () {
             $("#editorToolContainer").css("display", "block");
             $("#editorBlock").css("display", "block");
         });
