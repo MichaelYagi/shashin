@@ -52,6 +52,7 @@ import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -576,6 +577,71 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return result
         }
 
+        fun adjustSaturation(image: BufferedImage, saturation: Float): BufferedImage {
+            val output = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
+            for (y in 0 until image.height) {
+                for (x in 0 until image.width) {
+                    val rgb = image.getRGB(x, y)
+                    val a = rgb shr 24 and 0xFF
+                    val r = rgb shr 16 and 0xFF
+                    val g = rgb shr 8 and 0xFF
+                    val b = rgb and 0xFF
+
+                    val (h, s, l) = rgbToHsl(r, g, b)
+                    val (newR, newG, newB) = hslToRgb(h, (s * saturation).coerceAtMost(1.0), l)
+
+                    val newRgb = (a shl 24) or (newR shl 16) or (newG shl 8) or newB
+                    output.setRGB(x, y, newRgb)
+                }
+            }
+            return output
+        }
+
+        fun rgbToHsl(r: Int, g: Int, b: Int): Triple<Double, Double, Double> {
+            val rf = r / 255.0
+            val gf = g / 255.0
+            val bf = b / 255.0
+            val max = maxOf(rf, gf, bf)
+            val min = minOf(rf, gf, bf)
+            var h = 0.0
+            val l = (max + min) / 2.0
+            val d = max - min
+            val s = if (d == 0.0) 0.0 else d / (1 - Math.abs(2 * l - 1))
+            when (max) {
+                rf -> h = ((gf - bf) / d + if (gf < bf) 6 else 0)
+                gf -> h = ((bf - rf) / d + 2)
+                bf -> h = ((rf - gf) / d + 4)
+            }
+            h /= 6.0
+            return Triple(h, s, l)
+        }
+
+        fun hslToRgb(h: Double, s: Double, l: Double): Triple<Int, Int, Int> {
+            val r: Double
+            val g: Double
+            val b: Double
+            if (s == 0.0) {
+                r = l; g = l; b = l
+            } else {
+                val q = if (l < 0.5) l * (1 + s) else l + s - l * s
+                val p = 2 * l - q
+                fun hue2rgb(p: Double, q: Double, t: Double): Double {
+                    var tt = t
+                    if (tt < 0) tt += 1.0
+                    if (tt > 1) tt -= 1.0
+                    return when {
+                        tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
+                        tt < 1.0 / 2.0 -> q
+                        tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
+                        else -> p
+                    }
+                }
+                r = hue2rgb(p, q, h + 1.0 / 3.0)
+                g = hue2rgb(p, q, h)
+                b = hue2rgb(p, q, h - 1.0 / 3.0)
+            }
+            return Triple((r * 255).roundToInt(), (g * 255).roundToInt(), (b * 255).roundToInt())
+        }
 
         fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
 //        -0.15f, -0.15f, -0.15f,
