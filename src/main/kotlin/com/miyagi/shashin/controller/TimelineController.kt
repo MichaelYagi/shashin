@@ -3269,7 +3269,7 @@ class TimelineController: BaseController() {
             val brightness = metadataMap["brightness"].toString().toDouble()
             val contrast = metadataMap["contrast"].toString().toDouble()
             val saturation = metadataMap["saturation"].toString().toDouble()
-            val restoreImages = restore.orElse(false)
+            var restoreImages = restore.orElse(false)
 
             val metadataObj = metadataRepository.findById(metadataId)
 
@@ -3284,30 +3284,44 @@ class TimelineController: BaseController() {
                 var editedImage = bufferedImage
 
                 if (!restoreImages) {
+                    var manualRestore = true
+
                     if (flipX) {
                         metadata.setFlipHorizontally(true)
                         editedImage = ImageProcessing.flipHorizontally(editedImage)
+                        manualRestore = false
                     } else {
                         metadata.setFlipHorizontally(false)
+
                     }
 
                     if (flipY) {
                         metadata.setFlipVertically(true)
                         editedImage = ImageProcessing.flipVertically(editedImage)
+                        manualRestore = false
                     } else {
                         metadata.setFlipVertically(false)
                     }
 
                     if (metadata.getBrightness() == null || brightness in 0.9..1.9) {
                         metadata.setBrightness(brightness.toString())
+                        if (brightness != 1.0) {
+                            manualRestore = false
+                        }
                     }
 
                     if (metadata.getContrast() == null || contrast in 0.9..1.9) {
                         metadata.setContrast(contrast.toString())
+                        if (contrast != 1.0) {
+                            manualRestore = false
+                        }
                     }
 
                     if (metadata.getSaturation() == null || saturation in 0.9..1.9) {
                         metadata.setSaturation(saturation.toString())
+                        if (saturation != 1.0) {
+                            manualRestore = false
+                        }
                     }
 
                     editedImage = ImageProcessing.adjustBrightnessContrast(editedImage, brightness, contrast)
@@ -3326,6 +3340,21 @@ class TimelineController: BaseController() {
                         val setSmallHeight = metadata.getThumbnailSmallWidth()
                         metadata.setThumbnailSmallWidth(setSmallWidth)
                         metadata.setThumbnailSmallHeight(setSmallHeight)
+                    }
+
+                    if (rotation != 0) {
+                        manualRestore = false;
+                    }
+
+                    if (manualRestore) {
+                        restoreImages = true
+                        metadata.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadata.getId()}")
+                        metadata.setFlipHorizontally(false)
+                        metadata.setFlipVertically(false)
+                        metadata.setBrightness("1.0")
+                        metadata.setContrast("1.0")
+                        metadata.setSaturation("1.0")
+                        metadata.setRotation(0)
                     }
                 } else {
                     metadata.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadata.getId()}")
