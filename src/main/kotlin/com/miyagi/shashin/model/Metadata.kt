@@ -58,10 +58,22 @@ class Metadata {
     private var freeFormString: String? = null
     private var brightness: String? = null
     private var contrast: String? = null
+    private var flipHorizontally: Boolean? = null
+    private var flipVertically: Boolean? = null
+    private var rotation: Int? = null
 
     // Without a default constructor, Jackson will throw an exception
     fun Metadata() {}
 
+    fun setFlipHorizontally(flipHorizontally: Boolean?) {
+        this.flipHorizontally = flipHorizontally
+    }
+    fun setFlipVertically(flipVertically: Boolean?) {
+        this.flipVertically = flipVertically
+    }
+    fun setRotation(rotation: Int?) {
+        this.rotation = rotation
+    }
     fun setBrightness(brightness: String?) {
         this.brightness = brightness
     }
@@ -210,6 +222,15 @@ class Metadata {
         this.lastAccessedAt = lastAccessedAt
     }
 
+    fun getFlipHorizontally(): Boolean? {
+        return this.flipHorizontally
+    }
+    fun getFlipVertically(): Boolean? {
+        return this.flipVertically
+    }
+    fun getRotation(): Int? {
+        return this.rotation
+    }
     fun getBrightness(): String? {
         return this.brightness
     }
@@ -418,6 +439,9 @@ class Metadata {
         map["freeFormString"] = this.freeFormString
         map["brightness"] = this.brightness
         map["contrast"] = this.contrast
+        map["flipVertically"] = this.flipVertically
+        map["flipHorizontally"] = this.flipHorizontally
+        map["rotation"] = this.rotation
 
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

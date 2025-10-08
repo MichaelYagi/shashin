@@ -3279,9 +3279,9 @@ class TimelineController: BaseController() {
                 var edited = false
 
                 var path = metadataObj.get().getPath()!!
-                if (!restoreImages && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
-                    path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
-                }
+//                if (!restoreImages && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
+//                    path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
+//                }
 
                 var imageFile = File(path)
                 val bufferedImage = ImageIO.read(imageFile)
@@ -3289,28 +3289,42 @@ class TimelineController: BaseController() {
 
                 if (!restoreImages) {
                     if (flipX) {
+                        metadata.setFlipHorizontally(true)
                         editedImage = ImageProcessing.flipHorizontally(editedImage)
                         edited = true
+                    } else {
+                        metadata.setFlipHorizontally(false)
                     }
 
                     if (flipY) {
+                        metadata.setFlipVertically(true)
                         editedImage = ImageProcessing.flipVertically(editedImage)
                         edited = true
+                    } else {
+                        metadata.setFlipVertically(false)
                     }
 
+                    var contrastBrightnessChangeDetected = false
                     if (metadata.getBrightness() == null || (metadata.getBrightness() != null && brightness != metadata.getBrightness().toString().toDouble())) {
                         metadata.setBrightness(brightness.toString())
-                        editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
+//                        editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
                         edited = true
+                        contrastBrightnessChangeDetected = true
                     }
 
                     if (metadata.getContrast() == null || (metadata.getContrast() != null && contrast != metadata.getContrast().toString().toDouble())) {
                         metadata.setContrast(contrast.toString())
-                        editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
+//                        editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
                         edited = true
+                        contrastBrightnessChangeDetected = true
+                    }
+
+                    if (contrastBrightnessChangeDetected) {
+                        editedImage = ImageProcessing.adjustBrightnessContrast(editedImage, brightness, contrast)
                     }
 
                     editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
+                    metadata.setRotation(rotation)
                     if (editedImage.height != metadata.getOriginalImageHeight() && editedImage.width != metadata.getOriginalImageWidth()) {
                         val setWidth = metadata.getOriginalImageHeight()
                         val setHeight = metadata.getOriginalImageWidth()
@@ -3327,6 +3341,13 @@ class TimelineController: BaseController() {
                         edited = true
                     }
                 } else {
+                    metadata.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadata.getId()}")
+                    metadata.setFlipHorizontally(false)
+                    metadata.setFlipVertically(false)
+                    metadata.setBrightness("1.0")
+                    metadata.setContrast("1.0")
+                    metadata.setRotation(0)
+
                     edited = true
                 }
 
@@ -3342,11 +3363,6 @@ class TimelineController: BaseController() {
                         metadata.getExpectedExtension().toString(),
                         true
                     )
-                    if (restoreImages) {
-                        metadata.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadata.getId()}")
-                        metadata.setBrightness("1.0")
-                        metadata.setContrast("1.0")
-                    }
                     metadata.setModifiedAt(getCurrentTimestamp())
                     metadataRepository.save(metadata)
                 }
