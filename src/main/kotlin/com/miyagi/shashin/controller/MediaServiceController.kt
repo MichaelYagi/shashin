@@ -911,6 +911,13 @@ class MediaServiceController {
         return getRandomImageBy("type", model, request, type, height, width, orientation, albumsOnly, ttl)
     }
 
+    @RequestMapping(value = ["/api/v1/image/original/{metadataId}","/api/v1/image/original/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
+    @ResponseBody
+    @Throws(IOException::class)
+    fun getPathImage(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource> {
+        return getImageFactory(model, request, response, metadataId, false, locale, true)
+    }
+
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
@@ -925,7 +932,7 @@ class MediaServiceController {
         return getImageFactory(model, request, response, metadataId, true, locale)
     }
 
-    private fun getImageFactory(model: Model,request: HttpServletRequest, response: HttpServletResponse, metadataId: String?, attachFile: Boolean = false, locale: Locale): ResponseEntity<FileSystemResource> {
+    private fun getImageFactory(model: Model,request: HttpServletRequest, response: HttpServletResponse, metadataId: String?, attachFile: Boolean = false, locale: Locale, forcePathImage: Boolean = false): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId!!)
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
@@ -947,7 +954,7 @@ class MediaServiceController {
 
             // Check if an edited file
             var path = metadataObj.get().getPath()!!
-            if (!metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
+            if (!forcePathImage && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
                 path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
             }
 

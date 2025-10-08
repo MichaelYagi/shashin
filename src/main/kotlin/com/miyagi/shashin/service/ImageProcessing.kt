@@ -499,15 +499,17 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         }
 
         fun adjustBrightness(image: BufferedImage, brightness: Double): BufferedImage {
-            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
+            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
 
             for (y in 0 until image.height) {
                 for (x in 0 until image.width) {
-                    val color = Color(image.getRGB(x, y))
+                    val color = Color(image.getRGB(x, y), true) // 'true' preserves alpha
                     val r = (color.red * brightness).toInt().coerceIn(0, 255)
                     val g = (color.green * brightness).toInt().coerceIn(0, 255)
                     val b = (color.blue * brightness).toInt().coerceIn(0, 255)
-                    result.setRGB(x, y, Color(r, g, b).rgb)
+                    val a = color.alpha // preserve original alpha
+
+                    result.setRGB(x, y, Color(r, g, b, a).rgb)
                 }
             }
 
@@ -515,20 +517,65 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         }
 
         fun adjustContrast(image: BufferedImage, contrast: Double): BufferedImage {
-            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
+            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
 
             for (y in 0 until image.height) {
                 for (x in 0 until image.width) {
-                    val color = Color(image.getRGB(x, y))
+                    val color = Color(image.getRGB(x, y), true) // preserve alpha
                     val r = ((color.red - 128) * contrast + 128).toInt().coerceIn(0, 255)
                     val g = ((color.green - 128) * contrast + 128).toInt().coerceIn(0, 255)
                     val b = ((color.blue - 128) * contrast + 128).toInt().coerceIn(0, 255)
-                    result.setRGB(x, y, Color(r, g, b).rgb)
+                    val a = color.alpha
+
+                    result.setRGB(x, y, Color(r, g, b, a).rgb)
                 }
             }
 
             return result
         }
+
+        fun adjustBrightnessContrast(
+            image: BufferedImage,
+            brightness: Double,
+            contrast: Double,
+            gamma: Double = 2.2
+        ): BufferedImage {
+            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
+
+            fun gammaDecode(v: Int): Double = Math.pow(v / 255.0, gamma)
+            fun gammaEncode(v: Double): Int = (Math.pow(v, 1.0 / gamma) * 255.0).toInt().coerceIn(0, 255)
+
+            for (y in 0 until image.height) {
+                for (x in 0 until image.width) {
+                    val color = Color(image.getRGB(x, y), true)
+
+                    // Decode gamma
+                    val rLin = gammaDecode(color.red)
+                    val gLin = gammaDecode(color.green)
+                    val bLin = gammaDecode(color.blue)
+
+                    // Apply contrast centered around 0.5 (linear space)
+                    val rContrast = ((rLin - 0.5) * contrast + 0.5)
+                    val gContrast = ((gLin - 0.5) * contrast + 0.5)
+                    val bContrast = ((bLin - 0.5) * contrast + 0.5)
+
+                    // Apply brightness
+                    val rBright = rContrast * brightness
+                    val gBright = gContrast * brightness
+                    val bBright = bContrast * brightness
+
+                    // Encode gamma
+                    val r = gammaEncode(rBright)
+                    val g = gammaEncode(gBright)
+                    val b = gammaEncode(bBright)
+
+                    result.setRGB(x, y, Color(r, g, b, color.alpha).rgb)
+                }
+            }
+
+            return result
+        }
+
 
         fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
 //        -0.15f, -0.15f, -0.15f,
