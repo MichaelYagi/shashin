@@ -27,6 +27,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // console.log("isFlippedVertically:"+isFlippedVertically);
     // console.log("brightness:"+brightness);
     // console.log("contrast:"+contrast);
+    shashin.printMessageToConsole("initializeEditor after applying transitions",{tag:"editor"});
+    shashin.printMessageToConsole("rotation:"+rotation,{tag:"editor"});
+    shashin.printMessageToConsole("isFlippedHorizontally:"+isFlippedHorizontally,{tag:"editor"});
+    shashin.printMessageToConsole("isFlippedVertically:"+isFlippedVertically,{tag:"editor"});
+    shashin.printMessageToConsole("brightness:"+brightness,{tag:"editor"});
+    shashin.printMessageToConsole("contrast:"+contrast,{tag:"editor"});
+
 
     const gammaTables = createGammaTables(2.2);
 
@@ -290,12 +297,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
             rotation = parseInt(editMetadataObj.rotation);
         }
 
+        // TODO: Flipping around works here. why
         if (editMetadataObj.hasOwnProperty("flipHorizontally") && editMetadataObj.flipHorizontally !== null) {
-            isFlippedHorizontally = editMetadataObj.flipHorizontally;
+            isFlippedVertically = editMetadataObj.flipHorizontally;
         }
 
         if (editMetadataObj.hasOwnProperty("flipVertically") && editMetadataObj.flipVertically !== null) {
-            isFlippedVertically = editMetadataObj.flipVertically;
+            isFlippedHorizontally = editMetadataObj.flipVertically;
         }
 
         if (editMetadataObj.hasOwnProperty("brightness") && editMetadataObj.brightness !== null) {
@@ -440,7 +448,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorContrastAction").val(0);
 
             shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, true,  function (success) {
-                shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
+                shashin.printMessageToConsole("Restoring edited metadata:"+success,{tag:"editor"});
 
                 if (success === true) {
                     shashin.showToastMessage(shashin.getTranslatedValue("main.pages.map.modal.restored"), shashin.getTranslatedValue("main.pages.map.modal.restored"), {
@@ -481,6 +489,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         isFlippedVertically = isFlippedHorizontally;
         isFlippedHorizontally = swapFlip;
 
+        shashin.printMessageToConsole("Saving with settings: Rotation: "+normalizedRotation(rotation)+", isFlippedHorizontally:"+isFlippedHorizontally+", isFlippedVertically:"+isFlippedVertically+", brightness:"+brightness+", contrast:"+contrast,{tag:"editor"});
         shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation(rotation), isFlippedHorizontally, isFlippedVertically, brightness, contrast, false,  function (success) {
             shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
 

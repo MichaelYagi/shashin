@@ -461,15 +461,15 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         }
 
         fun flipVertically(buffImage: BufferedImage): BufferedImage {
-            val tx = AffineTransform.getScaleInstance(1.0, -1.0)
-            tx.translate(0.0, -buffImage.height.toDouble())
+            val tx = AffineTransform.getScaleInstance(-1.0, 1.0)
+            tx.translate(-buffImage.width.toDouble(), 0.0)
             val op = AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
             return op.filter(buffImage, null)
         }
 
         fun flipHorizontally(buffImage: BufferedImage): BufferedImage {
-            val tx = AffineTransform.getScaleInstance(-1.0, 1.0)
-            tx.translate(-buffImage.width.toDouble(), 0.0)
+            val tx = AffineTransform.getScaleInstance(1.0, -1.0)
+            tx.translate(0.0, -buffImage.height.toDouble())
             val op = AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
             return op.filter(buffImage, null)
         }
