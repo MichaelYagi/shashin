@@ -301,8 +301,8 @@
         const json = {
             metadataId: metadataId,
             rotation: rotation,
-            flipX: isFlippedVertically,
-            flipY: isFlippedHorizontally,
+            flipX: isFlippedHorizontally,
+            flipY: isFlippedVertically,
             brightness: brightness,
             contrast: contrast
         };

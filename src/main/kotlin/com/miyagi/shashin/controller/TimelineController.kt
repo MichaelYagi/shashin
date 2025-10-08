@@ -3274,14 +3274,8 @@ class TimelineController: BaseController() {
             if (metadataObj.isPresent) {
                 var metadata: Metadata = metadataObj.get()
                 val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-                val sidecarDir = rootPath + relativeSidecarDir
-
-                var edited = false
 
                 var path = metadataObj.get().getPath()!!
-//                if (!restoreImages && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
-//                    path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
-//                }
 
                 var imageFile = File(path)
                 val bufferedImage = ImageIO.read(imageFile)
@@ -3291,7 +3285,6 @@ class TimelineController: BaseController() {
                     if (flipX) {
                         metadata.setFlipHorizontally(true)
                         editedImage = ImageProcessing.flipHorizontally(editedImage)
-                        edited = true
                     } else {
                         metadata.setFlipHorizontally(false)
                     }
@@ -3299,33 +3292,23 @@ class TimelineController: BaseController() {
                     if (flipY) {
                         metadata.setFlipVertically(true)
                         editedImage = ImageProcessing.flipVertically(editedImage)
-                        edited = true
                     } else {
                         metadata.setFlipVertically(false)
                     }
 
-                    var contrastBrightnessChangeDetected = false
-                    if (metadata.getBrightness() == null || (metadata.getBrightness() != null && brightness != metadata.getBrightness().toString().toDouble())) {
+                    if (metadata.getBrightness() == null || brightness in 0.5..1.5) {
                         metadata.setBrightness(brightness.toString())
-//                        editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
-                        edited = true
-                        contrastBrightnessChangeDetected = true
                     }
 
-                    if (metadata.getContrast() == null || (metadata.getContrast() != null && contrast != metadata.getContrast().toString().toDouble())) {
+                    if (metadata.getContrast() == null || contrast in 0.5..1.5) {
                         metadata.setContrast(contrast.toString())
-//                        editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
-                        edited = true
-                        contrastBrightnessChangeDetected = true
                     }
 
-                    if (contrastBrightnessChangeDetected) {
-                        editedImage = ImageProcessing.adjustBrightnessContrast(editedImage, brightness, contrast)
-                    }
+                    editedImage = ImageProcessing.adjustBrightnessContrast(editedImage, brightness, contrast)
 
                     editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
                     metadata.setRotation(rotation)
-                    if (editedImage.height != metadata.getOriginalImageHeight() && editedImage.width != metadata.getOriginalImageWidth()) {
+                    if (rotation == 90 || rotation == 270) {
                         val setWidth = metadata.getOriginalImageHeight()
                         val setHeight = metadata.getOriginalImageWidth()
                         metadata.setOriginalImageWidth(setWidth)
@@ -3335,10 +3318,6 @@ class TimelineController: BaseController() {
                         val setSmallHeight = metadata.getThumbnailSmallWidth()
                         metadata.setThumbnailSmallWidth(setSmallWidth)
                         metadata.setThumbnailSmallHeight(setSmallHeight)
-
-                        edited = true
-                    } else if (rotation % 360 != 0) {
-                        edited = true
                     }
                 } else {
                     metadata.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadata.getId()}")
@@ -3347,25 +3326,21 @@ class TimelineController: BaseController() {
                     metadata.setBrightness("1.0")
                     metadata.setContrast("1.0")
                     metadata.setRotation(0)
-
-                    edited = true
                 }
 
-                if (edited) {
-                    deleteThumbnails(metadata)
-                    val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-                    val sidecarDir = rootPath + relativeSidecarDir
-                    val imageProcessing = ImageProcessing(apiVersion, File(metadata.getPath()!!), sidecarDir, metadata)
-                    metadata = imageProcessing.setThumbnails(
-                        editedImage,
-                        metadata,
-                        !restoreImages,
-                        metadata.getExpectedExtension().toString(),
-                        true
-                    )
-                    metadata.setModifiedAt(getCurrentTimestamp())
-                    metadataRepository.save(metadata)
-                }
+                // Create thumbnails
+                deleteThumbnails(metadata)
+                val sidecarDir = rootPath + relativeSidecarDir
+                val imageProcessing = ImageProcessing(apiVersion, File(metadata.getPath()!!), sidecarDir, metadata)
+                metadata = imageProcessing.setThumbnails(
+                    editedImage,
+                    metadata,
+                    !restoreImages,
+                    metadata.getExpectedExtension().toString(),
+                    true
+                )
+                metadata.setModifiedAt(getCurrentTimestamp())
+                metadataRepository.save(metadata)
 
                 resp["metadata"] = metadata
                 resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
