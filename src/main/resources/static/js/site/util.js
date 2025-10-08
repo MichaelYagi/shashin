@@ -1812,6 +1812,7 @@ class Util {
         $(".cameraLabel").hide();
         $(".lensLabel").hide();
         $(".qualityLabel").hide();
+        $(".editedLabel").hide();
         $(".addedAtLabel").hide();
         $(".createdAtLabel").hide();
         $(".modifiedAtLabel").hide();
@@ -1956,6 +1957,15 @@ class Util {
         if (metadata.quality != null) {
             $(".qualityLabel").show();
             $(".qualityDetails").text(metadata.quality);
+        }
+        if (metadata.brightness !== "1.0" ||
+            metadata.contrast !== "1.0" ||
+            metadata.saturation !== "1.0" ||
+            metadata.rotation !== 0 ||
+            metadata.flipHorizontally !== false ||
+            metadata.flipVertically !== false
+        ) {
+            $(".editedLabel").show();
         }
         if (metadata.addedAt != null) {
             $(".addedAtLabel").show();
