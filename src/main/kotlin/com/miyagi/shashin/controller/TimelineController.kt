@@ -3333,6 +3333,7 @@ class TimelineController: BaseController() {
                     metadata.setFlipVertically(false)
                     metadata.setBrightness("1.0")
                     metadata.setContrast("1.0")
+                    metadata.setSaturation("1.0")
                     metadata.setRotation(0)
                 }
 

@@ -31,7 +31,6 @@
                         icon: "bi-info-circle",
                         iconColor: "#777777",
                         delay: 2000,
-                        borderColor:"success",
                         tag: "editor"
                     });
                 }
