@@ -172,6 +172,42 @@ function initializeEditor(editMetadataObj, lgIndex) {
         "transform": "translate(-50%, -50%)"
     });
 
+    $("#editorBrightnessIcon").off("click").on('click', function(event) {
+        event.preventDefault();
+
+        let oldBrightness = brightness;
+        brightness = 1.0;
+        $("#editorBrightnessAction").val(0);
+
+        if (oldBrightness !== brightness) {
+            applyCanvasAttributes(brightness, contrast, saturation);
+        }
+    });
+
+    $("#editorContrastIcon").off("click").on('click', function(event) {
+        event.preventDefault();
+
+        let oldContrast = contrast;
+        contrast = 1.0;
+        $("#editorContrastAction").val(0);
+
+        if (oldContrast !== contrast) {
+            applyCanvasAttributes(brightness, contrast, saturation);
+        }
+    });
+
+    $("#editorSaturationIcon").off("click").on('click', function(event) {
+        event.preventDefault();
+
+        let oldSaturation = saturation;
+        saturation = 1.0;
+        $("#editorSaturationAction").val(0);
+
+        if (oldSaturation !== saturation) {
+            applyCanvasAttributes(brightness, contrast, saturation);
+        }
+    });
+
     $("#editorContainer").off("click").on('click', function(event) {
         event.preventDefault();
 
