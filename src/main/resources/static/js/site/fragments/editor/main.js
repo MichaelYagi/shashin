@@ -358,7 +358,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorCloseActionButton").css("display", "block");
         });
 
-        img.on("error", function (e) {
+        $(img).on("error", function (e) {
             e.preventDefault();
 
             enableButtons();
