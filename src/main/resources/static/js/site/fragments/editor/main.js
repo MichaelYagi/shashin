@@ -337,7 +337,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
         } else {
-            img.onload = () => {
+            $(img).on("load", function (e) {
+                e.preventDefault();
+
                 canvas.width = img.width;
                 canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
@@ -360,7 +362,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 enableButtons();
                 $("#editorSpinner").css("display", "none");
                 $("#editorCloseActionButton").css("display", "block");
-            };
+            });
         }
 
         img.onerror = () => {
