@@ -29,9 +29,9 @@ body {
 }
 
 .range-ticks span {
-  font-size: 0.5rem;
-  width: 1px;
-  text-align: center;
+  font-size: 0.8rem;
+  /*width: 1px;*/
+  /*text-align: center;*/
   flex: 1;
 }
 
