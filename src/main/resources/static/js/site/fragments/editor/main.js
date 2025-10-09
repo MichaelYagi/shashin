@@ -172,42 +172,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
         "left": "50%",
         "transform": "translate(-50%, -50%)"
     });
-    
-    $("#editorBrightnessIcon").off("click").on('click', function(event) {
-        event.preventDefault();
-
-        let oldBrightness = brightness;
-        brightness = 1.0;
-        $("#editorBrightnessAction").val(0);
-
-        if (oldBrightness !== brightness) {
-            applyCanvasAttributes(brightness, contrast, saturation);
-        }
-    });
-
-    $("#editorContrastIcon").off("click").on('click', function(event) {
-        event.preventDefault();
-
-        let oldContrast = contrast;
-        contrast = 1.0;
-        $("#editorContrastAction").val(0);
-
-        if (oldContrast !== contrast) {
-            applyCanvasAttributes(brightness, contrast, saturation);
-        }
-    });
-
-    $("#editorSaturationIcon").off("click").on('click', function(event) {
-        event.preventDefault();
-
-        let oldSaturation = saturation;
-        saturation = 1.0;
-        $("#editorSaturationAction").val(0);
-
-        if (oldSaturation !== saturation) {
-            applyCanvasAttributes(brightness, contrast, saturation);
-        }
-    });
 
     $("#editorContainer").off("click").on('click', function(event) {
         event.preventDefault();
@@ -263,7 +227,45 @@ function initializeEditor(editMetadataObj, lgIndex) {
         $("#editShashinImage").css(style);
     }
 
-    $("#editorBrightnessAction").off("click").on("click", function (e) {
+    // Slider icon
+    $("#editorBrightnessIcon").off("click").on('click', function(event) {
+        event.preventDefault();
+
+        let oldBrightness = brightness;
+        brightness = 1.0;
+        $("#editorBrightnessAction").val(0);
+
+        if (oldBrightness !== brightness) {
+            applyCanvasAttributes(brightness, contrast, saturation);
+        }
+    });
+
+    $("#editorContrastIcon").off("click").on('click', function(event) {
+        event.preventDefault();
+
+        let oldContrast = contrast;
+        contrast = 1.0;
+        $("#editorContrastAction").val(0);
+
+        if (oldContrast !== contrast) {
+            applyCanvasAttributes(brightness, contrast, saturation);
+        }
+    });
+
+    $("#editorSaturationIcon").off("click").on('click', function(event) {
+        event.preventDefault();
+
+        let oldSaturation = saturation;
+        saturation = 1.0;
+        $("#editorSaturationAction").val(0);
+
+        if (oldSaturation !== saturation) {
+            applyCanvasAttributes(brightness, contrast, saturation);
+        }
+    });
+
+    // Slider adjustment
+    $("#editorBrightnessAction").off("change").on("change", function (e) {
         e.preventDefault();
 
         if (isSpinnerHidden()) {
@@ -281,7 +283,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    $("#editorContrastAction").off("click").on("click", function (e) {
+    $("#editorContrastAction").off("change").on("change", function (e) {
         e.preventDefault();
 
         if (isSpinnerHidden()) {
@@ -299,7 +301,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    $("#editorSaturationAction").off("click").on("click", function (e) {
+    $("#editorSaturationAction").off("change").on("change", function (e) {
         e.preventDefault();
 
         if (isSpinnerHidden()) {

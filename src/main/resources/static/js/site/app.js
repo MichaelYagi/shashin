@@ -316,16 +316,29 @@
                 const thumbnailSmallHeight = metadata.thumbnailSmallHeight;
                 const thumbnailSmallWidth = metadata.thumbnailSmallWidth;
 
-                // Refresh image
                 Util.setMetadataLocalStorage();
-                $("#photoThumbnailContainer" + metadataId).css({
-                    "width": thumbnailSmallWidth + "px",
-                    "height": thumbnailSmallHeight + "px"
-                });
-                $("#image" + metadataId).attr("src", $("#image" + metadataId).attr("src") + "?v=" + uuidv4());
-                $("#image" + metadataId).attr("width", thumbnailSmallWidth);
-                $("#image" + metadataId).attr("height", thumbnailSmallHeight);
-                $("#editShashinImage").attr("src", "/api/v1/image/"+metadataId+"?v="+uuidv4());
+
+                // Refresh image
+                if (Util.isMobile()) {
+                    const centeredHeightWidth = 120;
+                    $("#photoThumbnailContainer" + metadataId).css({
+                        "width": centeredHeightWidth + "px",
+                        "height": centeredHeightWidth + "px"
+                    });
+                    $("#image" + metadataId).attr("src", "/api/v1/thumbnails/centered/" + metadataId + "?v=" + uuidv4());
+                    $("#image" + metadataId).attr("width", centeredHeightWidth);
+                    $("#image" + metadataId).attr("height", centeredHeightWidth);
+                } else {
+                    $("#photoThumbnailContainer" + metadataId).css({
+                        "width": thumbnailSmallWidth + "px",
+                        "height": thumbnailSmallHeight + "px"
+                    });
+                    $("#image" + metadataId).attr("src", $("#image" + metadataId).attr("src") + "?v=" + uuidv4());
+                    $("#image" + metadataId).attr("width", thumbnailSmallWidth);
+                    $("#image" + metadataId).attr("height", thumbnailSmallHeight);
+                }
+
+                $("#editShashinImage").attr("src", "/api/v1/image/" + metadataId + "?v=" + uuidv4());
 
                 // Refresh lightgallery
                 const mediaContentList = shashin.getLightGallery().galleryItems;
