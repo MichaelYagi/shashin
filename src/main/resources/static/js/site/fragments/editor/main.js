@@ -19,7 +19,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let saturation = 1.0;
 
     // Loading spinner
-    styleControl("#editorSpinner", "2em", "35px", "right", "15px");
+    styleTopControl("#editorSpinner", "2em", "35px", "right", "15px");
     $("#editorContainer").css("display", "block");
     $("#editorToolContainer").css("display", "block");
     $("#editorSpinner").css("display", "block");
@@ -57,7 +57,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     }
 
     // Title
-    styleControl("#editorTitle", "2rem", "23px", "left", "30px");
+    styleTopControl("#editorTitle", "2rem", "23px", "left", "30px");
 
     // First row buttons
     let sideValue = 8;
@@ -81,24 +81,42 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     // Third row buttons
     sideValue = 10;
-    const thirdRowButtons = [
+    let thirdRowButtons = [
         { id: "#editorBrightnessActionButton", fontSize: "2rem", top: "130px" }
     ];
-    const thirdRowMenuHeightWidth = applyStyles(thirdRowButtons, sideValue, "right");
+    let thirdRowMenuHeightWidth = 0;
+    if (Util.isMobile()) {
+        $(".range-ticks span").css("display", "none");
+        styleBottomControl("#editorBrightnessActionButton", "2em", "120px", "right", "10px", "#editorBrightnessIcon");
+    } else {
+        thirdRowMenuHeightWidth = applyStyles(thirdRowButtons, sideValue, "right");
+    }
 
     // Fourth row buttons
     sideValue = 10;
-    const fourthRowButtons = [
+    let fourthRowButtons = [
         { id: "#editorContrastActionButton", fontSize: "2rem", top: "220px" }
     ];
-    const fourthRowMenuHeightWidth = applyStyles(fourthRowButtons, sideValue, "right");
+    let fourthRowMenuHeightWidth = 0;
+    if (Util.isMobile()) {
+        $(".range-ticks span").css("display", "none");
+        styleBottomControl("#editorContrastActionButton", "2em", "60px", "right", "10px", "#editorContrastIcon");
+    } else {
+        fourthRowMenuHeightWidth = applyStyles(fourthRowButtons, sideValue, "right");
+    }
 
     // Fifth row buttons
     sideValue = 10;
-    const fifthRowButtons = [
+    let fifthRowButtons = [
         { id: "#editorSaturationActionButton", fontSize: "2rem", top: "310px" }
     ];
-    const fifthRowMenuHeightWidth = applyStyles(fifthRowButtons, sideValue, "right");
+    let fifthRowMenuHeightWidth = 0;
+    if (Util.isMobile()) {
+        $(".range-ticks span").css("display", "none");
+        styleBottomControl("#editorSaturationActionButton", "2em", "0", "right", "10px", "#editorSaturationIcon");
+    } else {
+        fifthRowMenuHeightWidth = applyStyles(fifthRowButtons, sideValue, "right");
+    }
 
     const rowWidths = [
         firstRowMenuHeightWidth[0],
@@ -115,7 +133,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         fifthRowMenuHeightWidth[1]
     ;
 
-    function styleControl(id, fontSize, top, side, sideValue) {
+    function styleTopControl(id, fontSize, top, side, sideValue) {
         $(id).css({
             "font-size": fontSize,
             "color": "#FFFFFF",
@@ -126,11 +144,26 @@ function initializeEditor(editMetadataObj, lgIndex) {
         });
     }
 
+    function styleBottomControl(id, fontSize, bottom, side, sideValue, iconId) {
+        $(id).css({
+            "font-size": fontSize,
+            "color": "#FFFFFF",
+            "z-index": 99998,
+            "position": "absolute",
+            "bottom": bottom,
+            [side]: sideValue
+        });
+
+        $(iconId).css({
+            "z-index": 999999
+        });
+    }
+
     function applyStyles(buttons, startValue, side) {
         let offset = startValue;
         let maxTop = 0;
         for (const { id, fontSize, top } of buttons) {
-            styleControl(id, fontSize, top, side, offset + "px");
+            styleTopControl(id, fontSize, top, side, offset + "px");
             const topPixels = parseInt(top.replace("px", ""));
             if (topPixels > maxTop) {
                 maxTop = topPixels;
@@ -145,12 +178,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
         return [offset, maxTop];
     }
 
-    $("#editorBlock").css({
-        "position": "absolute",
-        "height": (blockHeight-339)+"px",
-        "width": (blockWidth+5)+"px",
-        "right": "0"
-    });
+    if (!Util.isMobile()) {
+        $("#editorBlock").css({
+            "position": "absolute",
+            "height": (blockHeight - 339) + "px",
+            "width": (blockWidth + 5) + "px",
+            "right": "0"
+        });
+    }
 
     showModule();
 
