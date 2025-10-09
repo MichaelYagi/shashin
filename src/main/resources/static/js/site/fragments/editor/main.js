@@ -1,4 +1,11 @@
 function initializeEditor(editMetadataObj, lgIndex) {
+    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.dashboard.title"), shashin.getTranslatedValue("main.toast.dashboard.title"), {
+        icon: "bi-info-circle",
+        iconColor: "#777777",
+        autohide: false,
+        tag: "editor"
+    });
+
     // console.log("--------------------");
     // console.log(editMetadataObj.id);
     // console.log(editMetadataObj);
@@ -172,6 +179,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
         "transform": "translate(-50%, -50%)"
     });
 
+    shashin.closeToastMessages({tag:"editor"});
+
     $("#editorBrightnessIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
@@ -335,7 +344,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
             enableButtons();
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
-            shashin.closeToastMessages({tag:"editor"});
         } else {
             img.onload = () => {
                 canvas.width = img.width;
@@ -360,7 +368,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 enableButtons();
                 $("#editorSpinner").css("display", "none");
                 $("#editorCloseActionButton").css("display", "block");
-                shashin.closeToastMessages({tag:"editor"});
             };
         }
 
@@ -368,7 +375,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
             enableButtons();
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
-            shashin.closeToastMessages({tag:"editor"});
         };
     }
 
