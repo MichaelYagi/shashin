@@ -117,6 +117,13 @@
                 .first()
                 .off('click.lg')
                 .on('click.lg', () => {
+                    shashin.showToastMessage(null, shashin.getTranslatedValue("main.toast.dashboard.title"), {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        autohide: false,
+                        tag: "editor"
+                    });
+
                     if (metadataObj !== null) {
                         let lgIndex = this.core.index;
                         if ($("#lgIndex").val().length > 0) {
