@@ -600,12 +600,15 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 shashin.printMessageToConsole("Restoring edited metadata:"+success,{tag:"editor"});
 
                 if (success === true) {
-                    shashin.showToastMessage(shashin.getTranslatedValue("main.pages.map.modal.restored"), shashin.getTranslatedValue("main.pages.map.modal.restored"), {
-                        icon: "bi-info-circle",
-                        iconColor: "#777777",
-                        delay: 2000,
-                        borderColor: "success"
-                    });
+                    rotation = 0;
+                    isFlippedHorizontally = false;
+                    isFlippedVertically = false;
+                    brightness = 1.0;
+                    $("#editorBrightnessAction").val(0);
+                    contrast = 1.0;
+                    $("#editorContrastAction").val(0);
+                    saturation = 1.0;
+                    $("#editorSaturationAction").val(0);
 
                     editMetadataObj.brightness = brightness;
                     editMetadataObj.contrast = contrast;
@@ -613,6 +616,17 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     editMetadataObj.rotation = rotation;
                     editMetadataObj.flipHorizontally = isFlippedHorizontally;
                     editMetadataObj.flipVertically = isFlippedVertically;
+
+                    applyDefaultTransformations();
+
+                    updateTransform(false);
+
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.pages.map.modal.restored"), shashin.getTranslatedValue("main.pages.map.modal.restored"), {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        delay: 2000,
+                        borderColor: "success"
+                    });
                 } else {
                     shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail.body"), shashin.getTranslatedValue("main.toast.account.profile.fail.body"), {
                         icon: "bi-exclamation-triangle",
