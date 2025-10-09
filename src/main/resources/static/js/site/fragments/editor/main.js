@@ -18,6 +18,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let contrast = 1.0;
     let saturation = 1.0;
 
+    // Loading spinner
+    styleControl("#editorSpinner", "2em", "35px", "right", "15px");
+    $("#editorContainer").css("display", "block");
+    $("#editorToolContainer").css("display", "block");
     $("#editorSpinner").css("display", "block");
     $("#editorCloseActionButton").css("display", "none");
     applyDefaultTransformations();
@@ -54,9 +58,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     // Title
     styleControl("#editorTitle", "2rem", "23px", "left", "30px");
-
-    // Loading spinner
-    styleControl("#editorSpinner", "2em", "35px", "right", "15px");
 
     // First row buttons
     let sideValue = 8;
@@ -171,9 +172,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         "left": "50%",
         "transform": "translate(-50%, -50%)"
     });
-
-    shashin.closeToastMessages({tag:"editor"});
-
+    
     $("#editorBrightnessIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
