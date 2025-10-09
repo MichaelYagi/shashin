@@ -330,46 +330,43 @@ function initializeEditor(editMetadataObj, lgIndex) {
         const ctx = canvas.getContext("2d");
 
         const img = new Image();
+
+        $(img).on("load", function (e) {
+            e.preventDefault();
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            const imageData = ctx.getImageData(0, 0, img.width, img.height);
+
+            let adjustedImageData = adjustBrightnessContrast(imageData, brightnessInput, contrastInput, gammaTables);
+            adjustedImageData = adjustSaturation(imageData, saturationInput);
+            ctx.putImageData(adjustedImageData, 0, 0);
+            const imageURL = canvas.toDataURL("image/jpeg", 0.2);
+
+            $("#editShashinImage").attr("src", imageURL);
+
+            document.body.style.overflow = 'auto';
+            $(canvas).remove();
+
+            if (applyTransformation) {
+                updateTransform(false);
+            }
+
+            enableButtons();
+            $("#editorSpinner").css("display", "none");
+            $("#editorCloseActionButton").css("display", "block");
+        });
+
+        img.on("error", function (e) {
+            e.preventDefault();
+
+            enableButtons();
+            $("#editorSpinner").css("display", "none");
+            $("#editorCloseActionButton").css("display", "block");
+        });
+
         img.src = "/api/v1/image/original/"+editMetadataObj.id+"?v="+uuidv4();
-
-        if (img.complete) {
-            enableButtons();
-            $("#editorSpinner").css("display", "none");
-            $("#editorCloseActionButton").css("display", "block");
-        } else {
-            $(img).on("load", function (e) {
-                e.preventDefault();
-
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-                const imageData = ctx.getImageData(0, 0, img.width, img.height);
-
-                let adjustedImageData = adjustBrightnessContrast(imageData, brightnessInput, contrastInput, gammaTables);
-                adjustedImageData = adjustSaturation(imageData, saturationInput);
-                ctx.putImageData(adjustedImageData, 0, 0);
-                const imageURL = canvas.toDataURL("image/jpeg", 0.2);
-
-                $("#editShashinImage").attr("src", imageURL);
-
-                document.body.style.overflow = 'auto';
-                $(canvas).remove();
-
-                if (applyTransformation) {
-                    updateTransform(false);
-                }
-
-                enableButtons();
-                $("#editorSpinner").css("display", "none");
-                $("#editorCloseActionButton").css("display", "block");
-            });
-        }
-
-        img.onerror = () => {
-            enableButtons();
-            $("#editorSpinner").css("display", "none");
-            $("#editorCloseActionButton").css("display", "block");
-        };
     }
 
     function applyDefaultTransformations() {
