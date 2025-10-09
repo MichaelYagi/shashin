@@ -102,7 +102,7 @@
 
                 if (metadataId !== null) {
                     shashin.getMetadata(metadataId).then(function (metadata) {
-                        if (metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
+                        if (metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0 && Util.isMobile() === false) {
                             metadataObj = metadata;
                             $("#shashineditor").css("display", "block");
                         } else {
