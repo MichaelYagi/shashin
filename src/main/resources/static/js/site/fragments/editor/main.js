@@ -376,8 +376,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
             ctx.drawImage(img, 0, 0);
             const imageData = ctx.getImageData(0, 0, img.width, img.height);
 
-            let adjustedImageData = adjustBrightnessContrast(imageData, brightnessInput, contrastInput, gammaTables);
-            adjustedImageData = adjustSaturation(imageData, saturationInput);
+            let adjustedBrightnessImageData = adjustBrightnessContrast(imageData, brightnessInput, contrastInput, gammaTables);
+            const adjustedImageData = adjustSaturation(adjustedBrightnessImageData, saturationInput);
             ctx.putImageData(adjustedImageData, 0, 0);
             const imageURL = canvas.toDataURL("image/jpeg", 0.2);
 
