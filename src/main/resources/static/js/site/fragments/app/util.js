@@ -122,15 +122,15 @@
 
         if ((tags.some(r=> shashin.consoleTags.includes(r)) === true || ["all"].some(r=> shashin.consoleTags.includes(r)) === true) && (shashin.showDebug === true || localStorageDebugFlag === true)) {
             if (consoleType === shashin.consoleTypes.log && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1)) {
-                console.log(msg + ". Tags: " + tags.join());
+                console.log(msg + " - Tags: " + tags.join());
             } else if (consoleType === shashin.consoleTypes.error && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1)) {
-                console.error(msg + ". Tags: " + tags.join());
+                console.error(msg + " - Tags: " + tags.join());
             } else if (consoleType === shashin.consoleTypes.info && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.info, shashin.consoleFilterTypes) !== -1)) {
-                console.info(msg + ". Tags: " + tags.join());
+                console.info(msg + " - Tags: " + tags.join());
             } else if (consoleType === shashin.consoleTypes.warn && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1)) {
-                console.warn(msg + ". Tags: " + tags.join());
+                console.warn(msg + " - Tags: " + tags.join());
             } else {
-                console.log(msg + ". Tags: " + tags.join());
+                console.log(msg + " - Tags: " + tags.join());
             }
 
             if (shashin.showTrace === true) {

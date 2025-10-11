@@ -33,7 +33,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // console.log("brightness:"+brightness);
     // console.log("contrast:"+contrast);
     // console.log("saturation:"+saturation);
-    shashin.printMessageToConsole("initializeEditor after applying transitions",{tag:"editor"});
+
+    shashin.printMessageToConsole("--------------",{tag:"editor"});
+    shashin.printMessageToConsole("initializeEditor after applying default transitions",{tag:"editor"});
     shashin.printMessageToConsole("rotation:"+rotation,{tag:"editor"});
     shashin.printMessageToConsole("isFlippedHorizontally:"+isFlippedHorizontally,{tag:"editor"});
     shashin.printMessageToConsole("isFlippedVertically:"+isFlippedVertically,{tag:"editor"});
@@ -267,7 +269,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         if (isSpinnerHidden()) {
             brightness = 1.0;
             $("#editorBrightnessAction").val(0);
-            applyCanvasAttributes();
+            applyAttributes();
         }
     });
 
@@ -277,7 +279,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         if (isSpinnerHidden()) {
             contrast = 1.0;
             $("#editorContrastAction").val(0);
-            applyCanvasAttributes();
+            applyAttributes();
         }
     });
 
@@ -287,7 +289,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         if (isSpinnerHidden()) {
             saturation = 1.0;
             $("#editorSaturationAction").val(0);
-            applyCanvasAttributes();
+            applyAttributes();
         }
     });
 
@@ -302,7 +304,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 number = number.slice(1);
                 brightness = 1-parseFloat("0."+number);
             }
-            applyCanvasAttributes();
+            applyAttributes();
         }
     });
 
@@ -316,7 +318,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 number = number.slice(1);
                 contrast = 1-parseFloat("0."+number);
             }
-            applyCanvasAttributes();
+            applyAttributes();
         }
     });
 
@@ -330,30 +332,48 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 number = number.slice(1);
                 saturation = 1-parseFloat("0."+number);
             }
-            applyCanvasAttributes();
+            applyAttributes();
         }
     });
 
-    function applyCanvasAttributes() { // brightnessInput, contrastInput, saturationInput, applyTransformation = false) {
+    function applyAttributes() {
         disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
 
         document.body.style.overflowY= 'hidden';
 
-        // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
-        shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
-            if (data !== null) {
-                shashin.printMessageToConsole("Total time editing image: "+data.totalTimeMS+"ms",{tag:"editor"});
-                // console.log("Total time editing image: "+data.totalTimeMS+"ms");
-                $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
-                updateTransform(false);
-                document.body.style.overflow = 'auto';
-                enableButtons();
-                $("#editorSpinner").css("display", "none");
-                $("#editorCloseActionButton").css("display", "block");
-            }
-        });
+        shashin.printMessageToConsole("--------------",{tag:"editor"});
+        shashin.printMessageToConsole("Applying attributes",{tag:"editor"});
+        shashin.printMessageToConsole("Rotation: "+rotation,{tag:"editor"});
+        shashin.printMessageToConsole("isFlippedHorizontally: "+isFlippedHorizontally,{tag:"editor"});
+        shashin.printMessageToConsole("isFlippedVertically: "+isFlippedVertically,{tag:"editor"});
+        shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
+        shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
+        shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
+
+        if (brightness !== 1.0 || contrast !== 1.0 || saturation !== 1.0) {
+            // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
+            shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
+                if (data !== null) {
+                    shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
+                    // console.log("Total time editing image: "+data.totalTimeMS+"ms");
+                    $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
+                    updateTransform(false);
+                    document.body.style.overflow = 'auto';
+                    enableButtons();
+                    $("#editorSpinner").css("display", "none");
+                    $("#editorCloseActionButton").css("display", "block");
+                }
+            });
+        } else {
+            shashin.printMessageToConsole("No API call needed. Brightness, contrast, saturation at default.",{tag:"editor"});
+            updateTransform(false);
+            document.body.style.overflow = 'auto';
+            enableButtons();
+            $("#editorSpinner").css("display", "none");
+            $("#editorCloseActionButton").css("display", "block");
+        }
     }
 
     function applyDefaultTransformations() {
@@ -405,7 +425,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
 
         // Apply transformations
-        applyCanvasAttributes();
+        applyAttributes();
     }
 
     $("#editorRotateRightActionButton").off("click").on("click", function (e) {
@@ -497,6 +517,15 @@ function initializeEditor(editMetadataObj, lgIndex) {
             saturation = 1.0;
             $("#editorSaturationAction").val(0);
 
+            shashin.printMessageToConsole("--------------",{tag:"editor"});
+            shashin.printMessageToConsole("Restoring attributes",{tag:"editor"});
+            shashin.printMessageToConsole("Rotation: "+rotation,{tag:"editor"});
+            shashin.printMessageToConsole("isFlippedHorizontally: "+isFlippedHorizontally,{tag:"editor"});
+            shashin.printMessageToConsole("isFlippedVertically: "+isFlippedVertically,{tag:"editor"});
+            shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
+            shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
+            shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
+
             shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, true,  function (success) {
                 shashin.printMessageToConsole("Restoring edited metadata:"+success,{tag:"editor"});
 
@@ -554,7 +583,15 @@ function initializeEditor(editMetadataObj, lgIndex) {
         isFlippedVertically = isFlippedHorizontally;
         isFlippedHorizontally = swapFlip;
 
-        shashin.printMessageToConsole("Saving with settings: Rotation: "+normalizedRotation(rotation)+", isFlippedHorizontally:"+isFlippedHorizontally+", isFlippedVertically:"+isFlippedVertically+", brightness:"+brightness+", contrast:"+contrast,{tag:"editor"});
+        shashin.printMessageToConsole("--------------",{tag:"editor"});
+        shashin.printMessageToConsole("Saving attributes",{tag:"editor"});
+        shashin.printMessageToConsole("Rotation: "+rotation,{tag:"editor"});
+        shashin.printMessageToConsole("isFlippedHorizontally: "+isFlippedHorizontally,{tag:"editor"});
+        shashin.printMessageToConsole("isFlippedVertically: "+isFlippedVertically,{tag:"editor"});
+        shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
+        shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
+        shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
+
         shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation(rotation), isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, false,  function (success) {
             shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
 
