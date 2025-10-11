@@ -3261,14 +3261,10 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("brightness") &&
             metadataMap.containsKey("contrast") &&
             metadataMap.containsKey("saturation") &&
-            metadataMap.containsKey("path") &&
-            metadataMap.containsKey("width") &&
-            metadataMap.containsKey("height")
+            metadataMap.containsKey("path")
         ) {
             val metadataId = metadataMap["metadataId"] as String
             val path = metadataMap["path"] as String
-            val width = metadataMap["width"].toString().toInt()
-            val height = metadataMap["height"].toString().toInt()
             val brightness = String.format("%.1f", metadataMap["brightness"].toString().toDouble()).toDouble()
             val contrast = String.format("%.1f", metadataMap["contrast"].toString().toDouble()).toDouble()
             val saturation = String.format("%.1f", metadataMap["saturation"].toString().toDouble()).toDouble()
@@ -3321,6 +3317,7 @@ class TimelineController: BaseController() {
             }
         }
 
+        resp["totalTimeMS"] = 0
         resp["image"] = null
         resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
