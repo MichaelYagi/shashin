@@ -3260,9 +3260,15 @@ class TimelineController: BaseController() {
         if (metadataMap.containsKey("metadataId") &&
             metadataMap.containsKey("brightness") &&
             metadataMap.containsKey("contrast") &&
-            metadataMap.containsKey("saturation")
+            metadataMap.containsKey("saturation") &&
+            metadataMap.containsKey("path") &&
+            metadataMap.containsKey("width") &&
+            metadataMap.containsKey("height")
         ) {
             val metadataId = metadataMap["metadataId"] as String
+            val path = metadataMap["path"] as String
+            val width = metadataMap["width"].toString().toInt()
+            val height = metadataMap["height"].toString().toInt()
             val brightness = String.format("%.1f", metadataMap["brightness"].toString().toDouble()).toDouble()
             val contrast = String.format("%.1f", metadataMap["contrast"].toString().toDouble()).toDouble()
             val saturation = String.format("%.1f", metadataMap["saturation"].toString().toDouble()).toDouble()
@@ -3272,59 +3278,43 @@ class TimelineController: BaseController() {
             logger.log(Level.INFO, "contrast: $contrast")
             logger.log(Level.INFO, "saturation: $saturation")
 
-            val metadataObj = metadataRepository.findById(metadataId)
+            val metricsUtil = MetricsUtil()
 
-            if (metadataObj.isPresent) {
-                var metadata: Metadata = metadataObj.get()
+            metricsUtil.start("Editor - File to BI")
 
-                val metricsUtil = MetricsUtil()
-
-                metricsUtil.start("Editor - File to BI")
-
-                var path = metadata.getPath()!!
-                var imageFile = File(path)
+            var imageFile = File(path)
+            if (imageFile.exists()) {
                 var bufferedImage: BufferedImage = ImageIO.read(imageFile)
-
-                var editedImage = bufferedImage
 
                 metricsUtil.end()
                 metricsUtil.start("Editor - brightness")
 
                 if (brightness in 0.1..1.9 && brightness != 1.0) {
-                    logger.log(Level.INFO, "Adjusting brightness: "+brightness)
-                    editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
+                    logger.log(Level.INFO, "Adjusting brightness: " + brightness)
+                    bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
                 }
 
                 metricsUtil.end()
                 metricsUtil.start("Editor - contrast")
 
                 if (contrast in 0.1..1.9 && contrast != 1.0) {
-                    logger.log(Level.INFO, "Adjusting contrast: "+contrast)
-                    editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
+                    logger.log(Level.INFO, "Adjusting contrast: " + contrast)
+                    bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
                 }
 
                 metricsUtil.end()
                 metricsUtil.start("Editor - saturation")
 
                 if (saturation in 0.1..1.9 && saturation != 1.0) {
-                    logger.log(Level.INFO, "Adjusting saturation: "+saturation)
-                    editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
+                    logger.log(Level.INFO, "Adjusting saturation: " + saturation)
+                    bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
                 }
 
                 metricsUtil.end()
                 metricsUtil.start("Editor - coverting to base64")
 
-                // Raw file to image conversion
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
-
-                Thumbnails.of(editedImage)
-                    .size(metadata.getOriginalImageWidth()!!.toInt(), metadata.getOriginalImageHeight()!!.toInt())
-                    .outputQuality(0.3)
-                    .toFile(tempFile)
-
-                resp["image"] = Base64.getEncoder().encodeToString(tempFile.readBytes())
+                resp["image"] = FileUtils.bufferedImageToBase64(bufferedImage)
                 metricsUtil.end()
-                tempFile.delete()
                 resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)

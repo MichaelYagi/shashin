@@ -426,6 +426,18 @@ class FileUtils {
             return null
         }
 
+        fun bufferedImageToBase64(image: BufferedImage, type: String = "jpg"): String {
+            val outputStream = ByteArrayOutputStream()
+            // Write the BufferedImage to the ByteArrayOutputStream as a JPEG
+            ImageIO.write(image, type, outputStream)
+
+            // Get the byte array from the output stream
+            val imageBytes = outputStream.toByteArray()
+
+            // Encode the byte array to a Base64 string
+            return Base64.getEncoder().encodeToString(imageBytes)
+        }
+
         fun base64ToBufferedImage(base64String: String): BufferedImage? {
             return try {
                 // 1. Decode the Base64 string to a ByteArray
