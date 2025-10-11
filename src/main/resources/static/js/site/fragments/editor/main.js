@@ -86,7 +86,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
     ];
     let thirdRowMenuHeightWidth = 0;
     if (Util.isMobile()) {
-        $(".range-ticks span").css("display", "none");
         styleBottomControl("#editorBrightnessActionButton", "2em", "155px", "right", "10px", "#editorBrightnessIcon");
     } else {
         thirdRowMenuHeightWidth = applyStyles(thirdRowButtons, sideValue, "right");
@@ -95,11 +94,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // Fourth row buttons
     sideValue = 10;
     let fourthRowButtons = [
-        { id: "#editorContrastActionButton", fontSize: "2rem", top: "220px" }
+        { id: "#editorContrastActionButton", fontSize: "2rem", top: "200px" }
     ];
     let fourthRowMenuHeightWidth = 0;
     if (Util.isMobile()) {
-        $(".range-ticks span").css("display", "none");
         styleBottomControl("#editorContrastActionButton", "2em", "95px", "right", "10px", "#editorContrastIcon");
     } else {
         fourthRowMenuHeightWidth = applyStyles(fourthRowButtons, sideValue, "right");
@@ -108,11 +106,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // Fifth row buttons
     sideValue = 10;
     let fifthRowButtons = [
-        { id: "#editorSaturationActionButton", fontSize: "2rem", top: "310px" }
+        { id: "#editorSaturationActionButton", fontSize: "2rem", top: "270px" }
     ];
     let fifthRowMenuHeightWidth = 0;
     if (Util.isMobile()) {
-        $(".range-ticks span").css("display", "none");
         styleBottomControl("#editorSaturationActionButton", "2em", "35px", "right", "10px", "#editorSaturationIcon");
     } else {
         fifthRowMenuHeightWidth = applyStyles(fifthRowButtons, sideValue, "right");
