@@ -510,195 +510,201 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         fun adjustBrightness(image: BufferedImage, brightness: Double): BufferedImage {
             val width = image.width
             val height = image.height
-            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB) // ARGB results in blank image
-            val pixels = IntArray(width * height)
+
+            // Convert image to TYPE_INT_RGB if necessary
+            val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
+                val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+                converted.graphics.drawImage(image, 0, 0, null)
+                converted
+            } else {
+                image
+            }
+
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+
+            // Direct pixel buffer access
+            val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
+            val destPixels = (result.raster.dataBuffer as DataBufferInt).data
 
             // Precompute brightness LUT
             val brightnessLUT = IntArray(256) { i ->
                 (i * brightness).toInt().coerceIn(0, 255)
             }
 
-            runBlocking {
-                // Launch one coroutine per row using Dispatchers.Default
-                val jobs = List(height) { y ->
-                    launch(Dispatchers.Default) {
-                        for (x in 0 until width) {
-                            val index = y * width + x
-                            val argb = image.getRGB(x, y)
-                            val a = (argb ushr 24) and 0xFF
-                            val r = brightnessLUT[(argb ushr 16) and 0xFF]
-                            val g = brightnessLUT[(argb ushr 8) and 0xFF]
-                            val b = brightnessLUT[argb and 0xFF]
+            // Determine chunk size based on available processors
+            val availableCores = Runtime.getRuntime().availableProcessors()
+            val rowsPerChunk = maxOf(1, height / (availableCores * 2))
 
-                            pixels[index] = (a shl 24) or (r shl 16) or (g shl 8) or b
+            runBlocking {
+                val jobs = (0 until height step rowsPerChunk).map { startY ->
+                    launch(Dispatchers.Default) {
+                        val endY = minOf(startY + rowsPerChunk, height)
+                        for (y in startY until endY) {
+                            for (x in 0 until width) {
+                                val index = y * width + x
+                                val rgb = srcPixels[index]
+                                val r = brightnessLUT[(rgb ushr 16) and 0xFF]
+                                val g = brightnessLUT[(rgb ushr 8) and 0xFF]
+                                val b = brightnessLUT[rgb and 0xFF]
+                                destPixels[index] = (r shl 16) or (g shl 8) or b
+                            }
                         }
                     }
                 }
-                jobs.joinAll() // Wait for all coroutines to finish
+                jobs.joinAll()
             }
 
-            result.setRGB(0, 0, width, height, pixels, 0, width)
             return result
         }
 
         fun adjustContrast(image: BufferedImage, contrast: Double): BufferedImage {
             val width = image.width
             val height = image.height
-            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB) // ARGB results in blank image
-            val pixels = IntArray(width * height)
+
+            // Convert image to TYPE_INT_RGB if necessary
+            val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
+                val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+                converted.graphics.drawImage(image, 0, 0, null)
+                converted
+            } else {
+                image
+            }
+
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+
+            // Direct pixel buffer access
+            val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
+            val destPixels = (result.raster.dataBuffer as DataBufferInt).data
 
             // Precompute contrast LUT
             val contrastLUT = IntArray(256) { i ->
                 (((i - 128) * contrast + 128).toInt()).coerceIn(0, 255)
             }
 
-            runBlocking {
-                // Launch one coroutine per row using Dispatchers.Default
-                val jobs = List(height) { y ->
-                    launch(Dispatchers.Default) {
-                        for (x in 0 until width) {
-                            val index = y * width + x
-                            val argb = image.getRGB(x, y)
-                            val a = (argb ushr 24) and 0xFF
-                            val r = contrastLUT[(argb ushr 16) and 0xFF]
-                            val g = contrastLUT[(argb ushr 8) and 0xFF]
-                            val b = contrastLUT[argb and 0xFF]
+            // Determine chunk size based on available processors
+            val availableCores = Runtime.getRuntime().availableProcessors()
+            val rowsPerChunk = maxOf(1, height / (availableCores * 2))
 
-                            pixels[index] = (a shl 24) or (r shl 16) or (g shl 8) or b
+            runBlocking {
+                val jobs = (0 until height step rowsPerChunk).map { startY ->
+                    launch(Dispatchers.Default) {
+                        val endY = minOf(startY + rowsPerChunk, height)
+                        for (y in startY until endY) {
+                            for (x in 0 until width) {
+                                val index = y * width + x
+                                val rgb = srcPixels[index]
+                                val r = contrastLUT[(rgb ushr 16) and 0xFF]
+                                val g = contrastLUT[(rgb ushr 8) and 0xFF]
+                                val b = contrastLUT[rgb and 0xFF]
+                                destPixels[index] = (r shl 16) or (g shl 8) or b
+                            }
                         }
                     }
                 }
-                jobs.joinAll() // Wait for all coroutines to finish
+                jobs.joinAll()
             }
 
-            result.setRGB(0, 0, width, height, pixels, 0, width)
             return result
         }
 
         fun adjustSaturation(image: BufferedImage, saturation: Float): BufferedImage {
             val width = image.width
             val height = image.height
-            val pixels = IntArray(width * height)
+
+            // Convert image to TYPE_INT_RGB if necessary
+            val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
+                val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+                converted.graphics.drawImage(image, 0, 0, null)
+                converted
+            } else {
+                image
+            }
+
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+
+            // Direct pixel buffer access
+            val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
+            val destPixels = (result.raster.dataBuffer as DataBufferInt).data
+
+            // Precompute constants for HSL conversion
+            val saturationAdj = saturation.coerceAtMost(1.0f)
+
+            // Determine chunk size based on available processors
+            val availableCores = Runtime.getRuntime().availableProcessors()
+            val rowsPerChunk = maxOf(1, height / (availableCores * 2))
 
             runBlocking {
-                // Launch one coroutine per row using Dispatchers.Default (multi-core optimized)
-                val jobs = List(height) { y ->
+                val jobs = (0 until height step rowsPerChunk).map { startY ->
                     launch(Dispatchers.Default) {
-                        for (x in 0 until width) {
-                            val index = y * width + x
-                            val rgb = image.getRGB(x, y)
+                        val endY = minOf(startY + rowsPerChunk, height)
+                        for (y in startY until endY) {
+                            for (x in 0 until width) {
+                                val index = y * width + x
+                                val rgb = srcPixels[index]
 
-                            val a = rgb ushr 24 and 0xFF
-                            val r = rgb ushr 16 and 0xFF
-                            val g = rgb ushr 8 and 0xFF
-                            val b = rgb and 0xFF
+                                val r = (rgb ushr 16) and 0xFF
+                                val g = (rgb ushr 8) and 0xFF
+                                val b = rgb and 0xFF
 
-                            val rf = r / 255.0
-                            val gf = g / 255.0
-                            val bf = b / 255.0
-                            val max = max(rf, max(gf, bf))
-                            val min = min(rf, min(gf, bf))
-                            val l = (max + min) / 2.0
-                            val d = max - min
+                                val rf = r / 255.0
+                                val gf = g / 255.0
+                                val bf = b / 255.0
+                                val max = max(rf, max(gf, bf))
+                                val min = min(rf, min(gf, bf))
+                                val l = (max + min) / 2.0
+                                val d = max - min
 
-                            val s = if (d == 0.0) 0.0 else d / (1 - abs(2 * l - 1))
-                            val h = when {
-                                d == 0.0 -> 0.0
-                                max == rf -> ((gf - bf) / d + if (gf < bf) 6 else 0) / 6.0
-                                max == gf -> ((bf - rf) / d + 2) / 6.0
-                                else -> ((rf - gf) / d + 4) / 6.0
-                            }
-
-                            val sAdj = (s * saturation).coerceAtMost(1.0)
-
-                            val rOut: Int
-                            val gOut: Int
-                            val bOut: Int
-
-                            if (sAdj == 0.0) {
-                                val gray = (l * 255).roundToInt()
-                                rOut = gray
-                                gOut = gray
-                                bOut = gray
-                            } else {
-                                val q = if (l < 0.5) l * (1 + sAdj) else l + sAdj - l * sAdj
-                                val p = 2 * l - q
-
-                                fun hue2rgb(t: Double): Double {
-                                    val tt = when {
-                                        t < 0 -> t + 1
-                                        t > 1 -> t - 1
-                                        else -> t
-                                    }
-                                    return when {
-                                        tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
-                                        tt < 1.0 / 2.0 -> q
-                                        tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
-                                        else -> p
-                                    }
+                                val s = if (d == 0.0) 0.0 else d / (1.0 - abs(2.0 * l - 1.0))
+                                val h = when {
+                                    d == 0.0 -> 0.0
+                                    max == rf -> ((gf - bf) / d + if (gf < bf) 6.0 else 0.0) / 6.0
+                                    max == gf -> ((bf - rf) / d + 2.0) / 6.0
+                                    else -> ((rf - gf) / d + 4.0) / 6.0
                                 }
 
-                                rOut = (hue2rgb(h + 1.0 / 3.0) * 255).roundToInt()
-                                gOut = (hue2rgb(h) * 255).roundToInt()
-                                bOut = (hue2rgb(h - 1.0 / 3.0) * 255).roundToInt()
-                            }
+                                val sAdj = (s * saturationAdj).coerceAtMost(1.0)
 
-                            pixels[index] = (a shl 24) or (rOut shl 16) or (gOut shl 8) or bOut
+                                val rOut: Int
+                                val gOut: Int
+                                val bOut: Int
+
+                                if (sAdj == 0.0) {
+                                    val gray = (l * 255.0).roundToInt()
+                                    rOut = gray
+                                    gOut = gray
+                                    bOut = gray
+                                } else {
+                                    val q = if (l < 0.5) l * (1.0 + sAdj) else l + sAdj - l * sAdj
+                                    val p = 2.0 * l - q
+
+                                    fun hue2rgb(t: Double): Double {
+                                        val tt = when {
+                                            t < 0.0 -> t + 1.0
+                                            t > 1.0 -> t - 1.0
+                                            else -> t
+                                        }
+                                        return when {
+                                            tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
+                                            tt < 0.5 -> q
+                                            tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
+                                            else -> p
+                                        }
+                                    }
+
+                                    rOut = (hue2rgb(h + 1.0 / 3.0) * 255.0).roundToInt().coerceIn(0, 255)
+                                    gOut = (hue2rgb(h) * 255.0).roundToInt().coerceIn(0, 255)
+                                    bOut = (hue2rgb(h - 1.0 / 3.0) * 255.0).roundToInt().coerceIn(0, 255)
+                                }
+
+                                destPixels[index] = (rOut shl 16) or (gOut shl 8) or bOut
+                            }
                         }
                     }
                 }
-                jobs.joinAll() // Wait for all coroutines to finish
+                jobs.joinAll()
             }
 
-            val output = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-            output.setRGB(0, 0, width, height, pixels, 0, width)
-            return output
-        }
-
-        fun rgbToHsl(r: Int, g: Int, b: Int): Triple<Double, Double, Double> {
-            val rf = r / 255.0
-            val gf = g / 255.0
-            val bf = b / 255.0
-            val max = maxOf(rf, gf, bf)
-            val min = minOf(rf, gf, bf)
-            var h = 0.0
-            val l = (max + min) / 2.0
-            val d = max - min
-            val s = if (d == 0.0) 0.0 else d / (1 - Math.abs(2 * l - 1))
-            when (max) {
-                rf -> h = ((gf - bf) / d + if (gf < bf) 6 else 0)
-                gf -> h = ((bf - rf) / d + 2)
-                bf -> h = ((rf - gf) / d + 4)
-            }
-            h /= 6.0
-            return Triple(h, s, l)
-        }
-
-        fun hslToRgb(h: Double, s: Double, l: Double): Triple<Int, Int, Int> {
-            val r: Double
-            val g: Double
-            val b: Double
-            if (s == 0.0) {
-                r = l; g = l; b = l
-            } else {
-                val q = if (l < 0.5) l * (1 + s) else l + s - l * s
-                val p = 2 * l - q
-                fun hue2rgb(p: Double, q: Double, t: Double): Double {
-                    var tt = t
-                    if (tt < 0) tt += 1.0
-                    if (tt > 1) tt -= 1.0
-                    return when {
-                        tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
-                        tt < 1.0 / 2.0 -> q
-                        tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
-                        else -> p
-                    }
-                }
-                r = hue2rgb(p, q, h + 1.0 / 3.0)
-                g = hue2rgb(p, q, h)
-                b = hue2rgb(p, q, h - 1.0 / 3.0)
-            }
-            return Triple((r * 255).roundToInt(), (g * 255).roundToInt(), (b * 255).roundToInt())
+            return result
         }
 
         fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
