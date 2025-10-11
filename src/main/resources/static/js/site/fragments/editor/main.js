@@ -345,6 +345,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
             if (data !== null) {
                 shashin.printMessageToConsole("Total time editing image: "+data.totalTimeMS+"ms",{tag:"editor"});
+                // console.log("Total time editing image: "+data.totalTimeMS+"ms");
                 $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
                 updateTransform(false);
                 document.body.style.overflow = 'auto';
