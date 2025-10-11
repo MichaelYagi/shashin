@@ -537,7 +537,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         fun adjustContrast(image: BufferedImage, contrast: Double): BufferedImage {
             val width = image.width
             val height = image.height
-            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
 
             // Precompute contrast LUT
             val contrastLUT = IntArray(256) { i ->
@@ -604,7 +604,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             val width = image.width
             val height = image.height
-            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
 
             val gammaLUT = DoubleArray(256) { (it / 255.0).pow(gamma) }
             val invGammaLUT = DoubleArray(256 * 2) { ((it / 255.0).pow(1.0 / gamma) * 255.0).toInt().coerceIn(0, 255).toDouble() }
@@ -731,7 +731,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 jobs.joinAll() // Wait for all coroutines to finish
             }
 
-            val output = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+            val output = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
             output.setRGB(0, 0, width, height, pixels, 0, width)
             return output
         }

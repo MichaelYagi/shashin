@@ -342,7 +342,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         document.body.style.overflowY= 'hidden';
 
         // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
-        shashin.processEditedPreviewThumbnail(editMetadataObj.id, brightness, contrast, saturation, function (image) {
+        shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, editMetadataObj.originalImageWidth, editMetadataObj.originalImageHeight, brightness, contrast, saturation, function (image) {
             if (image !== null) {
                 $("#editShashinImage").attr("src", "data:image/jpg;base64," + image);
                 updateTransform(false);
