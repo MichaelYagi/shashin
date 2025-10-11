@@ -513,7 +513,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val width = image.width
             val height = image.height
 
-            // Convert image to TYPE_INT_RGB if necessary
             val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
                 val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
                 converted.graphics.drawImage(image, 0, 0, null)
@@ -523,32 +522,36 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-
-            // Direct pixel buffer access
             val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
             val destPixels = (result.raster.dataBuffer as DataBufferInt).data
 
-            // Precompute brightness LUT
             val brightnessLUT = IntArray(256) { i ->
                 (i * brightness).toInt().coerceIn(0, 255)
             }
 
-            // Determine chunk size based on available processors
             val availableCores = Runtime.getRuntime().availableProcessors()
-            val rowsPerChunk = maxOf(1, height / (availableCores * 2))
+            val rowsPerChunk = maxOf(1, height / availableCores)
+            val threadPool = Executors.newFixedThreadPool(availableCores)
+            val dispatcher = threadPool.asCoroutineDispatcher()
 
-            runBlocking {
+            runBlocking(dispatcher) {
                 val jobs = (0 until height step rowsPerChunk).map { startY ->
-                    launch(Dispatchers.Default) {
+                    launch {
                         val endY = minOf(startY + rowsPerChunk, height)
-                        for (y in startY until endY) {
-                            for (x in 0 until width) {
-                                val index = y * width + x
-                                val rgb = srcPixels[index]
-                                val r = brightnessLUT[(rgb ushr 16) and 0xFF]
-                                val g = brightnessLUT[(rgb ushr 8) and 0xFF]
-                                val b = brightnessLUT[rgb and 0xFF]
-                                destPixels[index] = (r shl 16) or (g shl 8) or b
+                        for (y in startY until endY step 8) {
+                            for (x in 0 until width step 8) {
+                                val blockHeight = minOf(8, endY - y)
+                                val blockWidth = minOf(8, width - x)
+                                for (by in 0 until blockHeight) {
+                                    for (bx in 0 until blockWidth) {
+                                        val index = (y + by) * width + (x + bx)
+                                        val rgb = srcPixels[index]
+                                        val r = brightnessLUT[(rgb ushr 16) and 0xFF]
+                                        val g = brightnessLUT[(rgb ushr 8) and 0xFF]
+                                        val b = brightnessLUT[rgb and 0xFF]
+                                        destPixels[index] = (r shl 16) or (g shl 8) or b
+                                    }
+                                }
                             }
                         }
                     }
@@ -556,6 +559,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 jobs.joinAll()
             }
 
+            threadPool.shutdown()
             return result
         }
 
@@ -563,7 +567,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val width = image.width
             val height = image.height
 
-            // Convert image to TYPE_INT_RGB if necessary
             val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
                 val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
                 converted.graphics.drawImage(image, 0, 0, null)
@@ -573,32 +576,36 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-
-            // Direct pixel buffer access
             val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
             val destPixels = (result.raster.dataBuffer as DataBufferInt).data
 
-            // Precompute contrast LUT
             val contrastLUT = IntArray(256) { i ->
                 (((i - 128) * contrast + 128).toInt()).coerceIn(0, 255)
             }
 
-            // Determine chunk size based on available processors
             val availableCores = Runtime.getRuntime().availableProcessors()
-            val rowsPerChunk = maxOf(1, height / (availableCores * 2))
+            val rowsPerChunk = maxOf(1, height / availableCores)
+            val threadPool = Executors.newFixedThreadPool(availableCores)
+            val dispatcher = threadPool.asCoroutineDispatcher()
 
-            runBlocking {
+            runBlocking(dispatcher) {
                 val jobs = (0 until height step rowsPerChunk).map { startY ->
-                    launch(Dispatchers.Default) {
+                    launch {
                         val endY = minOf(startY + rowsPerChunk, height)
-                        for (y in startY until endY) {
-                            for (x in 0 until width) {
-                                val index = y * width + x
-                                val rgb = srcPixels[index]
-                                val r = contrastLUT[(rgb ushr 16) and 0xFF]
-                                val g = contrastLUT[(rgb ushr 8) and 0xFF]
-                                val b = contrastLUT[rgb and 0xFF]
-                                destPixels[index] = (r shl 16) or (g shl 8) or b
+                        for (y in startY until endY step 8) {
+                            for (x in 0 until width step 8) {
+                                val blockHeight = minOf(8, endY - y)
+                                val blockWidth = minOf(8, width - x)
+                                for (by in 0 until blockHeight) {
+                                    for (bx in 0 until blockWidth) {
+                                        val index = (y + by) * width + (x + bx)
+                                        val rgb = srcPixels[index]
+                                        val r = contrastLUT[(rgb ushr 16) and 0xFF]
+                                        val g = contrastLUT[(rgb ushr 8) and 0xFF]
+                                        val b = contrastLUT[rgb and 0xFF]
+                                        destPixels[index] = (r shl 16) or (g shl 8) or b
+                                    }
+                                }
                             }
                         }
                     }
@@ -606,6 +613,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 jobs.joinAll()
             }
 
+            threadPool.shutdown()
             return result
         }
 
