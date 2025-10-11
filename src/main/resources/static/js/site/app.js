@@ -295,6 +295,24 @@
         }
     };
 
+    shashin.processEditedPreviewThumbnail = function(metadataId, brightness, contrast, saturation, callback) {
+        const http = new Http("preview edited photo metadata");
+        const json = {
+            metadataId: metadataId,
+            brightness: brightness,
+            contrast: contrast,
+            saturation: saturation
+        };
+
+        http.ajax("post", "/metadata/preview/edit/thumbs", JSON.stringify(json)).then(function (data) {
+            if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("image")) {
+                callback(data.image);
+            } else {
+                callback(null);
+            }
+        });
+    };
+
     shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, restore, callback) {
         const http = new Http("update edited photo metadata");
         const version = Util.getMetadataLocalStorage();

@@ -313,7 +313,6 @@ class MediaServiceController {
                 attrs.setAudioAttributes(audio)
                 attrs.setVideoAttributes(video)
 
-
                 metricsUtil.end()
                 metricsUtil.start("Converting video to mp4 - encoding")
 
@@ -954,8 +953,10 @@ class MediaServiceController {
 
             // Check if an edited file
             var path = metadataObj.get().getPath()!!
+            var isEdited = false
             if (!forcePathImage && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
                 path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
+                isEdited = true
             }
 
             var resource = FileSystemResource(path)
@@ -977,9 +978,14 @@ class MediaServiceController {
                         headers.contentType = MediaType(typeList[0], typeList[1])
                     }
                 }
+
                 if (attachFile) {
                     // Sanitize filename
-                    val filename = resource.filename.replace(validFileNameRegex, "_")
+                    var filename = resource.filename.replace(validFileNameRegex, "_")
+
+                    if (isEdited && filename.contains("_original")) {
+                        filename = filename.replace("_original","_edited")
+                    }
                     response.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))

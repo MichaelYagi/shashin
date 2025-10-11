@@ -41,8 +41,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
     shashin.printMessageToConsole("contrast:"+contrast,{tag:"editor"});
     shashin.printMessageToConsole("saturation:"+saturation,{tag:"editor"});
 
-    const gammaTables = createGammaTables(2.2);
-
     function getDigitsAfterDot(num) {
         const parts = (Math.round(num*10)/10).toString().split(".");
         return parts[1] || "0";
@@ -266,36 +264,30 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorBrightnessIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
-        let oldBrightness = brightness;
-        brightness = 1.0;
-        $("#editorBrightnessAction").val(0);
-
-        if (oldBrightness !== brightness) {
-            applyCanvasAttributes(brightness, contrast, saturation);
+        if (isSpinnerHidden()) {
+            brightness = 1.0;
+            $("#editorBrightnessAction").val(0);
+            applyCanvasAttributes();
         }
     });
 
     $("#editorContrastIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
-        let oldContrast = contrast;
-        contrast = 1.0;
-        $("#editorContrastAction").val(0);
-
-        if (oldContrast !== contrast) {
-            applyCanvasAttributes(brightness, contrast, saturation);
+        if (isSpinnerHidden()) {
+            contrast = 1.0;
+            $("#editorContrastAction").val(0);
+            applyCanvasAttributes();
         }
     });
 
     $("#editorSaturationIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
-        let oldSaturation = saturation;
-        saturation = 1.0;
-        $("#editorSaturationAction").val(0);
-
-        if (oldSaturation !== saturation) {
-            applyCanvasAttributes(brightness, contrast, saturation);
+        if (isSpinnerHidden()) {
+            saturation = 1.0;
+            $("#editorSaturationAction").val(0);
+            applyCanvasAttributes();
         }
     });
 
@@ -304,17 +296,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if (isSpinnerHidden()) {
-            let oldBrightness = brightness;
             let number = $("#editorBrightnessAction").val();
             brightness = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
                 number = number.slice(1);
                 brightness = 1-parseFloat("0."+number);
             }
-
-            if (oldBrightness !== brightness) {
-                applyCanvasAttributes(brightness, contrast, saturation);
-            }
+            applyCanvasAttributes();
         }
     });
 
@@ -322,17 +310,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if (isSpinnerHidden()) {
-            let oldContrast = contrast;
             let number = $("#editorContrastAction").val();
             contrast = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
                 number = number.slice(1);
                 contrast = 1-parseFloat("0."+number);
             }
-
-            if (oldContrast !== contrast) {
-                applyCanvasAttributes(brightness, contrast, saturation);
-            }
+            applyCanvasAttributes();
         }
     });
 
@@ -340,70 +324,82 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if (isSpinnerHidden()) {
-            let oldSaturation = saturation;
             let number = $("#editorSaturationAction").val();
             saturation = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
                 number = number.slice(1);
                 saturation = 1-parseFloat("0."+number);
             }
-
-            if (oldSaturation !== saturation) {
-                applyCanvasAttributes(brightness, contrast, saturation);
-            }
+            applyCanvasAttributes();
         }
     });
 
-    function applyCanvasAttributes(brightnessInput, contrastInput, saturationInput, applyTransformation = false) {
+    function applyCanvasAttributes() { // brightnessInput, contrastInput, saturationInput, applyTransformation = false) {
         disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
 
         document.body.style.overflowY= 'hidden';
-        const canvas = document.createElement("canvas");
-        $(canvas).attr("id", "editShashinImageCanvas");
 
-        document.body.appendChild(canvas);
-        const ctx = canvas.getContext("2d");
-
-        const img = new Image();
-
-        $(img).on("load", function (e) {
-            e.preventDefault();
-
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            const imageData = ctx.getImageData(0, 0, img.width, img.height);
-
-            let adjustedBrightnessImageData = adjustBrightnessContrast(imageData, brightnessInput, contrastInput, gammaTables);
-            const adjustedImageData = adjustSaturation(adjustedBrightnessImageData, saturationInput);
-            ctx.putImageData(adjustedImageData, 0, 0);
-            const imageURL = canvas.toDataURL("image/jpeg", 0.2);
-
-            $("#editShashinImage").attr("src", imageURL);
-
-            document.body.style.overflow = 'auto';
-            $(canvas).remove();
-
-            if (applyTransformation) {
+        // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
+        shashin.processEditedPreviewThumbnail(editMetadataObj.id, brightness, contrast, saturation, function (image) {
+            if (image !== null) {
+                $("#editShashinImage").attr("src", "data:image/jpg;base64," + image);
                 updateTransform(false);
+                document.body.style.overflow = 'auto';
+                enableButtons();
+                $("#editorSpinner").css("display", "none");
+                $("#editorCloseActionButton").css("display", "block");
             }
-
-            enableButtons();
-            $("#editorSpinner").css("display", "none");
-            $("#editorCloseActionButton").css("display", "block");
         });
 
-        $(img).on("error", function (e) {
-            e.preventDefault();
 
-            enableButtons();
-            $("#editorSpinner").css("display", "none");
-            $("#editorCloseActionButton").css("display", "block");
-        });
+        // const canvas = document.createElement("canvas");
+        // $(canvas).attr("id", "editShashinImageCanvas");
+        //
+        // document.body.appendChild(canvas);
+        // const ctx = canvas.getContext("2d");
+        //
+        // const img = new Image();
+        //
+        // $(img).on("load", function (e) {
+        //     e.preventDefault();
+        //
+        //     canvas.width = img.width;
+        //     canvas.height = img.height;
+        //     ctx.drawImage(img, 0, 0);
+        //     const imageData = ctx.getImageData(0, 0, img.width, img.height);
+        //
+        //     let adjustedBrightnessImageData = adjustBrightnessContrast(imageData, brightnessInput, contrastInput, gammaTables);
+        //     const adjustedImageData = adjustSaturation(adjustedBrightnessImageData, saturationInput);
+        //     ctx.putImageData(adjustedImageData, 0, 0);
+        //     const imageURL = canvas.toDataURL("image/jpeg", 0.2);
+        //
+        //     $("#editShashinImage").attr("src", imageURL);
+        //
+        //     document.body.style.overflow = 'auto';
+        //     $(canvas).remove();
+        //
+        //     if (applyTransformation) {
+        //         updateTransform(false);
+        //     }
+        //
+        //     enableButtons();
+        //     $("#editorSpinner").css("display", "none");
+        //     $("#editorCloseActionButton").css("display", "block");
+        // });
+        //
+        // $(img).on("error", function (e) {
+        //     e.preventDefault();
+        //
+        //     enableButtons();
+        //     $("#editorSpinner").css("display", "none");
+        //     $("#editorCloseActionButton").css("display", "block");
+        // });
+        //
+        // img.src = "/api/v1/image/original/"+editMetadataObj.id+"?v="+uuidv4();
 
-        img.src = "/api/v1/image/original/"+editMetadataObj.id+"?v="+uuidv4();
+
     }
 
     function applyDefaultTransformations() {
@@ -455,7 +451,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
 
         // Apply transformations
-        applyCanvasAttributes(brightness, contrast, saturation, true);
+        applyCanvasAttributes();
     }
 
     function createGammaTables(gamma = 2.2) {

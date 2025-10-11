@@ -22,6 +22,10 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import org.springframework.context.MessageSource
@@ -40,6 +44,7 @@ import java.awt.image.AffineTransformOp
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImageOp
 import java.awt.image.ConvolveOp
+import java.awt.image.DataBufferInt
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
@@ -52,6 +57,8 @@ import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -501,38 +508,56 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         }
 
         fun adjustBrightness(image: BufferedImage, brightness: Double): BufferedImage {
-            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
+            val width = image.width
+            val height = image.height
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
 
-            for (y in 0 until image.height) {
-                for (x in 0 until image.width) {
-                    val color = Color(image.getRGB(x, y), true) // 'true' preserves alpha
-                    val r = (color.red * brightness).toInt().coerceIn(0, 255)
-                    val g = (color.green * brightness).toInt().coerceIn(0, 255)
-                    val b = (color.blue * brightness).toInt().coerceIn(0, 255)
-                    val a = color.alpha // preserve original alpha
-
-                    result.setRGB(x, y, Color(r, g, b, a).rgb)
-                }
+            // Precompute brightness LUT
+            val brightnessLUT = IntArray(256) { i ->
+                (i * brightness).toInt().coerceIn(0, 255)
             }
 
+            val pixels = IntArray(width * height)
+            image.getRGB(0, 0, width, height, pixels, 0, width)
+
+            for (i in pixels.indices) {
+                val argb = pixels[i]
+                val a = (argb ushr 24) and 0xFF
+                val r = brightnessLUT[(argb ushr 16) and 0xFF]
+                val g = brightnessLUT[(argb ushr 8) and 0xFF]
+                val b = brightnessLUT[argb and 0xFF]
+
+                pixels[i] = (a shl 24) or (r shl 16) or (g shl 8) or b
+            }
+
+            result.setRGB(0, 0, width, height, pixels, 0, width)
             return result
         }
 
         fun adjustContrast(image: BufferedImage, contrast: Double): BufferedImage {
-            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
+            val width = image.width
+            val height = image.height
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
 
-            for (y in 0 until image.height) {
-                for (x in 0 until image.width) {
-                    val color = Color(image.getRGB(x, y), true) // preserve alpha
-                    val r = ((color.red - 128) * contrast + 128).toInt().coerceIn(0, 255)
-                    val g = ((color.green - 128) * contrast + 128).toInt().coerceIn(0, 255)
-                    val b = ((color.blue - 128) * contrast + 128).toInt().coerceIn(0, 255)
-                    val a = color.alpha
-
-                    result.setRGB(x, y, Color(r, g, b, a).rgb)
-                }
+            // Precompute contrast LUT
+            val contrastLUT = IntArray(256) { i ->
+                (((i - 128) * contrast + 128).toInt()).coerceIn(0, 255)
             }
 
+            val pixels = IntArray(width * height)
+            image.getRGB(0, 0, width, height, pixels, 0, width)
+
+            for (i in pixels.indices) {
+                val argb = pixels[i]
+                val a = (argb ushr 24) and 0xFF
+                val r = contrastLUT[(argb ushr 16) and 0xFF]
+                val g = contrastLUT[(argb ushr 8) and 0xFF]
+                val b = contrastLUT[argb and 0xFF]
+
+                pixels[i] = (a shl 24) or (r shl 16) or (g shl 8) or b
+            }
+
+            result.setRGB(0, 0, width, height, pixels, 0, width)
             return result
         }
 
@@ -542,59 +567,172 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             contrast: Double,
             gamma: Double = 2.2
         ): BufferedImage {
-            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
+//            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
+//
+//            fun gammaDecode(v: Int): Double = (v / 255.0).pow(gamma)
+//            fun gammaEncode(v: Double): Int = (v.pow(1.0 / gamma) * 255.0).toInt().coerceIn(0, 255)
+//
+//            for (y in 0 until image.height) {
+//                for (x in 0 until image.width) {
+//                    val color = Color(image.getRGB(x, y), true)
+//
+//                    // Decode gamma
+//                    val rLin = gammaDecode(color.red)
+//                    val gLin = gammaDecode(color.green)
+//                    val bLin = gammaDecode(color.blue)
+//
+//                    // Apply contrast centered around 0.5 (linear space)
+//                    val rContrast = ((rLin - 0.5) * contrast + 0.5)
+//                    val gContrast = ((gLin - 0.5) * contrast + 0.5)
+//                    val bContrast = ((bLin - 0.5) * contrast + 0.5)
+//
+//                    // Apply brightness
+//                    val rBright = rContrast * brightness
+//                    val gBright = gContrast * brightness
+//                    val bBright = bContrast * brightness
+//
+//                    // Encode gamma
+//                    val r = gammaEncode(rBright)
+//                    val g = gammaEncode(gBright)
+//                    val b = gammaEncode(bBright)
+//
+//                    result.setRGB(x, y, Color(r, g, b, color.alpha).rgb)
+//                }
+//            }
+//
+//            return result
 
-            fun gammaDecode(v: Int): Double = (v / 255.0).pow(gamma)
-            fun gammaEncode(v: Double): Int = (v.pow(1.0 / gamma) * 255.0).toInt().coerceIn(0, 255)
+            val width = image.width
+            val height = image.height
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
 
-            for (y in 0 until image.height) {
-                for (x in 0 until image.width) {
-                    val color = Color(image.getRGB(x, y), true)
+            val gammaLUT = DoubleArray(256) { (it / 255.0).pow(gamma) }
+            val invGammaLUT = DoubleArray(256 * 2) { ((it / 255.0).pow(1.0 / gamma) * 255.0).toInt().coerceIn(0, 255).toDouble() }
 
-                    // Decode gamma
-                    val rLin = gammaDecode(color.red)
-                    val gLin = gammaDecode(color.green)
-                    val bLin = gammaDecode(color.blue)
+            val pixels = IntArray(width * height)
+            image.getRGB(0, 0, width, height, pixels, 0, width)
 
-                    // Apply contrast centered around 0.5 (linear space)
-                    val rContrast = ((rLin - 0.5) * contrast + 0.5)
-                    val gContrast = ((gLin - 0.5) * contrast + 0.5)
-                    val bContrast = ((bLin - 0.5) * contrast + 0.5)
+            for (i in pixels.indices) {
+                val argb = pixels[i]
+                val a = argb ushr 24 and 0xFF
+                val r = argb ushr 16 and 0xFF
+                val g = argb ushr 8 and 0xFF
+                val b = argb and 0xFF
 
-                    // Apply brightness
-                    val rBright = rContrast * brightness
-                    val gBright = gContrast * brightness
-                    val bBright = bContrast * brightness
+                val rLin = gammaLUT[r]
+                val gLin = gammaLUT[g]
+                val bLin = gammaLUT[b]
 
-                    // Encode gamma
-                    val r = gammaEncode(rBright)
-                    val g = gammaEncode(gBright)
-                    val b = gammaEncode(bBright)
+                val rAdj = ((rLin - 0.5) * contrast + 0.5) * brightness
+                val gAdj = ((gLin - 0.5) * contrast + 0.5) * brightness
+                val bAdj = ((bLin - 0.5) * contrast + 0.5) * brightness
 
-                    result.setRGB(x, y, Color(r, g, b, color.alpha).rgb)
-                }
+                val rOut = invGammaLUT[(rAdj * 255.0).toInt().coerceIn(0, 511)]
+                val gOut = invGammaLUT[(gAdj * 255.0).toInt().coerceIn(0, 511)]
+                val bOut = invGammaLUT[(bAdj * 255.0).toInt().coerceIn(0, 511)]
+
+                pixels[i] = (a.toInt().shl(24)) or (rOut.toInt().shl(16)) or (gOut.toInt().shl(8)) or bOut.toInt()
             }
 
+            result.setRGB(0, 0, width, height, pixels, 0, width)
             return result
         }
 
         fun adjustSaturation(image: BufferedImage, saturation: Float): BufferedImage {
-            val output = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
-            for (y in 0 until image.height) {
-                for (x in 0 until image.width) {
-                    val rgb = image.getRGB(x, y)
-                    val a = rgb shr 24 and 0xFF
-                    val r = rgb shr 16 and 0xFF
-                    val g = rgb shr 8 and 0xFF
-                    val b = rgb and 0xFF
+//            val output = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
+//            for (y in 0 until image.height) {
+//                for (x in 0 until image.width) {
+//                    val rgb = image.getRGB(x, y)
+//                    val a = rgb shr 24 and 0xFF
+//                    val r = rgb shr 16 and 0xFF
+//                    val g = rgb shr 8 and 0xFF
+//                    val b = rgb and 0xFF
+//
+//                    val (h, s, l) = rgbToHsl(r, g, b)
+//                    val (newR, newG, newB) = hslToRgb(h, (s * saturation).coerceAtMost(1.0), l)
+//
+//                    val newRgb = (a shl 24) or (newR shl 16) or (newG shl 8) or newB
+//                    output.setRGB(x, y, newRgb)
+//                }
+//            }
+//            return output
 
-                    val (h, s, l) = rgbToHsl(r, g, b)
-                    val (newR, newG, newB) = hslToRgb(h, (s * saturation).coerceAtMost(1.0), l)
+            val width = image.width
+            val height = image.height
+            val pixels = IntArray(width * height)
 
-                    val newRgb = (a shl 24) or (newR shl 16) or (newG shl 8) or newB
-                    output.setRGB(x, y, newRgb)
+            runBlocking {
+                // Launch one coroutine per row using Dispatchers.Default (multi-core optimized)
+                val jobs = List(height) { y ->
+                    launch(Dispatchers.Default) {
+                        for (x in 0 until width) {
+                            val index = y * width + x
+                            val rgb = image.getRGB(x, y)
+
+                            val a = rgb ushr 24 and 0xFF
+                            val r = rgb ushr 16 and 0xFF
+                            val g = rgb ushr 8 and 0xFF
+                            val b = rgb and 0xFF
+
+                            val rf = r / 255.0
+                            val gf = g / 255.0
+                            val bf = b / 255.0
+                            val max = max(rf, max(gf, bf))
+                            val min = min(rf, min(gf, bf))
+                            val l = (max + min) / 2.0
+                            val d = max - min
+
+                            val s = if (d == 0.0) 0.0 else d / (1 - abs(2 * l - 1))
+                            val h = when {
+                                d == 0.0 -> 0.0
+                                max == rf -> ((gf - bf) / d + if (gf < bf) 6 else 0) / 6.0
+                                max == gf -> ((bf - rf) / d + 2) / 6.0
+                                else -> ((rf - gf) / d + 4) / 6.0
+                            }
+
+                            val sAdj = (s * saturation).coerceAtMost(1.0)
+
+                            val rOut: Int
+                            val gOut: Int
+                            val bOut: Int
+
+                            if (sAdj == 0.0) {
+                                val gray = (l * 255).roundToInt()
+                                rOut = gray
+                                gOut = gray
+                                bOut = gray
+                            } else {
+                                val q = if (l < 0.5) l * (1 + sAdj) else l + sAdj - l * sAdj
+                                val p = 2 * l - q
+
+                                fun hue2rgb(t: Double): Double {
+                                    val tt = when {
+                                        t < 0 -> t + 1
+                                        t > 1 -> t - 1
+                                        else -> t
+                                    }
+                                    return when {
+                                        tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
+                                        tt < 1.0 / 2.0 -> q
+                                        tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
+                                        else -> p
+                                    }
+                                }
+
+                                rOut = (hue2rgb(h + 1.0 / 3.0) * 255).roundToInt()
+                                gOut = (hue2rgb(h) * 255).roundToInt()
+                                bOut = (hue2rgb(h - 1.0 / 3.0) * 255).roundToInt()
+                            }
+
+                            pixels[index] = (a shl 24) or (rOut shl 16) or (gOut shl 8) or bOut
+                        }
+                    }
                 }
+                jobs.joinAll() // Wait for all coroutines to finish
             }
+
+            val output = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+            output.setRGB(0, 0, width, height, pixels, 0, width)
             return output
         }
 

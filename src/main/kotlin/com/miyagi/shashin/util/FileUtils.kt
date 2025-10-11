@@ -16,6 +16,7 @@ import org.apache.tika.parser.AutoDetectParser
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
+import java.awt.image.BufferedImage
 import java.io.*
 import java.net.URL
 import java.net.URLConnection
@@ -32,6 +33,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import javax.imageio.ImageIO
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 import kotlin.io.path.Path
 
@@ -422,6 +424,22 @@ class FileUtils {
             }
 
             return null
+        }
+
+        fun base64ToBufferedImage(base64String: String): BufferedImage? {
+            return try {
+                // 1. Decode the Base64 string to a ByteArray
+                val decodedBytes = Base64.getDecoder().decode(base64String)
+
+                // 2. Create a ByteArrayInputStream from the decoded bytes
+                val bis = ByteArrayInputStream(decodedBytes)
+
+                // 3. Read the image into a BufferedImage
+                ImageIO.read(bis)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
 
         fun writeToThreadFileAndLogMessage(message: String, threadFile: File) {
