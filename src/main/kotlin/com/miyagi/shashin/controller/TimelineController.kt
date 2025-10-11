@@ -42,9 +42,12 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
+import net.coobird.thumbnailator.Thumbnails
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -3248,6 +3251,93 @@ class TimelineController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/metadata/preview/edit/thumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    fun previewEditThumbs(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("metadataId") &&
+            metadataMap.containsKey("brightness") &&
+            metadataMap.containsKey("contrast") &&
+            metadataMap.containsKey("saturation")
+        ) {
+            val metadataId = metadataMap["metadataId"] as String
+            val brightness = String.format("%.1f", metadataMap["brightness"].toString().toDouble()).toDouble()
+            val contrast = String.format("%.1f", metadataMap["contrast"].toString().toDouble()).toDouble()
+            val saturation = String.format("%.1f", metadataMap["saturation"].toString().toDouble()).toDouble()
+
+            logger.log(Level.INFO, "metadataId: $metadataId")
+            logger.log(Level.INFO, "brightness: $brightness")
+            logger.log(Level.INFO, "contrast: $contrast")
+            logger.log(Level.INFO, "saturation: $saturation")
+
+            val metadataObj = metadataRepository.findById(metadataId)
+
+            if (metadataObj.isPresent) {
+                var metadata: Metadata = metadataObj.get()
+
+                val metricsUtil = MetricsUtil()
+
+                metricsUtil.start("Editor - File to BI")
+
+                var path = metadata.getPath()!!
+                var imageFile = File(path)
+                var bufferedImage: BufferedImage = ImageIO.read(imageFile)
+
+                var editedImage = bufferedImage
+
+                metricsUtil.end()
+                metricsUtil.start("Editor - brightness")
+
+                if (brightness in 0.1..1.9 && brightness != 1.0) {
+                    logger.log(Level.INFO, "Adjusting brightness: "+brightness)
+                    editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
+                }
+
+                metricsUtil.end()
+                metricsUtil.start("Editor - contrast")
+
+                if (contrast in 0.1..1.9 && contrast != 1.0) {
+                    logger.log(Level.INFO, "Adjusting contrast: "+contrast)
+                    editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
+                }
+
+                metricsUtil.end()
+                metricsUtil.start("Editor - saturation")
+
+                if (saturation in 0.1..1.9 && saturation != 1.0) {
+                    logger.log(Level.INFO, "Adjusting saturation: "+saturation)
+                    editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
+                }
+
+                metricsUtil.end()
+                metricsUtil.start("Editor - coverting to base64")
+
+                // Raw file to image conversion
+                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
+
+                Thumbnails.of(editedImage)
+                    .size(metadata.getOriginalImageWidth()!!.toInt(), metadata.getOriginalImageHeight()!!.toInt())
+                    .outputQuality(0.3)
+                    .toFile(tempFile)
+
+                resp["image"] = Base64.getEncoder().encodeToString(tempFile.readBytes())
+                metricsUtil.end()
+                tempFile.delete()
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
+                resp["status"] = ApiResponse.SUCCESS.status
+                return mapper.writeValueAsString(resp)
+            }
+        }
+
+        resp["image"] = null
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
+        resp["status"] = ApiResponse.FAIL.status
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/edit/thumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -3324,7 +3414,9 @@ class TimelineController: BaseController() {
                         }
                     }
 
-                    editedImage = ImageProcessing.adjustBrightnessContrast(editedImage, brightness, contrast)
+                    editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
+
+                    editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
 
                     editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
 
