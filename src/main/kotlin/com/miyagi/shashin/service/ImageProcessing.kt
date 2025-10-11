@@ -626,8 +626,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
             val destPixels = (result.raster.dataBuffer as DataBufferInt).data
 
-            // Precompute constants for HSL conversion
-            val saturationAdj = saturation.coerceAtMost(1.0f)
+            // Allow saturation values up to 2.0 for boosting, clamp at 0.0 for grayscale
+            val saturationAdj = saturation.coerceIn(0.0f, 2.0f)
 
             // Determine chunk size based on available processors
             val availableCores = Runtime.getRuntime().availableProcessors()
@@ -654,22 +654,23 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                 val l = (max + min) / 2.0
                                 val d = max - min
 
-                                val s = if (d == 0.0) 0.0 else d / (1.0 - abs(2.0 * l - 1.0))
+                                // Ensure numerical stability for saturation
+                                val s = if (d == 0.0 || abs(2.0 * l - 1.0) >= 1.0) 0.0 else d / (1.0 - abs(2.0 * l - 1.0))
                                 val h = when {
                                     d == 0.0 -> 0.0
-                                    max == rf -> ((gf - bf) / d + if (gf < bf) 6.0 else 0.0) / 6.0
+                                    max == rf -> ((gf - bf) / d + (if (gf < bf) 6.0 else 0.0)) / 6.0
                                     max == gf -> ((bf - rf) / d + 2.0) / 6.0
                                     else -> ((rf - gf) / d + 4.0) / 6.0
                                 }
 
-                                val sAdj = (s * saturationAdj).coerceAtMost(1.0)
+                                val sAdj = (s * saturationAdj).coerceIn(0.0, 2.0)
 
                                 val rOut: Int
                                 val gOut: Int
                                 val bOut: Int
 
                                 if (sAdj == 0.0) {
-                                    val gray = (l * 255.0).roundToInt()
+                                    val gray = (l * 255.0).roundToInt().coerceIn(0, 255)
                                     rOut = gray
                                     gOut = gray
                                     bOut = gray
@@ -678,17 +679,13 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                     val p = 2.0 * l - q
 
                                     fun hue2rgb(t: Double): Double {
-                                        val tt = when {
-                                            t < 0.0 -> t + 1.0
-                                            t > 1.0 -> t - 1.0
-                                            else -> t
-                                        }
+                                        val tt = ((t % 1.0) + 1.0) % 1.0 // Ensure hue wraps around
                                         return when {
                                             tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
                                             tt < 0.5 -> q
                                             tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
                                             else -> p
-                                        }
+                                        }.coerceIn(0.0, 1.0) // Clamp to avoid numerical errors
                                     }
 
                                     rOut = (hue2rgb(h + 1.0 / 3.0) * 255.0).roundToInt().coerceIn(0, 255)

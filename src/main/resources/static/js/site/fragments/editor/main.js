@@ -352,28 +352,19 @@ function initializeEditor(editMetadataObj, lgIndex) {
         shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
         shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
 
-        if (brightness !== 1.0 || contrast !== 1.0 || saturation !== 1.0) {
-            // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
-            shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
-                if (data !== null) {
-                    shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
-                    // console.log("Total time editing image: "+data.totalTimeMS+"ms");
-                    $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
-                    updateTransform(false);
-                    document.body.style.overflow = 'auto';
-                    enableButtons();
-                    $("#editorSpinner").css("display", "none");
-                    $("#editorCloseActionButton").css("display", "block");
-                }
-            });
-        } else {
-            shashin.printMessageToConsole("No API call needed. Brightness, contrast, saturation at default.",{tag:"editor"});
-            updateTransform(false);
-            document.body.style.overflow = 'auto';
-            enableButtons();
-            $("#editorSpinner").css("display", "none");
-            $("#editorCloseActionButton").css("display", "block");
-        }
+        // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
+        shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
+            if (data !== null) {
+                shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
+                // console.log("Total time editing image: "+data.totalTimeMS+"ms");
+                $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
+                updateTransform(false);
+                document.body.style.overflow = 'auto';
+                enableButtons();
+                $("#editorSpinner").css("display", "none");
+                $("#editorCloseActionButton").css("display", "block");
+            }
+        });
     }
 
     function applyDefaultTransformations() {
