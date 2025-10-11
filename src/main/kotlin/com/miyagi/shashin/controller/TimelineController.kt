@@ -3285,30 +3285,42 @@ class TimelineController: BaseController() {
                 metricsUtil.end()
                 metricsUtil.start("Editor - brightness")
 
+                var startTime = System.currentTimeMillis()
                 if (brightness in 0.1..1.9 && brightness != 1.0) {
                     logger.log(Level.INFO, "Adjusting brightness: " + brightness)
                     bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
                 }
+                var endTime = System.currentTimeMillis()
+                val brightnessAdjustmentTiming = endTime-startTime
 
                 metricsUtil.end()
                 metricsUtil.start("Editor - contrast")
 
+                startTime = System.currentTimeMillis()
                 if (contrast in 0.1..1.9 && contrast != 1.0) {
                     logger.log(Level.INFO, "Adjusting contrast: " + contrast)
                     bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
                 }
+                endTime = System.currentTimeMillis()
+                val contrastAdjustmentTiming = endTime-startTime
 
                 metricsUtil.end()
                 metricsUtil.start("Editor - saturation")
 
+                startTime = System.currentTimeMillis()
                 if (saturation in 0.1..1.9 && saturation != 1.0) {
                     logger.log(Level.INFO, "Adjusting saturation: " + saturation)
                     bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
                 }
+                endTime = System.currentTimeMillis()
+                val saturationAdjustmentTiming = endTime-startTime
 
                 metricsUtil.end()
                 metricsUtil.start("Editor - coverting to base64")
 
+                resp["saturationProcessingMS"] = saturationAdjustmentTiming
+                resp["contrastProcessingMS"] = contrastAdjustmentTiming
+                resp["brightnessProcessingMS"] = brightnessAdjustmentTiming
                 resp["totalTimeMS"] = metricsUtil.getTotalElapsedTime()
                 resp["image"] = FileUtils.bufferedImageToBase64(bufferedImage)
                 metricsUtil.end()
@@ -3318,6 +3330,9 @@ class TimelineController: BaseController() {
             }
         }
 
+        resp["saturationProcessingMS"] = 0
+        resp["contrastProcessingMS"] = 0
+        resp["brightnessProcessingMS"] = 0
         resp["totalTimeMS"] = 0
         resp["image"] = null
         resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
