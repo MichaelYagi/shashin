@@ -567,41 +567,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             contrast: Double,
             gamma: Double = 2.2
         ): BufferedImage {
-//            val result = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
-//
-//            fun gammaDecode(v: Int): Double = (v / 255.0).pow(gamma)
-//            fun gammaEncode(v: Double): Int = (v.pow(1.0 / gamma) * 255.0).toInt().coerceIn(0, 255)
-//
-//            for (y in 0 until image.height) {
-//                for (x in 0 until image.width) {
-//                    val color = Color(image.getRGB(x, y), true)
-//
-//                    // Decode gamma
-//                    val rLin = gammaDecode(color.red)
-//                    val gLin = gammaDecode(color.green)
-//                    val bLin = gammaDecode(color.blue)
-//
-//                    // Apply contrast centered around 0.5 (linear space)
-//                    val rContrast = ((rLin - 0.5) * contrast + 0.5)
-//                    val gContrast = ((gLin - 0.5) * contrast + 0.5)
-//                    val bContrast = ((bLin - 0.5) * contrast + 0.5)
-//
-//                    // Apply brightness
-//                    val rBright = rContrast * brightness
-//                    val gBright = gContrast * brightness
-//                    val bBright = bContrast * brightness
-//
-//                    // Encode gamma
-//                    val r = gammaEncode(rBright)
-//                    val g = gammaEncode(gBright)
-//                    val b = gammaEncode(bBright)
-//
-//                    result.setRGB(x, y, Color(r, g, b, color.alpha).rgb)
-//                }
-//            }
-//
-//            return result
-
             val width = image.width
             val height = image.height
             val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
@@ -639,24 +604,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         }
 
         fun adjustSaturation(image: BufferedImage, saturation: Float): BufferedImage {
-//            val output = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_ARGB)
-//            for (y in 0 until image.height) {
-//                for (x in 0 until image.width) {
-//                    val rgb = image.getRGB(x, y)
-//                    val a = rgb shr 24 and 0xFF
-//                    val r = rgb shr 16 and 0xFF
-//                    val g = rgb shr 8 and 0xFF
-//                    val b = rgb and 0xFF
-//
-//                    val (h, s, l) = rgbToHsl(r, g, b)
-//                    val (newR, newG, newB) = hslToRgb(h, (s * saturation).coerceAtMost(1.0), l)
-//
-//                    val newRgb = (a shl 24) or (newR shl 16) or (newG shl 8) or newB
-//                    output.setRGB(x, y, newRgb)
-//                }
-//            }
-//            return output
-
             val width = image.width
             val height = image.height
             val pixels = IntArray(width * height)
