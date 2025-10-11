@@ -510,24 +510,31 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         fun adjustBrightness(image: BufferedImage, brightness: Double): BufferedImage {
             val width = image.width
             val height = image.height
-            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB) // ARGB results in blank image
+            val pixels = IntArray(width * height)
 
             // Precompute brightness LUT
             val brightnessLUT = IntArray(256) { i ->
                 (i * brightness).toInt().coerceIn(0, 255)
             }
 
-            val pixels = IntArray(width * height)
-            image.getRGB(0, 0, width, height, pixels, 0, width)
+            runBlocking {
+                // Launch one coroutine per row using Dispatchers.Default
+                val jobs = List(height) { y ->
+                    launch(Dispatchers.Default) {
+                        for (x in 0 until width) {
+                            val index = y * width + x
+                            val argb = image.getRGB(x, y)
+                            val a = (argb ushr 24) and 0xFF
+                            val r = brightnessLUT[(argb ushr 16) and 0xFF]
+                            val g = brightnessLUT[(argb ushr 8) and 0xFF]
+                            val b = brightnessLUT[argb and 0xFF]
 
-            for (i in pixels.indices) {
-                val argb = pixels[i]
-                val a = (argb ushr 24) and 0xFF
-                val r = brightnessLUT[(argb ushr 16) and 0xFF]
-                val g = brightnessLUT[(argb ushr 8) and 0xFF]
-                val b = brightnessLUT[argb and 0xFF]
-
-                pixels[i] = (a shl 24) or (r shl 16) or (g shl 8) or b
+                            pixels[index] = (a shl 24) or (r shl 16) or (g shl 8) or b
+                        }
+                    }
+                }
+                jobs.joinAll() // Wait for all coroutines to finish
             }
 
             result.setRGB(0, 0, width, height, pixels, 0, width)
@@ -537,66 +544,31 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         fun adjustContrast(image: BufferedImage, contrast: Double): BufferedImage {
             val width = image.width
             val height = image.height
-            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB) // ARGB results in blank image
+            val pixels = IntArray(width * height)
 
             // Precompute contrast LUT
             val contrastLUT = IntArray(256) { i ->
                 (((i - 128) * contrast + 128).toInt()).coerceIn(0, 255)
             }
 
-            val pixels = IntArray(width * height)
-            image.getRGB(0, 0, width, height, pixels, 0, width)
+            runBlocking {
+                // Launch one coroutine per row using Dispatchers.Default
+                val jobs = List(height) { y ->
+                    launch(Dispatchers.Default) {
+                        for (x in 0 until width) {
+                            val index = y * width + x
+                            val argb = image.getRGB(x, y)
+                            val a = (argb ushr 24) and 0xFF
+                            val r = contrastLUT[(argb ushr 16) and 0xFF]
+                            val g = contrastLUT[(argb ushr 8) and 0xFF]
+                            val b = contrastLUT[argb and 0xFF]
 
-            for (i in pixels.indices) {
-                val argb = pixels[i]
-                val a = (argb ushr 24) and 0xFF
-                val r = contrastLUT[(argb ushr 16) and 0xFF]
-                val g = contrastLUT[(argb ushr 8) and 0xFF]
-                val b = contrastLUT[argb and 0xFF]
-
-                pixels[i] = (a shl 24) or (r shl 16) or (g shl 8) or b
-            }
-
-            result.setRGB(0, 0, width, height, pixels, 0, width)
-            return result
-        }
-
-        fun adjustBrightnessContrast(
-            image: BufferedImage,
-            brightness: Double,
-            contrast: Double,
-            gamma: Double = 2.2
-        ): BufferedImage {
-            val width = image.width
-            val height = image.height
-            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-
-            val gammaLUT = DoubleArray(256) { (it / 255.0).pow(gamma) }
-            val invGammaLUT = DoubleArray(256 * 2) { ((it / 255.0).pow(1.0 / gamma) * 255.0).toInt().coerceIn(0, 255).toDouble() }
-
-            val pixels = IntArray(width * height)
-            image.getRGB(0, 0, width, height, pixels, 0, width)
-
-            for (i in pixels.indices) {
-                val argb = pixels[i]
-                val a = argb ushr 24 and 0xFF
-                val r = argb ushr 16 and 0xFF
-                val g = argb ushr 8 and 0xFF
-                val b = argb and 0xFF
-
-                val rLin = gammaLUT[r]
-                val gLin = gammaLUT[g]
-                val bLin = gammaLUT[b]
-
-                val rAdj = ((rLin - 0.5) * contrast + 0.5) * brightness
-                val gAdj = ((gLin - 0.5) * contrast + 0.5) * brightness
-                val bAdj = ((bLin - 0.5) * contrast + 0.5) * brightness
-
-                val rOut = invGammaLUT[(rAdj * 255.0).toInt().coerceIn(0, 511)]
-                val gOut = invGammaLUT[(gAdj * 255.0).toInt().coerceIn(0, 511)]
-                val bOut = invGammaLUT[(bAdj * 255.0).toInt().coerceIn(0, 511)]
-
-                pixels[i] = (a.toInt().shl(24)) or (rOut.toInt().shl(16)) or (gOut.toInt().shl(8)) or bOut.toInt()
+                            pixels[index] = (a shl 24) or (r shl 16) or (g shl 8) or b
+                        }
+                    }
+                }
+                jobs.joinAll() // Wait for all coroutines to finish
             }
 
             result.setRGB(0, 0, width, height, pixels, 0, width)
