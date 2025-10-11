@@ -23,6 +23,7 @@ import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -49,6 +50,7 @@ import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
 import java.util.Locale
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -611,7 +613,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val width = image.width
             val height = image.height
 
-            // Convert image to TYPE_INT_RGB if necessary
             val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
                 val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
                 converted.graphics.drawImage(image, 0, 0, null)
@@ -621,79 +622,92 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-
-            // Direct pixel buffer access
             val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
             val destPixels = (result.raster.dataBuffer as DataBufferInt).data
 
-            // Allow saturation values up to 2.0 for boosting, clamp at 0.0 for grayscale
             val saturationAdj = saturation.coerceIn(0.0f, 2.0f)
+            val inv255 = 1.0 / 255.0 // Precompute 1/255
 
-            // Determine chunk size based on available processors
-            val availableCores = Runtime.getRuntime().availableProcessors()
-            val rowsPerChunk = maxOf(1, height / (availableCores * 2))
+            // Custom thread pool for minimal overhead
+            val threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
+            val dispatcher = threadPool.asCoroutineDispatcher()
+            val rowsPerChunk = maxOf(1, height / Runtime.getRuntime().availableProcessors())
 
-            runBlocking {
+            runBlocking(dispatcher) {
                 val jobs = (0 until height step rowsPerChunk).map { startY ->
-                    launch(Dispatchers.Default) {
+                    launch {
                         val endY = minOf(startY + rowsPerChunk, height)
-                        for (y in startY until endY) {
-                            for (x in 0 until width) {
-                                val index = y * width + x
-                                val rgb = srcPixels[index]
+                        for (y in startY until endY step 8) {
+                            for (x in 0 until width step 8) {
+                                val blockHeight = minOf(8, endY - y)
+                                val blockWidth = minOf(8, width - x)
+                                for (by in 0 until blockHeight) {
+                                    for (bx in 0 until blockWidth step 4) { // Process 4 pixels
+                                        val indices = IntArray(4) { i ->
+                                            if (bx + i < blockWidth) (y + by) * width + (x + bx + i) else -1
+                                        }
 
-                                val r = (rgb ushr 16) and 0xFF
-                                val g = (rgb ushr 8) and 0xFF
-                                val b = rgb and 0xFF
+                                        repeat(4) { i ->
+                                            if (indices[i] < 0) return@repeat
 
-                                val rf = r / 255.0
-                                val gf = g / 255.0
-                                val bf = b / 255.0
-                                val max = max(rf, max(gf, bf))
-                                val min = min(rf, min(gf, bf))
-                                val l = (max + min) / 2.0
-                                val d = max - min
+                                            val rgb = srcPixels[indices[i]]
+                                            val r = (rgb ushr 16) and 0xFF
+                                            val g = (rgb ushr 8) and 0xFF
+                                            val b = rgb and 0xFF
 
-                                // Ensure numerical stability for saturation
-                                val s = if (d == 0.0 || abs(2.0 * l - 1.0) >= 1.0) 0.0 else d / (1.0 - abs(2.0 * l - 1.0))
-                                val h = when {
-                                    d == 0.0 -> 0.0
-                                    max == rf -> ((gf - bf) / d + (if (gf < bf) 6.0 else 0.0)) / 6.0
-                                    max == gf -> ((bf - rf) / d + 2.0) / 6.0
-                                    else -> ((rf - gf) / d + 4.0) / 6.0
-                                }
+                                            // Optimized HSL conversion
+                                            val rf = r * inv255
+                                            val gf = g * inv255
+                                            val bf = b * inv255
+                                            val max = max(rf, max(gf, bf))
+                                            val min = min(rf, min(gf, bf))
+                                            val l = (max + min) * 0.5
+                                            val d = max - min
 
-                                val sAdj = (s * saturationAdj).coerceIn(0.0, 2.0)
+                                            val s = if (d == 0.0 || abs(2.0 * l - 1.0) >= 1.0) 0.0 else d / (1.0 - abs(2.0 * l - 1.0))
+                                            val h = when {
+                                                d == 0.0 -> 0.0
+                                                max == rf -> ((gf - bf) / d + (if (gf < bf) 6.0 else 0.0)) * (1.0 / 6.0)
+                                                max == gf -> ((bf - rf) / d + 2.0) * (1.0 / 6.0)
+                                                else -> ((rf - gf) / d + 4.0) * (1.0 / 6.0)
+                                            }
 
-                                val rOut: Int
-                                val gOut: Int
-                                val bOut: Int
+                                            val sAdj = (s * saturationAdj).coerceIn(0.0, 2.0)
 
-                                if (sAdj == 0.0) {
-                                    val gray = (l * 255.0).roundToInt().coerceIn(0, 255)
-                                    rOut = gray
-                                    gOut = gray
-                                    bOut = gray
-                                } else {
-                                    val q = if (l < 0.5) l * (1.0 + sAdj) else l + sAdj - l * sAdj
-                                    val p = 2.0 * l - q
+                                            val rOut: Int
+                                            val gOut: Int
+                                            val bOut: Int
 
-                                    fun hue2rgb(t: Double): Double {
-                                        val tt = ((t % 1.0) + 1.0) % 1.0 // Ensure hue wraps around
-                                        return when {
-                                            tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
-                                            tt < 0.5 -> q
-                                            tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
-                                            else -> p
-                                        }.coerceIn(0.0, 1.0) // Clamp to avoid numerical errors
+                                            if (sAdj == 0.0) {
+                                                val gray = (l * 255.0).roundToInt().coerceIn(0, 255)
+                                                rOut = gray
+                                                gOut = gray
+                                                bOut = gray
+                                            } else {
+                                                val q = if (l < 0.5) l * (1.0 + sAdj) else l + sAdj - l * sAdj
+                                                val p = 2.0 * l - q
+
+                                                // Inline hue2rgb for performance
+                                                fun hue2rgb(t: Double): Int {
+                                                    val tt = ((t % 1.0) + 1.0) % 1.0
+                                                    val value = when {
+                                                        tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
+                                                        tt < 0.5 -> q
+                                                        tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
+                                                        else -> p
+                                                    }.coerceIn(0.0, 1.0)
+                                                    return (value * 255.0).roundToInt().coerceIn(0, 255)
+                                                }
+
+                                                rOut = hue2rgb(h + 1.0 / 3.0)
+                                                gOut = hue2rgb(h)
+                                                bOut = hue2rgb(h - 1.0 / 3.0)
+                                            }
+
+                                            destPixels[indices[i]] = (rOut shl 16) or (gOut shl 8) or bOut
+                                        }
                                     }
-
-                                    rOut = (hue2rgb(h + 1.0 / 3.0) * 255.0).roundToInt().coerceIn(0, 255)
-                                    gOut = (hue2rgb(h) * 255.0).roundToInt().coerceIn(0, 255)
-                                    bOut = (hue2rgb(h - 1.0 / 3.0) * 255.0).roundToInt().coerceIn(0, 255)
                                 }
-
-                                destPixels[index] = (rOut shl 16) or (gOut shl 8) or bOut
                             }
                         }
                     }
@@ -701,6 +715,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 jobs.joinAll()
             }
 
+            threadPool.shutdown()
             return result
         }
 
