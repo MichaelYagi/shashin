@@ -3309,6 +3309,7 @@ class TimelineController: BaseController() {
                 metricsUtil.end()
                 metricsUtil.start("Editor - coverting to base64")
 
+                resp["totalTimeMS"] = metricsUtil.getTotalElapsedTime()
                 resp["image"] = FileUtils.bufferedImageToBase64(bufferedImage)
                 metricsUtil.end()
                 resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
