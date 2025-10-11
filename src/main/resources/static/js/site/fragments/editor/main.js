@@ -344,7 +344,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         document.body.style.overflowY= 'hidden';
 
         shashin.printMessageToConsole("--------------",{tag:"editor"});
-        shashin.printMessageToConsole("Applying attributes",{tag:"editor"});
+        shashin.printMessageToConsole("Applying attributes for preview",{tag:"editor"});
         shashin.printMessageToConsole("Rotation: "+rotation,{tag:"editor"});
         shashin.printMessageToConsole("isFlippedHorizontally: "+isFlippedHorizontally,{tag:"editor"});
         shashin.printMessageToConsole("isFlippedVertically: "+isFlippedVertically,{tag:"editor"});
@@ -593,7 +593,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
 
         shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation(rotation), isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, false,  function (success) {
-            shashin.printMessageToConsole("Edited metadata:"+success,{tag:"editor"});
+            shashin.printMessageToConsole("Edited metadata: "+success,{tag:"editor"});
 
             if (success === true) {
                 shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.upload"), shashin.getTranslatedValue("main.toast.app.image.upload"), {
