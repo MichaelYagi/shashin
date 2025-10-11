@@ -342,9 +342,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
         document.body.style.overflowY= 'hidden';
 
         // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
-        shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (image) {
-            if (image !== null) {
-                $("#editShashinImage").attr("src", "data:image/jpg;base64," + image);
+        shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
+            if (data !== null) {
+                shashin.printMessageToConsole("Total time editing image: "+data.totalTimeMS+"ms",{tag:"editor"});
+                $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
                 updateTransform(false);
                 document.body.style.overflow = 'auto';
                 enableButtons();
@@ -352,54 +353,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 $("#editorCloseActionButton").css("display", "block");
             }
         });
-
-
-        // const canvas = document.createElement("canvas");
-        // $(canvas).attr("id", "editShashinImageCanvas");
-        //
-        // document.body.appendChild(canvas);
-        // const ctx = canvas.getContext("2d");
-        //
-        // const img = new Image();
-        //
-        // $(img).on("load", function (e) {
-        //     e.preventDefault();
-        //
-        //     canvas.width = img.width;
-        //     canvas.height = img.height;
-        //     ctx.drawImage(img, 0, 0);
-        //     const imageData = ctx.getImageData(0, 0, img.width, img.height);
-        //
-        //     let adjustedBrightnessImageData = adjustBrightnessContrast(imageData, brightnessInput, contrastInput, gammaTables);
-        //     const adjustedImageData = adjustSaturation(adjustedBrightnessImageData, saturationInput);
-        //     ctx.putImageData(adjustedImageData, 0, 0);
-        //     const imageURL = canvas.toDataURL("image/jpeg", 0.2);
-        //
-        //     $("#editShashinImage").attr("src", imageURL);
-        //
-        //     document.body.style.overflow = 'auto';
-        //     $(canvas).remove();
-        //
-        //     if (applyTransformation) {
-        //         updateTransform(false);
-        //     }
-        //
-        //     enableButtons();
-        //     $("#editorSpinner").css("display", "none");
-        //     $("#editorCloseActionButton").css("display", "block");
-        // });
-        //
-        // $(img).on("error", function (e) {
-        //     e.preventDefault();
-        //
-        //     enableButtons();
-        //     $("#editorSpinner").css("display", "none");
-        //     $("#editorCloseActionButton").css("display", "block");
-        // });
-        //
-        // img.src = "/api/v1/image/original/"+editMetadataObj.id+"?v="+uuidv4();
-
-
     }
 
     function applyDefaultTransformations() {
@@ -452,90 +405,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         // Apply transformations
         applyCanvasAttributes();
-    }
-
-    function createGammaTables(gamma = 2.2) {
-        const decode = new Array(256);
-        const encode = new Array(256);
-        for (let i = 0; i < 256; i++) {
-            const lin = Math.pow(i / 255, gamma);
-            decode[i] = lin;
-            encode[i] = Math.pow(lin, 1 / gamma) * 255;
-        }
-        return { decode, encode };
-    }
-
-    function adjustBrightnessContrast(imageData, brightness, contrast, gammaTables) {
-        const data = imageData.data;
-        const decode = gammaTables.decode;
-
-        function truncate(value) {
-            return value < 0 ? 0 : value > 255 ? 255 : value;
-        }
-
-        for (let i = 0; i < data.length; i += 4) {
-            for (let j = 0; j < 3; j++) { // R, G, B
-                let lin = decode[data[i + j]];
-                let contrasted = (lin - 0.5) * contrast + 0.5;
-                let brightened = contrasted * brightness;
-                data[i + j] = truncate(Math.pow(brightened, 1 / 2.2) * 255);
-            }
-            data[i + 3] = data[i + 3]; // Preserve alpha
-        }
-
-        return imageData;
-    }
-
-    function adjustSaturation(imageData, saturation) {
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
-            const [h, s, l] = rgbToHsl(r, g, b);
-            const [newR, newG, newB] = hslToRgb(h, Math.min(s * saturation, 1), l);
-            [data[i], data[i + 1], data[i + 2]] = [newR, newG, newB];
-        }
-        return imageData;
-    }
-
-    function rgbToHsl(r, g, b) {
-        r /= 255; g /= 255; b /= 255;
-        const max = Math.max(r, g, b), min = Math.min(r, g, b);
-        let h, s, l = (max + min) / 2;
-        if (max === min) {
-            h = s = 0;
-        } else {
-            const d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-                case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
-                case g: h = ((b - r) / d + 2); break;
-                case b: h = ((r - g) / d + 4); break;
-            }
-            h /= 6;
-        }
-        return [h, s, l];
-    }
-
-    function hslToRgb(h, s, l) {
-        let r, g, b;
-        if (s === 0) {
-            r = g = b = l;
-        } else {
-            const hue2rgb = (p, q, t) => {
-                if (t < 0) t += 1;
-                if (t > 1) t -= 1;
-                if (t < 1 / 6) return p + (q - p) * 6 * t;
-                if (t < 1 / 2) return q;
-                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-                return p;
-            };
-            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-            const p = 2 * l - q;
-            r = hue2rgb(p, q, h + 1 / 3);
-            g = hue2rgb(p, q, h);
-            b = hue2rgb(p, q, h - 1 / 3);
-        }
-        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     }
 
     $("#editorRotateRightActionButton").off("click").on("click", function (e) {

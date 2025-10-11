@@ -307,7 +307,7 @@
 
         http.ajax("post", "/metadata/preview/edit/thumbs", JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("image")) {
-                callback(data.image);
+                callback(data);
             } else {
                 callback(null);
             }
