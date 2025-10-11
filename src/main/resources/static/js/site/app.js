@@ -295,16 +295,14 @@
         }
     };
 
-    shashin.processEditedPreviewThumbnail = function(metadataId, path, width, height, brightness, contrast, saturation, callback) {
+    shashin.processEditedPreviewThumbnail = function(metadataId, path, brightness, contrast, saturation, callback) {
         const http = new Http("preview edited photo metadata");
         const json = {
             metadataId: metadataId,
             brightness: brightness,
             contrast: contrast,
             saturation: saturation,
-            path: path,
-            width: width,
-            height: height
+            path: path
         };
 
         http.ajax("post", "/metadata/preview/edit/thumbs", JSON.stringify(json)).then(function (data) {
