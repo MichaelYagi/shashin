@@ -36,12 +36,12 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     shashin.printMessageToConsole("--------------",{tag:"editor"});
     shashin.printMessageToConsole("initializeEditor after applying default transitions",{tag:"editor"});
-    shashin.printMessageToConsole("rotation:"+rotation,{tag:"editor"});
-    shashin.printMessageToConsole("isFlippedHorizontally:"+isFlippedHorizontally,{tag:"editor"});
-    shashin.printMessageToConsole("isFlippedVertically:"+isFlippedVertically,{tag:"editor"});
-    shashin.printMessageToConsole("brightness:"+brightness,{tag:"editor"});
-    shashin.printMessageToConsole("contrast:"+contrast,{tag:"editor"});
-    shashin.printMessageToConsole("saturation:"+saturation,{tag:"editor"});
+    shashin.printMessageToConsole("rotation: "+rotation,{tag:"editor"});
+    shashin.printMessageToConsole("isFlippedHorizontally: "+isFlippedHorizontally,{tag:"editor"});
+    shashin.printMessageToConsole("isFlippedVertically: "+isFlippedVertically,{tag:"editor"});
+    shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
+    shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
+    shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
 
     function getDigitsAfterDot(num) {
         const parts = (Math.round(num*10)/10).toString().split(".");
@@ -355,6 +355,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
         // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
         shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
             if (data !== null) {
+                shashin.printMessageToConsole("--------------",{tag:"editor"});
+                shashin.printMessageToConsole("Saturation editing time: " + data.saturationProcessingMS + "ms", {tag: "editor"});
+                shashin.printMessageToConsole("Contrast editing time: " + data.contrastProcessingMS + "ms", {tag: "editor"});
+                shashin.printMessageToConsole("Brightness editing time: " + data.brightnessProcessingMS + "ms", {tag: "editor"});
                 shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
                 // console.log("Total time editing image: "+data.totalTimeMS+"ms");
                 $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
