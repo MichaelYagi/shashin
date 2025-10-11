@@ -135,17 +135,26 @@ class SearchController: BaseController() {
                     "authority"
                 ).toString() == model.getAttribute("superRole")
             ) {
-                metadataList = searchRepository?.findMetadataBySearchTerm(updatedTerm, pageValue, queryLimit)
+                if (updatedTerm.lowercase() == "shashinedit" || updatedTerm.lowercase() == "shashinedited") {
+                    metadataList = searchRepository?.findMetadataEditedPhotos(pageValue, queryLimit)
+                } else {
+                    metadataList = searchRepository?.findMetadataBySearchTerm(updatedTerm, pageValue, queryLimit)
+                }
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 response["totalPages"] = ceil((searchRepository?.countAllByHiddenIsFalse(updatedTerm)!!.toDouble()) / size.toDouble()).toInt()
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 if (currentUserObj != null) {
-                    metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
-                        updatedTerm,
-                        currentUserObj.getId(),
-                        pageValue,
-                        queryLimit
-                    )
+                    if (updatedTerm.lowercase() == "shashinedit" || updatedTerm.lowercase() == "shashinedited") {
+                        metadataList = searchRepository?.findMetadataEditedPhotosAndUserId(currentUserObj.getId(), pageValue, queryLimit)
+                    } else {
+                        metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
+                            updatedTerm,
+                            currentUserObj.getId(),
+                            pageValue,
+                            queryLimit
+                        )
+                    }
+
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                     response["totalPages"] = ceil((searchRepository?.countAllByHiddenIsFalseAndUserId(updatedTerm, currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
                 }
