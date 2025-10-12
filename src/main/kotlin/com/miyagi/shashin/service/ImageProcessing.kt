@@ -634,7 +634,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val destPixels = (result.raster.dataBuffer as DataBufferInt).data
 
             val saturationAdj = saturation.coerceIn(0.0f, 2.0f)
-            val inv255 = 1.0 / 255.0
 
             val threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
             val dispatcher = threadPool.asCoroutineDispatcher()
