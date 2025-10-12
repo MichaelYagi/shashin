@@ -17,6 +17,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let brightness = 1.0;
     let contrast = 1.0;
     let saturation = 1.0;
+    let sharpness = 1.0;
 
     // Loading spinner
     styleTopControl("#editorSpinner", "2em", "35px", "right", "15px");
@@ -42,6 +43,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
     shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
     shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
+    shashin.printMessageToConsole("sharpness: "+sharpness,{tag:"editor"});
 
     function getDigitsAfterDot(num) {
         const parts = (Math.round(num*10)/10).toString().split(".");
@@ -86,7 +88,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     ];
     let thirdRowMenuHeightWidth = 0;
     if (Util.isMobile()) {
-        styleBottomControl("#editorBrightnessActionButton", "2em", "155px", "right", "10px", "#editorBrightnessIcon");
+        styleBottomControl("#editorBrightnessActionButton", "2em", "215px", "right", "10px", "#editorBrightnessIcon");
     } else {
         thirdRowMenuHeightWidth = applyStyles(thirdRowButtons, sideValue, "right");
     }
@@ -98,7 +100,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     ];
     let fourthRowMenuHeightWidth = 0;
     if (Util.isMobile()) {
-        styleBottomControl("#editorContrastActionButton", "2em", "95px", "right", "10px", "#editorContrastIcon");
+        styleBottomControl("#editorContrastActionButton", "2em", "155px", "right", "10px", "#editorContrastIcon");
     } else {
         fourthRowMenuHeightWidth = applyStyles(fourthRowButtons, sideValue, "right");
     }
@@ -110,9 +112,21 @@ function initializeEditor(editMetadataObj, lgIndex) {
     ];
     let fifthRowMenuHeightWidth = 0;
     if (Util.isMobile()) {
-        styleBottomControl("#editorSaturationActionButton", "2em", "35px", "right", "10px", "#editorSaturationIcon");
+        styleBottomControl("#editorSaturationActionButton", "2em", "95px", "right", "10px", "#editorSaturationIcon");
     } else {
         fifthRowMenuHeightWidth = applyStyles(fifthRowButtons, sideValue, "right");
+    }
+
+    // Sixth row buttons
+    sideValue = 10;
+    let sixthRowButtons = [
+        { id: "#editorSharpnessActionButton", fontSize: "2rem", top: "340px" }
+    ];
+    let sixthRowMenuHeightWidth = 0;
+    if (Util.isMobile()) {
+        styleBottomControl("#editorSharpnessActionButton", "2em", "35px", "right", "10px", "#editorSharpnessIcon");
+    } else {
+        sixthRowMenuHeightWidth = applyStyles(sixthRowButtons, sideValue, "right");
     }
 
     const rowWidths = [
@@ -120,14 +134,16 @@ function initializeEditor(editMetadataObj, lgIndex) {
         secondRowMenuHeightWidth[0],
         thirdRowMenuHeightWidth[0],
         fourthRowMenuHeightWidth[0],
-        fifthRowMenuHeightWidth[0]
+        fifthRowMenuHeightWidth[0],
+        sixthRowMenuHeightWidth[0],
     ];
     let blockWidth = Math.max(...rowWidths);
     let blockHeight = firstRowMenuHeightWidth[1] +
         secondRowMenuHeightWidth[1] +
         thirdRowMenuHeightWidth[1] +
         fourthRowMenuHeightWidth[1] +
-        fifthRowMenuHeightWidth[1]
+        fifthRowMenuHeightWidth[1] +
+        sixthRowMenuHeightWidth[1]
     ;
 
     function styleTopControl(id, fontSize, top, side, sideValue) {
@@ -165,7 +181,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             if (topPixels > maxTop) {
                 maxTop = topPixels;
             }
-            if (id === "#editorBrightnessActionButton" || id === "#editorContrastActionButton") {
+            if (id === "#editorBrightnessActionButton" || id === "#editorContrastActionButton" || id === "#editorSaturationActionButton") {
                 offset += 150;
             } else {
                 offset += 75;
@@ -178,7 +194,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     if (!Util.isMobile()) {
         $("#editorBlock").css({
             "position": "absolute",
-            "height": (blockHeight - 339) + "px",
+            "height": (blockHeight - 589) + "px",
             "width": (blockWidth + 5) + "px",
             "right": "0"
         });
@@ -224,6 +240,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
             '#editorContrastAction, ' +
             '#editorSaturationActionButton, ' +
             '#editorSaturationAction, ' +
+            '#editorSharpnessActionButton, ' +
+            '#editorSharpnessAction, ' +
             '#editorBlock'
         ).length) {
             if ($("#editorSpinner").css("display") === "none") {
@@ -290,6 +308,16 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
+    $("#editorSharpnessIcon").off("click").on('click', function(event) {
+        event.preventDefault();
+
+        if (isSpinnerHidden()) {
+            sharpness = 1.0;
+            $("#editorSharpnessAction").val(1);
+            applyAttributes();
+        }
+    });
+
     // Slider adjustment
     $("#editorBrightnessAction").off("change").on("change", function (e) {
         e.preventDefault();
@@ -333,6 +361,16 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
+    $("#editorSharpnessAction").off("change").on("change", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
+            let number = $("#editorSharpnessAction").val();
+            sharpness = parseFloat(number+".0");
+            applyAttributes();
+        }
+    });
+
     function webglSupport () {
         try {
             const canvas = document.createElement('canvas');
@@ -358,8 +396,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
         shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
         shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
         shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
+        shashin.printMessageToConsole("sharpness: "+sharpness,{tag:"editor"});
 
-        // If there is WebGL support
         const vertexShaderSource = `
             attribute vec2 a_position;
             attribute vec2 a_texCoord;
@@ -376,25 +414,44 @@ function initializeEditor(editMetadataObj, lgIndex) {
             uniform float u_brightness;
             uniform float u_contrast;
             uniform float u_saturation;
+            uniform float u_sharpness;
+            uniform vec2 u_resolution;
             varying vec2 v_texCoord;
         
             void main() {
                 vec4 color = texture2D(u_image, v_texCoord);
         
+                // Sharpness
+                vec4 sharpColor = color;
+                if (u_sharpness > 1.0) {
+                    vec2 onePixel = vec2(1.0) / u_resolution;
+                    // Scale sampling distance based on resolution to avoid artifacts on low-res images
+                    float resolutionScale = clamp(sqrt(u_resolution.x * u_resolution.y) / 512.0, 0.5, 2.0);
+                    vec2 adjustedPixel = onePixel * resolutionScale;
+                    float sharpenWeight = (u_sharpness - 1.0) / 4.5; // Map 1-10 to 0-2 for controlled sharpening
+                    vec4 total = vec4(0.0);
+                    total += texture2D(u_image, v_texCoord) * (1.0 + 4.0 * sharpenWeight);
+                    total += texture2D(u_image, v_texCoord + vec2(-adjustedPixel.x, 0.0)) * (-sharpenWeight);
+                    total += texture2D(u_image, v_texCoord + vec2(adjustedPixel.x, 0.0)) * (-sharpenWeight);
+                    total += texture2D(u_image, v_texCoord + vec2(0.0, -adjustedPixel.y)) * (-sharpenWeight);
+                    total += texture2D(u_image, v_texCoord + vec2(0.0, adjustedPixel.y)) * (-sharpenWeight);
+                    sharpColor = total / 1.0; // Normalize with constant weight
+                }
+        
                 // Brightness
-                color.rgb *= u_brightness;
+                sharpColor.rgb *= u_brightness;
         
                 // Contrast
-                color.rgb = ((color.rgb - 0.5) * u_contrast) + 0.5;
+                sharpColor.rgb = ((sharpColor.rgb - 0.5) * u_contrast) + 0.5;
         
                 // Saturation with red dampening
-                float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
-                vec3 delta = color.rgb - vec3(gray);
+                float gray = dot(sharpColor.rgb, vec3(0.299, 0.587, 0.114));
+                vec3 delta = sharpColor.rgb - vec3(gray);
                 vec3 saturated = vec3(gray) + delta * u_saturation;
         
                 if (u_saturation > 1.0) {
                     float redFactor = 1.0 - 0.10 * (u_saturation - 1.0);
-                    saturated.r = gray + (color.r - gray) * u_saturation * redFactor;
+                    saturated.r = gray + (sharpColor.r - gray) * u_saturation * redFactor;
                 }
         
                 // Perceptual brightness boost (applied after saturation)
@@ -402,9 +459,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 saturated += vec3(brightnessBoost);
         
                 // Clamp final output
-                color.rgb = clamp(saturated, 0.0, 1.0);
+                sharpColor.rgb = clamp(saturated, 0.0, 1.0);
         
-                gl_FragColor = color;
+                gl_FragColor = sharpColor;
             }
         `;
 
@@ -423,7 +480,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             return program;
         }
 
-        function setupImageAdjustments(image, canvas, brightnessInput = 1.0, contrastInput = 1.0, saturationInput = 1.0) {
+        function setupImageAdjustments(image, canvas, brightnessInput = 1.0, contrastInput = 1.0, saturationInput = 1.0, sharpnessInput = 1.0) {
             const gl = canvas.getContext("webgl");
             const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
             gl.useProgram(program);
@@ -466,6 +523,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
             gl.uniform1f(gl.getUniformLocation(program, "u_brightness"), brightnessInput);
             gl.uniform1f(gl.getUniformLocation(program, "u_contrast"), contrastInput);
             gl.uniform1f(gl.getUniformLocation(program, "u_saturation"), saturationInput);
+            gl.uniform1f(gl.getUniformLocation(program, "u_sharpness"), sharpnessInput);
+            gl.uniform2f(gl.getUniformLocation(program, "u_resolution"), canvas.width, canvas.height);
 
             // Draw
             gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -476,10 +535,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         if (webglSupport() === false) {
             // Make network call to transform: inputs - brightness, contrast, and saturation
-            shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
+            shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness, function (data) {
                 if (data !== null) {
                     shashin.printMessageToConsole("--------------",{tag:"editor"});
                     shashin.printMessageToConsole("Saturation editing time: " + data.saturationProcessingMS + "ms", {tag: "editor"});
+                    shashin.printMessageToConsole("Sharpness editing time: " + data.sharpnessProcessingMS + "ms", {tag: "editor"});
                     shashin.printMessageToConsole("Contrast editing time: " + data.contrastProcessingMS + "ms", {tag: "editor"});
                     shashin.printMessageToConsole("Brightness editing time: " + data.brightnessProcessingMS + "ms", {tag: "editor"});
                     shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
@@ -507,7 +567,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             img.onload = () => {
                 canvas.width = img.width;
                 canvas.height = img.height;
-                setupImageAdjustments(img, canvas, brightness, contrast, saturation);
+                setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness);
                 updateTransform(false);
                 document.body.style.overflow = 'auto';
                 enableButtons();
@@ -524,6 +584,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         brightness = 1.0;
         contrast = 1.0;
         saturation = 1.0;
+        sharpness = 1.0;
 
         if (editMetadataObj.hasOwnProperty("rotation") && editMetadataObj.rotation !== null) {
             rotation = parseInt(editMetadataObj.rotation);
@@ -563,6 +624,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorSaturationAction").val(parseInt(getDigitsAfterDot(saturation)));
         } else {
             $("#editorSaturationAction").val(-parseInt(getDigitsAfterDot(1 - saturation)));
+        }
+
+        if (editMetadataObj.hasOwnProperty("sharpness") && editMetadataObj.sharpness !== null) {
+            sharpness = parseFloat(editMetadataObj.sharpness);
+        }
+        if (sharpness >= 1.0) {
+            $("#editorSharpnessAction").val(parseInt(sharpness));
         }
 
         // Apply transformations
@@ -664,6 +732,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorContrastAction").val(0);
             saturation = 1.0;
             $("#editorSaturationAction").val(0);
+            sharpness = 1.0;
+            $("#editorSharpnessAction").val(0);
 
             shashin.printMessageToConsole("--------------",{tag:"editor"});
             shashin.printMessageToConsole("Restoring attributes",{tag:"editor"});
@@ -673,8 +743,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
             shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
             shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
             shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
+            shashin.printMessageToConsole("sharpness: "+sharpness,{tag:"editor"});
 
-            shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, true,  function (success) {
+            shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, sharpness, true,  function (success) {
                 shashin.printMessageToConsole("Restoring edited metadata:"+success,{tag:"editor"});
 
                 if (success === true) {
@@ -687,10 +758,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     $("#editorContrastAction").val(0);
                     saturation = 1.0;
                     $("#editorSaturationAction").val(0);
+                    sharpness = 1.0;
+                    $("#editorSharpnessAction").val(0);
 
                     editMetadataObj.brightness = brightness;
                     editMetadataObj.contrast = contrast;
                     editMetadataObj.saturation = saturation;
+                    editMetadataObj.sharpness = sharpness;
                     editMetadataObj.rotation = rotation;
                     editMetadataObj.flipHorizontally = isFlippedHorizontally;
                     editMetadataObj.flipVertically = isFlippedVertically;
@@ -739,8 +813,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
         shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
         shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
         shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
+        shashin.printMessageToConsole("sharpness: "+sharpness,{tag:"editor"});
 
-        shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation(rotation), isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, false,  function (success) {
+        shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, normalizedRotation(rotation), isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, sharpness, false,  function (success) {
             shashin.printMessageToConsole("Edited metadata: "+success,{tag:"editor"});
 
             if (success === true) {
@@ -754,6 +829,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 editMetadataObj.brightness = brightness;
                 editMetadataObj.contrast = contrast;
                 editMetadataObj.saturation = saturation;
+                editMetadataObj.sharpness = sharpness;
                 editMetadataObj.rotation = normalizedRotation(rotation);
                 editMetadataObj.flipHorizontally = isFlippedHorizontally;
                 editMetadataObj.flipVertically = isFlippedVertically;
@@ -786,7 +862,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
             "editorFlipVerticalAction",
             "editorBrightnessIcon",
             "editorContrastIcon",
-            "editorSaturationIcon"
+            "editorSaturationIcon",
+            "editorSharpnessAction",
+            "editorSharpnessIcon"
         ];
 
         buttonIds.forEach(id => {
@@ -810,7 +888,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
             "editorFlipVerticalAction",
             "editorBrightnessIcon",
             "editorContrastIcon",
-            "editorSaturationIcon"
+            "editorSaturationIcon",
+            "editorSharpnessAction",
+            "editorSharpnessIcon"
         ];
 
         buttonIds.forEach(id => {
@@ -852,6 +932,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         brightness = 1.0;
         contrast = 1.0;
         saturation = 1.0;
+        sharpness = 1.0;
         isFlippedHorizontally = false;
         isFlippedVertically = false;
     }

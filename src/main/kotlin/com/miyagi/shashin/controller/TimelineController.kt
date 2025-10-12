@@ -3261,6 +3261,7 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("brightness") &&
             metadataMap.containsKey("contrast") &&
             metadataMap.containsKey("saturation") &&
+            metadataMap.containsKey("sharpness") &&
             metadataMap.containsKey("path")
         ) {
             val metadataId = metadataMap["metadataId"] as String
@@ -3268,11 +3269,13 @@ class TimelineController: BaseController() {
             val brightness = String.format("%.1f", metadataMap["brightness"].toString().toDouble()).toDouble()
             val contrast = String.format("%.1f", metadataMap["contrast"].toString().toDouble()).toDouble()
             val saturation = String.format("%.1f", metadataMap["saturation"].toString().toDouble()).toDouble()
+            val sharpness = String.format("%.1f", metadataMap["sharpness"].toString().toDouble()).toDouble()
 
             logger.log(Level.INFO, "metadataId: $metadataId")
             logger.log(Level.INFO, "brightness: $brightness")
             logger.log(Level.INFO, "contrast: $contrast")
             logger.log(Level.INFO, "saturation: $saturation")
+            logger.log(Level.INFO, "sharpness: $sharpness")
 
             val metricsUtil = MetricsUtil()
 
@@ -3283,7 +3286,7 @@ class TimelineController: BaseController() {
                 var startTime: Long = 0
                 var endTime: Long = 0
                 metricsUtil.end()
-                
+
                 metricsUtil.start("Editor - saturation")
                 startTime = System.currentTimeMillis()
                 if (saturation in 0.1..1.9 && saturation != 1.0) {
@@ -3314,7 +3317,18 @@ class TimelineController: BaseController() {
                 val contrastAdjustmentTiming = endTime-startTime
                 metricsUtil.end()
 
+                metricsUtil.start("Editor - sharpness")
+                startTime = System.currentTimeMillis()
+                if (sharpness in 1.0..10.0 && sharpness != 1.0) {
+                    logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
+                    bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
+                }
+                endTime = System.currentTimeMillis()
+                val sharpnessAdjustmentTiming = endTime-startTime
+                metricsUtil.end()
+
                 metricsUtil.start("Editor - coverting to base64")
+                resp["sharpnessProcessingMS"] = sharpnessAdjustmentTiming
                 resp["saturationProcessingMS"] = saturationAdjustmentTiming
                 resp["contrastProcessingMS"] = contrastAdjustmentTiming
                 resp["brightnessProcessingMS"] = brightnessAdjustmentTiming
@@ -3328,6 +3342,7 @@ class TimelineController: BaseController() {
             }
         }
 
+        resp["sharpnessProcessingMS"] = 0
         resp["saturationProcessingMS"] = 0
         resp["contrastProcessingMS"] = 0
         resp["brightnessProcessingMS"] = 0
@@ -3351,7 +3366,8 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("flipY") &&
             metadataMap.containsKey("brightness") &&
             metadataMap.containsKey("contrast") &&
-            metadataMap.containsKey("saturation")
+            metadataMap.containsKey("saturation") &&
+            metadataMap.containsKey("sharpness")
         ) {
             val metadataId = metadataMap["metadataId"] as String
             val rotation = metadataMap["rotation"] as Int
@@ -3360,6 +3376,7 @@ class TimelineController: BaseController() {
             val brightness = metadataMap["brightness"].toString().toDouble()
             val contrast = metadataMap["contrast"].toString().toDouble()
             val saturation = metadataMap["saturation"].toString().toDouble()
+            val sharpness = metadataMap["sharpness"].toString().toDouble()
             var restoreImages = restore.orElse(false)
 
             val metadataObj = metadataRepository.findById(metadataId)
@@ -3415,11 +3432,20 @@ class TimelineController: BaseController() {
                         }
                     }
 
+                    if (metadata.getSharpness() == null || sharpness in 1.0..10.0) {
+                        metadata.setSharpness(sharpness.toString())
+                        if (sharpness != 1.0) {
+                            manualRestore = false
+                        }
+                    }
+
                     editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
 
                     editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
 
                     editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
+
+                    editedImage = ImageProcessing.adjustSharpness(editedImage, sharpness)
 
                     editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
                     metadata.setRotation(rotation)
@@ -3447,6 +3473,7 @@ class TimelineController: BaseController() {
                         metadata.setBrightness("1.0")
                         metadata.setContrast("1.0")
                         metadata.setSaturation("1.0")
+                        metadata.setSharpness("1.0")
                         metadata.setRotation(0)
                     }
                 } else {
@@ -3456,6 +3483,7 @@ class TimelineController: BaseController() {
                     metadata.setBrightness("1.0")
                     metadata.setContrast("1.0")
                     metadata.setSaturation("1.0")
+                    metadata.setSharpness("1.0")
                     metadata.setRotation(0)
                 }
 

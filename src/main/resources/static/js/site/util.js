@@ -1958,7 +1958,8 @@ class Util {
             $(".qualityLabel").show();
             $(".qualityDetails").text(metadata.quality);
         }
-        if (metadata.brightness !== "1.0" ||
+        if (metadata.sharpness !== "1.0" ||
+            metadata.brightness !== "1.0" ||
             metadata.contrast !== "1.0" ||
             metadata.saturation !== "1.0" ||
             metadata.rotation !== 0 ||

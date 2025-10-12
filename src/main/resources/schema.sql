@@ -48,6 +48,7 @@ CREATE TABLE `metadata` (
                             `brightness` VARCHAR(10) NOT NULL DEFAULT '1.0',
                             `contrast` VARCHAR(10) NOT NULL DEFAULT '1.0',
                             `saturation` VARCHAR(10) NOT NULL DEFAULT '1.0',
+                            `sharpness` VARCHAR(10) NOT NULL DEFAULT '1.0',
                             `flipHorizontally` BOOLEAN NOT NULL DEFAULT FALSE,
                             `flipVertically` BOOLEAN NOT NULL DEFAULT FALSE,
                             `rotation` INTEGER DEFAULT 0,
