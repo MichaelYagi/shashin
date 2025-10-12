@@ -333,12 +333,22 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
+    function webglSupport () {
+        try {
+            const canvas = document.createElement('canvas');
+            return !!window.WebGLRenderingContext &&
+                (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+        } catch(e) {
+            return false;
+        }
+    }
+
     function applyAttributes() {
         disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
 
-        document.body.style.overflowY= 'hidden';
+        document.body.style.overflowY = 'hidden';
 
         shashin.printMessageToConsole("--------------",{tag:"editor"});
         shashin.printMessageToConsole("Applying attributes for preview",{tag:"editor"});
@@ -349,23 +359,149 @@ function initializeEditor(editMetadataObj, lgIndex) {
         shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
         shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
 
-        // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
-        shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
-            if (data !== null) {
-                shashin.printMessageToConsole("--------------",{tag:"editor"});
-                shashin.printMessageToConsole("Saturation editing time: " + data.saturationProcessingMS + "ms", {tag: "editor"});
-                shashin.printMessageToConsole("Contrast editing time: " + data.contrastProcessingMS + "ms", {tag: "editor"});
-                shashin.printMessageToConsole("Brightness editing time: " + data.brightnessProcessingMS + "ms", {tag: "editor"});
-                shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
-                // console.log("Total time editing image: "+data.totalTimeMS+"ms");
-                $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
+        // I there is WebGL support
+        const vertexShaderSource = `
+                attribute vec2 a_position;
+                attribute vec2 a_texCoord;
+                varying vec2 v_texCoord;
+                void main() {
+                    gl_Position = vec4(a_position, 0, 1);
+                    v_texCoord = a_texCoord;
+                }
+            `;
+
+        const fragmentShaderSource = `
+                precision mediump float;
+                uniform sampler2D u_image;
+                uniform float u_brightness;
+                uniform float u_contrast;
+                uniform float u_saturation;
+                varying vec2 v_texCoord;
+                
+                void main() {
+                    vec4 color = texture2D(u_image, v_texCoord);
+                    
+                    // Brightness: scale around 1.0
+                    color.rgb *= u_brightness;
+                    
+                    // Contrast: scale around midpoint 0.5
+                    color.rgb = ((color.rgb - 0.5) * u_contrast) + 0.5;
+                    
+                    // Saturation: blend with grayscale
+                    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+                    color.rgb = mix(vec3(gray), color.rgb, u_saturation);
+                    
+                    gl_FragColor = color;
+                }
+            `;
+
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
+        }
+
+        function createProgram(gl, vsSource, fsSource) {
+            const program = gl.createProgram();
+            gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
+            gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
+            gl.linkProgram(program);
+            return program;
+        }
+
+        function setupImageAdjustments(image, canvas, brightnessInput = 1.0, contrastInput = 1.0, saturationInput = 1.0) {
+            const gl = canvas.getContext("webgl");
+            const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
+            gl.useProgram(program);
+            gl.viewport(0, 0, canvas.width, canvas.height);
+
+            // Geometry
+            const positionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -1, -1, 1, -1, -1, 1,
+                1, -1, 1, 1, -1, 1
+            ]), gl.STATIC_DRAW);
+            const aPosition = gl.getAttribLocation(program, "a_position");
+            gl.enableVertexAttribArray(aPosition);
+            gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+
+            const texCoordBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                0, 0, 1, 0, 0, 1,
+                1, 0, 1, 1, 0, 1
+            ]), gl.STATIC_DRAW);
+            const aTexCoord = gl.getAttribLocation(program, "a_texCoord");
+            gl.enableVertexAttribArray(aTexCoord);
+            gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, 0, 0);
+
+            // Texture
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.uniform1i(gl.getUniformLocation(program, "u_image"), 0);
+
+            // Uniforms
+            gl.uniform1f(gl.getUniformLocation(program, "u_brightness"), brightnessInput);
+            gl.uniform1f(gl.getUniformLocation(program, "u_contrast"), contrastInput);
+            gl.uniform1f(gl.getUniformLocation(program, "u_saturation"), saturationInput);
+
+            // Draw
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+            const imageURL = canvas.toDataURL("image/jpeg", 0.2);
+            $("#editShashinImage").attr("src", imageURL);
+        }
+
+        if (webglSupport() === false) {
+            // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
+            shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
+                if (data !== null) {
+                    shashin.printMessageToConsole("--------------",{tag:"editor"});
+                    shashin.printMessageToConsole("Saturation editing time: " + data.saturationProcessingMS + "ms", {tag: "editor"});
+                    shashin.printMessageToConsole("Contrast editing time: " + data.contrastProcessingMS + "ms", {tag: "editor"});
+                    shashin.printMessageToConsole("Brightness editing time: " + data.brightnessProcessingMS + "ms", {tag: "editor"});
+                    shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
+                    // console.log("Total time editing image: "+data.totalTimeMS+"ms");
+                    $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
+                    updateTransform(false);
+                    document.body.style.overflow = 'auto';
+                    enableButtons();
+                    $("#editorSpinner").css("display", "none");
+                    $("#editorCloseActionButton").css("display", "block");
+                }
+            });
+        } else {
+            if ($("#glcanvas").length > 0) {
+                $("#glcanvas").remove();
+            }
+
+            const canvas = document.createElement("canvas");
+            $(canvas).attr("id", "glcanvas");
+
+            document.body.appendChild(canvas);
+
+            const img = new Image();
+            img.src = "/api/v1/image/original/" + editMetadataObj.id + "?v=shashin" + uuidv4();
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                setupImageAdjustments(img, canvas, brightness, contrast, saturation);
                 updateTransform(false);
                 document.body.style.overflow = 'auto';
                 enableButtons();
                 $("#editorSpinner").css("display", "none");
                 $("#editorCloseActionButton").css("display", "block");
-            }
-        });
+            };
+        }
     }
 
     function applyDefaultTransformations() {
@@ -464,6 +600,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if (isSpinnerHidden()) {
+            if ($("#glcanvas").length > 0) {
+                $("#glcanvas").remove();
+            }
+
             applyDefaultTransformations();
 
             updateTransform(false);
@@ -495,6 +635,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
         e.preventDefault();
 
         if ($("#editorSpinner").css("display") === "none") {
+            if ($("#glcanvas").length > 0) {
+                $("#glcanvas").remove();
+            }
             disableButtons();
             $("#editorSpinner").css("display", "block");
             $("#editorCloseActionButton").css("display", "none");
@@ -687,6 +830,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         $("#editorMedia").css("display", "none");
         $("#editorMedia").html("");
+
+        if ($("#glcanvas").length > 0) {
+            $("#glcanvas").remove();
+        }
 
         rotation = 0;
         brightness = 1.0;
