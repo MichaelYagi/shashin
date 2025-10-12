@@ -64,6 +64,7 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 @Suppress("UNCHECKED_CAST")
@@ -698,6 +699,137 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             threadPool.shutdown()
             return result
+        }
+
+        fun adjustSharpness(image: BufferedImage, sharpness: Double): BufferedImage {
+            val width = image.width
+            val height = image.height
+
+            // Convert to TYPE_INT_RGB if needed
+            val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
+                val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+                converted.graphics.drawImage(image, 0, 0, null)
+                converted
+            } else {
+                image
+            }
+
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+            val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
+            val destPixels = (result.raster.dataBuffer as DataBufferInt).data
+
+            // Resolution-aware sampling scale (matching WebGL)
+            val resolutionScale = sqrt((width * height).toDouble()).div(512.0).clamp(0.5, 2.0)
+
+            // Sharpening parameters (matching WebGL exactly)
+            val sharpenWeight = if (sharpness > 1.0) (sharpness - 1.0) / 4.5 else 0.0 // Map 1-10 to 0-2
+            val centerWeight = 1.0 + 4.0 * sharpenWeight
+            val neighborWeight = -sharpenWeight
+
+            val availableCores = Runtime.getRuntime().availableProcessors()
+            val rowsPerChunk = maxOf(1, height / availableCores)
+            val threadPool = Executors.newFixedThreadPool(availableCores)
+            val dispatcher = threadPool.asCoroutineDispatcher()
+
+            runBlocking(dispatcher) {
+                val jobs = (0 until height step rowsPerChunk).map { startY ->
+                    launch {
+                        val endY = minOf(startY + rowsPerChunk, height)
+                        for (y in startY until endY) {
+                            for (x in 0 until width) {
+                                val index = y * width + x
+
+                                if (sharpness <= 1.0) {
+                                    // No sharpening, copy original pixel
+                                    destPixels[index] = srcPixels[index]
+                                    continue
+                                }
+
+                                // Apply 3x3 sharpening kernel with bilinear-like sampling
+                                var rTotal = 0.0
+                                var gTotal = 0.0
+                                var bTotal = 0.0
+                                var totalWeight = 1.0
+
+                                // Center pixel
+                                val rgbCenter = srcPixels[index]
+                                val rCenter = ((rgbCenter ushr 16) and 0xFF).toDouble()
+                                val gCenter = ((rgbCenter ushr 8) and 0xFF).toDouble()
+                                val bCenter = (rgbCenter and 0xFF).toDouble()
+                                rTotal += rCenter * centerWeight
+                                gTotal += gCenter * centerWeight
+                                bTotal += bCenter * centerWeight
+
+                                // Neighbor pixels with resolution-adjusted sampling
+                                val offsets = listOf(
+                                    intArrayOf(-1, 0), // Left
+                                    intArrayOf(1, 0),  // Right
+                                    intArrayOf(0, -1), // Up
+                                    intArrayOf(0, 1)   // Down
+                                )
+
+                                for (offset in offsets) {
+                                    // Simulate WebGL linear interpolation by averaging neighboring pixels
+                                    val nx = x + (offset[0] * resolutionScale).toInt()
+                                    val ny = y + (offset[1] * resolutionScale).toInt()
+                                    var rNeighbor = 0.0
+                                    var gNeighbor = 0.0
+                                    var bNeighbor = 0.0
+                                    var sampleCount = 0
+
+                                    // Sample a 2x2 grid around the neighbor to approximate bilinear filtering
+                                    for (dx in 0..1) {
+                                        for (dy in 0..1) {
+                                            val sampleX = nx + dx
+                                            val sampleY = ny + dy
+                                            if (sampleX >= 0 && sampleX < width && sampleY >= 0 && sampleY < height) {
+                                                val nIndex = sampleY * width + sampleX
+                                                val rgb = srcPixels[nIndex]
+                                                rNeighbor += ((rgb ushr 16) and 0xFF).toDouble()
+                                                gNeighbor += ((rgb ushr 8) and 0xFF).toDouble()
+                                                bNeighbor += (rgb and 0xFF).toDouble()
+                                                sampleCount++
+                                            }
+                                        }
+                                    }
+
+                                    if (sampleCount > 0) {
+                                        rNeighbor /= sampleCount.toDouble()
+                                        gNeighbor /= sampleCount.toDouble()
+                                        bNeighbor /= sampleCount.toDouble()
+                                    } else {
+                                        // Edge handling: use center pixel (mimics WebGL CLAMP_TO_EDGE)
+                                        rNeighbor = rCenter
+                                        gNeighbor = gCenter
+                                        bNeighbor = bCenter
+                                    }
+
+                                    rTotal += rNeighbor * neighborWeight
+                                    gTotal += gNeighbor * neighborWeight
+                                    bTotal += bNeighbor * neighborWeight
+                                }
+
+                                // Normalize and clamp
+                                val r = (rTotal / totalWeight).toInt().coerceIn(0, 255)
+                                val g = (gTotal / totalWeight).toInt().coerceIn(0, 255)
+                                val b = (bTotal / totalWeight).toInt().coerceIn(0, 255)
+                                destPixels[index] = (r shl 16) or (g shl 8) or b
+                            }
+                        }
+                    }
+                }
+                jobs.joinAll()
+            }
+
+            threadPool.shutdown()
+            return result
+        }
+
+        // Extension function for clamping
+        fun Double.clamp(min: Double, max: Double): Double = when {
+            this < min -> min
+            this > max -> max
+            else -> this
         }
 
         fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {

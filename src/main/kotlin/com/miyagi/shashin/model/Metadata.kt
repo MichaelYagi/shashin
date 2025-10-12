@@ -59,6 +59,7 @@ class Metadata {
     private var brightness: String? = null
     private var contrast: String? = null
     private var saturation: String? = null
+    private var sharpness: String? = null
     private var flipHorizontally: Boolean? = null
     private var flipVertically: Boolean? = null
     private var rotation: Int? = null
@@ -83,6 +84,9 @@ class Metadata {
     }
     fun setSaturation(saturation: String?) {
         this.saturation = saturation
+    }
+    fun setSharpness(sharpness: String?) {
+        this.sharpness = sharpness
     }
     fun setPath(path: String?) {
         this.path = path
@@ -243,6 +247,9 @@ class Metadata {
     }
     fun getSaturation(): String? {
         return this.saturation
+    }
+    fun getSharpness(): String? {
+        return this.sharpness
     }
     fun getPath(): String? {
         return this.path
@@ -447,6 +454,7 @@ class Metadata {
         map["brightness"] = this.brightness
         map["contrast"] = this.contrast
         map["saturation"] = this.saturation
+        map["sharpness"] = this.sharpness
         map["flipVertically"] = this.flipVertically
         map["flipHorizontally"] = this.flipHorizontally
         map["rotation"] = this.rotation

@@ -295,13 +295,14 @@
         }
     };
 
-    shashin.processEditedPreviewThumbnail = function(metadataId, path, brightness, contrast, saturation, callback) {
+    shashin.processEditedPreviewThumbnail = function(metadataId, path, brightness, contrast, saturation, sharpness, callback) {
         const http = new Http("preview edited photo metadata");
         const json = {
             metadataId: metadataId,
             brightness: brightness,
             contrast: contrast,
             saturation: saturation,
+            sharpness: sharpness,
             path: path
         };
 
@@ -314,7 +315,7 @@
         });
     };
 
-    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, restore, callback) {
+    shashin.processEditedThumbnail = function(metadataId, lightGalleryIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, sharpness, restore, callback) {
         const http = new Http("update edited photo metadata");
         const version = Util.getMetadataLocalStorage();
         const json = {
@@ -324,7 +325,8 @@
             flipY: isFlippedVertically,
             brightness: brightness,
             contrast: contrast,
-            saturation: saturation
+            saturation: saturation,
+            sharpness: sharpness
         };
 
         http.ajax("post", "/metadata/edit/thumbs" + ((restore === true) ? (version === "" ? "?restore=true" : "?v=" + version + "&restore=true") : (version === "" ? "" : "?v=" + version)), JSON.stringify(json)).then(function (data) {
