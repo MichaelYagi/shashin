@@ -361,39 +361,54 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         // I there is WebGL support
         const vertexShaderSource = `
-                attribute vec2 a_position;
-                attribute vec2 a_texCoord;
-                varying vec2 v_texCoord;
-                void main() {
-                    gl_Position = vec4(a_position, 0, 1);
-                    v_texCoord = a_texCoord;
-                }
-            `;
+            attribute vec2 a_position;
+            attribute vec2 a_texCoord;
+            varying vec2 v_texCoord;
+            void main() {
+                gl_Position = vec4(a_position, 0, 1);
+                v_texCoord = a_texCoord;
+            }
+        `;
 
         const fragmentShaderSource = `
-                precision mediump float;
-                uniform sampler2D u_image;
-                uniform float u_brightness;
-                uniform float u_contrast;
-                uniform float u_saturation;
-                varying vec2 v_texCoord;
+            precision mediump float;
+            uniform sampler2D u_image;
+            uniform float u_brightness;
+            uniform float u_contrast;
+            uniform float u_saturation;
+            varying vec2 v_texCoord;
+            
+            void main() {
+                vec4 color = texture2D(u_image, v_texCoord);
                 
-                void main() {
-                    vec4 color = texture2D(u_image, v_texCoord);
-                    
-                    // Brightness: scale around 1.0
-                    color.rgb *= u_brightness;
-                    
-                    // Contrast: scale around midpoint 0.5
-                    color.rgb = ((color.rgb - 0.5) * u_contrast) + 0.5;
-                    
-                    // Saturation: blend with grayscale
-                    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
-                    color.rgb = mix(vec3(gray), color.rgb, u_saturation);
-                    
-                    gl_FragColor = color;
+                // Brightness
+                color.rgb *= u_brightness;
+                
+                // Contrast
+                color.rgb = ((color.rgb - 0.5) * u_contrast) + 0.5;
+                
+                // Saturation with red dampening
+                float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+                vec3 delta = color.rgb - vec3(gray);
+                vec3 saturated = vec3(gray) + delta * u_saturation;
+                
+                if (u_saturation > 1.0) {
+                float redFactor = 1.0 - 0.10 * (u_saturation - 1.0);
+                saturated.r = gray + (color.r - gray) * u_saturation * redFactor;
                 }
-            `;
+                
+                color.rgb = saturated;
+                
+                // Refined perceptual brightness boost
+                float brightnessBoost = (u_saturation > 1.0) ? (u_saturation - 1.0) * 0.003 : 0.0;
+                // color.rgb += brightnessBoost;
+                
+                // Clamp
+                color.rgb = clamp(color.rgb, 0.0, 1.0);
+                
+                gl_FragColor = color;
+            }
+        `;
 
         function createShader(gl, type, source) {
             const shader = gl.createShader(type);
