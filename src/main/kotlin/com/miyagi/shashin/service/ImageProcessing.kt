@@ -617,7 +617,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return result
         }
 
-        fun adjustSaturation(image: BufferedImage, saturation: Float): BufferedImage {
+        fun adjustSaturation(image: BufferedImage, saturation: Float, brightness: Float = 1.0f, contrast: Float = 1.0f): BufferedImage {
             val width = image.width
             val height = image.height
 
@@ -644,88 +644,52 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val jobs = (0 until height step rowsPerChunk).map { startY ->
                     launch {
                         val endY = minOf(startY + rowsPerChunk, height)
-                        for (y in startY until endY step 8) {
-                            for (x in 0 until width step 8) {
-                                val blockHeight = minOf(8, endY - y)
-                                val blockWidth = minOf(8, width - x)
-                                for (by in 0 until blockHeight) {
-                                    for (bx in 0 until blockWidth step 4) {
-                                        val indices = IntArray(4) { i ->
-                                            if (bx + i < blockWidth) (y + by) * width + (x + bx + i) else -1
-                                        }
+                        for (y in startY until endY) {
+                            for (x in 0 until width) {
+                                val index = y * width + x
+                                val rgb = srcPixels[index]
+                                var r = (rgb ushr 16) and 0xFF
+                                var g = (rgb ushr 8) and 0xFF
+                                var b = rgb and 0xFF
 
-                                        repeat(4) { i ->
-                                            if (indices[i] < 0) return@repeat
+                                // Apply brightness
+                                var rf = (r * brightness).toDouble()
+                                var gf = (g * brightness).toDouble()
+                                var bf = (b * brightness).toDouble()
 
-                                            val rgb = srcPixels[indices[i]]
-                                            val r = (rgb ushr 16) and 0xFF
-                                            val g = (rgb ushr 8) and 0xFF
-                                            val b = rgb and 0xFF
+                                // Apply contrast
+                                rf = ((rf / 255.0 - 0.5) * contrast + 0.5) * 255.0
+                                gf = ((gf / 255.0 - 0.5) * contrast + 0.5) * 255.0
+                                bf = ((bf / 255.0 - 0.5) * contrast + 0.5) * 255.0
 
-                                            val rf = r * inv255
-                                            val gf = g * inv255
-                                            val bf = b * inv255
-                                            val max = max(rf, max(gf, bf))
-                                            val min = min(rf, min(gf, bf))
-                                            val l = (max + min) * 0.5
-                                            val d = max - min
+                                // Saturation in RGB space
+                                val gray = 0.299 * rf + 0.587 * gf + 0.114 * bf
+                                val deltaR = rf - gray
+                                val deltaG = gf - gray
+                                val deltaB = bf - gray
 
-                                            val s = if (d == 0.0 || abs(2.0 * l - 1.0) >= 1.0) 0.0 else d / (1.0 - abs(2.0 * l - 1.0))
-                                            val h = when {
-                                                d == 0.0 -> 0.0
-                                                max == rf -> ((gf - bf) / d + (if (gf < bf) 6.0 else 0.0)) * (1.0 / 6.0)
-                                                max == gf -> ((bf - rf) / d + 2.0) * (1.0 / 6.0)
-                                                else -> ((rf - gf) / d + 4.0) * (1.0 / 6.0)
-                                            }
+                                var rSat = gray + deltaR * saturationAdj
+                                var gSat = gray + deltaG * saturationAdj
+                                var bSat = gray + deltaB * saturationAdj
 
-                                            val sAdj = (s * saturationAdj).coerceIn(0.0, 2.0)
-
-                                            val rOut: Int
-                                            val gOut: Int
-                                            val bOut: Int
-
-                                            if (sAdj == 0.0) {
-                                                val gray = (l * 255.0).roundToInt().coerceIn(0, 255)
-                                                rOut = gray
-                                                gOut = gray
-                                                bOut = gray
-                                            } else {
-                                                val q = if (l < 0.5) l * (1.0 + sAdj) else l + sAdj - l * sAdj
-                                                val p = 2.0 * l - q
-
-                                                fun hue2rgb(t: Double): Int {
-                                                    val tt = ((t % 1.0) + 1.0) % 1.0
-                                                    val value = when {
-                                                        tt < 1.0 / 6.0 -> p + (q - p) * 6.0 * tt
-                                                        tt < 0.5 -> q
-                                                        tt < 2.0 / 3.0 -> p + (q - p) * (2.0 / 3.0 - tt) * 6.0
-                                                        else -> p
-                                                    }.coerceIn(0.0, 1.0)
-                                                    return (value * 255.0).roundToInt().coerceIn(0, 255)
-                                                }
-
-                                                rOut = hue2rgb(h + 1.0 / 3.0)
-                                                gOut = hue2rgb(h)
-                                                bOut = hue2rgb(h - 1.0 / 3.0)
-                                            }
-
-                                            // Red dampening
-                                            val gray255 = (l * 255.0)
-                                            val redFactor = if (saturationAdj > 1.0f) 1.0 - 0.10 * (saturationAdj - 1.0f) else 1.0
-                                            val rDamped = gray255 + (rOut - gray255) * saturationAdj * redFactor
-                                            val gDamped = gray255 + (gOut - gray255) * saturationAdj
-                                            val bDamped = gray255 + (bOut - gray255) * saturationAdj
-
-                                            // Perceptual brightness boost
-                                            val brightnessBoost = if (saturationAdj > 1.0f) (saturationAdj - 1.0f) * 0.006 else 0.0
-                                            val rFinal = (rDamped + brightnessBoost * 255.0).roundToInt().coerceIn(0, 255)
-                                            val gFinal = (gDamped + brightnessBoost * 255.0).roundToInt().coerceIn(0, 255)
-                                            val bFinal = (bDamped + brightnessBoost * 255.0).roundToInt().coerceIn(0, 255)
-
-                                            destPixels[indices[i]] = (rFinal shl 16) or (gFinal shl 8) or bFinal
-                                        }
-                                    }
+                                // Red dampening
+                                if (saturationAdj > 1.0f) {
+                                    val redFactor = 1.0 - 0.10 * (saturationAdj - 1.0)
+                                    rSat = gray + deltaR * saturationAdj * redFactor
                                 }
+
+                                // Perceptual brightness boost
+                                val brightnessBoost = if (saturationAdj > 1.0f) (saturationAdj - 1.0f) * 0.006 else 0.0
+                                rSat += brightnessBoost * 255.0
+                                gSat += brightnessBoost * 255.0
+                                bSat += brightnessBoost * 255.0
+
+                                // Clamp and round
+                                val rFinal = rSat.roundToInt().coerceIn(0, 255)
+                                val gFinal = gSat.roundToInt().coerceIn(0, 255)
+                                val bFinal = bSat.roundToInt().coerceIn(0, 255)
+
+                                destPixels[index] = (rFinal shl 16) or (gFinal shl 8) or bFinal
                             }
                         }
                     }
