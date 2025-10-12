@@ -3287,14 +3287,14 @@ class TimelineController: BaseController() {
                 var endTime: Long = 0
                 metricsUtil.end()
 
-                metricsUtil.start("Editor - saturation")
+                metricsUtil.start("Editor - sharpness")
                 startTime = System.currentTimeMillis()
-                if (saturation in 0.1..1.9 && saturation != 1.0) {
-                    logger.log(Level.INFO, "Adjusting saturation: " + saturation)
-                    bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
+                if (sharpness in 1.0..10.0 && sharpness != 1.0) {
+                    logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
+                    bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
                 }
                 endTime = System.currentTimeMillis()
-                val saturationAdjustmentTiming = endTime-startTime
+                val sharpnessAdjustmentTiming = endTime-startTime
                 metricsUtil.end()
 
                 metricsUtil.start("Editor - brightness")
@@ -3317,14 +3317,14 @@ class TimelineController: BaseController() {
                 val contrastAdjustmentTiming = endTime-startTime
                 metricsUtil.end()
 
-                metricsUtil.start("Editor - sharpness")
+                metricsUtil.start("Editor - saturation")
                 startTime = System.currentTimeMillis()
-                if (sharpness in 1.0..10.0 && sharpness != 1.0) {
-                    logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
-                    bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
+                if (saturation in 0.1..1.9 && saturation != 1.0) {
+                    logger.log(Level.INFO, "Adjusting saturation: " + saturation)
+                    bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
                 }
                 endTime = System.currentTimeMillis()
-                val sharpnessAdjustmentTiming = endTime-startTime
+                val saturationAdjustmentTiming = endTime-startTime
                 metricsUtil.end()
 
                 metricsUtil.start("Editor - coverting to base64")
@@ -3439,13 +3439,13 @@ class TimelineController: BaseController() {
                         }
                     }
 
+                    editedImage = ImageProcessing.adjustSharpness(editedImage, sharpness)
+
                     editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
 
                     editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
 
                     editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
-
-                    editedImage = ImageProcessing.adjustSharpness(editedImage, sharpness)
 
                     editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
                     metadata.setRotation(rotation)
