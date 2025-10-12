@@ -359,7 +359,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
         shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
 
-        // I there is WebGL support
+        // If there is WebGL support
         const vertexShaderSource = `
             attribute vec2 a_position;
             attribute vec2 a_texCoord;
