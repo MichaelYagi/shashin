@@ -371,44 +371,42 @@ function initializeEditor(editMetadataObj, lgIndex) {
         `;
 
         const fragmentShaderSource = `
-            precision mediump float;
-            uniform sampler2D u_image;
-            uniform float u_brightness;
-            uniform float u_contrast;
-            uniform float u_saturation;
-            varying vec2 v_texCoord;
-            
-            void main() {
-                vec4 color = texture2D(u_image, v_texCoord);
-                
-                // Brightness
-                color.rgb *= u_brightness;
-                
-                // Contrast
-                color.rgb = ((color.rgb - 0.5) * u_contrast) + 0.5;
-                
-                // Saturation with red dampening
-                float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
-                vec3 delta = color.rgb - vec3(gray);
-                vec3 saturated = vec3(gray) + delta * u_saturation;
-                
-                if (u_saturation > 1.0) {
-                float redFactor = 1.0 - 0.10 * (u_saturation - 1.0);
-                saturated.r = gray + (color.r - gray) * u_saturation * redFactor;
-                }
-                
-                color.rgb = saturated;
-                
-                // Refined perceptual brightness boost
-                float brightnessBoost = (u_saturation > 1.0) ? (u_saturation - 1.0) * 0.003 : 0.0;
-                // color.rgb += brightnessBoost;
-                
-                // Clamp
-                color.rgb = clamp(color.rgb, 0.0, 1.0);
-                
-                gl_FragColor = color;
-            }
-        `;
+    precision mediump float;
+    uniform sampler2D u_image;
+    uniform float u_brightness;
+    uniform float u_contrast;
+    uniform float u_saturation;
+    varying vec2 v_texCoord;
+
+    void main() {
+        vec4 color = texture2D(u_image, v_texCoord);
+
+        // Brightness
+        color.rgb *= u_brightness;
+
+        // Contrast
+        color.rgb = ((color.rgb - 0.5) * u_contrast) + 0.5;
+
+        // Saturation with red dampening
+        float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+        vec3 delta = color.rgb - vec3(gray);
+        vec3 saturated = vec3(gray) + delta * u_saturation;
+
+        if (u_saturation > 1.0) {
+            float redFactor = 1.0 - 0.10 * (u_saturation - 1.0);
+            saturated.r = gray + (color.r - gray) * u_saturation * redFactor;
+        }
+
+        // Perceptual brightness boost (applied after saturation)
+        float brightnessBoost = (u_saturation > 1.0) ? (u_saturation - 1.0) * 0.006 : 0.0;
+        saturated += vec3(brightnessBoost);
+
+        // Clamp final output
+        color.rgb = clamp(saturated, 0.0, 1.0);
+
+        gl_FragColor = color;
+    }
+`;
 
         function createShader(gl, type, source) {
             const shader = gl.createShader(type);

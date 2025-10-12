@@ -634,9 +634,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val destPixels = (result.raster.dataBuffer as DataBufferInt).data
 
             val saturationAdj = saturation.coerceIn(0.0f, 2.0f)
-            val inv255 = 1.0 / 255.0 // Precompute 1/255
+            val inv255 = 1.0 / 255.0
 
-            // Custom thread pool for minimal overhead
             val threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
             val dispatcher = threadPool.asCoroutineDispatcher()
             val rowsPerChunk = maxOf(1, height / Runtime.getRuntime().availableProcessors())
@@ -650,7 +649,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                 val blockHeight = minOf(8, endY - y)
                                 val blockWidth = minOf(8, width - x)
                                 for (by in 0 until blockHeight) {
-                                    for (bx in 0 until blockWidth step 4) { // Process 4 pixels
+                                    for (bx in 0 until blockWidth step 4) {
                                         val indices = IntArray(4) { i ->
                                             if (bx + i < blockWidth) (y + by) * width + (x + bx + i) else -1
                                         }
@@ -663,7 +662,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                             val g = (rgb ushr 8) and 0xFF
                                             val b = rgb and 0xFF
 
-                                            // Optimized HSL conversion
                                             val rf = r * inv255
                                             val gf = g * inv255
                                             val bf = b * inv255
@@ -695,7 +693,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                                 val q = if (l < 0.5) l * (1.0 + sAdj) else l + sAdj - l * sAdj
                                                 val p = 2.0 * l - q
 
-                                                // Inline hue2rgb for performance
                                                 fun hue2rgb(t: Double): Int {
                                                     val tt = ((t % 1.0) + 1.0) % 1.0
                                                     val value = when {
@@ -712,7 +709,20 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                                 bOut = hue2rgb(h - 1.0 / 3.0)
                                             }
 
-                                            destPixels[indices[i]] = (rOut shl 16) or (gOut shl 8) or bOut
+                                            // Red dampening
+                                            val gray255 = (l * 255.0)
+                                            val redFactor = if (saturationAdj > 1.0f) 1.0 - 0.10 * (saturationAdj - 1.0f) else 1.0
+                                            val rDamped = gray255 + (rOut - gray255) * saturationAdj * redFactor
+                                            val gDamped = gray255 + (gOut - gray255) * saturationAdj
+                                            val bDamped = gray255 + (bOut - gray255) * saturationAdj
+
+                                            // Perceptual brightness boost
+                                            val brightnessBoost = if (saturationAdj > 1.0f) (saturationAdj - 1.0f) * 0.006 else 0.0
+                                            val rFinal = (rDamped + brightnessBoost * 255.0).roundToInt().coerceIn(0, 255)
+                                            val gFinal = (gDamped + brightnessBoost * 255.0).roundToInt().coerceIn(0, 255)
+                                            val bFinal = (bDamped + brightnessBoost * 255.0).roundToInt().coerceIn(0, 255)
+
+                                            destPixels[indices[i]] = (rFinal shl 16) or (gFinal shl 8) or bFinal
                                         }
                                     }
                                 }
