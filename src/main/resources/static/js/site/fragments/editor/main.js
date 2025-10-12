@@ -475,7 +475,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
 
         if (webglSupport() === false) {
-            // Make network call to transform: inputs - brightness, contrast, saturation, rotation and x/y flips
+            // Make network call to transform: inputs - brightness, contrast, and saturation
             shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, function (data) {
                 if (data !== null) {
                     shashin.printMessageToConsole("--------------",{tag:"editor"});
