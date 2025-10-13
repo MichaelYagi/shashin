@@ -323,33 +323,34 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
 
     // Slider adjustment
-    let actionType = "change";
-    if (Util.webglSupport() === true) {
-        actionType = "input";
-    }
-
-    if (actionType !== "input") {
-        $("#editorBrightnessAction").off("input").on("input", function (e) {
-            e.preventDefault();
-
-            if ($("#editorBrightnessAction").val() === "0") {
-                $("#brightnessTick").css("display", "none");
-            } else {
-                $("#brightnessTick").css("display", "block");
-            }
-        });
-    }
-    $("#editorBrightnessAction").off(actionType).on(actionType, function (e) {
+    $("#editorBrightnessAction").off("input").on("input", function (e) {
         e.preventDefault();
 
-        if (actionType === "input") {
-            if ($("#editorBrightnessAction").val() === "0") {
-                $("#brightnessTick").css("display", "none");
-            } else {
-                $("#brightnessTick").css("display", "block");
-            }
+        if ($("#editorBrightnessAction").val() === "0") {
+            $("#brightnessTick").css("display", "none");
+        } else {
+            $("#brightnessTick").css("display", "block");
         }
-        if (isSpinnerHidden() || Util.webglSupport() === true) {
+    });
+    $("#brightnessTick").off("click").on("click", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
+            let number = "0";
+            $("#editorBrightnessAction").val(number);
+            $("#brightnessTick").css("display", "none");
+            brightness = parseFloat("1."+number);
+            if (number.charAt(0) === "-") {
+                number = number.slice(1);
+                brightness = 1-parseFloat("0."+number);
+            }
+            applyAttributes();
+        }
+    });
+    $("#editorBrightnessAction").off("change").on("change", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
             let number = $("#editorBrightnessAction").val();
             brightness = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -360,28 +361,34 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    if (actionType !== "input") {
-        $("#editorContrastAction").off("input").on("input", function (e) {
-            e.preventDefault();
-
-            if ($("#editorContrastAction").val() === "0") {
-                $("#contrastTick").css("display", "none");
-            } else {
-                $("#contrastTick").css("display", "block");
-            }
-        });
-    }
-    $("#editorContrastAction").off(actionType).on(actionType, function (e) {
+    $("#editorContrastAction").off("input").on("input", function (e) {
         e.preventDefault();
 
-        if (actionType === "input") {
-            if ($("#editorContrastAction").val() === "0") {
-                $("#contrastTick").css("display", "none");
-            } else {
-                $("#contrastTick").css("display", "block");
-            }
+        if ($("#editorContrastAction").val() === "0") {
+            $("#contrastTick").css("display", "none");
+        } else {
+            $("#contrastTick").css("display", "block");
         }
-        if (isSpinnerHidden() || Util.webglSupport() === true) {
+    });
+    $("#contrastTick").off("click").on("click", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
+            let number = "0";
+            $("#editorContrastAction").val(number);
+            $("#contrastTick").css("display", "none");
+            contrast = parseFloat("1."+number);
+            if (number.charAt(0) === "-") {
+                number = number.slice(1);
+                contrast = 1-parseFloat("0."+number);
+            }
+            applyAttributes();
+        }
+    });
+    $("#editorContrastAction").off("change").on("change", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
             let number = $("#editorContrastAction").val();
             contrast = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -392,28 +399,34 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    if (actionType !== "input") {
-        $("#editorSaturationAction").off("input").on("input", function (e) {
-            e.preventDefault();
-
-            if ($("#editorSaturationAction").val() === "0") {
-                $("#saturationTick").css("display", "none");
-            } else {
-                $("#saturationTick").css("display", "block");
-            }
-        });
-    }
-    $("#editorSaturationAction").off(actionType).on(actionType, function (e) {
+    $("#editorSaturationAction").off("input").on("input", function (e) {
         e.preventDefault();
 
-        if (actionType === "input") {
-            if ($("#editorSaturationAction").val() === "0") {
-                $("#saturationTick").css("display", "none");
-            } else {
-                $("#saturationTick").css("display", "block");
-            }
+        if ($("#editorSaturationAction").val() === "0") {
+            $("#saturationTick").css("display", "none");
+        } else {
+            $("#saturationTick").css("display", "block");
         }
-        if (isSpinnerHidden() || Util.webglSupport() === true) {
+    });
+    $("#saturationTick").off("click").on("click", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
+            let number = "0";
+            $("#editorSaturationAction").val(number);
+            $("#saturationTick").css("display", "none");
+            saturation = parseFloat("1."+number);
+            if (number.charAt(0) === "-") {
+                number = number.slice(1);
+                saturation = 1-parseFloat("0."+number);
+            }
+            applyAttributes();
+        }
+    });
+    $("#editorSaturationAction").off("change").on("change", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
             let number = $("#editorSaturationAction").val();
             saturation = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -424,28 +437,34 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    if (actionType !== "input") {
-        $("#editorSharpnessAction").off("input").on("input", function (e) {
-            e.preventDefault();
-
-            if ($("#editorSharpnessAction").val() === "1") {
-                $("#sharpnessTick").css("display", "none");
-            } else {
-                $("#sharpnessTick").css("display", "block");
-            }
-        });
-    }
-    $("#editorSharpnessAction").off(actionType).on(actionType, function (e) {
+    $("#editorSharpnessAction").off("input").on("input", function (e) {
         e.preventDefault();
 
-        if (actionType === "input") {
-            if ($("#editorSharpnessAction").val() === "1") {
-                $("#sharpnessTick").css("display", "none");
-            } else {
-                $("#sharpnessTick").css("display", "block");
-            }
+        if ($("#editorSharpnessAction").val() === "1") {
+            $("#sharpnessTick").css("display", "none");
+        } else {
+            $("#sharpnessTick").css("display", "block");
         }
-        if (isSpinnerHidden() || Util.webglSupport() === true) {
+    });
+    $("#sharpnessTick").off("click").on("click", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
+            let number = "0";
+            $("#editorSharpnessAction").val(number);
+            $("#sharpnessTick").css("display", "none");
+            sharpness = parseFloat("1."+number);
+            if (number.charAt(0) === "-") {
+                number = number.slice(1);
+                sharpness = 1-parseFloat("0."+number);
+            }
+            applyAttributes();
+        }
+    });
+    $("#editorSharpnessAction").off("change").on("change", function (e) {
+        e.preventDefault();
+
+        if (isSpinnerHidden()) {
             let number = $("#editorSharpnessAction").val();
             sharpness = parseFloat(number+".0");
             applyAttributes();
@@ -453,16 +472,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
 
     function applyAttributes() {
-        document.body.style.overflow = 'auto';
-        enableButtons();
-        $("#editorSpinner").css("display", "none");
-        $("#editorCloseActionButton").css("display", "block");
-
-        if (Util.webglSupport() === false) {
-            disableButtons();
-            $("#editorSpinner").css("display", "block");
-            $("#editorCloseActionButton").css("display", "none");
-        }
+        disableButtons();
+        $("#editorSpinner").css("display", "block");
+        $("#editorCloseActionButton").css("display", "none");
 
         document.body.style.overflowY = 'hidden';
 
@@ -609,7 +621,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
             document.getElementById("editShashinImage").src = imageURL;
         }
 
-
         if (Util.webglSupport() === true) {
             if ($("#glcanvas").length > 0) {
                 $("#glcanvas").remove();
@@ -627,6 +638,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 canvas.height = img.height;
                 setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness);
                 updateTransform(false);
+                document.body.style.overflow = 'auto';
+                enableButtons();
+                $("#editorSpinner").css("display", "none");
+                $("#editorCloseActionButton").css("display", "block");
             };
         } else {
             // Make network call to transform: inputs - brightness, contrast, and saturation
