@@ -41,12 +41,12 @@ describe('#shashin app tests', function() {
         shashin.printMessageToConsole("fail", {tags: ["sinon","tik","tok"]});
         shashin.printMessageToConsole("fail", {tags: ["sinon","tik","all","tok"]});
 
-        assert.isTrue(consoleSpy.calledWith("test message. Tags: test"));
-        assert.isTrue(consoleSpy.calledWith("tik. Tags: all"));
-        assert.isTrue(consoleSpy.calledWith("tok. Tags: tik"));
-        assert.isTrue(consoleSpy.calledWith("fail. Tags: sinon,tik,tok"));
-        assert.isFalse(consoleSpy.calledWith("failz. Tag: sinon"));
-        assert.isTrue(consoleSpy.calledWith("fail. Tags: all"));
+        assert.isTrue(consoleSpy.calledWith("test message - Tags: test"));
+        assert.isTrue(consoleSpy.calledWith("tik - Tags: all"));
+        assert.isTrue(consoleSpy.calledWith("tok - Tags: tik"));
+        assert.isTrue(consoleSpy.calledWith("fail - Tags: sinon,tik,tok"));
+        assert.isFalse(consoleSpy.calledWith("failz - Tag: sinon"));
+        assert.isTrue(consoleSpy.calledWith("fail - Tags: all"));
 
         consoleSpy.restore();
 
