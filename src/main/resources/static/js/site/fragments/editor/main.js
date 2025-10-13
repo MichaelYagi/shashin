@@ -319,10 +319,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
 
     // Slider adjustment
-    $("#editorBrightnessAction").off("change").on("change", function (e) {
+    let actionType = "change";
+    if (Util.webglSupport() === true) {
+        actionType = "input";
+    }
+    $("#editorBrightnessAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden()) {
+        if (isSpinnerHidden() || Util.webglSupport() === true) {
             let number = $("#editorBrightnessAction").val();
             brightness = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -333,10 +337,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    $("#editorContrastAction").off("change").on("change", function (e) {
+    $("#editorContrastAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden()) {
+        if (isSpinnerHidden() || Util.webglSupport() === true) {
             let number = $("#editorContrastAction").val();
             contrast = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -347,10 +351,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    $("#editorSaturationAction").off("change").on("change", function (e) {
+    $("#editorSaturationAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden()) {
+        if (isSpinnerHidden() || Util.webglSupport() === true) {
             let number = $("#editorSaturationAction").val();
             saturation = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -361,30 +365,27 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    $("#editorSharpnessAction").off("change").on("change", function (e) {
+    $("#editorSharpnessAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden()) {
+        if (isSpinnerHidden() || Util.webglSupport() === true) {
             let number = $("#editorSharpnessAction").val();
             sharpness = parseFloat(number+".0");
             applyAttributes();
         }
     });
 
-    function webglSupport () {
-        try {
-            const canvas = document.createElement('canvas');
-            return !!window.WebGLRenderingContext &&
-                (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
-        } catch(e) {
-            return false;
-        }
-    }
-
     function applyAttributes() {
-        disableButtons();
-        $("#editorSpinner").css("display", "block");
-        $("#editorCloseActionButton").css("display", "none");
+        document.body.style.overflow = 'auto';
+        enableButtons();
+        $("#editorSpinner").css("display", "none");
+        $("#editorCloseActionButton").css("display", "block");
+
+        if (Util.webglSupport() === false) {
+            disableButtons();
+            $("#editorSpinner").css("display", "block");
+            $("#editorCloseActionButton").css("display", "none");
+        }
 
         document.body.style.overflowY = 'hidden';
 
@@ -417,53 +418,41 @@ function initializeEditor(editMetadataObj, lgIndex) {
             uniform float u_sharpness;
             uniform vec2 u_resolution;
             varying vec2 v_texCoord;
-        
+            
             void main() {
-                vec4 color = texture2D(u_image, v_texCoord);
-        
-                // Sharpness
-                vec4 sharpColor = color;
-                if (u_sharpness > 1.0) {
+                vec4 center = texture2D(u_image, v_texCoord);
+                vec4 color = center;
+            
+                float sharpenWeight = max((u_sharpness - 1.0) / 4.5, 0.0);
+                if (sharpenWeight > 0.0) {
                     vec2 onePixel = vec2(1.0) / u_resolution;
-                    // Scale sampling distance based on resolution to avoid artifacts on low-res images
-                    float resolutionScale = clamp(sqrt(u_resolution.x * u_resolution.y) / 512.0, 0.5, 2.0);
-                    vec2 adjustedPixel = onePixel * resolutionScale;
-                    float sharpenWeight = (u_sharpness - 1.0) / 4.5; // Map 1-10 to 0-2 for controlled sharpening
-                    vec4 total = vec4(0.0);
-                    total += texture2D(u_image, v_texCoord) * (1.0 + 4.0 * sharpenWeight);
-                    total += texture2D(u_image, v_texCoord + vec2(-adjustedPixel.x, 0.0)) * (-sharpenWeight);
-                    total += texture2D(u_image, v_texCoord + vec2(adjustedPixel.x, 0.0)) * (-sharpenWeight);
-                    total += texture2D(u_image, v_texCoord + vec2(0.0, -adjustedPixel.y)) * (-sharpenWeight);
-                    total += texture2D(u_image, v_texCoord + vec2(0.0, adjustedPixel.y)) * (-sharpenWeight);
-                    sharpColor = total / 1.0; // Normalize with constant weight
+                    float scale = clamp(sqrt(u_resolution.x * u_resolution.y) / 512.0, 0.5, 2.0);
+                    vec2 offset = onePixel * scale;
+            
+                    vec4 sum = center * (1.0 + 4.0 * sharpenWeight);
+                    sum -= texture2D(u_image, v_texCoord + vec2(-offset.x, 0.0)) * sharpenWeight;
+                    sum -= texture2D(u_image, v_texCoord + vec2(offset.x, 0.0)) * sharpenWeight;
+                    sum -= texture2D(u_image, v_texCoord + vec2(0.0, -offset.y)) * sharpenWeight;
+                    sum -= texture2D(u_image, v_texCoord + vec2(0.0, offset.y)) * sharpenWeight;
+                    color = sum;
                 }
-        
-                // Brightness
-                sharpColor.rgb *= u_brightness;
-        
-                // Contrast
-                sharpColor.rgb = ((sharpColor.rgb - 0.5) * u_contrast) + 0.5;
-        
-                // Saturation with red dampening
-                float gray = dot(sharpColor.rgb, vec3(0.299, 0.587, 0.114));
-                vec3 delta = sharpColor.rgb - vec3(gray);
+            
+                color.rgb = ((color.rgb * u_brightness - 0.5) * u_contrast) + 0.5;
+            
+                float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+                vec3 delta = color.rgb - vec3(gray);
                 vec3 saturated = vec3(gray) + delta * u_saturation;
-        
+            
                 if (u_saturation > 1.0) {
                     float redFactor = 1.0 - 0.10 * (u_saturation - 1.0);
-                    saturated.r = gray + (sharpColor.r - gray) * u_saturation * redFactor;
+                    saturated.r = gray + (color.r - gray) * u_saturation * redFactor;
                 }
-        
-                // Perceptual brightness boost (applied after saturation)
-                float brightnessBoost = (u_saturation > 1.0) ? (u_saturation - 1.0) * 0.006 : 0.0;
-                saturated += vec3(brightnessBoost);
-        
-                // Clamp final output
-                sharpColor.rgb = clamp(saturated, 0.0, 1.0);
-        
-                gl_FragColor = sharpColor;
+            
+                saturated += vec3(max((u_saturation - 1.0) * 0.006, 0.0));
+            
+                gl_FragColor = vec4(clamp(saturated, 0.0, 1.0), color.a);
             }
-        `;
+            `;
 
         function createShader(gl, type, source) {
             const shader = gl.createShader(type);
@@ -481,7 +470,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
 
         function setupImageAdjustments(image, canvas, brightnessInput = 1.0, contrastInput = 1.0, saturationInput = 1.0, sharpnessInput = 1.0) {
-            const gl = canvas.getContext("webgl");
+            const gl = canvas.getContext("webgl", { preserveDrawingBuffer: false });
             const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
             gl.useProgram(program);
             gl.viewport(0, 0, canvas.width, canvas.height);
@@ -517,23 +506,52 @@ function initializeEditor(editMetadataObj, lgIndex) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.uniform1i(gl.getUniformLocation(program, "u_image"), 0);
 
             // Uniforms
-            gl.uniform1f(gl.getUniformLocation(program, "u_brightness"), brightnessInput);
-            gl.uniform1f(gl.getUniformLocation(program, "u_contrast"), contrastInput);
-            gl.uniform1f(gl.getUniformLocation(program, "u_saturation"), saturationInput);
-            gl.uniform1f(gl.getUniformLocation(program, "u_sharpness"), sharpnessInput);
-            gl.uniform2f(gl.getUniformLocation(program, "u_resolution"), canvas.width, canvas.height);
+            const uniforms = {
+                brightness: gl.getUniformLocation(program, "u_brightness"),
+                contrast: gl.getUniformLocation(program, "u_contrast"),
+                saturation: gl.getUniformLocation(program, "u_saturation"),
+                sharpness: gl.getUniformLocation(program, "u_sharpness"),
+                resolution: gl.getUniformLocation(program, "u_resolution"),
+                image: gl.getUniformLocation(program, "u_image")
+            };
+
+            gl.uniform1f(uniforms.brightness, brightnessInput);
+            gl.uniform1f(uniforms.contrast, contrastInput);
+            gl.uniform1f(uniforms.saturation, saturationInput);
+            gl.uniform1f(uniforms.sharpness, sharpnessInput);
+            gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
+            gl.uniform1i(uniforms.image, 0);
 
             // Draw
             gl.drawArrays(gl.TRIANGLES, 0, 6);
 
+            // Optional readback (expensive)
             const imageURL = canvas.toDataURL("image/jpeg", 0.2);
-            $("#editShashinImage").attr("src", imageURL);
+            document.getElementById("editShashinImage").src = imageURL;
         }
 
-        if (webglSupport() === false) {
+
+        if (Util.webglSupport() === true) {
+            if ($("#glcanvas").length > 0) {
+                $("#glcanvas").remove();
+            }
+
+            const canvas = document.createElement("canvas");
+            $(canvas).attr("id", "glcanvas");
+
+            document.body.appendChild(canvas);
+
+            const img = new Image();
+            img.src = "/api/v1/image/original/" + editMetadataObj.id + "?v=shashin" + uuidv4();
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness);
+                updateTransform(false);
+            };
+        } else {
             // Make network call to transform: inputs - brightness, contrast, and saturation
             shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness, function (data) {
                 if (data !== null) {
@@ -552,28 +570,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     $("#editorCloseActionButton").css("display", "block");
                 }
             });
-        } else {
-            if ($("#glcanvas").length > 0) {
-                $("#glcanvas").remove();
-            }
-
-            const canvas = document.createElement("canvas");
-            $(canvas).attr("id", "glcanvas");
-
-            document.body.appendChild(canvas);
-
-            const img = new Image();
-            img.src = "/api/v1/image/original/" + editMetadataObj.id + "?v=shashin" + uuidv4();
-            img.onload = () => {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness);
-                updateTransform(false);
-                document.body.style.overflow = 'auto';
-                enableButtons();
-                $("#editorSpinner").css("display", "none");
-                $("#editorCloseActionButton").css("display", "block");
-            };
         }
     }
 
