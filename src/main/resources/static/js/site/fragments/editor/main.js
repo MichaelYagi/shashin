@@ -955,7 +955,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         buttonIds.forEach(id => {
             $('#' + id)
                 .prop('disabled', false)
-                .css({'color': "#FFFFFF", "text-shadow": "#EDEBEB 1px 0 10px"});
+                .css({'color': "#FFFFFF", "text-shadow": "#EDEBEB 2px 2px 5px"});
         });
     }
 
@@ -981,7 +981,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         buttonIds.forEach(id => {
             $('#' + id)
                 .prop('disabled', true)
-                .css({'color': "#808080", "text-shadow": "#969595 1px 0 10px"});
+                .css({'color': "#808080", "text-shadow": "#969595 2px 2px 5px"});
         });
     }
 
