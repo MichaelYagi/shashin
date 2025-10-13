@@ -11,21 +11,37 @@
         <span id="editorBrightnessActionButton" th:title="#{main.pages.lg.plugins.editor.brightness}">
             <span type="button" class="bi-brightness-high" id="editorBrightnessIcon" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px; margin-left: 114px;"></span>
             <br>
+            <div class="range-ticks d-flex justify-content-between">
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="brightnessTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+            </div>
             <input type="range" class="form-range" id="editorBrightnessAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
         </span>
         <span id="editorContrastActionButton" th:title="#{main.pages.lg.plugins.editor.contrast}">
             <span type="button" class="bi-circle-half" id="editorContrastIcon" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px; margin-left: 114px;"></span>
             <br>
+            <div class="range-ticks d-flex justify-content-between">
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="contrastTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+            </div>
             <input type="range" class="form-range" id="editorContrastAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
         </span>
         <span id="editorSaturationActionButton" th:title="#{main.pages.lg.plugins.editor.saturation}">
             <span type="button" class="bi-droplet-half" id="editorSaturationIcon" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px; margin-left: 114px;"></span>
             <br>
+            <div class="range-ticks d-flex justify-content-between">
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="saturationTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+            </div>
             <input type="range" class="form-range" id="editorSaturationAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
         </span>
         <span id="editorSharpnessActionButton" th:title="#{main.pages.lg.plugins.editor.sharpness}">
             <span type="button" class="bi-gem" id="editorSharpnessIcon" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px; margin-left: 114px;"></span>
             <br>
+            <div class="range-ticks d-flex justify-content-between">
+                <span id="sharpnessTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+            </div>
             <input type="range" class="form-range" id="editorSharpnessAction" min="1" max="9" style="width: 260px; padding-bottom: 30px;">
         </span>
         <span type="button" id="editorRestoreActionButton" th:title="#{main.pages.map.modal.restore}"><span class="bi-clock-history" id="editorRestoreAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>

@@ -281,6 +281,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorBrightnessIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
+        $("#brightnessTick").css("display", "none");
         if (isSpinnerHidden()) {
             brightness = 1.0;
             $("#editorBrightnessAction").val(0);
@@ -291,6 +292,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorContrastIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
+        $("#contrastTick").css("display", "none");
         if (isSpinnerHidden()) {
             contrast = 1.0;
             $("#editorContrastAction").val(0);
@@ -301,6 +303,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorSaturationIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
+        $("#saturationTick").css("display", "none");
         if (isSpinnerHidden()) {
             saturation = 1.0;
             $("#editorSaturationAction").val(0);
@@ -311,6 +314,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorSharpnessIcon").off("click").on('click', function(event) {
         event.preventDefault();
 
+        $("#sharpnessTick").css("display", "none");
         if (isSpinnerHidden()) {
             sharpness = 1.0;
             $("#editorSharpnessAction").val(1);
@@ -323,9 +327,28 @@ function initializeEditor(editMetadataObj, lgIndex) {
     if (Util.webglSupport() === true) {
         actionType = "input";
     }
+
+    if (actionType !== "input") {
+        $("#editorBrightnessAction").off("input").on("input", function (e) {
+            e.preventDefault();
+
+            if ($("#editorBrightnessAction").val() === "0") {
+                $("#brightnessTick").css("display", "none");
+            } else {
+                $("#brightnessTick").css("display", "block");
+            }
+        });
+    }
     $("#editorBrightnessAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
+        if (actionType === "input") {
+            if ($("#editorBrightnessAction").val() === "0") {
+                $("#brightnessTick").css("display", "none");
+            } else {
+                $("#brightnessTick").css("display", "block");
+            }
+        }
         if (isSpinnerHidden() || Util.webglSupport() === true) {
             let number = $("#editorBrightnessAction").val();
             brightness = parseFloat("1."+number);
@@ -337,9 +360,27 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
+    if (actionType !== "input") {
+        $("#editorContrastAction").off("input").on("input", function (e) {
+            e.preventDefault();
+
+            if ($("#editorContrastAction").val() === "0") {
+                $("#contrastTick").css("display", "none");
+            } else {
+                $("#contrastTick").css("display", "block");
+            }
+        });
+    }
     $("#editorContrastAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
+        if (actionType === "input") {
+            if ($("#editorContrastAction").val() === "0") {
+                $("#contrastTick").css("display", "none");
+            } else {
+                $("#contrastTick").css("display", "block");
+            }
+        }
         if (isSpinnerHidden() || Util.webglSupport() === true) {
             let number = $("#editorContrastAction").val();
             contrast = parseFloat("1."+number);
@@ -351,9 +392,27 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
+    if (actionType !== "input") {
+        $("#editorSaturationAction").off("input").on("input", function (e) {
+            e.preventDefault();
+
+            if ($("#editorSaturationAction").val() === "0") {
+                $("#saturationTick").css("display", "none");
+            } else {
+                $("#saturationTick").css("display", "block");
+            }
+        });
+    }
     $("#editorSaturationAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
+        if (actionType === "input") {
+            if ($("#editorSaturationAction").val() === "0") {
+                $("#saturationTick").css("display", "none");
+            } else {
+                $("#saturationTick").css("display", "block");
+            }
+        }
         if (isSpinnerHidden() || Util.webglSupport() === true) {
             let number = $("#editorSaturationAction").val();
             saturation = parseFloat("1."+number);
@@ -365,9 +424,27 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
+    if (actionType !== "input") {
+        $("#editorSharpnessAction").off("input").on("input", function (e) {
+            e.preventDefault();
+
+            if ($("#editorSharpnessAction").val() === "1") {
+                $("#sharpnessTick").css("display", "none");
+            } else {
+                $("#sharpnessTick").css("display", "block");
+            }
+        });
+    }
     $("#editorSharpnessAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
+        if (actionType === "input") {
+            if ($("#editorSharpnessAction").val() === "1") {
+                $("#sharpnessTick").css("display", "none");
+            } else {
+                $("#sharpnessTick").css("display", "block");
+            }
+        }
         if (isSpinnerHidden() || Util.webglSupport() === true) {
             let number = $("#editorSharpnessAction").val();
             sharpness = parseFloat(number+".0");
@@ -598,6 +675,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
         if (editMetadataObj.hasOwnProperty("brightness") && editMetadataObj.brightness !== null) {
             brightness = parseFloat(editMetadataObj.brightness);
         }
+        if (brightness === 1.0) {
+            $("#brightnessTick").css("display", "none");
+        }
         if (brightness >= 1.0) {
             $("#editorBrightnessAction").val(parseInt(getDigitsAfterDot(brightness)));
         } else {
@@ -606,6 +686,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         if (editMetadataObj.hasOwnProperty("contrast") && editMetadataObj.contrast !== null) {
             contrast = parseFloat(editMetadataObj.contrast);
+        }
+        if (contrast === 1.0) {
+            $("#contrastTick").css("display", "none");
         }
         if (contrast >= 1.0) {
             $("#editorContrastAction").val(parseInt(getDigitsAfterDot(contrast)));
@@ -616,6 +699,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
         if (editMetadataObj.hasOwnProperty("saturation") && editMetadataObj.saturation !== null) {
             saturation = parseFloat(editMetadataObj.saturation);
         }
+        if (saturation === 1.0) {
+            $("#saturationTick").css("display", "none");
+        }
         if (saturation >= 1.0) {
             $("#editorSaturationAction").val(parseInt(getDigitsAfterDot(saturation)));
         } else {
@@ -624,6 +710,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         if (editMetadataObj.hasOwnProperty("sharpness") && editMetadataObj.sharpness !== null) {
             sharpness = parseFloat(editMetadataObj.sharpness);
+        }
+        if (sharpness === 1.0) {
+            $("#sharpnessTick").css("display", "none");
         }
         if (sharpness >= 1.0) {
             $("#editorSharpnessAction").val(parseInt(sharpness));
