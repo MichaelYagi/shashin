@@ -974,6 +974,15 @@ class Util {
         return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     }
 
+    static webglSupport() {
+        try {
+            // const canvas = document.createElement('canvas');
+            return !!window.WebGLRenderingContext; // && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+        } catch(e) {
+            return false;
+        }
+    }
+
     static serializeObject(formElement) {
         const o = {};
         const a = formElement.serializeArray();
