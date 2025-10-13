@@ -320,13 +320,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     // Slider adjustment
     let actionType = "change";
-    if (webglSupport() !== false) {
+    if (webglSupport() === true) {
         actionType = "input";
     }
     $("#editorBrightnessAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden() || webglSupport() !== false) {
+        if (isSpinnerHidden() || webglSupport() === true) {
             let number = $("#editorBrightnessAction").val();
             brightness = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -340,7 +340,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorContrastAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden() || webglSupport() !== false) {
+        if (isSpinnerHidden() || webglSupport() === true) {
             let number = $("#editorContrastAction").val();
             contrast = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -354,7 +354,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorSaturationAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden() || webglSupport() !== false) {
+        if (isSpinnerHidden() || webglSupport() === true) {
             let number = $("#editorSaturationAction").val();
             saturation = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -368,14 +368,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorSharpnessAction").off(actionType).on(actionType, function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden() || webglSupport() !== false) {
+        if (isSpinnerHidden() || webglSupport() === true) {
             let number = $("#editorSharpnessAction").val();
             sharpness = parseFloat(number+".0");
             applyAttributes();
         }
     });
 
-    function webglSupport () {
+    function webglSupport() {
         try {
             return !!window.WebGLRenderingContext;
         } catch(e) {
