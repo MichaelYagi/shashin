@@ -9,6 +9,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // 3. When reseting, do step 1 & 2
     // 4. When restoring, delete original thumb
 
+    document.body.style.overflowY = 'hidden';
+
     // 2. Get stored transformations
     // brightness, contrast, rotation, flipHorizontally, flipVertically
     let rotation = 0;
@@ -20,7 +22,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let sharpness = 1.0;
 
     // Loading spinner
-    styleTopControl("#editorSpinner", "2em", "35px", "right", "15px");
+    styleTopControl("#editorSpinner", "2em", "35px", "right", "25px");
     $("#editorContainer").css("display", "block");
     $("#editorToolContainer").css("display", "block");
     $("#editorSpinner").css("display", "block");
@@ -59,10 +61,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
     }
 
     // Title
-    styleTopControl("#editorTitle", "2rem", "23px", "left", "30px");
+    styleTopControl("#editorTitle", "2rem", "23px", "left", "50px");
 
     // First row buttons
-    let sideValue = 8;
+    let sideValue = 8+20;
     const firstRowButtons = [
         { id: "#editorCloseActionButton", fontSize: "3rem", top: "10px" },
         { id: "#editorSaveActionButton", fontSize: "2rem", top: "23px" },
@@ -72,7 +74,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     const firstRowMenuHeightWidth = applyStyles(firstRowButtons, sideValue, "right");
     
     // Second row buttons
-    sideValue = 13;
+    sideValue = 13+20;
     const secondRowButtons = [
         { id: "#editorFlipHorizontalActionButton", fontSize: "2rem", top: "75px" },
         { id: "#editorFlipVerticalActionButton", fontSize: "2rem", top: "75px" },
@@ -82,7 +84,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     const secondRowMenuHeightWidth = applyStyles(secondRowButtons, sideValue, "right");
 
     // Third row buttons
-    sideValue = 10;
+    sideValue = 10+20;
     let thirdRowButtons = [
         { id: "#editorBrightnessActionButton", fontSize: "2rem", top: "130px" }
     ];
@@ -94,7 +96,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // }
 
     // Fourth row buttons
-    sideValue = 10;
+    sideValue = 10+20;
     let fourthRowButtons = [
         { id: "#editorContrastActionButton", fontSize: "2rem", top: "200px" }
     ];
@@ -106,7 +108,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // }
 
     // Fifth row buttons
-    sideValue = 10;
+    sideValue = 10+20;
     let fifthRowButtons = [
         { id: "#editorSaturationActionButton", fontSize: "2rem", top: "270px" }
     ];
@@ -118,7 +120,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // }
 
     // Sixth row buttons
-    sideValue = 10;
+    sideValue = 10+20;
     let sixthRowButtons = [
         { id: "#editorSharpnessActionButton", fontSize: "2rem", top: "340px" }
     ];
@@ -476,8 +478,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
 
-        document.body.style.overflowY = 'hidden';
-
         shashin.printMessageToConsole("--------------",{tag:"editor"});
         shashin.printMessageToConsole("Applying attributes for preview",{tag:"editor"});
         shashin.printMessageToConsole("Rotation: "+rotation,{tag:"editor"});
@@ -616,9 +616,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
             // Draw
             gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-            // Optional readback (expensive)
-            const imageURL = canvas.toDataURL("image/jpeg", 0.2);
-            document.getElementById("editShashinImage").src = imageURL;
+            // Show updated image - expensive
+            document.getElementById("editShashinImage").src = canvas.toDataURL("image/jpeg", 0.2);
         }
 
         if (Util.webglSupport() === true) {
@@ -638,7 +637,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 canvas.height = img.height;
                 setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness);
                 updateTransform(false);
-                document.body.style.overflow = 'auto';
                 enableButtons();
                 $("#editorSpinner").css("display", "none");
                 $("#editorCloseActionButton").css("display", "block");
@@ -656,7 +654,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     // console.log("Total time editing image: "+data.totalTimeMS+"ms");
                     $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
                     updateTransform(false);
-                    document.body.style.overflow = 'auto';
                     enableButtons();
                     $("#editorSpinner").css("display", "none");
                     $("#editorCloseActionButton").css("display", "block");
@@ -1043,5 +1040,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         sharpness = 1.0;
         isFlippedHorizontally = false;
         isFlippedVertically = false;
+
+        document.body.style.overflowY = 'auto';
     }
 }
