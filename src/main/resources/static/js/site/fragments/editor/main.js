@@ -87,11 +87,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
         { id: "#editorBrightnessActionButton", fontSize: "2rem", top: "130px" }
     ];
     let thirdRowMenuHeightWidth = 0;
-    if (Util.isMobile()) {
-        styleBottomControl("#editorBrightnessActionButton", "2em", "215px", "right", "10px", "#editorBrightnessIcon");
-    } else {
+    // if (Util.isMobile()) {
+    //     styleBottomControl("#editorBrightnessActionButton", "2em", "215px", "right", "10px", "#editorBrightnessIcon");
+    // } else {
         thirdRowMenuHeightWidth = applyStyles(thirdRowButtons, sideValue, "right");
-    }
+    // }
 
     // Fourth row buttons
     sideValue = 10;
@@ -99,11 +99,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
         { id: "#editorContrastActionButton", fontSize: "2rem", top: "200px" }
     ];
     let fourthRowMenuHeightWidth = 0;
-    if (Util.isMobile()) {
-        styleBottomControl("#editorContrastActionButton", "2em", "155px", "right", "10px", "#editorContrastIcon");
-    } else {
+    // if (Util.isMobile()) {
+    //     styleBottomControl("#editorContrastActionButton", "2em", "155px", "right", "10px", "#editorContrastIcon");
+    // } else {
         fourthRowMenuHeightWidth = applyStyles(fourthRowButtons, sideValue, "right");
-    }
+    // }
 
     // Fifth row buttons
     sideValue = 10;
@@ -111,11 +111,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
         { id: "#editorSaturationActionButton", fontSize: "2rem", top: "270px" }
     ];
     let fifthRowMenuHeightWidth = 0;
-    if (Util.isMobile()) {
-        styleBottomControl("#editorSaturationActionButton", "2em", "95px", "right", "10px", "#editorSaturationIcon");
-    } else {
+    // if (Util.isMobile()) {
+    //     styleBottomControl("#editorSaturationActionButton", "2em", "95px", "right", "10px", "#editorSaturationIcon");
+    // } else {
         fifthRowMenuHeightWidth = applyStyles(fifthRowButtons, sideValue, "right");
-    }
+    // }
 
     // Sixth row buttons
     sideValue = 10;
@@ -123,11 +123,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
         { id: "#editorSharpnessActionButton", fontSize: "2rem", top: "340px" }
     ];
     let sixthRowMenuHeightWidth = 0;
-    if (Util.isMobile()) {
-        styleBottomControl("#editorSharpnessActionButton", "2em", "35px", "right", "10px", "#editorSharpnessIcon");
-    } else {
+    // if (Util.isMobile()) {
+    //     styleBottomControl("#editorSharpnessActionButton", "2em", "35px", "right", "10px", "#editorSharpnessIcon");
+    // } else {
         sixthRowMenuHeightWidth = applyStyles(sixthRowButtons, sideValue, "right");
-    }
+    // }
 
     const rowWidths = [
         firstRowMenuHeightWidth[0],
@@ -191,14 +191,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
         return [offset, maxTop];
     }
 
-    if (!Util.isMobile()) {
+    // if (!Util.isMobile()) {
         $("#editorBlock").css({
             "position": "absolute",
             "height": (blockHeight - 589) + "px",
             "width": (blockWidth + 5) + "px",
             "right": "0"
         });
-    }
+    // }
 
     showModule();
 
