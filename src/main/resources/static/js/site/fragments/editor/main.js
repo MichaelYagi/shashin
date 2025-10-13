@@ -319,14 +319,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
 
     // Slider adjustment
-    let actionType = "change";
-    if (webglSupport() === true) {
-        actionType = "input";
-    }
-    $("#editorBrightnessAction").off(actionType).on(actionType, function (e) {
+    $("#editorBrightnessAction").off("change").on("change", function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden() || webglSupport() === true) {
+        if (isSpinnerHidden()) {
             let number = $("#editorBrightnessAction").val();
             brightness = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -337,10 +333,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    $("#editorContrastAction").off(actionType).on(actionType, function (e) {
+    $("#editorContrastAction").off("change").on("change", function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden() || webglSupport() === true) {
+        if (isSpinnerHidden()) {
             let number = $("#editorContrastAction").val();
             contrast = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -351,10 +347,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    $("#editorSaturationAction").off(actionType).on(actionType, function (e) {
+    $("#editorSaturationAction").off("change").on("change", function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden() || webglSupport() === true) {
+        if (isSpinnerHidden()) {
             let number = $("#editorSaturationAction").val();
             saturation = parseFloat("1."+number);
             if (number.charAt(0) === "-") {
@@ -365,34 +361,32 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
-    $("#editorSharpnessAction").off(actionType).on(actionType, function (e) {
+    $("#editorSharpnessAction").off("change").on("change", function (e) {
         e.preventDefault();
 
-        if (isSpinnerHidden() || webglSupport() === true) {
+        if (isSpinnerHidden()) {
             let number = $("#editorSharpnessAction").val();
             sharpness = parseFloat(number+".0");
             applyAttributes();
         }
     });
 
-    function webglSupport() {
+    function webglSupport () {
         try {
-            return !!window.WebGLRenderingContext;
+            const canvas = document.createElement('canvas');
+            return !!window.WebGLRenderingContext &&
+                (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
         } catch(e) {
             return false;
         }
     }
 
     function applyAttributes() {
-        $("#editorSpinner").css("display", "none");
-        $("#editorCloseActionButton").css("display", "block");
+        disableButtons();
+        $("#editorSpinner").css("display", "block");
+        $("#editorCloseActionButton").css("display", "none");
 
-        if (webglSupport() === false) {
-            disableButtons();
-            $("#editorSpinner").css("display", "block");
-            $("#editorCloseActionButton").css("display", "none");
-            document.body.style.overflowY = 'hidden';
-        }
+        document.body.style.overflowY = 'hidden';
 
         shashin.printMessageToConsole("--------------",{tag:"editor"});
         shashin.printMessageToConsole("Applying attributes for preview",{tag:"editor"});
@@ -549,6 +543,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     shashin.printMessageToConsole("Contrast editing time: " + data.contrastProcessingMS + "ms", {tag: "editor"});
                     shashin.printMessageToConsole("Brightness editing time: " + data.brightnessProcessingMS + "ms", {tag: "editor"});
                     shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
+                    // console.log("Total time editing image: "+data.totalTimeMS+"ms");
                     $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
                     updateTransform(false);
                     document.body.style.overflow = 'auto';
@@ -574,6 +569,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 canvas.height = img.height;
                 setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness);
                 updateTransform(false);
+                document.body.style.overflow = 'auto';
+                enableButtons();
+                $("#editorSpinner").css("display", "none");
+                $("#editorCloseActionButton").css("display", "block");
             };
         }
     }
