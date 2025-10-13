@@ -6,10 +6,10 @@
 <div id="editorContainer" class="editorbox" style="display: none;z-index: 999999;">
     <div id="editorBlock" style="display: none;"></div>
     <div id="editorToolContainer" style="display: none;">
-        <span id="editorTitle"><span style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;" th:text="#{main.pages.lg.plugins.editor.title}"></span></span>
-        <span type="button" id="editorSaveActionButton" th:title="#{main.modal.save}"><span class="bi-floppy" id="editorSaveAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
+        <span id="editorTitle"><span style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span></span>
+        <span type="button" id="editorSaveActionButton" th:title="#{main.modal.save}"><span class="bi-floppy" id="editorSaveAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
         <span id="editorBrightnessActionButton" th:title="#{main.pages.lg.plugins.editor.brightness}">
-            <span type="button" class="bi-brightness-high" id="editorBrightnessIcon" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px; margin-left: 114px;"></span>
+            <span type="button" class="bi-brightness-high" id="editorBrightnessIcon" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;margin-left: 114px;"></span>
             <br>
             <div class="range-ticks d-flex justify-content-between">
                 <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="brightnessTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
@@ -18,7 +18,7 @@
             <input type="range" class="form-range" id="editorBrightnessAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
         </span>
         <span id="editorContrastActionButton" th:title="#{main.pages.lg.plugins.editor.contrast}">
-            <span type="button" class="bi-circle-half" id="editorContrastIcon" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px; margin-left: 114px;"></span>
+            <span type="button" class="bi-circle-half" id="editorContrastIcon" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;margin-left: 114px;"></span>
             <br>
             <div class="range-ticks d-flex justify-content-between">
                 <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="contrastTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
@@ -27,7 +27,7 @@
             <input type="range" class="form-range" id="editorContrastAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
         </span>
         <span id="editorSaturationActionButton" th:title="#{main.pages.lg.plugins.editor.saturation}">
-            <span type="button" class="bi-droplet-half" id="editorSaturationIcon" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px; margin-left: 114px;"></span>
+            <span type="button" class="bi-droplet-half" id="editorSaturationIcon" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;margin-left: 114px;"></span>
             <br>
             <div class="range-ticks d-flex justify-content-between">
                 <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="saturationTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
@@ -36,7 +36,7 @@
             <input type="range" class="form-range" id="editorSaturationAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
         </span>
         <span id="editorSharpnessActionButton" th:title="#{main.pages.lg.plugins.editor.sharpness}">
-            <span type="button" class="bi-gem" id="editorSharpnessIcon" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px; margin-left: 114px;"></span>
+            <span type="button" class="bi-gem" id="editorSharpnessIcon" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;margin-left: 114px;"></span>
             <br>
             <div class="range-ticks d-flex justify-content-between">
                 <span id="sharpnessTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
@@ -44,14 +44,14 @@
             </div>
             <input type="range" class="form-range" id="editorSharpnessAction" min="1" max="9" style="width: 260px; padding-bottom: 30px;">
         </span>
-        <span type="button" id="editorRestoreActionButton" th:title="#{main.pages.map.modal.restore}"><span class="bi-clock-history" id="editorRestoreAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
-        <span type="button" id="editorResetActionButton" th:title="#{main.pages.map.modal.reset}"><span class="bi-skip-backward" id="editorResetAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
-        <span type="button" id="editorRotateRightActionButton" th:title="#{main.pages.lg.plugins.editor.rotateright}"><span class="bi-arrow-clockwise" id="editorRotateRightAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
-        <span type="button" id="editorRotateLeftActionButton" th:title="#{main.pages.lg.plugins.editor.rotateleft}"><span class="bi-arrow-counterclockwise" id="editorRotateLeftAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
-        <span type="button" id="editorFlipHorizontalActionButton" th:title="#{main.pages.lg.plugins.editor.flipx}"><span class="bi-symmetry-horizontal" id="editorFlipHorizontalAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
-        <span type="button" id="editorFlipVerticalActionButton" th:title="#{main.pages.lg.plugins.editor.flipy}"><span class="bi-symmetry-vertical" id="editorFlipVerticalAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
-        <span type="button" id="editorCloseActionButton" th:title="#{main.modal.cancel}"><span class="bi-x" id="editorCloseAction" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;"></span></span>
-        <div class="spinner-border" id="editorSpinner" role="status" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;display: none;">
+        <span type="button" id="editorRestoreActionButton" th:title="#{main.pages.map.modal.restore}"><span class="bi-clock-history" id="editorRestoreAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
+        <span type="button" id="editorResetActionButton" th:title="#{main.pages.map.modal.reset}"><span class="bi-skip-backward" id="editorResetAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
+        <span type="button" id="editorRotateRightActionButton" th:title="#{main.pages.lg.plugins.editor.rotateright}"><span class="bi-arrow-clockwise" id="editorRotateRightAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
+        <span type="button" id="editorRotateLeftActionButton" th:title="#{main.pages.lg.plugins.editor.rotateleft}"><span class="bi-arrow-counterclockwise" id="editorRotateLeftAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
+        <span type="button" id="editorFlipHorizontalActionButton" th:title="#{main.pages.lg.plugins.editor.flipx}"><span class="bi-symmetry-horizontal" id="editorFlipHorizontalAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
+        <span type="button" id="editorFlipVerticalActionButton" th:title="#{main.pages.lg.plugins.editor.flipy}"><span class="bi-symmetry-vertical" id="editorFlipVerticalAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
+        <span type="button" id="editorCloseActionButton" th:title="#{main.modal.cancel}"><span class="bi-x" id="editorCloseAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
+        <div class="spinner-border" id="editorSpinner" role="status" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;display: none;">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
