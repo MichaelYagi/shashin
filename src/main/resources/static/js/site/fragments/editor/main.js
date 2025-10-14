@@ -910,6 +910,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         $("#contrastTick").css("display", "none");
         $("#saturationTick").css("display", "none");
         $("#sharpnessTick").css("display", "none");
+        
         const swapFlip = isFlippedVertically;
         isFlippedVertically = isFlippedHorizontally;
         isFlippedHorizontally = swapFlip;
