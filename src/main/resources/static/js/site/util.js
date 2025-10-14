@@ -1967,13 +1967,20 @@ class Util {
             $(".qualityLabel").show();
             $(".qualityDetails").text(metadata.quality);
         }
-        if (metadata.sharpness !== "1.0" ||
+        if (metadata.sharpness !== null &&
+            metadata.brightness !== null &&
+            metadata.contrast !== null &&
+            metadata.saturation !== null &&
+            metadata.rotation !== null &&
+            metadata.flipHorizontally !== null &&
+            metadata.flipVertically !== null &&
+            (metadata.sharpness !== "1.0" ||
             metadata.brightness !== "1.0" ||
             metadata.contrast !== "1.0" ||
             metadata.saturation !== "1.0" ||
             metadata.rotation !== 0 ||
-            metadata.flipHorizontally !== false ||
-            metadata.flipVertically !== false
+            metadata.flipHorizontally === true ||
+            metadata.flipVertically === true)
         ) {
             $(".editedLabel").show();
         }
