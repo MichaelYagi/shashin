@@ -1223,6 +1223,14 @@ class TimelineController: BaseController() {
                                 )
                                 metadataCopy = metadataProcessing.populateMetadata()
 
+                                metadataCopy.setRotation(0)
+                                metadataCopy.setFlipVertically(false)
+                                metadataCopy.setFlipHorizontally(false)
+                                metadataCopy.setBrightness("1.0")
+                                metadataCopy.setContrast("1.0")
+                                metadataCopy.setSaturation("1.0")
+                                metadataCopy.setSharpness("1.0")
+
                                 if (!metadataCopy.getLat().isNullOrBlank() && !metadataCopy.getLng().isNullOrBlank()) {
                                     val lat = metadataCopy.getLat().toString()
                                     val lng = metadataCopy.getLng().toString()
