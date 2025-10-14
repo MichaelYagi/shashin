@@ -3402,12 +3402,8 @@ class TimelineController: BaseController() {
                 if (!restoreImages) {
                     var manualRestore = true
 
-                    // Normalize - This is the same as no orientation change
-                    if (flipX && flipY && rotation == 180) {
-                        flipX = false
-                        flipY = false
-                        rotation = 0
-                    } else if (flipX && flipY && rotation == 0) { // Normalize - This is the same as upside down
+                    // FlipX + FlipY Normalizations
+                    if (flipX && flipY && rotation == 0) {
                         flipX = false
                         flipY = false
                         rotation = 180
@@ -3415,6 +3411,10 @@ class TimelineController: BaseController() {
                         flipX = false
                         flipY = false
                         rotation = 270
+                    } else if (flipX && flipY && rotation == 180) {
+                        flipX = false
+                        flipY = false
+                        rotation = 0
                     } else if (flipX && flipY && rotation == 270) {
                         flipX = false
                         flipY = false
