@@ -796,6 +796,19 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
             showModule();
 
+            if (brightness === 1.0) {
+                $("#brightnessTick").css("display", "none");
+            }
+            if (contrast === 1.0) {
+                $("#contrastTick").css("display", "none");
+            }
+            if (saturation === 1.0) {
+                $("#saturationTick").css("display", "none");
+            }
+            if (sharpness === 1.0) {
+                $("#sharpnessTick").css("display", "none");
+            }
+
             $("#editorContainer").css({
                 "width": "100%",
                 "height": "100%",
@@ -839,6 +852,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorSaturationAction").val(0);
             sharpness = 1.0;
             $("#editorSharpnessAction").val(0);
+
+            $("#brightnessTick").css("display", "none");
+            $("#contrastTick").css("display", "none");
+            $("#saturationTick").css("display", "none");
+            $("#sharpnessTick").css("display", "none");
 
             shashin.printMessageToConsole("--------------",{tag:"editor"});
             shashin.printMessageToConsole("Restoring attributes",{tag:"editor"});
@@ -906,11 +924,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
-        $("#brightnessTick").css("display", "none");
-        $("#contrastTick").css("display", "none");
-        $("#saturationTick").css("display", "none");
-        $("#sharpnessTick").css("display", "none");
-        
+
         const swapFlip = isFlippedVertically;
         isFlippedVertically = isFlippedHorizontally;
         isFlippedHorizontally = swapFlip;
