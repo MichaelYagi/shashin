@@ -373,9 +373,16 @@
                         mediaContent.downloadUrl.includes(metadataId)
                     ) {
                         mediaContentList[lightGalleryIndex].src = mediaContentList[lightGalleryIndex].src + "?v=" + uuidv4();
+                        mediaContentList[lightGalleryIndex].lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
+                        mediaContentList[lightGalleryIndex].width = metadata.originalImageWidth;
+                        mediaContentList[lightGalleryIndex].height = metadata.originalImageHeight;
+
                         const mediaLinkId = "#mediaLink"+metadataId;
                         if ($(mediaLinkId).length > 0) {
                             $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + uuidv4());
+                            $(mediaLinkId).attr("data-lg-size", metadata.originalImageWidth+"-"+metadata.originalImageHeight);
+                            $(mediaLinkId).attr("data-width", metadata.originalImageWidth);
+                            $(mediaLinkId).attr("data-height", metadata.originalImageHeight);
                             if (parseInt($("img.lg-object.lg-image").attr("data-index")) === lightGalleryIndex) {
                                 $("img.lg-object.lg-image").attr("src", ($("img.lg-object.lg-image").attr("src") + "?v=" + uuidv4()));
                             }
