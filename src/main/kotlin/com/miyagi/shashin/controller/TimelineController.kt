@@ -3407,7 +3407,7 @@ class TimelineController: BaseController() {
                         flipX = false
                         flipY = false
                         rotation = 0
-                    } else if (flipX && flipY && rotation == 0) { // Normalize - This is the same as upside done
+                    } else if (flipX && flipY && rotation == 0) { // Normalize - This is the same as upside down
                         flipX = false
                         flipY = false
                         rotation = 180
