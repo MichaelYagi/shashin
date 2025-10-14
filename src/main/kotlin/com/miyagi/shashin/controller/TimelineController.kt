@@ -3378,9 +3378,9 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("sharpness")
         ) {
             val metadataId = metadataMap["metadataId"] as String
-            val rotation = metadataMap["rotation"] as Int
-            val flipX = metadataMap["flipX"] as Boolean
-            val flipY = metadataMap["flipY"] as Boolean
+            var rotation = metadataMap["rotation"] as Int
+            var flipX = metadataMap["flipX"] as Boolean
+            var flipY = metadataMap["flipY"] as Boolean
             val brightness = metadataMap["brightness"].toString().toDouble()
             val contrast = metadataMap["contrast"].toString().toDouble()
             val saturation = metadataMap["saturation"].toString().toDouble()
@@ -3401,6 +3401,12 @@ class TimelineController: BaseController() {
 
                 if (!restoreImages) {
                     var manualRestore = true
+
+                    if (flipX && flipY && rotation == 180) {
+                        flipX = false
+                        flipY = false
+                        rotation = 0
+                    }
 
                     if (flipX) {
                         metadata.setFlipHorizontally(true)
