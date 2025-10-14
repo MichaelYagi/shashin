@@ -259,10 +259,13 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 )
                 if (tnFile != null) {
                     Thumbnails.of(img)
-                        .size(metadataObj.getOriginalImageWidth()!!, metadataObj.getOriginalImageHeight()!!)
+                        .size(img.width, img.height)
                         .outputQuality(0.4)
                         .toFile(tnFile)
                 }
+
+                metadataObj.setOriginalImageWidth(img.width)
+                metadataObj.setOriginalImageHeight(img.height)
                 metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
             }
 
