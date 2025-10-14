@@ -159,20 +159,20 @@ function initializeEditor(editMetadataObj, lgIndex) {
         });
     }
 
-    function styleBottomControl(id, fontSize, bottom, side, sideValue, iconId) {
-        $(id).css({
-            "font-size": fontSize,
-            "color": "#FFFFFF",
-            "z-index": 99998,
-            "position": "absolute",
-            "bottom": bottom,
-            [side]: sideValue
-        });
-
-        $(iconId).css({
-            "z-index": 999999
-        });
-    }
+    // function styleBottomControl(id, fontSize, bottom, side, sideValue, iconId) {
+    //     $(id).css({
+    //         "font-size": fontSize,
+    //         "color": "#FFFFFF",
+    //         "z-index": 99998,
+    //         "position": "absolute",
+    //         "bottom": bottom,
+    //         [side]: sideValue
+    //     });
+    //
+    //     $(iconId).css({
+    //         "z-index": 999999
+    //     });
+    // }
 
     function applyStyles(buttons, startValue, side) {
         let offset = startValue;
@@ -906,6 +906,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
         disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
+        $("#brightnessTick").css("display", "none");
+        $("#contrastTick").css("display", "none");
+        $("#saturationTick").css("display", "none");
+        $("#sharpnessTick").css("display", "none");
         const swapFlip = isFlippedVertically;
         isFlippedVertically = isFlippedHorizontally;
         isFlippedHorizontally = swapFlip;
