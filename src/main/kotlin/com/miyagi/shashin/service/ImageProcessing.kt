@@ -264,10 +264,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         .toFile(tnFile)
                 }
 
-                metadataObj.setOriginalImageWidth(img.width)
-                metadataObj.setOriginalImageHeight(img.height)
                 metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
             }
+
+            metadataObj.setOriginalImageWidth(img.width)
+            metadataObj.setOriginalImageHeight(img.height)
 
             // Gallery small thumbnails
             thumbnailFileStr =
