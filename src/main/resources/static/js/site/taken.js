@@ -162,6 +162,7 @@ class Taken {
                     shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
                 }
 
+                $('a').attr('draggable', 'false');
                 this.rendering = false;
                 $("#spinner").css("display", "none");
             } else {

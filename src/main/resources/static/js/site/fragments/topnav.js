@@ -17,6 +17,11 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         await Util.getNotifications(notificationAlerts, timezone, locale);
     }
 
+    // Disable draggable on html
+    if (activePage === "album" || activePage === "recent" || activePage === "modified" || activePage === "taken" || activePage === "accessed") {
+        $('a').attr('draggable', 'false');
+    }
+
     setTimeout(function () {
         const http = new Http("check compreface status");
         http.ajax("get", "/status/compreface").then(function (data) {
