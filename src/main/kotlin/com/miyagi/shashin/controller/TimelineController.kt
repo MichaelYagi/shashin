@@ -49,6 +49,7 @@ import org.springframework.context.MessageSource
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -3223,7 +3224,6 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @ResponseBody
     fun downloadBatchMetadata(model: Model, @RequestParam paramMap: Map<String, String>): ResponseEntity<InputStreamResource>? {
-
         if (paramMap.containsKey("batchMetadataIds")) {
             val idArray: Array<String>? = mapper.readValue(paramMap["batchMetadataIds"], object : TypeReference<Array<String>>() {})
             if (!idArray.isNullOrEmpty()) {
@@ -3231,35 +3231,117 @@ class TimelineController: BaseController() {
 
                 val tempDownloadDir = Files.createTempDirectory("shashin_download")
 
+                var tempFile: File? = null
+
                 for (metadata in metadatas) {
-                    val tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
-                    if (tempFile.createNewFile()) {
-                        Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                    var imageFile = File(metadata.getPath()!!)
+                    if (imageFile.exists()) {
+                        val extension = metadata.getPath()?.substringAfterLast('.', "")
+
+                        var bufferedImage: BufferedImage = ImageIO.read(imageFile)
+
+                        val sharpness = if (metadata.getSharpness() == null) 1.0 else metadata.getSharpness().toString().toDouble()
+                        val contrast = if (metadata.getContrast() == null) 1.0 else metadata.getContrast().toString().toDouble()
+                        val saturation = if (metadata.getSaturation() == null) 1.0 else metadata.getSaturation().toString().toDouble()
+                        val brightness = if (metadata.getBrightness() == null) 1.0 else metadata.getBrightness().toString().toDouble()
+                        val rotation = if (metadata.getRotation() == null) 0 else metadata.getRotation()?.toInt()
+                        val flipX = if (metadata.getFlipHorizontally() == null) false else metadata.getFlipHorizontally() as Boolean
+                        val flipY = if (metadata.getFlipVertically() == null) false else metadata.getFlipVertically() as Boolean
+
+                        var default = true
+
+                        // Order important
+                        if (flipX) {
+                            logger.log(Level.INFO, "Adjusting flipX: " + flipX)
+                            bufferedImage = ImageProcessing.flipHorizontally(bufferedImage)
+                            default = false
+                        }
+
+                        if (flipY) {
+                            logger.log(Level.INFO, "Adjusting flipY: " + flipY)
+                            bufferedImage = ImageProcessing.flipVertically(bufferedImage)
+                            default = false
+                        }
+
+                        if (brightness in 0.1..1.9 && brightness != 1.0) {
+                            logger.log(Level.INFO, "Adjusting brightness: " + brightness)
+                            bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
+                            default = false
+                        }
+
+                        if (contrast in 0.1..1.9 && contrast != 1.0) {
+                            logger.log(Level.INFO, "Adjusting contrast: " + contrast)
+                            bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
+                            default = false
+                        }
+
+                        if (saturation in 0.1..1.9 && saturation != 1.0) {
+                            logger.log(Level.INFO, "Adjusting saturation: " + saturation)
+                            bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
+                            default = false
+                        }
+
+                        if (sharpness in 1.0..10.0 && sharpness != 1.0) {
+                            logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
+                            bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
+                            default = false
+                        }
+
+                        if (rotation != null && rotation > 0) {
+                            logger.log(Level.INFO, "Adjusting rotation: " + rotation)
+                            bufferedImage = ImageProcessing.rotateImage(bufferedImage, rotation.toDouble())
+                            default = false
+                        }
+
+                        tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                        if (default) {
+                            tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                            if (tempFile.createNewFile()) {
+                                Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                            }
+                        } else {
+                            ImageIO.write(bufferedImage, extension, tempFile)
+                        }
+                    } else {
+                        tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                        if (tempFile.createNewFile()) {
+                            Files.copy(
+                                Path(metadata.getPath()!!),
+                                tempFile.toPath(),
+                                StandardCopyOption.REPLACE_EXISTING
+                            )
+                        }
                     }
                 }
 
                 if (tempDownloadDir.isDirectory() && tempDownloadDir.toList().isNotEmpty()) {
-                    val tempDir = tempDownloadDir.toFile()
-                    val outputZipFile = FileUtils.zipFolder(tempDir, "shashin_download")
+                    try {
+                        val tempDir = tempDownloadDir.toFile()
+                        val outputZipFile = FileUtils.zipFolder(tempDir, "shashin_download")
 
-                    if (outputZipFile != null) {
-                        FileUtils.deleteDirectory(tempDir)
+                        if (outputZipFile != null) {
+                            FileUtils.deleteDirectory(tempDir)
 
-                        val headers = HttpHeaders()
-                        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
-                        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
-                        headers.add("Pragma", "no-cache")
-                        headers.add("Expires", "0")
-                        headers.add("Set-Cookie", "fileDownload=true; path=/")
+                            val headers = HttpHeaders()
+                            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
+                            headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                            headers.add("Pragma", "no-cache")
+                            headers.add("Expires", "0")
+                            headers.add("Set-Cookie", "fileDownload=true; path=/")
 
-                        val resource = InputStreamResource(FileInputStream(outputZipFile))
-                        val contentLength = outputZipFile.length()
+                            val resource = InputStreamResource(FileInputStream(outputZipFile))
+                            val contentLength = outputZipFile.length()
 
-                        return ResponseEntity.ok()
-                            .headers(headers)
-                            .contentLength(contentLength)
-                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                            .body(resource)
+                            return ResponseEntity.ok()
+                                .headers(headers)
+                                .contentLength(contentLength)
+                                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                                .body(resource)
+                        }
+                    } finally {
+                        if (tempFile != null && tempFile.exists()) {
+                            tempFile.delete()
+                        }
                     }
                 }
             }
