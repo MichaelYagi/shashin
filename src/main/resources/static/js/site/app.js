@@ -128,14 +128,26 @@
         metadata.lastAccessedByDetails = "";
         metadata.uploadedByDetails = "";
         metadata.baseUrl = "";
-
-        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap") && data.hasOwnProperty("lastAccessedByDetails") && data.hasOwnProperty("uploadedByDetails") && data.hasOwnProperty("baseUrl")) {
+        metadata.fileSize = "";
+        metadata.sidecarSize = "";
+console.log(data.sidecarSize)
+        if (data.hasOwnProperty("metadata") &&
+            data.hasOwnProperty("keywordList") &&
+            data.hasOwnProperty("albumMap") &&
+            data.hasOwnProperty("lastAccessedByDetails") &&
+            data.hasOwnProperty("uploadedByDetails") &&
+            data.hasOwnProperty("baseUrl") &&
+            data.hasOwnProperty("fileSize") &&
+            data.hasOwnProperty("sidecarSize")
+        ) {
             metadata = data.metadata;
             metadata.keywords = data.keywordList;
             metadata.albumMap = data.albumMap;
             metadata.lastAccessedByDetails = data.lastAccessedByDetails;
             metadata.uploadedByDetails = data.uploadedByDetails;
             metadata.baseUrl = data.baseUrl;
+            metadata.fileSize = data.fileSize;
+            metadata.sidecarSize = data.sidecarSize;
         }
 
         return metadata;
