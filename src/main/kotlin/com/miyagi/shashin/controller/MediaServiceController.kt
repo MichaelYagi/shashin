@@ -967,13 +967,13 @@ class MediaServiceController {
                     if (imageFile.exists()) {
                         var bufferedImage: BufferedImage = ImageIO.read(imageFile)
 
-                        val sharpness = metadataObj.get().getSharpness().toString().toDouble()
-                        val contrast = metadataObj.get().getContrast().toString().toDouble()
-                        val saturation = metadataObj.get().getSaturation().toString().toDouble()
-                        val brightness = metadataObj.get().getBrightness().toString().toDouble()
-                        val rotation = metadataObj.get().getRotation()?.toInt()
-                        val flipX = metadataObj.get().getFlipHorizontally() as Boolean
-                        val flipY = metadataObj.get().getFlipVertically() as Boolean
+                        val sharpness = if (metadata.getSharpness() == null) 1.0 else metadata.getSharpness().toString().toDouble()
+                        val contrast = if (metadata.getContrast() == null) 1.0 else metadata.getContrast().toString().toDouble()
+                        val saturation = if (metadata.getSaturation() == null) 1.0 else metadata.getSaturation().toString().toDouble()
+                        val brightness = if (metadata.getBrightness() == null) 1.0 else metadata.getBrightness().toString().toDouble()
+                        val rotation = if (metadata.getRotation() == null) 0 else metadata.getRotation()?.toInt()
+                        val flipX = if (metadata.getFlipHorizontally() == null) false else metadata.getFlipHorizontally() as Boolean
+                        val flipY = if (metadata.getFlipVertically() == null) false else metadata.getFlipVertically() as Boolean
 
                         var default = true
 
