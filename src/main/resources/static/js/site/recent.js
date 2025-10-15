@@ -142,6 +142,7 @@ class Recent {
                     }
                 }
 
+                $('a').attr('draggable', 'false');
                 this.rendering = false;
                 $("#spinner").css("display", "none");
             } else {

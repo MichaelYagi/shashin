@@ -220,6 +220,7 @@
                             shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
                         }
 
+                        $('a').attr('draggable', 'false');
                         $("#spinner").css("display","none");
                         albumSettings.rendering = false;
                     } else {
