@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.FileStats
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.*
@@ -2896,6 +2897,10 @@ class TimelineController: BaseController() {
 
         response["shortPlaceName"] = null
 
+        response["fileSize"] = null
+
+        response["sidecarSize"] = null
+
         var scheme = request.getHeader("X-Forwarded-Proto")
         if (scheme == null) {
             scheme = request.scheme // Fallback if not behind a proxy
@@ -2957,6 +2962,11 @@ class TimelineController: BaseController() {
                         response["lastAccessedByDetails"] = accessClientIP + accessInfoString
                     }
                 }
+
+                val fileStats = FileStats()
+                val imageFileStats = fileStats.getMetadataFileStats(metadataObj)
+                response["fileSize"] = imageFileStats["fileSize"]
+                response["sidecarSize"] = imageFileStats["sidecarSize"]
             }
             response["metadata"] = metadataObjCopy
 

@@ -1808,7 +1808,11 @@ class Util {
         $(".lastViewedByDetails").html("");
         $(".albumsDetails").html("");
         $(".uploadedByDetails").html("");
+        $(".filesizeDetails").html("");
+        $(".sidecarFilesizeDetails").html("");
 
+        $(".filesizeLabel").hide();
+        $(".sidecarFilesizeLabel").hide();
         $(".pathLabel").hide();
         $(".descriptionLabel").hide();
         $(".timelineLink").hide();
@@ -1895,6 +1899,12 @@ class Util {
         if (metadata.path != null) {
             $(".pathLabel").show();
             $(".pathDetails").text(metadata.path);
+
+            $(".filesizeLabel").show();
+            $(".filesizeDetails").text(metadata.fileSize);
+
+            $(".sidecarFilesizeLabel").show();
+            $(".sidecarFilesizeDetails").text(metadata.sidecarSize);
         }
         if (metadata.description != null) {
             $(".descriptionLabel").show();

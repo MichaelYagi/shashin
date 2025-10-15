@@ -8,8 +8,13 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Service
 import org.springframework.ui.Model
+import java.io.File
+import java.text.DecimalFormat
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.collections.set
+import kotlin.math.log10
+import kotlin.math.pow
 
 @Service
 @CacheConfig(cacheNames=["filestats"])
@@ -92,5 +97,80 @@ class FileStats {
         logger.log(Level.INFO, "Sidecar file stats elapsed time:" + metricsUtil.getTotalElapsedTime())
 
         return response
+    }
+
+    @Cacheable("getMetadataFileStats")
+    fun getMetadataFileStats(metadata: com.miyagi.shashin.model.Metadata): MutableMap<String, Any?> {
+        val metricsUtil = MetricsUtil()
+        metricsUtil.start("metadatafilestats")
+        val response = mutableMapOf<String, Any?>()
+
+        response["fileSizeBytes"] = null
+        response["fileSize"] = null
+        response["sidecarSize"] = null
+
+        if (metadata.getPath() != null) {
+            val imageFile = File(metadata.getPath()!!)
+            if (imageFile.exists()) {
+                var fileSize = imageFile.length()
+                response["fileSizeBytes"] = fileSize
+                response["fileSize"] = formatFileSize(fileSize)
+            }
+
+            var thumbnailSmallFileSize = 0L
+            var thumbnailCenteredFileSize = 0L
+            var thumbnailMapMarkerFileSize = 0L
+            var thumbnailLargeFileSize = 0L
+
+            val basePath = metadata.getThumbnailPathSmall()?.substringBefore("_225.")
+            val extension = metadata.getThumbnailPathSmall()?.substringAfterLast('.') // eg png
+
+            // 225
+            val thumbnailSmallPath = metadata.getThumbnailPathSmall()
+            if (thumbnailSmallPath != null) {
+                val thumbnailSmallFile = File(thumbnailSmallPath)
+                if (thumbnailSmallFile.exists()) {
+                    thumbnailSmallFileSize = thumbnailSmallFile.length()
+                }
+            }
+
+            // centered
+            val centeredFile = File(basePath+"_centered."+extension)
+            if (centeredFile.exists()) {
+                thumbnailCenteredFileSize = centeredFile.length()
+            }
+
+            // mapmarker
+            val mapmarkerFile = File(basePath+"_mapmarker."+extension)
+            if (mapmarkerFile.exists()) {
+                thumbnailMapMarkerFileSize = mapmarkerFile.length()
+            }
+
+            // original
+            val originalFile = File(basePath+"_original."+extension)
+            if (originalFile.exists()) {
+                thumbnailLargeFileSize = originalFile.length()
+            }
+
+            var totalMetadataSidecarSize = thumbnailSmallFileSize + thumbnailCenteredFileSize + thumbnailMapMarkerFileSize + thumbnailLargeFileSize
+            response["sidecarSize"] = formatFileSize(totalMetadataSidecarSize)
+        }
+
+        metricsUtil.end()
+
+        logger.log(Level.INFO, "getMetadataFileStats elapsed time:" + metricsUtil.getTotalElapsedTime())
+
+        return response
+    }
+
+    fun formatFileSize(bytes: Long): String {
+        if (bytes <= 0) return "0 B"
+
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (log10(bytes.toDouble()) / log10(1024.0)).toInt()
+        val size = bytes / 1024.0.pow(digitGroups.toDouble())
+
+        val df = DecimalFormat("#,##0.00")
+        return "${df.format(size)} ${units[digitGroups]}"
     }
 }
