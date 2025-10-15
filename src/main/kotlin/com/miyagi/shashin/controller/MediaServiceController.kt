@@ -10,6 +10,7 @@ import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -43,11 +44,14 @@ import net.coobird.thumbnailator.Thumbnails
 import org.springframework.context.MessageSource
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
 import java.io.IOException
 import java.net.URL
+import java.nio.file.Path
 import javax.imageio.ImageIO
+import kotlin.collections.set
 import kotlin.text.split
 
 @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
@@ -913,25 +917,25 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/image/original/{metadataId}","/api/v1/image/original/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getPathImage(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource> {
-        return getImageFactory(model, request, response, metadataId, false, locale, true)
+    fun getPathImage(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<StreamingResponseBody> {
+        return getImageFactory(model, request, response, metadataId, false, locale, true, false)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getImage(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource> {
-        return getImageFactory(model, request, response, metadataId, false, locale)
+    fun getImage(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<StreamingResponseBody> {
+        return getImageFactory(model, request, response, metadataId, false, locale, false, false)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}/download"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getImageDownload(model: Model, response: HttpServletResponse,request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource> {
-        return getImageFactory(model, request, response, metadataId, true, locale)
+    fun getImageDownload(model: Model, response: HttpServletResponse,request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<StreamingResponseBody> {
+        return getImageFactory(model, request, response, metadataId, true, locale, false, true)
     }
 
-    private fun getImageFactory(model: Model,request: HttpServletRequest, response: HttpServletResponse, metadataId: String?, attachFile: Boolean = false, locale: Locale, forcePathImage: Boolean = false): ResponseEntity<FileSystemResource> {
+    private fun getImageFactory(model: Model,request: HttpServletRequest, response: HttpServletResponse, metadataId: String?, attachFile: Boolean = false, locale: Locale, forcePathImage: Boolean = false, isDownload: Boolean = false): ResponseEntity<StreamingResponseBody> {
         val metadataObj = metadataRepository.findById(metadataId!!)
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
@@ -952,10 +956,89 @@ class MediaServiceController {
             metadataRepository.save(metadata)
 
             // Check if an edited file
+            var tempFile: File? = null
             var path = metadataObj.get().getPath()!!
             var isEdited = false
             if (!forcePathImage && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
-                path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
+                if (isDownload) {
+                    val extension = path.substringAfterLast('.', "")
+
+                    var imageFile = File(path)
+                    if (imageFile.exists()) {
+                        var bufferedImage: BufferedImage = ImageIO.read(imageFile)
+
+                        val sharpness = metadataObj.get().getSharpness().toString().toDouble()
+                        val contrast = metadataObj.get().getContrast().toString().toDouble()
+                        val saturation = metadataObj.get().getSaturation().toString().toDouble()
+                        val brightness = metadataObj.get().getBrightness().toString().toDouble()
+                        val rotation = metadataObj.get().getRotation()?.toInt()
+                        val flipX = metadataObj.get().getFlipHorizontally() as Boolean
+                        val flipY = metadataObj.get().getFlipVertically() as Boolean
+
+                        var default = true
+
+                        // Order important
+                        if (flipX) {
+                            logger.log(Level.INFO, "Adjusting flipX: " + flipX)
+                            bufferedImage = ImageProcessing.flipHorizontally(bufferedImage)
+                            default = false
+                        }
+
+                        if (flipY) {
+                            logger.log(Level.INFO, "Adjusting flipY: " + flipY)
+                            bufferedImage = ImageProcessing.flipVertically(bufferedImage)
+                            default = false
+                        }
+
+                        if (brightness in 0.1..1.9 && brightness != 1.0) {
+                            logger.log(Level.INFO, "Adjusting brightness: " + brightness)
+                            bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
+                            default = false
+                        }
+
+                        if (contrast in 0.1..1.9 && contrast != 1.0) {
+                            logger.log(Level.INFO, "Adjusting contrast: " + contrast)
+                            bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
+                            default = false
+                        }
+
+                        if (saturation in 0.1..1.9 && saturation != 1.0) {
+                            logger.log(Level.INFO, "Adjusting saturation: " + saturation)
+                            bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
+                            default = false
+                        }
+
+                        if (sharpness in 1.0..10.0 && sharpness != 1.0) {
+                            logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
+                            bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
+                            default = false
+                        }
+
+                        if (rotation != null && rotation > 0) {
+                            logger.log(Level.INFO, "Adjusting rotation: " + rotation)
+                            bufferedImage = ImageProcessing.rotateImage(bufferedImage, rotation.toDouble())
+                            default = false
+                        }
+
+                        if (default) {
+                            path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/", ""))
+                        } else {
+                            tempFile = kotlin.io.path.createTempFile(
+                                directory = Paths.get(System.getProperty("java.io.tmpdir")),
+                                prefix = metadataObj.get().getFileName(),
+                                suffix = ".${extension}"
+                            ).toFile()
+                            ImageIO.write(bufferedImage, extension, tempFile)
+
+                            path = tempFile.path
+                        }
+                    } else {
+                        path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/", ""))
+                    }
+                } else {
+                    path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/", ""))
+                }
+
                 isEdited = true
             }
 
@@ -965,7 +1048,7 @@ class MediaServiceController {
 
             // If raw or edited, use metadata image
             if (metadata.getExpectedExtension() in FileUtils.allowableRawImageFiles()) {
-                path = metadata.getThumbnailPathSmall()!!.replace("_225.jpg","_original.jpg")
+                path = metadata.getThumbnailPathSmall()!!.replace("_225.jpg", "_original.jpg")
                 resource = FileSystemResource(path)
                 type = "image/jpg"
             }
@@ -984,12 +1067,29 @@ class MediaServiceController {
                     var filename = resource.filename.replace(validFileNameRegex, "_")
 
                     if (isEdited && filename.contains("_original")) {
-                        filename = filename.replace("_original","_edited")
+                        filename = filename.replace("_original", "_edited")
                     }
                     response.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
+
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+
+                val fileToStream = resource.file
+                val streamingBody = StreamingResponseBody { outputStream ->
+                    try {
+                        fileToStream.inputStream().use { input ->
+                            input.copyTo(outputStream)
+                        }
+                    } finally {
+                        if (isEdited && tempFile != null && tempFile.exists()) {
+                            tempFile.delete()
+                        }
+                    }
+                }
+
+                return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(streamingBody)
             } catch (e: Exception) {
                 logger.log(
                     Level.SEVERE,
@@ -1007,10 +1107,27 @@ class MediaServiceController {
                 }
                 if (attachFile) {
                     val filename = resource.filename.replace(validFileNameRegex, "_")
-                    response?.setHeader("Content-Disposition", "attachment; filename=$filename")
+                    response.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.NOT_FOUND)
+
+                val fileToStream = resource.file
+                val streamingBody = StreamingResponseBody { outputStream ->
+                    try {
+                        fileToStream.inputStream().use { input ->
+                            input.copyTo(outputStream)
+                        }
+                    } finally {
+                        if (isEdited && tempFile != null && tempFile.exists()) {
+                            tempFile.delete()
+                        }
+                    }
+                }
+
+                return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(streamingBody)
+
             }
         } else {
             val userIp = model.getAttribute("clientIP").toString()
@@ -1022,7 +1139,20 @@ class MediaServiceController {
                 }"
             notifyAdmins(userIp, message)
 
-            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
+            val emptyStream = StreamingResponseBody { outputStream ->
+                // Optionally write a message or leave empty
+                outputStream.write("File not found.".toByteArray())
+            }
+
+            val headers = HttpHeaders().apply {
+                contentType = MediaType.TEXT_PLAIN
+                contentLength = "File not found.".toByteArray().size.toLong()
+            }
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .headers(headers)
+                .body(emptyStream)
+
         }
     }
 }

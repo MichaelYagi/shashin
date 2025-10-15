@@ -260,7 +260,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 if (tnFile != null) {
                     Thumbnails.of(img)
                         .size(img.width, img.height)
-                        .outputQuality(0.4)
+                        .outputQuality(0.3)
                         .toFile(tnFile)
                 }
 
