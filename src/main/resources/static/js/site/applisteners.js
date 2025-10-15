@@ -172,7 +172,7 @@ $("#appToolsDeselectAll").on("click", function(e) {
 
     shashin.stopRendering = true;
 
-    shashin.clearSelection("timeline");
+    shashin.clearSelection($("#activePage").val());
 });
 
 $("#albumAppToolsDeselectAll").on("click", function(e) {
@@ -180,7 +180,7 @@ $("#albumAppToolsDeselectAll").on("click", function(e) {
 
     shashin.stopRendering = true;
 
-    shashin.clearSelection("album");
+    shashin.clearSelection($("#activePage").val());
 });
 
 $("#comprefaceDeselectAll").on("click", function(e) {
@@ -188,7 +188,7 @@ $("#comprefaceDeselectAll").on("click", function(e) {
 
     shashin.stopRendering = true;
 
-    shashin.clearSelection("timeline");
+    shashin.clearSelection($("#activePage").val());
 });
 
 $("#appToolsAddAlbum").on("click", function(e) {
