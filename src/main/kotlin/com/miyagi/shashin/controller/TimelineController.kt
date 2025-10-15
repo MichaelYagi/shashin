@@ -3431,6 +3431,7 @@ class TimelineController: BaseController() {
                         rotation = 90
                     }
 
+                    // Order important
                     if (flipX) {
                         metadata.setFlipHorizontally(true)
                         editedImage = ImageProcessing.flipHorizontally(editedImage)
