@@ -20,6 +20,7 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
     // Disable draggable on html
     if (activePage === "album" || activePage === "recent" || activePage === "modified" || activePage === "taken" || activePage === "accessed") {
         $('a').attr('draggable', 'false');
+        $('img').attr('draggable', 'false');
     }
 
     setTimeout(function () {

@@ -163,6 +163,7 @@ class Taken {
                 }
 
                 $('a').attr('draggable', 'false');
+                $('img').attr('draggable', 'false');
                 this.rendering = false;
                 $("#spinner").css("display", "none");
             } else {
