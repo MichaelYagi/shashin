@@ -6,6 +6,7 @@ import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.KeywordRepository
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -36,6 +37,9 @@ class SearchController: BaseController() {
 
     @Autowired
     private val searchRepository: SearchRepository? = null
+
+    @Autowired
+    private lateinit var metadataRepository: MetadataRepository
 
     @Autowired
     private val searchHistoryRepository: SearchHistoryRepository? = null
@@ -135,10 +139,25 @@ class SearchController: BaseController() {
                     "authority"
                 ).toString() == model.getAttribute("superRole")
             ) {
-                if (updatedTerm.lowercase() == "shashinedit" || updatedTerm.lowercase() == "shashinedited") {
-                    metadataList = searchRepository?.findMetadataEditedPhotos(pageValue, queryLimit)
+                metadataList = if (updatedTerm.lowercase() == "shashinedit" || updatedTerm.lowercase() == "shashinedited") {
+                    searchRepository?.findMetadataEditedPhotos(pageValue, queryLimit)
+                } else if (updatedTerm.lowercase() == "nolatlng") {
+                    metadataRepository.findAllMissingCoordOffsetAndLimit(
+                        pageValue,
+                        queryLimit
+                    )
+                } else if (updatedTerm.lowercase() == "latlng") {
+                    metadataRepository.findAllWithCoordOffsetAndLimit(
+                        pageValue,
+                        queryLimit
+                    )
+                } else if (updatedTerm.lowercase() == "description") {
+                    metadataRepository.findAllDescriptionOffsetAndLimit(
+                        pageValue,
+                        queryLimit
+                    )
                 } else {
-                    metadataList = searchRepository?.findMetadataBySearchTerm(updatedTerm, pageValue, queryLimit)
+                    searchRepository?.findMetadataBySearchTerm(updatedTerm, pageValue, queryLimit)
                 }
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 response["totalPages"] = ceil((searchRepository?.countAllByHiddenIsFalse(updatedTerm)!!.toDouble()) / size.toDouble()).toInt()
@@ -146,6 +165,24 @@ class SearchController: BaseController() {
                 if (currentUserObj != null) {
                     if (updatedTerm.lowercase() == "shashinedit" || updatedTerm.lowercase() == "shashinedited") {
                         metadataList = searchRepository?.findMetadataEditedPhotosAndUserId(currentUserObj.getId(), pageValue, queryLimit)
+                    } else if (updatedTerm.lowercase() == "nolatlng") {
+                        metadataRepository.findAllMissingCoordAndUserIdOffsetAndLimit(
+                            currentUserObj.getId(),
+                            pageValue,
+                            queryLimit
+                        )
+                    } else if (updatedTerm.lowercase() == "latlng") {
+                        metadataRepository.findAllWithCoordAndUserIdOffsetAndLimit(
+                            currentUserObj.getId(),
+                            pageValue,
+                            queryLimit
+                        )
+                    } else if (updatedTerm.lowercase() == "description") {
+                        metadataRepository.findAllDescriptionAndUserIdOffsetAndLimit(
+                            currentUserObj.getId(),
+                            pageValue,
+                            queryLimit
+                        )
                     } else {
                         metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
                             updatedTerm,
