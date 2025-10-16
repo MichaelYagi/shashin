@@ -221,6 +221,7 @@
                         }
 
                         $('a').attr('draggable', 'false');
+                        $('img').attr('draggable', 'false');
                         $("#spinner").css("display","none");
                         albumSettings.rendering = false;
                     } else {
