@@ -961,7 +961,7 @@ class MediaServiceController {
             var isEdited = false
             if (!forcePathImage && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
                 if (isDownload) {
-                    val extension = path.substringAfterLast('.', "")
+                    var extension = path.substringAfterLast('.', "")
 
                     var imageFile = File(path)
                     if (imageFile.exists()) {
@@ -1034,9 +1034,11 @@ class MediaServiceController {
                                 sharpness
                             )
 
+                            extension = "jpg"
+
                             tempFile = kotlin.io.path.createTempFile(
                                 directory = Paths.get(System.getProperty("java.io.tmpdir")),
-                                prefix = metadataObj.get().getFileName(),
+                                prefix = (metadataObj.get().getFileName())?.substringBeforeLast('.') + "_edited_",
                                 suffix = ".${extension}"
                             ).toFile()
                             ImageIO.write(bufferedImage, extension, tempFile)

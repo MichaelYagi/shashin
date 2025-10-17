@@ -51,7 +51,7 @@
         th:data-poster="${(metadataObj.thumbnailUrlOriginal == null || metadataObj.thumbnailUrlOriginal == '') ? '/api/v1/thumbnails/225/'+metadataObj.id : '/api/v1/thumbnails/original/' + metadataObj.id}"
         th:data-sub-html="${metadataObj.description}"
         th:data-metadata-id="${metadataObj.id}"
-        th:data-download-url="${metadataObj.videoUrl + '/download'}"
+        th:data-download-url="${metadataObj.videoUrl + '/download?v=' + randomString}"
     >
         <img id="photoImage" th:src="'/api/v1/thumbnails/225/'+${metadataObj.id}" />
     </a>

@@ -2080,7 +2080,7 @@ class Util {
                 page = "/player";
             }
 
-            let shareDetailsHtml = "<a class='bi-download' href='" + relativeShareLink + "/download' title='"+shashin.getTranslatedValue("main.pages.tooltip.topnav.msg.downloadmedia")+"' style='font-size: 1rem;'></a>&nbsp;&nbsp;&nbsp;" +
+            let shareDetailsHtml = "<a class='bi-download' href='" + relativeShareLink + "/download?v=" + uuidv4() + "' title='"+shashin.getTranslatedValue("main.pages.tooltip.topnav.msg.downloadmedia")+"' style='font-size: 1rem;'></a>&nbsp;&nbsp;&nbsp;" +
                 "<a class='" + ((metadata.videoUrl != null) ? "bi-camera-video" : "bi-file-image") + "' style='font-size: 1rem;' href='" + relativeShareLink.replace('/api/v1', '') + page + "' title='" + ((metadata.videoUrl != null) ? shashin.getTranslatedValue("main.pages.utils.tooltip.viewvideo") : shashin.getTranslatedValue("main.pages.utils.tooltip.viewimage")) + "' target='_blank'></a>";
 
             if (metadata.videoUrl === null && Util.isLocalNetwork() === false) {
