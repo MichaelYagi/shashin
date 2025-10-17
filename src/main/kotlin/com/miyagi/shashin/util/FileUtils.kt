@@ -588,57 +588,85 @@ class FileUtils {
          * @param folder Folder to be zipped
          * @param basePathLength Length of original Folder Path (for recursion)
          */
+        private val VIDEO_EXTENSIONS = setOf("mp4", "mov", "avi", "mkv", "webm", "mpg", "mpeg", "3gp", "flv")
+
+        private const val DEFAULT_COPY_BUFFER = 64 * 1024 // 64 KB - good tradeoff for large files
+
+        private fun isLikelyVideoByExtension(file: File): Boolean {
+            val name = file.name
+            val dot = name.lastIndexOf('.')
+            if (dot == -1 || dot == name.length - 1) return false
+            val ext = name.substring(dot + 1).lowercase()
+            return ext in VIDEO_EXTENSIONS
+        }
+
+        private fun shouldDisableCompression(file: File, sizeThresholdKB: Long = 10_000L): Boolean {
+            // Prefer fast extension check; fall back to size threshold
+            val sizeKB = file.length() / 1024
+            return isLikelyVideoByExtension(file) || sizeKB > sizeThresholdKB
+        }
+
+        /**
+         * Optimized zipper for a folder. This function is intentionally small and focused:
+         * - Reuses a single buffer
+         * - Avoids expensive probeContentType calls
+         * - Uses kotlin.io.copyTo for a tight native loop
+         */
         @Throws(IOException::class)
         private fun zipSubFolder(out: ZipOutputStream, folder: File, basePathLength: Int) {
             val metricsUtil = MetricsUtil()
-            val buffer = 2048
-            val fileList = folder.listFiles()
-            var origin: BufferedInputStream?
+            val bufferSize = DEFAULT_COPY_BUFFER
+            val buffer = ByteArray(bufferSize)
 
-            if (fileList != null) {
-                for (file in fileList) {
-                    if (file.isDirectory) {
-                        zipSubFolder(out, file, basePathLength)
-                    } else {
-                        if (!file.path.endsWith(".exif.yaml")) {
-                            val fileSizeInBytes = file.length()
+            val fileList = folder.listFiles() ?: return
 
-                            // Optionally, convert to other units
-                            val fileSizeInKB = fileSizeInBytes / 1024
-//                            val fileSizeInMB = fileSizeInKB / 1024
+            for (file in fileList) {
+                if (file.isDirectory) {
+                    // Recurse into subfolders
+                    zipSubFolder(out, file, basePathLength)
+                    continue
+                }
 
-                            logger.log(
-                                Level.INFO,
-                                "${file.path} $fileSizeInKB KB"
-                            )
+                // Skip exif sidecar files (case-insensitive)
+                if (file.name.lowercase().endsWith(".exif.yaml")) continue
 
-                            val contentType = Files.probeContentType(file.toPath())
-                            if (contentType != null && contentType.contains("video")) {
-                                out.setLevel(Deflater.NO_COMPRESSION) //Deflater.BEST_SPEED
-                            } else if (fileSizeInKB > 10000) { //10mb
-                                out.setLevel(Deflater.NO_COMPRESSION) //Deflater.BEST_SPEED
-                            } else {
-                                out.setLevel(Deflater.DEFAULT_COMPRESSION)
-                            }
-                            val data = ByteArray(buffer)
-                            val unmodifiedFilePath = file.path
-                            val relativePath = unmodifiedFilePath.substring(basePathLength + 1)
-                            val fi = FileInputStream(unmodifiedFilePath)
-                            origin = BufferedInputStream(fi, buffer)
-                            metricsUtil.start("Zip Entry: " + file.name)
-                            val entry = ZipEntry(relativePath)
-                            entry.time = file.lastModified() // to keep modification time after unzipping
-                            out.putNextEntry(entry)
-                            var count: Int
-                            while (origin.read(data, 0, buffer).also { count = it } != -1) {
-                                out.write(data, 0, count)
-                            }
-                            metricsUtil.end()
-                            origin.close()
-                            out.closeEntry()
+                // Log at FINE level (cheap when not enabled)
+                val fileSizeKB = file.length() / 1024
+                logger.log(Level.FINE, "${file.path} ${fileSizeKB} KB")
+
+                // Decide compression strategy cheaply
+                val disableCompression = shouldDisableCompression(file)
+
+                // Set level once per-entry (cheap); keep DEFAULT otherwise
+                if (disableCompression) {
+                    out.setLevel(Deflater.NO_COMPRESSION)
+                } else {
+                    out.setLevel(Deflater.DEFAULT_COMPRESSION)
+                }
+
+                val relativePath = file.path.substring(basePathLength + 1)
+                val entry = ZipEntry(relativePath).apply {
+                    time = file.lastModified()
+                }
+
+                // Write entry using a single reusable buffer, with safe closing
+                Files.newInputStream(file.toPath()).use { fis ->
+                    BufferedInputStream(fis, bufferSize).use { origin ->
+                        metricsUtil.start("Zip Entry: ${file.name}")
+                        out.putNextEntry(entry)
+                        // Kotlin extension: copyTo uses an internal buffer but we want to supply ours,
+                        // so copy manually for full control and minimal allocations.
+                        var read = origin.read(buffer, 0, bufferSize)
+                        while (read >= 0) {
+                            out.write(buffer, 0, read)
+                            read = origin.read(buffer, 0, bufferSize)
                         }
+                        metricsUtil.end()
+                        out.closeEntry()
                     }
                 }
+                // Note: we intentionally do not attempt to restore ZipOutputStream's previous level
+                // (there is no public getLevel()), instead we set per-entry desired level.
             }
         }
     }
