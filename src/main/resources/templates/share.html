@@ -4,6 +4,8 @@
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <body class="thumb d-flex flex-column vh-100">
 
+<span th:replace="~{fragments/translations.html :: translations()}"></span>
+
 <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
     <header class="py-2 mb-2">
         <div class="container-fluid align-items-center d-flex">

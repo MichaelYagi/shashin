@@ -1989,7 +1989,7 @@ class AlbumsController: BaseController() {
 
                     if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
                         val tempDir = tempExportBaseDir.toFile()
-                        val outputZipFile = FileUtils.zipFolder(tempDir, albumObj?.getName()!!)
+                        val outputZipFile = FileUtils.zipFolder(tempDir, "shashin_"+albumObj?.getName()!!)
                         FileUtils.deleteDirectory(tempDir)
 
                         if (outputZipFile != null) {
@@ -2098,7 +2098,7 @@ class AlbumsController: BaseController() {
 
                 if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
                     val tempDir = tempExportBaseDir.toFile()
-                    val outputZipFile = FileUtils.zipFolder(tempDir, albumObj.get().getName()!!)
+                    val outputZipFile = FileUtils.zipFolder(tempDir, "shashin_"+albumObj.get().getName()!!)
                     FileUtils.deleteDirectory(tempDir)
 
                     if (outputZipFile != null) {
