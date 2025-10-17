@@ -130,7 +130,7 @@
         metadata.baseUrl = "";
         metadata.fileSize = "";
         metadata.sidecarSize = "";
-console.log(data.sidecarSize)
+
         if (data.hasOwnProperty("metadata") &&
             data.hasOwnProperty("keywordList") &&
             data.hasOwnProperty("albumMap") &&
