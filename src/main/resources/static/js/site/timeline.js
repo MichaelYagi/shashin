@@ -1316,12 +1316,12 @@
 
         if (metadata.type.indexOf("video") >= 0) {
             mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl).replace(";", "%3B") + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
-            mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download";
+            mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download?v=" + uuidv4();
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
             mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/"+timelineSettings.thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
         } else {
             mediaContent.src = "/api/v1/thumbnails/original/"+metadata.id;
-            mediaContent.downloadUrl = "/api/v1/"+metadata.id + "/download";
+            mediaContent.downloadUrl = "/api/v1/"+metadata.id + "/download?v=" + uuidv4();
         }
 
         if (metadata.originalImageWidth !== null) {

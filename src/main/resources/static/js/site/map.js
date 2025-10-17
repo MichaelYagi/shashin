@@ -777,7 +777,7 @@ async function showMap(mapdata, keywordMap, locale) {
 
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = "/api/v1/image/"+featureProperties.metadataId;
-                    mediaContent.downloadUrl = "/api/v1/image/"+featureProperties.metadataId + "/download";
+                    mediaContent.downloadUrl = "/api/v1/image/"+featureProperties.metadataId + "/download?v=" + uuidv4();
                 } else if (featureProperties.type.includes("video")) {
                     mediaContent.video = {
                         "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
@@ -791,7 +791,7 @@ async function showMap(mapdata, keywordMap, locale) {
 
                     mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+featureProperties.metadataId : "/api/v1/thumbnails/original/"+featureProperties.metadataId) + "?v=" + Util.getMetadataLocalStorage();
                     mediaContent.lgSize = featureProperties.originalImageWidth+"-"+featureProperties.originalImageHeight;
-                    mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl).replace(";", "%3B") + "/download";
+                    mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl).replace(";", "%3B") + "/download?v=" + uuidv4();
                 }
                 mediaContent.metadataId = featureProperties.metadataId;
                 mediaContent.subHtml = featureProperties.description;

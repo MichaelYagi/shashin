@@ -9,7 +9,7 @@ class GalleryTemplates {
             
             ${(activePage === "share")?
             `<div class="thumbnail-bl" id="tnbl${metadata.id}">
-                <a href="/api/v1${(metadata.type.includes("video") ? `/video/` : `/image/`)}${metadata.id}/download" id="download${metadata.id}">
+                <a href="/api/v1${(metadata.type.includes("video") ? `/video/` : `/image/`)}${metadata.id}/download?v=${uuidv4()}" id="download${metadata.id}">
                     <span class="bi-download" style="font-size: 1rem;color: lightgray;"></span>
                 </a>
             </div>`
@@ -198,7 +198,7 @@ class GalleryTemplates {
     
             ${($.inArray("isVideo", overlays) !== -1) ?
                 `
-                <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl).replace(";", "%3B")}/download" 
+                <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl).replace(";", "%3B")}/download?v=${uuidv4()}" 
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
                     data-metadata-id="${data.metadata.id}"
                     data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : "/api/v1/thumbnails/original/"+data.metadata.id}?v=${uuid}"
@@ -210,7 +210,7 @@ class GalleryTemplates {
                 :
                 `
                 <a class="mediaLink" id="mediaLink${id}" data-src="${"/api/v1/image/"+data.metadata.id}" href="${"/api/v1/image/"+data.metadata.id+"?v="+uuidv4()}"
-                    data-download-url="${"/api/v1/image/"+data.metadata.id}/download"
+                    data-download-url="${"/api/v1/image/"+data.metadata.id}/download?v=${uuidv4()}"
                     data-metadata-id="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
                     <span class="bi-play-btn" style="font-size: ${isMobile ?1.5:4}rem;color: lightgray;"></span>

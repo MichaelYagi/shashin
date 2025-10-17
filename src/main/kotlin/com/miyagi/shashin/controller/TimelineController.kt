@@ -3299,7 +3299,7 @@ class TimelineController: BaseController() {
                         val expectedExt = metadata.getExpectedExtension() ?: imageFile.extension
 
                         if (imageFile.exists()) {
-                            val extension = imageFile.extension.ifEmpty { expectedExt }
+                            var extension = imageFile.extension.ifEmpty { expectedExt }
 
                             val sharpness = metadata.getSharpness()?.toString()?.toDoubleOrNull() ?: 1.0
                             val contrast = metadata.getContrast()?.toString()?.toDoubleOrNull() ?: 1.0
@@ -3343,6 +3343,8 @@ class TimelineController: BaseController() {
                                     saturation.toFloat(),
                                     sharpness
                                 )
+
+                                extension = "jpg"
 
                                 // Ensure parent exists
                                 outFile.parentFile?.mkdirs()
@@ -3580,10 +3582,9 @@ class TimelineController: BaseController() {
                 var imageFile = File(path)
                 val bufferedImage = ImageIO.read(imageFile)
                 var editedImage = bufferedImage
+                var manualRestore = true
 
                 if (!restoreImages) {
-                    var manualRestore = true
-
                     // FlipX + FlipY Normalizations
                     if (flipX && flipY && rotation == 0) {
                         flipX = false
@@ -3725,7 +3726,7 @@ class TimelineController: BaseController() {
                     editedImage,
                     metadata,
                     !restoreImages,
-                    metadata.getExpectedExtension().toString(),
+                    "jpg", // if (manualRestore) metadata.getExpectedExtension().toString() else "jpg",
                     true
                 )
                 metadata.setModifiedAt(getCurrentTimestamp())

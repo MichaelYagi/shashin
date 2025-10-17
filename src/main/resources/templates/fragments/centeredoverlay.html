@@ -7,7 +7,7 @@
         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                 th:data-metadata-id="${metadata.id}"
-                th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
+                th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download?v=' + randomString}"
                 th:data-sub-html="${metadata.description}"
                 th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}">
                 <th:block th:if="${isMobile}">
@@ -21,7 +21,7 @@
         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                 th:data-metadata-id="${metadata.id}"
-                th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
+                th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download?v=' + randomString}"
                 th:data-sub-html="${metadata.description}"
                 th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}">
                 <th:block th:if="${isMobile}">
@@ -38,7 +38,7 @@
         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                 th:data-metadata-id="${metadata.id}"
-                th:data-download-url="${metadata.videoUrl + '/download'}"
+                th:data-download-url="${metadata.videoUrl + '/download?v=' + randomString}"
                 th:data-sub-html="${metadata.description}"
                 th:data-lg-size="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? (metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight) : (metadata.originalImageWidth+'-'+metadata.originalImageHeight)}"
                 th:data-poster="${(metadata.thumbnailUrlOriginal == null || metadata.thumbnailUrlOriginal == '') ? '/api/v1/thumbnails/225/' + metadata.id : '/api/v1/thumbnails/original/' + metadata.id}"
@@ -55,7 +55,7 @@
         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                 th:data-metadata-id="${metadata.id}"
-                th:data-download-url="${metadata.videoUrl + '/download'}"
+                th:data-download-url="${metadata.videoUrl + '/download?v=' + randomString}"
                 th:data-sub-html="${metadata.description}"
                 th:data-lg-size="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? (metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight) : (metadata.originalImageWidth+'-'+metadata.originalImageHeight)}"
                 th:data-poster="${(metadata.thumbnailUrlOriginal == null || metadata.thumbnailUrlOriginal == '') ? '/api/v1/thumbnails/225/'+metadata.id : '/api/v1/thumbnails/original/' + metadata.id}"
