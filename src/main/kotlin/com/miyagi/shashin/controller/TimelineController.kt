@@ -53,6 +53,8 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 import kotlin.String
 import kotlin.collections.ArrayList
 import kotlin.collections.set
@@ -3268,141 +3270,155 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @ResponseBody
     fun downloadBatchMetadata(model: Model, @RequestParam paramMap: Map<String, String>): ResponseEntity<InputStreamResource>? {
-        if (paramMap.containsKey("batchMetadataIds")) {
-            val idArray: Array<String>? = mapper.readValue(paramMap["batchMetadataIds"], object : TypeReference<Array<String>>() {})
-            if (!idArray.isNullOrEmpty()) {
-                val metadatas = metadataRepository.findAllByMetadataIds(idArray).toMutableList()
+        val metricsUtil = MetricsUtil()
+        metricsUtil.start("downloadBatchMetadata")
 
-                val tempDownloadDir = Files.createTempDirectory("shashin_download")
+        if (!paramMap.containsKey("batchMetadataIds")) return null
 
-                var tempFile: File? = null
+        val idArray: Array<String>? = mapper.readValue(paramMap["batchMetadataIds"], object : TypeReference<Array<String>>() {})
+        if (idArray.isNullOrEmpty()) return null
 
-                for (metadata in metadatas) {
-                    var imageFile = File(metadata.getPath()!!)
-                    val shortString = TextUtils.createBase64EncodedUuid(metadata.getId())
+        val metadatas = metadataRepository.findAllByMetadataIds(idArray).toMutableList()
+        val tempDownloadDir = Files.createTempDirectory("shashin_download")
+        val tempDirFile = tempDownloadDir.toFile()
 
-                    if (imageFile.exists()) {
-                        val extension = metadata.getPath()?.substringAfterLast('.', "")
+        // Configure parallelism: number of worker threads (tune as needed)
+        val cpu = Runtime.getRuntime().availableProcessors()
+        val maxParallelism = Math.max(1, Math.min(cpu, 8)) // cap at 8 by default
+        val executor = Executors.newFixedThreadPool(maxParallelism)
 
-                        var bufferedImage: BufferedImage = ImageIO.read(imageFile)
-
-                        val sharpness = if (metadata.getSharpness() == null) 1.0 else metadata.getSharpness().toString().toDouble()
-                        val contrast = if (metadata.getContrast() == null) 1.0 else metadata.getContrast().toString().toDouble()
-                        val saturation = if (metadata.getSaturation() == null) 1.0 else metadata.getSaturation().toString().toDouble()
-                        val brightness = if (metadata.getBrightness() == null) 1.0 else metadata.getBrightness().toString().toDouble()
-                        val rotation = if (metadata.getRotation() == null) 0 else metadata.getRotation()?.toInt()
-                        val flipX = if (metadata.getFlipHorizontally() == null) false else metadata.getFlipHorizontally() as Boolean
-                        val flipY = if (metadata.getFlipVertically() == null) false else metadata.getFlipVertically() as Boolean
-
-                        var default = true
-
-                        // Order important
-                        if (flipX) {
-                            logger.log(Level.INFO, "Adjusting flipX: " + flipX)
-//                            bufferedImage = ImageProcessing.flipHorizontally(bufferedImage)
-                            default = false
-                        }
-
-                        if (flipY) {
-                            logger.log(Level.INFO, "Adjusting flipY: " + flipY)
-//                            bufferedImage = ImageProcessing.flipVertically(bufferedImage)
-                            default = false
-                        }
-
-                        if (brightness in 0.1..1.9 && brightness != 1.0) {
-                            logger.log(Level.INFO, "Adjusting brightness: " + brightness)
-//                            bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
-                            default = false
-                        }
-
-                        if (contrast in 0.1..1.9 && contrast != 1.0) {
-                            logger.log(Level.INFO, "Adjusting contrast: " + contrast)
-//                            bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
-                            default = false
-                        }
-
-                        if (saturation in 0.1..1.9 && saturation != 1.0) {
-                            logger.log(Level.INFO, "Adjusting saturation: " + saturation)
-//                            bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
-                            default = false
-                        }
-
-                        if (sharpness in 1.0..10.0 && sharpness != 1.0) {
-                            logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
-//                            bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
-                            default = false
-                        }
-
-                        if (rotation != null && rotation > 0) {
-                            logger.log(Level.INFO, "Adjusting rotation: " + rotation)
-//                            bufferedImage = ImageProcessing.rotateImage(bufferedImage, rotation.toDouble())
-                            default = false
-                        }
-
-                        tempFile = File(tempDownloadDir.pathString + "/" + metadata.getFileName()?.substringBeforeLast(".") + "_" + shortString + "." + metadata.getExpectedExtension())
-                        if (default) {
-                            tempFile = File(tempDownloadDir.pathString + "/" + metadata.getFileName()?.substringBeforeLast(".") + "_" + shortString + "." + metadata.getExpectedExtension())
-                            if (tempFile.createNewFile()) {
-                                Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                            }
-                        } else {
-                            bufferedImage = ImageProcessing.transformAndAdjust(
-                                bufferedImage,
-                                rotation?.toDouble() ?: 0.0,
-                                flipX,
-                                flipY,
-                                brightness,
-                                contrast,
-                                saturation.toFloat(),
-                                sharpness
-                            )
-
-                            ImageIO.write(bufferedImage, extension, tempFile)
-                        }
-                    } else {
-                        tempFile = File(tempDownloadDir.pathString + "/" + metadata.getFileName()?.substringBeforeLast(".") + "_" + shortString + "." + metadata.getExpectedExtension())
-                        if (tempFile.createNewFile()) {
-                            Files.copy(
-                                Path(metadata.getPath()!!),
-                                tempFile.toPath(),
-                                StandardCopyOption.REPLACE_EXISTING
-                            )
-                        }
-                    }
-                }
-
-                if (tempDownloadDir.isDirectory() && tempDownloadDir.toList().isNotEmpty()) {
+        try {
+            // Prepare tasks: one per metadata
+            val tasks = metadatas.map { metadata ->
+                Callable<File?> {
                     try {
-                        val tempDir = tempDownloadDir.toFile()
-                        val outputZipFile = FileUtils.zipFolder(tempDir, "shashin_download")
+                        val imagePath = metadata.getPath() ?: return@Callable null
+                        val imageFile = File(imagePath)
+                        val shortString = TextUtils.createBase64EncodedUuid(metadata.getId())
+                        val basename = metadata.getFileName()?.substringBeforeLast(".") ?: "file"
+                        val expectedExt = metadata.getExpectedExtension() ?: imageFile.extension
 
-                        if (outputZipFile != null) {
-                            FileUtils.deleteDirectory(tempDir)
+                        if (imageFile.exists()) {
+                            val extension = imageFile.extension.ifEmpty { expectedExt }
+                            var bufferedImage: BufferedImage = ImageIO.read(imageFile)
 
-                            val headers = HttpHeaders()
-                            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
-                            headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
-                            headers.add("Pragma", "no-cache")
-                            headers.add("Expires", "0")
-                            headers.add("Set-Cookie", "fileDownload=true; path=/")
+                            val sharpness = metadata.getSharpness()?.toString()?.toDoubleOrNull() ?: 1.0
+                            val contrast = metadata.getContrast()?.toString()?.toDoubleOrNull() ?: 1.0
+                            val saturation = metadata.getSaturation()?.toString()?.toDoubleOrNull() ?: 1.0
+                            val brightness = metadata.getBrightness()?.toString()?.toDoubleOrNull() ?: 1.0
+                            val rotation = metadata.getRotation()?.toString()?.toIntOrNull() ?: 0
+                            val flipX = metadata.getFlipHorizontally() as? Boolean ?: false
+                            val flipY = metadata.getFlipVertically() as? Boolean ?: false
 
-                            val resource = InputStreamResource(FileInputStream(outputZipFile))
-                            val contentLength = outputZipFile.length()
+                            var default = true
 
-                            return ResponseEntity.ok()
-                                .headers(headers)
-                                .contentLength(contentLength)
-                                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                                .body(resource)
+                            if (flipX || flipY) default = false
+                            if (brightness in 0.1..1.9 && brightness != 1.0) default = false
+                            if (contrast in 0.1..1.9 && contrast != 1.0) default = false
+                            if (saturation in 0.1..1.9 && saturation != 1.0) default = false
+                            if (sharpness in 1.0..10.0 && sharpness != 1.0) default = false
+                            if (rotation > 0) default = false
+
+                            val outFile = File(tempDirFile, if (default) "${basename}_${shortString}.${expectedExt}" else "${basename}_edited_${shortString}.${expectedExt}")
+
+                            if (default) {
+                                // Fast path: copy file bytes
+                                if (outFile.createNewFile()) {
+                                    Files.copy(Path(imagePath), outFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                                }
+                            } else {
+                                // Apply transforms
+                                val transformed = ImageProcessing.transformAndAdjust(
+                                    bufferedImage,
+                                    rotation.toDouble(),
+                                    flipX,
+                                    flipY,
+                                    brightness,
+                                    contrast,
+                                    saturation.toFloat(),
+                                    sharpness
+                                )
+
+                                // Ensure parent exists
+                                outFile.parentFile?.mkdirs()
+                                ImageIO.write(transformed, extension, outFile)
+                            }
+
+                            outFile
+                        } else {
+                            // If original doesn't exist, still attempt to create an empty copy entry? For consistency, skip.
+                            logger.log(Level.WARNING, "Source image does not exist: $imagePath")
+                            null
                         }
-                    } finally {
-                        if (tempFile != null && tempFile.exists()) {
-                            tempFile.delete()
-                        }
+                    } catch (ex: Exception) {
+                        logger.log(Level.SEVERE, "Failed processing metadata id=${metadata.getId()}: ${ex.message}", ex)
+                        null
                     }
                 }
             }
+
+            // Submit all and wait
+            val futures = executor.invokeAll(tasks)
+
+            // Optionally check results and log failures; files are already created by tasks
+            futures.forEach { future ->
+                try {
+                    future.get() // propagate exceptions if any thrown
+                } catch (ex: Exception) {
+                    logger.log(Level.WARNING, "One of the image processing tasks failed: ${ex.message}")
+                }
+            }
+
+            // Now zip the temp directory if it has files
+            if (tempDirFile.isDirectory && tempDirFile.listFiles()?.isNotEmpty() == true) {
+                val outputZipFile = FileUtils.zipFolder(tempDirFile, "shashin_download")
+                if (outputZipFile != null) {
+                    // Clean up unzipped temp dir after zipping
+                    FileUtils.deleteDirectory(tempDirFile)
+
+                    val headers = HttpHeaders()
+                    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
+                    headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                    headers.add("Pragma", "no-cache")
+                    headers.add("Expires", "0")
+                    headers.add("Set-Cookie", "fileDownload=true; path=/")
+
+                    val resource = InputStreamResource(FileInputStream(outputZipFile))
+                    val contentLength = outputZipFile.length()
+
+                    metricsUtil.end()
+
+                    return ResponseEntity.ok()
+                        .headers(headers)
+                        .contentLength(contentLength)
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(resource)
+                }
+            }
+        } finally {
+            // Shutdown executor
+            executor.shutdown()
+            try {
+                if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+                    executor.shutdownNow()
+                }
+            } catch (ie: InterruptedException) {
+                executor.shutdownNow()
+                Thread.currentThread().interrupt()
+            }
+
+            // Clean any leftover temp files if necessary
+            // (the zip flow already deletes the folder, but on error we should attempt cleanup)
+            if (tempDirFile.exists()) {
+                try {
+                    FileUtils.deleteDirectory(tempDirFile)
+                } catch (ex: Exception) {
+                    logger.log(Level.WARNING, "Failed to delete temp dir: ${ex.message}")
+                }
+            }
         }
+
+        metricsUtil.end()
 
         return null
     }
