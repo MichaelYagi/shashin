@@ -72,12 +72,12 @@
 
                                 <div class="thumbnail-bl" th:id="${'tnbl'+metadata.id}">
                                     <th:block th:if="${metadata.type.contains('video')}">
-                                        <a th:href="'/api/v1/video/'+${metadata.id}+'/download?v='+uuidv4()" th:id="${'download'+metadata.id}">
+                                        <a th:href="'/api/v1/video/'+${metadata.id}+'/download?v='+${randomString}" th:id="${'download'+metadata.id}">
                                             <span class="bi-download" style="font-size: 1rem;color: lightgray;"></span>
                                         </a>
                                     </th:block>
                                     <th:block th:unless="${metadata.type.contains('video')}">
-                                        <a th:href="'/api/v1/image/'+${metadata.id}+'/download?v='+uuidv4()" th:id="${'download'+metadata.id}">
+                                        <a th:href="'/api/v1/image/'+${metadata.id}+'/download?v='+${randomString}" th:id="${'download'+metadata.id}">
                                             <span class="bi-download" style="font-size: 1rem;color: lightgray;"></span>
                                         </a>
                                     </th:block>
