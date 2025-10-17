@@ -3300,7 +3300,6 @@ class TimelineController: BaseController() {
 
                         if (imageFile.exists()) {
                             val extension = imageFile.extension.ifEmpty { expectedExt }
-                            var bufferedImage: BufferedImage = ImageIO.read(imageFile)
 
                             val sharpness = metadata.getSharpness()?.toString()?.toDoubleOrNull() ?: 1.0
                             val contrast = metadata.getContrast()?.toString()?.toDoubleOrNull() ?: 1.0
@@ -3319,6 +3318,10 @@ class TimelineController: BaseController() {
                             if (sharpness in 1.0..10.0 && sharpness != 1.0) default = false
                             if (rotation > 0) default = false
 
+                            if (metadata.getType() != null && metadata.getType()!!.lowercase().contains("video")) {
+                                default = true
+                            }
+
                             val outFile = File(tempDirFile, if (default) "${basename}_${shortString}.${expectedExt}" else "${basename}_edited_${shortString}.${expectedExt}")
 
                             if (default) {
@@ -3327,6 +3330,8 @@ class TimelineController: BaseController() {
                                     Files.copy(Path(imagePath), outFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
                                 }
                             } else {
+                                var bufferedImage: BufferedImage = ImageIO.read(imageFile)
+
                                 // Apply transforms
                                 val transformed = ImageProcessing.transformAndAdjust(
                                     bufferedImage,
