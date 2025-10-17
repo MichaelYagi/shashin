@@ -14,10 +14,12 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Added Sharpness
 
 ### Changed
+- Batch selection improvements
+
 ### Deprecated
 ### Removed
 ### Fixed
-- Batch selection improvements and bug fixes
+- Shift selecting same image
 
 ### Security
 
