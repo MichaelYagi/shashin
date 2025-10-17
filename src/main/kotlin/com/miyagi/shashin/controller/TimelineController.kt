@@ -389,16 +389,16 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                response["msg"] = messageSource?.getMessage("main.fail", null, locale)
-                response["status"] = ApiResponse.FAIL.status
+                response["msg"] = messageSource?.getMessage("main.success", null, locale)
+                response["status"] = ApiResponse.SUCCESS.status
                 response["direction"] = direction
                 response["metadataIdArray"] = retMetadataIdArray
                 response["metadataFilenameArray"] = retMetadataFilenameArray
                 response["metadataThumbnailArray"] = retMetadataThumbnailArray
                 response["metadataDatesArray"] = retMetadataDatesArray
             } else {
-                response["msg"] = messageSource?.getMessage("main.f", null, locale)
-                response["status"] = ApiResponse.SUCCESS.status
+                response["msg"] = messageSource?.getMessage("main.fail", null, locale)
+                response["status"] = ApiResponse.FAIL.status
                 response["direction"] = direction
                 response["metadataIdArray"] = retMetadataIdArray
                 response["metadataFilenameArray"] = retMetadataFilenameArray
