@@ -868,76 +868,63 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             saturation: Float = 1.0f,
             sharpness: Double = 1.0
         ): BufferedImage {
-            val metricsUtil = MetricsUtil()
-            metricsUtil.start("transformAndAdjust")
-
-            val needsGeo = rotationDegrees != 0.0 || flipH || flipV
+            val flipX = flipV
+            val flipY = flipH
+            val needsFlip = flipX || flipY
+            val needsRotation = rotationDegrees != 0.0
             val needsColor = brightness != 1.0 || contrast != 1.0 || saturation != 1.0f
             val needsSharpen = sharpness > 1.0
 
             // Fast path: nothing to do
-            if (!needsGeo && !needsColor && !needsSharpen) {
+            if (!needsFlip && !needsRotation && !needsColor && !needsSharpen) {
                 return ensureIntRGB(srcImage)
             }
 
-            // Apply geometry first if needed
-            var img: BufferedImage = if (needsGeo) {
-                applyAffineTransform(srcImage, rotationDegrees, flipH, flipV)
-            } else {
-                srcImage
+            // Start with the source
+            var img: BufferedImage = srcImage
+
+            // 1) Apply flips (if any). Flips keep same dimensions.
+            if (needsFlip) {
+                img = applyFlipTransform(img, flipX, flipY)
             }
 
-            // Color adjustments (single pass) if requested
+            // 2) Color adjustments (single pass) if requested
             if (needsColor) {
                 img = applyColorAdjustmentsSinglePass(ensureIntRGB(img), brightness, contrast, saturation)
             }
 
-            // Sharpen if requested (last)
+            // 3) Sharpen if requested (still before rotation as requested)
             if (needsSharpen) {
                 img = applySharpen(ensureIntRGB(img), sharpness)
             }
 
-            metricsUtil.end()
+            // 4) Apply rotation last (if requested)
+            if (needsRotation) {
+                img = applyRotation(img, rotationDegrees)
+            }
 
             return img
         }
 
-        private fun ensureIntRGB(image: BufferedImage): BufferedImage {
-            if (image.type == BufferedImage.TYPE_INT_RGB) return image
-            val converted = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
-            converted.graphics.drawImage(image, 0, 0, null)
-            converted.graphics.dispose()
-            return converted
-        }
-
-        // Combine rotation + flips in one AffineTransform draw
-        private fun applyAffineTransform(
+        // -------------------------
+        // Flip transform only (no rotation)
+        // -------------------------
+        private fun applyFlipTransform(
             image: BufferedImage,
-            rotationDegrees: Double,
             flipH: Boolean,
             flipV: Boolean
         ): BufferedImage {
-            val rad = Math.toRadians(rotationDegrees)
-            val sin = abs(sin(rad))
-            val cos = abs(cos(rad))
+            if (!flipH && !flipV) return image
+
             val width = image.width
             val height = image.height
-            val nWidth = floor(width.toDouble() * cos + height.toDouble() * sin).toInt()
-            val nHeight = floor(height.toDouble() * cos + width.toDouble() * sin).toInt()
 
-            val dest = BufferedImage(nWidth, nHeight, BufferedImage.TYPE_INT_RGB)
+            val dest = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
             val g = dest.createGraphics()
             try {
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
 
                 val tx = AffineTransform()
-                val translateX = (nWidth - width) / 2.0
-                val translateY = (nHeight - height) / 2.0
-                tx.translate(translateX, translateY)
-
-                if (rotationDegrees != 0.0) {
-                    tx.rotate(rad, (width / 2.0), (height / 2.0))
-                }
 
                 var scaleX = 1.0
                 var scaleY = 1.0
@@ -962,7 +949,40 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return dest
         }
 
-        // Single-pass: brightness + contrast + saturation
+        // -------------------------
+        // Rotation only (applied last)
+        // -------------------------
+        private fun applyRotation(image: BufferedImage, rotationDegrees: Double): BufferedImage {
+            if (rotationDegrees == 0.0) return image
+
+            val radian = Math.toRadians(rotationDegrees)
+            val sin = abs(kotlin.math.sin(radian))
+            val cos = abs(kotlin.math.cos(radian))
+            val width = image.width
+            val height = image.height
+            val nWidth = floor(width.toDouble() * cos + height.toDouble() * sin).toInt()
+            val nHeight = floor(height.toDouble() * cos + width.toDouble() * sin).toInt()
+            val rotatedImage = BufferedImage(nWidth, nHeight, BufferedImage.TYPE_INT_RGB)
+            val graphics = rotatedImage.createGraphics()
+            try {
+                graphics.setRenderingHint(
+                    RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC
+                )
+                // center translated so rotated image is centered
+                graphics.translate((nWidth - width) / 2.0, (nHeight - height) / 2.0)
+                // rotation around the center point of the original image
+                graphics.rotate(radian, (width / 2).toDouble(), (height / 2).toDouble())
+                graphics.drawImage(image, 0, 0, null)
+            } finally {
+                graphics.dispose()
+            }
+            return rotatedImage
+        }
+
+        // -------------------------
+        // Color adjustments (single-pass)
+        // -------------------------
         private fun applyColorAdjustmentsSinglePass(
             image: BufferedImage,
             brightness: Double,
@@ -974,7 +994,12 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
                 val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-                converted.graphics.drawImage(image, 0, 0, null)
+                val g = converted.createGraphics()
+                try {
+                    g.drawImage(image, 0, 0, null)
+                } finally {
+                    g.dispose()
+                }
                 converted
             } else {
                 image
@@ -1061,7 +1086,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return result
         }
 
-        // Sharpen pass (only when requested)
+        // -------------------------
+        // Sharpen pass (optimized)
+        // -------------------------
         private fun applySharpen(image: BufferedImage, sharpness: Double): BufferedImage {
             val width = image.width
             val height = image.height
@@ -1135,6 +1162,21 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             return dest
+        }
+
+        // -------------------------
+        // Helpers
+        // -------------------------
+        private fun ensureIntRGB(image: BufferedImage): BufferedImage {
+            if (image.type == BufferedImage.TYPE_INT_RGB) return image
+            val converted = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
+            val g = converted.createGraphics()
+            try {
+                g.drawImage(image, 0, 0, null)
+            } finally {
+                g.dispose()
+            }
+            return converted
         }
 
         private fun Double.coerceIn(min: Double, max: Double): Double = when {
