@@ -980,49 +980,60 @@ class MediaServiceController {
                         // Order important
                         if (flipX) {
                             logger.log(Level.INFO, "Adjusting flipX: " + flipX)
-                            bufferedImage = ImageProcessing.flipHorizontally(bufferedImage)
+//                            bufferedImage = ImageProcessing.flipHorizontally(bufferedImage)
                             default = false
                         }
 
                         if (flipY) {
                             logger.log(Level.INFO, "Adjusting flipY: " + flipY)
-                            bufferedImage = ImageProcessing.flipVertically(bufferedImage)
+//                            bufferedImage = ImageProcessing.flipVertically(bufferedImage)
                             default = false
                         }
 
                         if (brightness in 0.1..1.9 && brightness != 1.0) {
                             logger.log(Level.INFO, "Adjusting brightness: " + brightness)
-                            bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
+//                            bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
                             default = false
                         }
 
                         if (contrast in 0.1..1.9 && contrast != 1.0) {
                             logger.log(Level.INFO, "Adjusting contrast: " + contrast)
-                            bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
+//                            bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
                             default = false
                         }
 
                         if (saturation in 0.1..1.9 && saturation != 1.0) {
                             logger.log(Level.INFO, "Adjusting saturation: " + saturation)
-                            bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
+//                            bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
                             default = false
                         }
 
                         if (sharpness in 1.0..10.0 && sharpness != 1.0) {
                             logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
-                            bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
+//                            bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
                             default = false
                         }
 
                         if (rotation != null && rotation > 0) {
                             logger.log(Level.INFO, "Adjusting rotation: " + rotation)
-                            bufferedImage = ImageProcessing.rotateImage(bufferedImage, rotation.toDouble())
+//                            bufferedImage = ImageProcessing.rotateImage(bufferedImage, rotation.toDouble())
                             default = false
                         }
 
                         if (default) {
                             path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/", ""))
                         } else {
+                            bufferedImage = ImageProcessing.transformAndAdjust(
+                                bufferedImage,
+                                rotation?.toDouble() ?: 0.0,
+                                flipX,
+                                flipY,
+                                brightness,
+                                contrast,
+                                saturation.toFloat(),
+                                sharpness
+                            )
+
                             tempFile = kotlin.io.path.createTempFile(
                                 directory = Paths.get(System.getProperty("java.io.tmpdir")),
                                 prefix = metadataObj.get().getFileName(),

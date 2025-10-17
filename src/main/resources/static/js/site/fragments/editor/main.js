@@ -515,11 +515,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness, function (data) {
                 if (data !== null) {
                     shashin.printMessageToConsole("--------------",{tag:"editor"});
-                    shashin.printMessageToConsole("Saturation editing time: " + data.saturationProcessingMS + "ms", {tag: "editor"});
-                    shashin.printMessageToConsole("Sharpness editing time: " + data.sharpnessProcessingMS + "ms", {tag: "editor"});
-                    shashin.printMessageToConsole("Contrast editing time: " + data.contrastProcessingMS + "ms", {tag: "editor"});
-                    shashin.printMessageToConsole("Brightness editing time: " + data.brightnessProcessingMS + "ms", {tag: "editor"});
-                    shashin.printMessageToConsole("Total time editing image: " + data.totalTimeMS + "ms", {tag: "editor"});
+                    shashin.printMessageToConsole("Editing time: " + data.totalTimeMS + "ms", {tag: "editor"});
                     // console.log("Total time editing image: "+data.totalTimeMS+"ms");
                     $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
                     updateTransform(false);

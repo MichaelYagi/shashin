@@ -3297,43 +3297,43 @@ class TimelineController: BaseController() {
                         // Order important
                         if (flipX) {
                             logger.log(Level.INFO, "Adjusting flipX: " + flipX)
-                            bufferedImage = ImageProcessing.flipHorizontally(bufferedImage)
+//                            bufferedImage = ImageProcessing.flipHorizontally(bufferedImage)
                             default = false
                         }
 
                         if (flipY) {
                             logger.log(Level.INFO, "Adjusting flipY: " + flipY)
-                            bufferedImage = ImageProcessing.flipVertically(bufferedImage)
+//                            bufferedImage = ImageProcessing.flipVertically(bufferedImage)
                             default = false
                         }
 
                         if (brightness in 0.1..1.9 && brightness != 1.0) {
                             logger.log(Level.INFO, "Adjusting brightness: " + brightness)
-                            bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
+//                            bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
                             default = false
                         }
 
                         if (contrast in 0.1..1.9 && contrast != 1.0) {
                             logger.log(Level.INFO, "Adjusting contrast: " + contrast)
-                            bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
+//                            bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
                             default = false
                         }
 
                         if (saturation in 0.1..1.9 && saturation != 1.0) {
                             logger.log(Level.INFO, "Adjusting saturation: " + saturation)
-                            bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
+//                            bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
                             default = false
                         }
 
                         if (sharpness in 1.0..10.0 && sharpness != 1.0) {
                             logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
-                            bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
+//                            bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
                             default = false
                         }
 
                         if (rotation != null && rotation > 0) {
                             logger.log(Level.INFO, "Adjusting rotation: " + rotation)
-                            bufferedImage = ImageProcessing.rotateImage(bufferedImage, rotation.toDouble())
+//                            bufferedImage = ImageProcessing.rotateImage(bufferedImage, rotation.toDouble())
                             default = false
                         }
 
@@ -3344,6 +3344,17 @@ class TimelineController: BaseController() {
                                 Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
                             }
                         } else {
+                            bufferedImage = ImageProcessing.transformAndAdjust(
+                                bufferedImage,
+                                rotation?.toDouble() ?: 0.0,
+                                flipX,
+                                flipY,
+                                brightness,
+                                contrast,
+                                saturation.toFloat(),
+                                sharpness
+                            )
+
                             ImageIO.write(bufferedImage, extension, tempFile)
                         }
                     } else {
@@ -3427,55 +3438,67 @@ class TimelineController: BaseController() {
             var imageFile = File(path)
             if (imageFile.exists()) {
                 var bufferedImage: BufferedImage = ImageIO.read(imageFile)
-                var startTime: Long = 0
-                var endTime: Long = 0
+//                var startTime: Long = 0
+//                var endTime: Long = 0
                 metricsUtil.end()
 
                 metricsUtil.start("Editor - sharpness")
-                startTime = System.currentTimeMillis()
-                if (sharpness in 1.0..10.0 && sharpness != 1.0) {
-                    logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
-                    bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
-                }
-                endTime = System.currentTimeMillis()
-                val sharpnessAdjustmentTiming = endTime-startTime
-                metricsUtil.end()
+//                startTime = System.currentTimeMillis()
 
-                metricsUtil.start("Editor - brightness")
-                startTime = System.currentTimeMillis()
-                if (brightness in 0.1..1.9 && brightness != 1.0) {
-                    logger.log(Level.INFO, "Adjusting brightness: " + brightness)
-                    bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
-                }
-                endTime = System.currentTimeMillis()
-                val brightnessAdjustmentTiming = endTime-startTime
-                metricsUtil.end()
+                bufferedImage = ImageProcessing.transformAndAdjust(
+                    bufferedImage,
+                    0.0,
+                    false,
+                    false,
+                    brightness,
+                    contrast,
+                    saturation.toFloat(),
+                    sharpness
+                )
 
-                metricsUtil.start("Editor - contrast")
-                startTime = System.currentTimeMillis()
-                if (contrast in 0.1..1.9 && contrast != 1.0) {
-                    logger.log(Level.INFO, "Adjusting contrast: " + contrast)
-                    bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
-                }
-                endTime = System.currentTimeMillis()
-                val contrastAdjustmentTiming = endTime-startTime
-                metricsUtil.end()
-
-                metricsUtil.start("Editor - saturation")
-                startTime = System.currentTimeMillis()
-                if (saturation in 0.1..1.9 && saturation != 1.0) {
-                    logger.log(Level.INFO, "Adjusting saturation: " + saturation)
-                    bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
-                }
-                endTime = System.currentTimeMillis()
-                val saturationAdjustmentTiming = endTime-startTime
+//                if (sharpness in 1.0..10.0 && sharpness != 1.0) {
+//                    logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
+//                    bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
+//                }
+//                endTime = System.currentTimeMillis()
+//                val sharpnessAdjustmentTiming = endTime-startTime
+//                metricsUtil.end()
+//
+//                metricsUtil.start("Editor - brightness")
+//                startTime = System.currentTimeMillis()
+//                if (brightness in 0.1..1.9 && brightness != 1.0) {
+//                    logger.log(Level.INFO, "Adjusting brightness: " + brightness)
+//                    bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
+//                }
+//                endTime = System.currentTimeMillis()
+//                val brightnessAdjustmentTiming = endTime-startTime
+//                metricsUtil.end()
+//
+//                metricsUtil.start("Editor - contrast")
+//                startTime = System.currentTimeMillis()
+//                if (contrast in 0.1..1.9 && contrast != 1.0) {
+//                    logger.log(Level.INFO, "Adjusting contrast: " + contrast)
+//                    bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
+//                }
+//                endTime = System.currentTimeMillis()
+//                val contrastAdjustmentTiming = endTime-startTime
+//                metricsUtil.end()
+//
+//                metricsUtil.start("Editor - saturation")
+//                startTime = System.currentTimeMillis()
+//                if (saturation in 0.1..1.9 && saturation != 1.0) {
+//                    logger.log(Level.INFO, "Adjusting saturation: " + saturation)
+//                    bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
+//                }
+//                endTime = System.currentTimeMillis()
+//                val saturationAdjustmentTiming = endTime-startTime
                 metricsUtil.end()
 
                 metricsUtil.start("Editor - coverting to base64")
-                resp["sharpnessProcessingMS"] = sharpnessAdjustmentTiming
-                resp["saturationProcessingMS"] = saturationAdjustmentTiming
-                resp["contrastProcessingMS"] = contrastAdjustmentTiming
-                resp["brightnessProcessingMS"] = brightnessAdjustmentTiming
+//                resp["sharpnessProcessingMS"] = sharpnessAdjustmentTiming
+//                resp["saturationProcessingMS"] = saturationAdjustmentTiming
+//                resp["contrastProcessingMS"] = contrastAdjustmentTiming
+//                resp["brightnessProcessingMS"] = brightnessAdjustmentTiming
                 resp["totalTimeMS"] = metricsUtil.getTotalElapsedTime()
                 resp["image"] = FileUtils.bufferedImageToBase64(bufferedImage)
                 metricsUtil.end()
@@ -3560,7 +3583,7 @@ class TimelineController: BaseController() {
                     // Order important
                     if (flipX) {
                         metadata.setFlipHorizontally(true)
-                        editedImage = ImageProcessing.flipHorizontally(editedImage)
+//                        editedImage = ImageProcessing.flipHorizontally(editedImage)
                         manualRestore = false
                     } else {
                         metadata.setFlipHorizontally(false)
@@ -3569,7 +3592,7 @@ class TimelineController: BaseController() {
 
                     if (flipY) {
                         metadata.setFlipVertically(true)
-                        editedImage = ImageProcessing.flipVertically(editedImage)
+//                        editedImage = ImageProcessing.flipVertically(editedImage)
                         manualRestore = false
                     } else {
                         metadata.setFlipVertically(false)
@@ -3603,15 +3626,35 @@ class TimelineController: BaseController() {
                         }
                     }
 
-                    editedImage = ImageProcessing.adjustSharpness(editedImage, sharpness)
+//                    if (sharpness != 1.0) {
+//                        editedImage = ImageProcessing.adjustSharpness(editedImage, sharpness)
+//                    }
+//
+//                    if (brightness != 1.0) {
+//                        editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
+//                    }
+//
+//                    if (contrast != 1.0) {
+//                        editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
+//                    }
+//
+//                    if (saturation != 1.0) {
+//                        editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
+//                    }
+//
+//                    editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
 
-                    editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
+                    editedImage = ImageProcessing.transformAndAdjust(
+                        editedImage,
+                        rotation.toDouble(),
+                        flipX,
+                        flipY,
+                        brightness,
+                        contrast,
+                        saturation.toFloat(),
+                        sharpness
+                    )
 
-                    editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
-
-                    editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
-
-                    editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
                     metadata.setRotation(rotation)
                     if (rotation == 90 || rotation == 270) {
                         val setWidth = metadata.getOriginalImageHeight()

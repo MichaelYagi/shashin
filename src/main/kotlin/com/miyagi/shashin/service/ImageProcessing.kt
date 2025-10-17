@@ -19,6 +19,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
@@ -50,7 +51,9 @@ import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
 import java.util.Locale
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -457,6 +460,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
+        private val NCPUS = Runtime.getRuntime().availableProcessors()
+
         fun createVideoGif(metadataId: String, metadataRepository: MetadataRepository?, overwrite: Boolean = false) {
 
             val metadataObj = metadataRepository?.findByMetadataId(metadataId)
@@ -851,6 +856,291 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             val op: BufferedImageOp = ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null)
             return op.filter(bufferedImage, null)
+        }
+
+        fun transformAndAdjust(
+            srcImage: BufferedImage,
+            rotationDegrees: Double = 0.0,
+            flipH: Boolean = false,
+            flipV: Boolean = false,
+            brightness: Double = 1.0,
+            contrast: Double = 1.0,
+            saturation: Float = 1.0f,
+            sharpness: Double = 1.0
+        ): BufferedImage {
+            val metricsUtil = MetricsUtil()
+            metricsUtil.start("transformAndAdjust")
+
+            val needsGeo = rotationDegrees != 0.0 || flipH || flipV
+            val needsColor = brightness != 1.0 || contrast != 1.0 || saturation != 1.0f
+            val needsSharpen = sharpness > 1.0
+
+            // Fast path: nothing to do
+            if (!needsGeo && !needsColor && !needsSharpen) {
+                return ensureIntRGB(srcImage)
+            }
+
+            // Apply geometry first if needed
+            var img: BufferedImage = if (needsGeo) {
+                applyAffineTransform(srcImage, rotationDegrees, flipH, flipV)
+            } else {
+                srcImage
+            }
+
+            // Color adjustments (single pass) if requested
+            if (needsColor) {
+                img = applyColorAdjustmentsSinglePass(ensureIntRGB(img), brightness, contrast, saturation)
+            }
+
+            // Sharpen if requested (last)
+            if (needsSharpen) {
+                img = applySharpen(ensureIntRGB(img), sharpness)
+            }
+
+            metricsUtil.end()
+
+            return img
+        }
+
+        private fun ensureIntRGB(image: BufferedImage): BufferedImage {
+            if (image.type == BufferedImage.TYPE_INT_RGB) return image
+            val converted = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
+            converted.graphics.drawImage(image, 0, 0, null)
+            converted.graphics.dispose()
+            return converted
+        }
+
+        // Combine rotation + flips in one AffineTransform draw
+        private fun applyAffineTransform(
+            image: BufferedImage,
+            rotationDegrees: Double,
+            flipH: Boolean,
+            flipV: Boolean
+        ): BufferedImage {
+            val rad = Math.toRadians(rotationDegrees)
+            val sin = abs(sin(rad))
+            val cos = abs(cos(rad))
+            val width = image.width
+            val height = image.height
+            val nWidth = floor(width.toDouble() * cos + height.toDouble() * sin).toInt()
+            val nHeight = floor(height.toDouble() * cos + width.toDouble() * sin).toInt()
+
+            val dest = BufferedImage(nWidth, nHeight, BufferedImage.TYPE_INT_RGB)
+            val g = dest.createGraphics()
+            try {
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
+
+                val tx = AffineTransform()
+                val translateX = (nWidth - width) / 2.0
+                val translateY = (nHeight - height) / 2.0
+                tx.translate(translateX, translateY)
+
+                if (rotationDegrees != 0.0) {
+                    tx.rotate(rad, (width / 2.0), (height / 2.0))
+                }
+
+                var scaleX = 1.0
+                var scaleY = 1.0
+                var txExtraX = 0.0
+                var txExtraY = 0.0
+
+                if (flipH) {
+                    scaleX = -scaleX
+                    txExtraX = -width.toDouble()
+                }
+                if (flipV) {
+                    scaleY = -scaleY
+                    txExtraY = -height.toDouble()
+                }
+                tx.scale(scaleX, scaleY)
+                tx.translate(txExtraX, txExtraY)
+
+                g.drawImage(image, tx, null)
+            } finally {
+                g.dispose()
+            }
+            return dest
+        }
+
+        // Single-pass: brightness + contrast + saturation
+        private fun applyColorAdjustmentsSinglePass(
+            image: BufferedImage,
+            brightness: Double,
+            contrast: Double,
+            saturation: Float
+        ): BufferedImage {
+            val width = image.width
+            val height = image.height
+
+            val rgbImage = if (image.type != BufferedImage.TYPE_INT_RGB) {
+                val converted = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+                converted.graphics.drawImage(image, 0, 0, null)
+                converted
+            } else {
+                image
+            }
+
+            val result = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+            val srcPixels = (rgbImage.raster.dataBuffer as DataBufferInt).data
+            val destPixels = (result.raster.dataBuffer as DataBufferInt).data
+
+            val satAdj = saturation.coerceIn(0.0f, 2.0f)
+            val brightnessD = brightness
+            val contrastD = contrast
+
+            val rowsPerChunk = maxOf(1, height / NCPUS)
+            val exec = Executors.newFixedThreadPool(NCPUS)
+            try {
+                val tasks = ArrayList<Callable<Unit>>()
+                var startY = 0
+                while (startY < height) {
+                    val s = startY
+                    val e = minOf(s + rowsPerChunk, height)
+                    tasks.add(Callable {
+                        for (y in s until e) {
+                            val rowBase = y * width
+                            for (x in 0 until width) {
+                                val idx = rowBase + x
+                                val rgb = srcPixels[idx]
+                                var r = ((rgb ushr 16) and 0xFF).toDouble()
+                                var g = ((rgb ushr 8) and 0xFF).toDouble()
+                                var b = (rgb and 0xFF).toDouble()
+
+                                // Brightness (multiplicative)
+                                r *= brightnessD
+                                g *= brightnessD
+                                b *= brightnessD
+
+                                // Contrast
+                                r = ((r / 255.0 - 0.5) * contrastD + 0.5) * 255.0
+                                g = ((g / 255.0 - 0.5) * contrastD + 0.5) * 255.0
+                                b = ((b / 255.0 - 0.5) * contrastD + 0.5) * 255.0
+
+                                if (satAdj != 1.0f) {
+                                    val gray = 0.299 * r + 0.587 * g + 0.114 * b
+                                    val dr = r - gray
+                                    val dg = g - gray
+                                    val db = b - gray
+
+                                    var rSat = gray + dr * satAdj
+                                    var gSat = gray + dg * satAdj
+                                    var bSat = gray + db * satAdj
+
+                                    if (satAdj > 1.0f) {
+                                        val redFactor = 1.0 - 0.10 * (satAdj - 1.0f)
+                                        rSat = gray + dr * satAdj * redFactor
+                                    }
+
+                                    if (satAdj > 1.0f) {
+                                        val brightnessBoost = (satAdj - 1.0f) * 0.006
+                                        rSat += brightnessBoost * 255.0
+                                        gSat += brightnessBoost * 255.0
+                                        bSat += brightnessBoost * 255.0
+                                    }
+
+                                    r = rSat
+                                    g = gSat
+                                    b = bSat
+                                }
+
+                                val rf = r.roundToInt().coerceIn(0, 255)
+                                val gf = g.roundToInt().coerceIn(0, 255)
+                                val bf = b.roundToInt().coerceIn(0, 255)
+                                destPixels[idx] = (rf shl 16) or (gf shl 8) or bf
+                            }
+                        }
+                    })
+                    startY += rowsPerChunk
+                }
+                exec.invokeAll(tasks).forEach { /* waits */ }
+            } finally {
+                exec.shutdown()
+                exec.awaitTermination(5, TimeUnit.SECONDS)
+            }
+
+            return result
+        }
+
+        // Sharpen pass (only when requested)
+        private fun applySharpen(image: BufferedImage, sharpness: Double): BufferedImage {
+            val width = image.width
+            val height = image.height
+
+            val srcPixels = (image.raster.dataBuffer as DataBufferInt).data
+            val dest = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+            val destPixels = (dest.raster.dataBuffer as DataBufferInt).data
+
+            val resolutionScale = (sqrt((width * height).toDouble()) / 512.0).coerceIn(0.5, 2.0)
+            val sharpenWeight = if (sharpness > 1.0) (sharpness - 1.0) / 4.5 else 0.0
+            val centerWeight = 1.0 + 4.0 * sharpenWeight
+            val neighborWeight = -sharpenWeight
+
+            val rowsPerChunk = maxOf(1, height / NCPUS)
+            val exec = Executors.newFixedThreadPool(NCPUS)
+            try {
+                val tasks = ArrayList<Callable<Unit>>()
+                var startY = 0
+                while (startY < height) {
+                    val s = startY
+                    val e = minOf(s + rowsPerChunk, height)
+                    tasks.add(Callable {
+                        for (y in s until e) {
+                            val rowBase = y * width
+                            for (x in 0 until width) {
+                                val idx = rowBase + x
+
+                                val rgbC = srcPixels[idx]
+                                val rC = ((rgbC ushr 16) and 0xFF).toDouble()
+                                val gC = ((rgbC ushr 8) and 0xFF).toDouble()
+                                val bC = (rgbC and 0xFF).toDouble()
+
+                                var rTotal = rC * centerWeight
+                                var gTotal = gC * centerWeight
+                                var bTotal = bC * centerWeight
+
+                                val offs = arrayOf(
+                                    intArrayOf((-1.0 * resolutionScale).toInt(), 0),
+                                    intArrayOf((1.0 * resolutionScale).toInt(), 0),
+                                    intArrayOf(0, (-1.0 * resolutionScale).toInt()),
+                                    intArrayOf(0, (1.0 * resolutionScale).toInt())
+                                )
+
+                                for (off in offs) {
+                                    val nx = x + off[0]
+                                    val ny = y + off[1]
+                                    val nIdx = if (nx in 0 until width && ny in 0 until height) ny * width + nx else idx
+                                    val rgbN = srcPixels[nIdx]
+                                    val rN = ((rgbN ushr 16) and 0xFF).toDouble()
+                                    val gN = ((rgbN ushr 8) and 0xFF).toDouble()
+                                    val bN = (rgbN and 0xFF).toDouble()
+
+                                    rTotal += rN * neighborWeight
+                                    gTotal += gN * neighborWeight
+                                    bTotal += bN * neighborWeight
+                                }
+
+                                val rF = rTotal.roundToInt().coerceIn(0, 255)
+                                val gF = gTotal.roundToInt().coerceIn(0, 255)
+                                val bF = bTotal.roundToInt().coerceIn(0, 255)
+                                destPixels[idx] = (rF shl 16) or (gF shl 8) or bF
+                            }
+                        }
+                    })
+                    startY += rowsPerChunk
+                }
+                exec.invokeAll(tasks).forEach { /* waits */ }
+            } finally {
+                exec.shutdown()
+                exec.awaitTermination(5, TimeUnit.SECONDS)
+            }
+
+            return dest
+        }
+
+        private fun Double.coerceIn(min: Double, max: Double): Double = when {
+            this < min -> min
+            this > max -> max
+            else -> this
         }
 
         fun borderImage(bufferedImage: BufferedImage): BufferedImage {
