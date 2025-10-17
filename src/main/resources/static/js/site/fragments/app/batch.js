@@ -38,7 +38,7 @@
 
         if (metadataId !== shashin.lastSelectedMetadataId) {
             shashin.printMessageToConsole("Select action", {tag: "multiselect"});
-            
+
             // Disable all links inside divs
             disableToolbar();
             Util.showSpinner(true);

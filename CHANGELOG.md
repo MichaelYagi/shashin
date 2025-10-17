@@ -17,6 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Batch selection improvements and bug fixes
+
 ### Security
 
 ## [2.14.1] - 2025-10-08
