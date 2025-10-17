@@ -169,7 +169,7 @@ class TimelineController: BaseController() {
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
-            val anchorMetadataDateString: String = when (view) {
+            val anchorMetadataDateString: String? = when (view) {
                 "accessed" -> anchorMetadata?.getLastAccessedAt().orEmpty()
                 "modified" -> anchorMetadata?.getModifiedAt().orEmpty()
                 "recent" -> anchorMetadata?.getAddedAt().orEmpty()
@@ -180,7 +180,7 @@ class TimelineController: BaseController() {
                 }
             }
 
-            val selectMetadataDateString: String = when (view) {
+            val selectMetadataDateString: String? = when (view) {
                 "accessed" -> selectMetadata?.getLastAccessedAt().orEmpty()
                 "modified" -> selectMetadata?.getModifiedAt().orEmpty()
                 "recent" -> selectMetadata?.getAddedAt().orEmpty()
@@ -191,132 +191,168 @@ class TimelineController: BaseController() {
                 }
             }
 
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val anchorMetadataDateObj = sdf.parse(anchorMetadataDateString)
-            val selectMetadataDateObj = sdf.parse(selectMetadataDateString)
+            var metadatas: MutableList<Metadata>? = null
+            var direction = ""
 
-            var startDate = selectMetadataDateString
-            var endDate = anchorMetadataDateString
-            var direction = "down"
-            if (anchorMetadataDateObj < selectMetadataDateObj) {
-                direction = "up"
-                startDate = anchorMetadataDateString
-                endDate = selectMetadataDateString
-            }
+            if (anchorMetadataDateString != null && anchorMetadataDateString != "" && selectMetadataDateString != null && selectMetadataDateString != "") {
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                val anchorMetadataDateObj = sdf.parse(anchorMetadataDateString)
+                val selectMetadataDateObj = sdf.parse(selectMetadataDateString)
 
-            // If timeline view
-            val metadatas: MutableList<Metadata>? =
-                if (view === "taken" || view === "timeline") {
-                    if (mediaType == "all") {
-                        metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
-                    } else if (mediaType == "nolatlng") {
-                        metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
-                    } else if (mediaType == "description") {
-                        metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
-                    } else {
-                        metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(
-                            startDate,
-                            endDate,
-                            mediaType.toString()
-                        )
-                    }
-                } else if (view == "accessed") {
-                    if (mediaType == "all") {
-                        metadataRepository.findMetadataIdBetweenAccessedAt(startDate, endDate)
-                    } else if (mediaType == "nolatlng") {
-                        metadataRepository.findMetadataIdBetweenAccessAtNoCoord(startDate, endDate)
-                    } else if (mediaType == "description") {
-                        metadataRepository.findMetadataIdBetweenAccessAtByDescription(startDate, endDate)
-                    } else {
-                        metadataRepository.findMetadataIdBetweenAccessedAtWithType(startDate, endDate, mediaType.toString())
-                    }
-                } else if (view == "modified") {
-                    if (mediaType == "all") {
-                        metadataRepository.findMetadataIdBetweenModifiedAt(startDate, endDate)
-                    } else if (mediaType == "nolatlng") {
-                        metadataRepository.findMetadataIdBetweenModifiedAtNoCoord(startDate, endDate)
-                    } else if (mediaType == "description") {
-                        metadataRepository.findMetadataIdBetweenModifiedAtByDescription(startDate, endDate)
-                    } else {
-                        metadataRepository.findMetadataIdBetweenModifiedAtWithType(startDate, endDate, mediaType.toString())
-                    }
-                } else if (view == "recent") {
-                    if (mediaType == "all") {
-                        metadataRepository.findMetadataIdBetweenAddedAt(startDate, endDate)
-                    } else if (mediaType == "nolatlng") {
-                        metadataRepository.findMetadataIdBetweenAddedAtNoCoord(startDate, endDate)
-                    } else if (mediaType == "description") {
-                        metadataRepository.findMetadataIdBetweenAddedAtByDescription(startDate, endDate)
-                    } else {
-                        metadataRepository.findMetadataIdBetweenAddedAtWithType(startDate, endDate, mediaType.toString())
-                    }
-                } else if (view == "taken") {
-                    if (mediaType == "all") {
-                        metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
-                    } else if (mediaType == "nolatlng") {
-                        metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
-                    } else if (mediaType == "description") {
-                        metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
-                    } else {
-                        metadataRepository.findMetadataIdBetweenTakenAtWithType(
-                            startDate,
-                            endDate,
-                            mediaType.toString()
-                        )
-                    }
-                } else if (view == "archived") {
-                    metadataRepository.findAllByHiddenByDate(startDate, endDate)
-                } else if (view == "folder" && folderNameCopy.isNotEmpty()) {
-                    metadataRepository.findAllByFolderByDates(startDate, endDate, folderNameCopy)
-                } else if (view == "search" && searchTermCopy.isNotEmpty()) {
-                    searchRepository.findMetadataBySearchTermByDate(startDate, endDate, searchTermCopy)
-                } else if (view == "favorites" && personIdCopy > 0) {
-                    if (mediaType == "all") {
-                        favoriteRepository.findAllByUserIdAndDate(startDate, endDate, personIdCopy)
-                    } else if (mediaType == "nolatlng") {
-                        favoriteRepository.findAllByUserIdAndDateNoCoord(startDate, endDate, personIdCopy)
-                    } else if (mediaType == "description") {
-                        favoriteRepository.findAllByUserIdAndDateByDescription(startDate, endDate, personIdCopy)
-                    } else {
-                        favoriteRepository.findAllByUserIdAndDateByMediaType(startDate, endDate, personIdCopy, mediaType.toString())
-                    }
-                } else if (view == "matches" && personIdCopy > 0) {
-                    metadataRepository.findLowMatchesByPersonAndDate(startDate, endDate, personIdCopy, settings.getRecognitionConfidenceThreshold()!!)
-                } else if (view == "person" && personIdCopy > 0) {
-                    if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
-                        metadataRepository.findAlbumPhotoByPersonAndDate(
-                            startDate,
-                            endDate,
-                            settings.getRecognitionConfidenceThreshold()!!,
-                            personIdCopy,
-                            currentUserObj.getId()
-                        )
-                    } else {
-                        metadataRepository.findMetadataByPersonAndDate(
-                            startDate, endDate,
-                            settings.getRecognitionConfidenceThreshold()!!,
-                            personIdCopy
-                        )
-                    }
-                } else if (albumIdCopy > 0) {
-                    if (mediaType == "all") {
-                        albumRepository.findMetadataIdBetweenAlbum(albumIdCopy, startDate, endDate)
-                    } else if (mediaType == "nolatlng") {
-                        albumRepository.findMetadataIdBetweenAlbumNoCoord(albumIdCopy, startDate, endDate)
-                    } else if (mediaType == "description") {
-                        albumRepository.findMetadataIdBetweenAlbumByDesciption(albumIdCopy, startDate, endDate)
-                    } else if (mediaType == "comments") {
-                        albumRepository.findMetadataIdBetweenAlbumByComments(albumIdCopy, startDate, endDate)
-                    } else {
-                        albumRepository.findMetadataIdBetweenAlbumWithType(albumIdCopy, startDate, endDate, mediaType.toString())
-                    }
-                } else {
-                    if (mediaType == "all") {
-                        metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
-                    } else {
-                        metadataRepository.findMetadataIdBetweenTakenAtWithType(startDate, endDate, mediaType.toString())
-                    }
+                var startDate = selectMetadataDateString
+                var endDate = anchorMetadataDateString
+                direction = "down"
+                if (anchorMetadataDateObj < selectMetadataDateObj) {
+                    direction = "up"
+                    startDate = anchorMetadataDateString
+                    endDate = selectMetadataDateString
                 }
+
+                // If timeline view
+                metadatas =
+                    if (view === "taken" || view === "timeline") {
+                        if (mediaType == "all") {
+                            metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                        } else if (mediaType == "nolatlng") {
+                            metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
+                        } else if (mediaType == "description") {
+                            metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
+                        } else {
+                            metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(
+                                startDate,
+                                endDate,
+                                mediaType.toString()
+                            )
+                        }
+                    } else if (view == "accessed") {
+                        if (mediaType == "all") {
+                            metadataRepository.findMetadataIdBetweenAccessedAt(startDate, endDate)
+                        } else if (mediaType == "nolatlng") {
+                            metadataRepository.findMetadataIdBetweenAccessAtNoCoord(startDate, endDate)
+                        } else if (mediaType == "description") {
+                            metadataRepository.findMetadataIdBetweenAccessAtByDescription(startDate, endDate)
+                        } else {
+                            metadataRepository.findMetadataIdBetweenAccessedAtWithType(
+                                startDate,
+                                endDate,
+                                mediaType.toString()
+                            )
+                        }
+                    } else if (view == "modified") {
+                        if (mediaType == "all") {
+                            metadataRepository.findMetadataIdBetweenModifiedAt(startDate, endDate)
+                        } else if (mediaType == "nolatlng") {
+                            metadataRepository.findMetadataIdBetweenModifiedAtNoCoord(startDate, endDate)
+                        } else if (mediaType == "description") {
+                            metadataRepository.findMetadataIdBetweenModifiedAtByDescription(startDate, endDate)
+                        } else {
+                            metadataRepository.findMetadataIdBetweenModifiedAtWithType(
+                                startDate,
+                                endDate,
+                                mediaType.toString()
+                            )
+                        }
+                    } else if (view == "recent") {
+                        if (mediaType == "all") {
+                            metadataRepository.findMetadataIdBetweenAddedAt(startDate, endDate)
+                        } else if (mediaType == "nolatlng") {
+                            metadataRepository.findMetadataIdBetweenAddedAtNoCoord(startDate, endDate)
+                        } else if (mediaType == "description") {
+                            metadataRepository.findMetadataIdBetweenAddedAtByDescription(startDate, endDate)
+                        } else {
+                            metadataRepository.findMetadataIdBetweenAddedAtWithType(
+                                startDate,
+                                endDate,
+                                mediaType.toString()
+                            )
+                        }
+                    } else if (view == "taken") {
+                        if (mediaType == "all") {
+                            metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                        } else if (mediaType == "nolatlng") {
+                            metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
+                        } else if (mediaType == "description") {
+                            metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
+                        } else {
+                            metadataRepository.findMetadataIdBetweenTakenAtWithType(
+                                startDate,
+                                endDate,
+                                mediaType.toString()
+                            )
+                        }
+                    } else if (view == "archived") {
+                        metadataRepository.findAllByHiddenByDate(startDate, endDate)
+                    } else if (view == "folder" && folderNameCopy.isNotEmpty()) {
+                        metadataRepository.findAllByFolderByDates(startDate, endDate, folderNameCopy)
+                    } else if (view == "search" && searchTermCopy.isNotEmpty()) {
+                        searchRepository.findMetadataBySearchTermByDate(startDate, endDate, searchTermCopy)
+                    } else if (view == "favorites" && personIdCopy > 0) {
+                        if (mediaType == "all") {
+                            favoriteRepository.findAllByUserIdAndDate(startDate, endDate, personIdCopy)
+                        } else if (mediaType == "nolatlng") {
+                            favoriteRepository.findAllByUserIdAndDateNoCoord(startDate, endDate, personIdCopy)
+                        } else if (mediaType == "description") {
+                            favoriteRepository.findAllByUserIdAndDateByDescription(startDate, endDate, personIdCopy)
+                        } else {
+                            favoriteRepository.findAllByUserIdAndDateByMediaType(
+                                startDate,
+                                endDate,
+                                personIdCopy,
+                                mediaType.toString()
+                            )
+                        }
+                    } else if (view == "matches" && personIdCopy > 0) {
+                        metadataRepository.findLowMatchesByPersonAndDate(
+                            startDate,
+                            endDate,
+                            personIdCopy,
+                            settings.getRecognitionConfidenceThreshold()!!
+                        )
+                    } else if (view == "person" && personIdCopy > 0) {
+                        if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
+                            metadataRepository.findAlbumPhotoByPersonAndDate(
+                                startDate,
+                                endDate,
+                                settings.getRecognitionConfidenceThreshold()!!,
+                                personIdCopy,
+                                currentUserObj.getId()
+                            )
+                        } else {
+                            metadataRepository.findMetadataByPersonAndDate(
+                                startDate, endDate,
+                                settings.getRecognitionConfidenceThreshold()!!,
+                                personIdCopy
+                            )
+                        }
+                    } else if (albumIdCopy > 0) {
+                        if (mediaType == "all") {
+                            albumRepository.findMetadataIdBetweenAlbum(albumIdCopy, startDate, endDate)
+                        } else if (mediaType == "nolatlng") {
+                            albumRepository.findMetadataIdBetweenAlbumNoCoord(albumIdCopy, startDate, endDate)
+                        } else if (mediaType == "description") {
+                            albumRepository.findMetadataIdBetweenAlbumByDesciption(albumIdCopy, startDate, endDate)
+                        } else if (mediaType == "comments") {
+                            albumRepository.findMetadataIdBetweenAlbumByComments(albumIdCopy, startDate, endDate)
+                        } else {
+                            albumRepository.findMetadataIdBetweenAlbumWithType(
+                                albumIdCopy,
+                                startDate,
+                                endDate,
+                                mediaType.toString()
+                            )
+                        }
+                    } else {
+                        if (mediaType == "all") {
+                            metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                        } else {
+                            metadataRepository.findMetadataIdBetweenTakenAtWithType(
+                                startDate,
+                                endDate,
+                                mediaType.toString()
+                            )
+                        }
+                    }
+            }
 
             if (metadatas != null && metadatas.isNotEmpty()) {
                 var startCaptured = false
@@ -353,7 +389,15 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                response["msg"] = messageSource?.getMessage("main.success", null, locale)
+                response["msg"] = messageSource?.getMessage("main.fail", null, locale)
+                response["status"] = ApiResponse.FAIL.status
+                response["direction"] = direction
+                response["metadataIdArray"] = retMetadataIdArray
+                response["metadataFilenameArray"] = retMetadataFilenameArray
+                response["metadataThumbnailArray"] = retMetadataThumbnailArray
+                response["metadataDatesArray"] = retMetadataDatesArray
+            } else {
+                response["msg"] = messageSource?.getMessage("main.f", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
                 response["direction"] = direction
                 response["metadataIdArray"] = retMetadataIdArray
