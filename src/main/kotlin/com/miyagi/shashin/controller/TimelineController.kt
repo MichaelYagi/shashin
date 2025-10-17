@@ -3279,6 +3279,8 @@ class TimelineController: BaseController() {
 
                 for (metadata in metadatas) {
                     var imageFile = File(metadata.getPath()!!)
+                    val shortString = TextUtils.createBase64EncodedUuid(metadata.getId())
+
                     if (imageFile.exists()) {
                         val extension = metadata.getPath()?.substringAfterLast('.', "")
 
@@ -3337,9 +3339,9 @@ class TimelineController: BaseController() {
                             default = false
                         }
 
-                        tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                        tempFile = File(tempDownloadDir.pathString + "/" + metadata.getFileName()?.substringBeforeLast(".") + "_" + shortString + "." + metadata.getExpectedExtension())
                         if (default) {
-                            tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                            tempFile = File(tempDownloadDir.pathString + "/" + metadata.getFileName()?.substringBeforeLast(".") + "_" + shortString + "." + metadata.getExpectedExtension())
                             if (tempFile.createNewFile()) {
                                 Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
                             }
@@ -3358,7 +3360,7 @@ class TimelineController: BaseController() {
                             ImageIO.write(bufferedImage, extension, tempFile)
                         }
                     } else {
-                        tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                        tempFile = File(tempDownloadDir.pathString + "/" + metadata.getFileName()?.substringBeforeLast(".") + "_" + shortString + "." + metadata.getExpectedExtension())
                         if (tempFile.createNewFile()) {
                             Files.copy(
                                 Path(metadata.getPath()!!),

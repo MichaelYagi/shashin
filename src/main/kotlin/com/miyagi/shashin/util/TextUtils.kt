@@ -68,6 +68,32 @@ class TextUtils {
 
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
 
+        fun createBase64EncodedUuid(uuidStr: String): String {
+            val uuid = try {
+                when {
+                    // Accept compact 32-hex form (no hyphens)
+                    uuidStr.length == 32 && uuidStr.matches(Regex("(?i)[0-9a-f]{32}")) -> {
+                        val s = uuidStr.lowercase()
+                        UUID.fromString("${s.substring(0,8)}-${s.substring(8,12)}-${s.substring(12,16)}-${s.substring(16,20)}-${s.substring(20)}")
+                    }
+                    else -> UUID.fromString(uuidStr)
+                }
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Invalid UUID string: $uuidStr", e)
+            }
+
+            val bytes = ByteArray(16)
+            val buffer = java.nio.ByteBuffer.wrap(bytes)
+            buffer.putLong(uuid.mostSignificantBits)
+            buffer.putLong(uuid.leastSignificantBits)
+
+            return Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(bytes)
+                .replace("-", "")
+                .replace("_", "")
+        }
+
         fun getRandomWithExclusion(start: Int, end: Int, exclude: List<Int> = listOf()): Int {
             var random = start + Random.nextInt(end - start + 1 - exclude.size)
             for (ex in exclude) {
