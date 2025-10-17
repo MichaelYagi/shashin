@@ -124,7 +124,8 @@
                 enableToolbar();
                 Util.showSpinner(false);
             }).then(data => {
-                if (data.hasOwnProperty("metadataIdArray") &&
+                if (data.status === shashin.apiResponse.SUCCESS &&
+                    data.hasOwnProperty("metadataIdArray") &&
                     data.hasOwnProperty("metadataFilenameArray") &&
                     data.hasOwnProperty("metadataThumbnailArray") &&
                     data.hasOwnProperty("metadataDatesArray") &&
@@ -246,6 +247,13 @@
                             shashin.lastSelectedMetadataId = "";
                         }
                     }, 0);
+                } else {
+                    shashin.showToastMessage(null, shashin.getTranslatedValue("main.fail"), {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000",
+                        tag: "batchselect",
+                        borderColor: "danger"
+                    });
                 }
             });
         } else {
