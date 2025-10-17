@@ -1,7 +1,3 @@
-// Improved imageAdjuster with null-checks, better WebGL error reporting,
-// and safer usage (accepts canvas element or id). Uses toBlob + createObjectURL
-// instead of toDataURL to avoid blocking the main thread.
-//
 // Usage examples:
 //   // pass an element
 //   setupImageAdjustments(imgEl, document.getElementById('glCanvas'), ...);
