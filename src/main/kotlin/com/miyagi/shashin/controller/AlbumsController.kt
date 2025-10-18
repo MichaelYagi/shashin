@@ -48,8 +48,10 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import java.time.Duration
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.collections.count
@@ -2082,112 +2084,169 @@ class AlbumsController: BaseController() {
     }
 
     @PostMapping("/download/share/{shareLink}/album/{albumId}")
-    fun postShareAlbumDownload(model: Model, @RequestParam download: Optional<Int>, @RequestParam downloadArray: Optional<String>, @PathVariable shareLink: String, @PathVariable albumId: Int, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
-        if (albumId > 0 && (download.isPresent && download.get() == albumId) || (downloadArray.isPresent && downloadArray.get() != "")) {
+    fun postShareAlbumDownload(
+        @RequestParam download: Optional<Int>,
+        @RequestParam downloadArray: Optional<String>,
+        @PathVariable shareLink: String,
+        @PathVariable albumId: Int
+    ): ResponseEntity<InputStreamResource>? {
+        // Validate request
+        if (!(albumId > 0 && ((download.isPresent && download.get() == albumId) || (downloadArray.isPresent && downloadArray.get() != "")))) {
+            return null
+        }
 
-            // Get album photos
-            val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
-            val albumObj = albumRepository.findById(albumId)
+        val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+        val albumObj = albumRepository.findById(albumId)
+        if (albumPhotos == null || !albumObj.isPresent || albumObj.get().getShareUrl() != shareLink) {
+            return null
+        }
 
-            if (albumPhotos != null && albumObj.isPresent && albumObj.get().getShareUrl() == shareLink) {
-                val tempExportBaseDir = Files.createTempDirectory(albumId.toString())
-                val metricsUtil = MetricsUtil()
-
-                if (download.isPresent && download.get() == albumId) {
-                    for (albumPhoto in albumPhotos) {
-                        if (albumPhoto != null) {
-                            val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
-                            //if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
-                            metricsUtil.start("Share album download: " + metadata.get().getPath()!!)
-                            val tempFile = File(metadata.get().getPath()!!)
-                            if (tempFile.exists()) {
-                                val tempFileTo =
-                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName()?.substringBeforeLast(".") + "_" + TextUtils.createBase64EncodedUuid(metadata.get().getId()) + "." + metadata.get().getFileName()?.substringAfterLast("."))
-
-                                Files.copy(
-                                    tempFile.toPath(),
-                                    tempFileTo.toPath(),
-                                    StandardCopyOption.REPLACE_EXISTING
-                                )
-                            } else {
-                                logger.log(
-                                    Level.INFO,
-                                    "Exporting album photo. File does not exist: " + tempFile.absolutePath
-                                )
-                            }
-                            metricsUtil.end()
-//                            } else {
-//                                logger.log(
-//                                    Level.INFO,
-//                                    "Ignoring album video: " + metadata.get().getPath()
-//                                )
-//                            }
-                        }
-                    }
-                } else if (downloadArray.isPresent && downloadArray.get() != "") {
-                    val metadataIdArray: Array<String>? = mapper.readValue(downloadArray.get(), object : TypeReference<Array<String>>() {})
-
-                    if (metadataIdArray != null) {
-                        for (metadataId in metadataIdArray) {
-                            val metadata = metadataRepository.findById(metadataId)
-                            //if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
-                            metricsUtil.start("Share album download: " + metadata.get().getPath()!!)
-                            val tempFile = File(metadata.get().getPath()!!)
-                            if (tempFile.exists()) {
-                                val tempFileTo =
-                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName()?.substringBeforeLast(".") + "_" + TextUtils.createBase64EncodedUuid(metadata.get().getId()) + "." + metadata.get().getFileName()?.substringAfterLast("."))
-                                Files.copy(
-                                    tempFile.toPath(),
-                                    tempFileTo.toPath(),
-                                    StandardCopyOption.REPLACE_EXISTING
-                                )
-                            } else {
-                                logger.log(
-                                    Level.INFO,
-                                    "Exporting album photo. File does not exist: " + tempFile.absolutePath
-                                )
-                            }
-                            metricsUtil.end()
-                            //}
-                        }
-                    }
-                }
-
-                if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
-                    val tempDir = tempExportBaseDir.toFile()
-                    val outputZipFile = FileUtils.zipFolder(tempDir, albumObj.get().getName()!!)
-                    FileUtils.deleteDirectory(tempDir)
-
-                    if (outputZipFile != null) {
-                        metricsUtil.start("Sending")
-                        outputZipFile.deleteOnExit()
-
-                        val resource = InputStreamResource(FileInputStream(outputZipFile))
-                        val contentLength = outputZipFile.length()
-
-                        val headers = HttpHeaders()
-                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinShareAlbumName",
-                            outputZipFile.name.replace("\\s".toRegex(), "_").lowercase(Locale.getDefault())
-                        ).path("/").build().toString())
-                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinShareAlbumSize",contentLength.toString()).path("/").build().toString())
-                        headers.add(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=" + outputZipFile.name
-                        )
-                        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
-                        headers.add("Pragma", "no-cache")
-                        headers.add("Expires", "0")
-
-                        metricsUtil.end()
-
-                        return ResponseEntity.ok()
-                            .headers(headers)
-                            .contentLength(contentLength)
-                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                            .body(resource)
-                    }
+        // Collect metadata entries in the same order the original code used
+        val metadataList = mutableListOf<Metadata>()
+        if (download.isPresent && download.get() == albumId) {
+            for (albumPhoto in albumPhotos) {
+                if (albumPhoto == null) continue
+                val mOpt = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                if (mOpt.isPresent) metadataList.add(mOpt.get())
+            }
+        } else if (downloadArray.isPresent && downloadArray.get() != "") {
+            val metadataIdArray: Array<String>? = mapper.readValue(downloadArray.get(), object : TypeReference<Array<String>>() {})
+            if (metadataIdArray != null) {
+                for (id in metadataIdArray) {
+                    val mOpt = metadataRepository.findById(id)
+                    if (mOpt.isPresent) metadataList.add(mOpt.get())
                 }
             }
+        }
+
+        if (metadataList.isEmpty()) return null
+
+        // Create base temp directory for exports
+        val tempExportBaseDir: Path = Files.createTempDirectory(albumId.toString())
+        val metricsUtil = MetricsUtil()
+
+        // Determine a reasonable thread pool size and create executor
+        val cpu = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
+        val poolSize = (cpu * 2).coerceAtMost(16) // cap to avoid too many concurrent disk operations
+        val executor = Executors.newFixedThreadPool(poolSize)
+
+        try {
+            // Submit copy tasks for each metadata entry to preserve filename logic exactly
+            val futures = metadataList.map { metadata ->
+                executor.submit(Callable<File?> {
+                    try {
+                        // Start metric for this file copy
+                        metricsUtil.start("Share album download: " + (metadata.getPath() ?: ""))
+                        val srcPathStr = metadata.getPath()
+                        if (srcPathStr.isNullOrBlank()) {
+                            logger.log(Level.INFO, "Skipping metadata with missing path: ${metadata.getId()}")
+                            return@Callable null
+                        }
+
+                        val srcFile = File(srcPathStr)
+                        if (!srcFile.exists()) {
+                            logger.log(Level.INFO, "Exporting album photo. File does not exist: " + srcFile.absolutePath)
+                            return@Callable null
+                        }
+
+                        // Keep filename logic identical to original:
+                        val originalFileName = metadata.getFileName() ?: srcFile.name
+                        val base = originalFileName.substringBeforeLast(".")
+                        val ext = originalFileName.substringAfterLast(".", "")
+                        val destFileName = if (ext.isNotEmpty())
+                            "${base}_${TextUtils.createBase64EncodedUuid(metadata.getId())}.$ext"
+                        else
+                            "${base}_${TextUtils.createBase64EncodedUuid(metadata.getId())}"
+
+                        val destFile = tempExportBaseDir.resolve(destFileName).toFile()
+                        Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                        destFile
+                    } catch (t: Throwable) {
+                        logger.log(Level.WARNING, "Error copying file for metadata ${metadata.getId()}: ${t.message}", t)
+                        null
+                    } finally {
+                        metricsUtil.end()
+                    }
+                })
+            }
+
+            // Wait for all copy tasks to finish (collect successes)
+            val copiedAny = futures.mapNotNull { future ->
+                try {
+                    future.get()
+                } catch (t: Throwable) {
+                    logger.log(Level.WARNING, "Copy task failed: ${t.message}", t)
+                    null
+                }
+            }.isNotEmpty()
+
+            if (!copiedAny) {
+                // Nothing copied -> cleanup and return
+                try { Files.deleteIfExists(tempExportBaseDir) } catch (_: Exception) {}
+                return null
+            }
+
+            // Zip the folder (existing utility used by original code)
+            val tempDirFile = tempExportBaseDir.toFile()
+            val outputZipFile = FileUtils.zipFolder(tempDirFile, albumObj.get().getName()!!)
+            // Remove temp directory after zipping
+            try { FileUtils.deleteDirectory(tempDirFile) } catch (t: Throwable) {
+                logger.log(Level.WARNING, "Failed to delete temp export dir: ${t.message}", t)
+            }
+
+            if (outputZipFile != null) {
+                metricsUtil.start("Sending")
+                // ensure file removed on JVM exit
+                outputZipFile.deleteOnExit()
+
+                val resource = InputStreamResource(FileInputStream(outputZipFile))
+                val contentLength = outputZipFile.length()
+
+                val headers = HttpHeaders()
+                headers.add(
+                    HttpHeaders.SET_COOKIE,
+                    ResponseCookie.from(
+                        "ShashinShareAlbumName",
+                        outputZipFile.name.replace("\\s".toRegex(), "_").lowercase(Locale.getDefault())
+                    ).path("/").maxAge(Duration.ofMinutes(5)).build().toString()
+                )
+                headers.add(
+                    HttpHeaders.SET_COOKIE,
+                    ResponseCookie.from("ShashinShareAlbumSize", contentLength.toString()).path("/").maxAge(Duration.ofMinutes(5)).build().toString()
+                )
+                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
+                headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                headers.add("Pragma", "no-cache")
+                headers.add("Expires", "0")
+
+                metricsUtil.end()
+
+                return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(contentLength)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource)
+            }
+        } finally {
+            // Best-effort shutdown of executor
+            try {
+                executor.shutdown()
+                if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                    executor.shutdownNow()
+                }
+            } catch (_: InterruptedException) {
+                executor.shutdownNow()
+                Thread.currentThread().interrupt()
+            } catch (_: Exception) {
+            }
+
+            // Ensure temp dir removed if empty or leftover files exist
+            try {
+                val dirFile = tempExportBaseDir.toFile()
+                if (dirFile.exists()) {
+                    FileUtils.deleteDirectory(dirFile)
+                }
+            } catch (_: Exception) {}
         }
 
         return null
