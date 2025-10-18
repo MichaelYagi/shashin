@@ -2057,25 +2057,7 @@ class AlbumsController: BaseController() {
                                     // Ensure parent exists
                                     outFile.parentFile?.mkdirs()
                                     ImageIO.write(transformed, extension, outFile)
-                                }
-
-                                // Build a unique destination filename to avoid collisions (use albumPhoto id or metadata id)
-                                val safeFileName = metadata.getFileName()?.substringBeforeLast(".") + "_" + TextUtils.createBase64EncodedUuid(metadata.getId()) + "." + metadata.getFileName()?.substringAfterLast(".")
-                                val destFinal = tempExportBaseDir.resolve(safeFileName.toString())
-                                val destTmp = tempExportBaseDir.resolve("$safeFileName.tmp")
-
-                                try {
-                                    // Try atomic move to final name; fall back to non-atomic if not supported
-                                    try {
-                                        Files.move(destTmp, destFinal, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
-                                    } catch (atomicEx: Exception) {
-                                        Files.move(destTmp, destFinal, StandardCopyOption.REPLACE_EXISTING)
-                                    }
-                                } catch (ex: Exception) {
-                                    // Clean up partial tmp file and log
-                                    try { Files.deleteIfExists(destTmp) } catch (_: Exception) {}
-                                    logger.log(Level.SEVERE, "Error copying album file ${outFile.absolutePath}", ex)
-                                    throw ex
+                                    outFile
                                 }
                             }
                         }
