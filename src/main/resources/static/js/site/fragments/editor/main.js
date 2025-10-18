@@ -21,6 +21,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let saturation = 1.0;
     let sharpness = 1.0;
 
+    let originalRotation = (editMetadataObj.hasOwnProperty("rotation") && editMetadataObj.rotation !== null) ? editMetadataObj.rotation : rotation;
+    let originalIsFlippedHorizontally = (editMetadataObj.hasOwnProperty("flipHorizontally") && editMetadataObj.flipHorizontally !== null) ? editMetadataObj.flipHorizontally : isFlippedHorizontally;
+    let originalIsFlippedVertically = (editMetadataObj.hasOwnProperty("flipVertically") && editMetadataObj.flipVertically !== null) ? editMetadataObj.flipVertically : isFlippedVertically;
+    let originalBrightness = (editMetadataObj.hasOwnProperty("brightness") && editMetadataObj.brightness !== null) ? editMetadataObj.brightness : brightness;
+    let originalContrast = (editMetadataObj.hasOwnProperty("contrast") && editMetadataObj.contrast !== null) ? editMetadataObj.contrast : contrast;
+    let originalSaturation = (editMetadataObj.hasOwnProperty("saturation") && editMetadataObj.saturation !== null) ? editMetadataObj.saturation : saturation;
+    let originalSharpness = (editMetadataObj.hasOwnProperty("sharpness") && editMetadataObj.sharpness !== null) ? editMetadataObj.sharpness : sharpness;
+
     // Loading spinner
     styleTopControl("#editorSpinner", "2em", "35px", "right", "25px");
     $("#editorContainer").css("display", "block");
@@ -203,6 +211,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // }
 
     showModule();
+    toggleResetSaveButtons();
 
     $("#editorContainer").css({
         "width": "100%",
@@ -289,6 +298,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorBrightnessAction").val(0);
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorContrastIcon").off("click").on('click', function(event) {
@@ -300,6 +310,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorContrastAction").val(0);
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorSaturationIcon").off("click").on('click', function(event) {
@@ -311,6 +322,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorSaturationAction").val(0);
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorSharpnessIcon").off("click").on('click', function(event) {
@@ -322,6 +334,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorSharpnessAction").val(1);
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
 
     // Slider adjustment
@@ -348,6 +361,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
     $("#editorBrightnessAction").off("change").on("change", function (e) {
         e.preventDefault();
@@ -361,6 +375,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorContrastAction").off("input").on("input", function (e) {
@@ -386,6 +401,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
     $("#editorContrastAction").off("change").on("change", function (e) {
         e.preventDefault();
@@ -399,6 +415,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorSaturationAction").off("input").on("input", function (e) {
@@ -424,6 +441,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
     $("#editorSaturationAction").off("change").on("change", function (e) {
         e.preventDefault();
@@ -437,6 +455,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorSharpnessAction").off("input").on("input", function (e) {
@@ -455,13 +474,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
             let number = "0";
             $("#editorSharpnessAction").val(number);
             $("#sharpnessTick").css("display", "none");
-            sharpness = parseFloat("1."+number);
-            if (number.charAt(0) === "-") {
-                number = number.slice(1);
-                sharpness = 1-parseFloat("0."+number);
-            }
+            sharpness = parseFloat(number+".0");
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
     $("#editorSharpnessAction").off("change").on("change", function (e) {
         e.preventDefault();
@@ -471,6 +487,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             sharpness = parseFloat(number+".0");
             applyAttributes();
         }
+        toggleResetSaveButtons();
     });
 
     function applyAttributes() {
@@ -506,6 +523,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness).then(() => {
                     updateTransform(false);
                     enableButtons();
+                    toggleResetSaveButtons();
                     $("#editorSpinner").css("display", "none");
                     $("#editorCloseActionButton").css("display", "block");
                 });
@@ -520,6 +538,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
                     updateTransform(false);
                     enableButtons();
+                    toggleResetSaveButtons();
                     $("#editorSpinner").css("display", "none");
                     $("#editorCloseActionButton").css("display", "block");
                 }
@@ -613,6 +632,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             rotation += 90;
             updateTransform();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorRotateLeftActionButton").off("click").on("click", function (e) {
@@ -621,6 +641,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             rotation -= 90;
             updateTransform();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorFlipVerticalActionButton").off("click").on("click", function (e) {
@@ -633,6 +654,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             updateTransform();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorFlipHorizontalActionButton").off("click").on("click", function (e) {
@@ -645,6 +667,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             updateTransform();
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorResetActionButton").off("click").on("click", function (e) {
@@ -693,6 +716,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 "transform": "translate(-50%, -50%)"
             });
         }
+        toggleResetSaveButtons();
     });
 
     $("#editorRestoreActionButton").off("click").on("click", function (e) {
@@ -717,6 +741,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorSaturationAction").val(0);
             sharpness = 1.0;
             $("#editorSharpnessAction").val(0);
+
+            originalRotation = rotation;
+            originalIsFlippedHorizontally = isFlippedHorizontally;
+            originalIsFlippedVertically = isFlippedVertically;
+            originalBrightness = brightness;
+            originalContrast = contrast;
+            originalSaturation = saturation;
+            originalSharpness = sharpness;
 
             $("#brightnessTick").css("display", "none");
             $("#contrastTick").css("display", "none");
@@ -749,6 +781,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
                     sharpness = 1.0;
                     $("#editorSharpnessAction").val(0);
 
+                    originalRotation = rotation;
+                    originalIsFlippedHorizontally = isFlippedHorizontally;
+                    originalIsFlippedVertically = isFlippedVertically;
+                    originalBrightness = brightness;
+                    originalContrast = contrast;
+                    originalSaturation = saturation;
+                    originalSharpness = sharpness;
+
                     editMetadataObj.brightness = brightness;
                     editMetadataObj.contrast = contrast;
                     editMetadataObj.saturation = saturation;
@@ -776,6 +816,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 }
 
                 enableButtons();
+                toggleResetSaveButtons();
                 $("#editorSpinner").css("display", "none");
                 $("#editorCloseActionButton").css("display", "block");
                 // hideModule();
@@ -831,6 +872,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
 
             enableButtons();
+            toggleResetSaveButtons();
             $("#editorSpinner").css("display", "none");
             $("#editorCloseActionButton").css("display", "block");
             hideModule();
@@ -844,11 +886,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
             "editorContrastAction",
             "editorSaturationAction",
             "editorRestoreAction",
-            "editorResetAction",
             "editorRotateRightAction",
             "editorRotateLeftAction",
             "editorFlipHorizontalAction",
             "editorFlipVerticalAction",
+            "editorResetAction",
             "editorBrightnessIcon",
             "editorContrastIcon",
             "editorSaturationIcon",
@@ -870,11 +912,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
             "editorContrastAction",
             "editorSaturationAction",
             "editorRestoreAction",
-            "editorResetAction",
             "editorRotateRightAction",
             "editorRotateLeftAction",
             "editorFlipHorizontalAction",
             "editorFlipVerticalAction",
+            "editorResetAction",
             "editorBrightnessIcon",
             "editorContrastIcon",
             "editorSaturationIcon",
@@ -926,5 +968,136 @@ function initializeEditor(editMetadataObj, lgIndex) {
         isFlippedVertically = false;
 
         document.body.style.overflowY = 'auto';
+    }
+
+    function normalizeFlipRotation(isFlippedHorizontallyInput, isFlippedVerticallyInput, rotationInput) {
+        let retVal = {
+            isFlippedVertically: isFlippedVerticallyInput,
+            isFlippedHorizontally: isFlippedHorizontallyInput,
+            rotation: normalizedRotation(rotationInput)
+        };
+
+        // FlipX + FlipY Normalizations
+        if (isFlippedHorizontallyInput && isFlippedVerticallyInput && normalizedRotation(rotationInput) === 0) {
+            retVal = {
+                isFlippedVertically: false,
+                isFlippedHorizontally: false,
+                rotation: 180
+            };
+        } else if (isFlippedHorizontallyInput && isFlippedVerticallyInput && normalizedRotation(rotationInput) === 90) {
+            retVal = {
+                isFlippedVertically: false,
+                isFlippedHorizontally: false,
+                rotation: 270
+            };
+        } else if (isFlippedHorizontallyInput && isFlippedVerticallyInput && normalizedRotation(rotationInput) === 180) {
+            retVal = {
+                isFlippedVertically: false,
+                isFlippedHorizontally: false,
+                rotation: 0
+            };
+        } else if (isFlippedHorizontallyInput && isFlippedVerticallyInput && normalizedRotation(rotationInput) === 270) {
+            retVal = {
+                isFlippedVertically: false,
+                isFlippedHorizontally: false,
+                rotation: 90
+            };
+        }
+
+        return retVal;
+    }
+
+    function toggleResetSaveButtons() {
+        const normalizedDynamicValues = normalizeFlipRotation(isFlippedHorizontally, isFlippedVertically, rotation);
+        const normalizedDynamicRotation = normalizedDynamicValues.rotation;
+        const normalizedDynamicIsFlippedHorizontally = normalizedDynamicValues.isFlippedHorizontally;
+        const normalizedDynamicIsFlippedVertically = normalizedDynamicValues.isFlippedVertically;
+
+        const normalizedOriginalValues = normalizeFlipRotation(originalIsFlippedVertically, originalIsFlippedHorizontally, originalRotation);
+        const normalizedOriginalRotation = normalizedOriginalValues.rotation;
+        const normalizedOriginalIsFlippedHorizontally = normalizedOriginalValues.isFlippedHorizontally;
+        const normalizedOriginalIsFlippedVertically = normalizedOriginalValues.isFlippedVertically;
+
+        if (normalizedOriginalRotation === normalizedDynamicRotation &&
+            normalizedOriginalIsFlippedHorizontally === normalizedDynamicIsFlippedHorizontally &&
+            normalizedOriginalIsFlippedVertically === normalizedDynamicIsFlippedVertically &&
+            parseFloat(originalBrightness) === parseFloat(brightness) &&
+            parseFloat(originalContrast) === parseFloat(contrast) &&
+            parseFloat(originalSaturation) === parseFloat(saturation) &&
+            parseFloat(originalSharpness) === parseFloat(sharpness))
+        {
+            $("#editorResetActionButton")
+                .prop('disabled', true)
+                .css({
+                    "pointer-events": "none"
+                });
+            $("#editorResetAction")
+                .css({
+                    "color": "#808080",
+                    "text-shadow": "#969595 2px 2px 5px"
+                });
+            $("#editorSaveActionButton")
+                .prop('disabled', true)
+                .css({
+                    "pointer-events": "none"
+                });
+            $("#editorSaveAction")
+                .css({
+                    "color": "#808080",
+                    "text-shadow": "#969595 2px 2px 5px"
+                });
+        } else {
+            $("#editorResetActionButton")
+                .prop('disabled', false)
+                .css({
+                    "pointer-events": "auto"
+                });
+            $("#editorResetAction")
+                .css({
+                    "color": "#FFFFFF",
+                    "text-shadow": "#EDEBEB 2px 2px 5px"
+                });
+            $("#editorSaveActionButton")
+                .prop('disabled', false)
+                .css({
+                    "pointer-events": "auto"
+                });
+            $("#editorSaveAction")
+                .css({
+                    "color": "#FFFFFF",
+                    "text-shadow": "#EDEBEB 2px 2px 5px"
+                });
+        }
+
+        if (normalizedDynamicRotation === 0 &&
+            normalizedDynamicIsFlippedHorizontally === false &&
+            normalizedDynamicIsFlippedVertically === false &&
+            brightness === 1 &&
+            contrast === 1 &&
+            saturation === 1 &&
+            sharpness === 1
+        ) {
+            $("#editorRestoreActionButton")
+                .prop('disabled', true)
+                .css({
+                    "pointer-events": "none"
+                });
+            $("#editorRestoreAction")
+                .css({
+                    "color": "#808080",
+                    "text-shadow": "#969595 2px 2px 5px"
+                });
+        } else {
+            $("#editorRestoreActionButton")
+                .prop('disabled', false)
+                .css({
+                    "pointer-events": "auto"
+                });
+            $("#editorRestoreAction")
+                .css({
+                    "color": "#FFFFFF",
+                    "text-shadow": "#EDEBEB 2px 2px 5px"
+                });
+        }
     }
 }
