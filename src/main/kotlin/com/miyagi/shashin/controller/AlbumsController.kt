@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.service.MetadataProcessing
@@ -44,6 +45,7 @@ import org.springframework.context.MessageSource
 import org.springframework.http.HttpHeaders.SET_COOKIE
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
+import java.awt.image.BufferedImage
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.nio.file.Path
@@ -54,7 +56,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import javax.imageio.ImageIO
 import kotlin.collections.count
+import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.math.ceil
 
@@ -1997,19 +2001,70 @@ class AlbumsController: BaseController() {
                                     return@Callable
                                 }
 
+                                // Get transformations
+                                val imagePath = metadata.getPath()!!
+                                val imageFile = File(imagePath)
+                                val shortString = TextUtils.createBase64EncodedUuid(metadata.getId())
+                                val basename = metadata.getFileName()?.substringBeforeLast(".") ?: "file"
+                                val expectedExt = metadata.getExpectedExtension() ?: source.extension
+                                var extension = source.extension.ifEmpty { expectedExt }
+
+                                val sharpness = metadata.getSharpness()?.toString()?.toDoubleOrNull() ?: 1.0
+                                val contrast = metadata.getContrast()?.toString()?.toDoubleOrNull() ?: 1.0
+                                val saturation = metadata.getSaturation()?.toString()?.toDoubleOrNull() ?: 1.0
+                                val brightness = metadata.getBrightness()?.toString()?.toDoubleOrNull() ?: 1.0
+                                val rotation = metadata.getRotation()?.toString()?.toIntOrNull() ?: 0
+                                val flipX = metadata.getFlipHorizontally() as? Boolean ?: false
+                                val flipY = metadata.getFlipVertically() as? Boolean ?: false
+
+                                var default = true
+
+                                if (flipX || flipY) default = false
+                                if (brightness in 0.1..1.9 && brightness != 1.0) default = false
+                                if (contrast in 0.1..1.9 && contrast != 1.0) default = false
+                                if (saturation in 0.1..1.9 && saturation != 1.0) default = false
+                                if (sharpness in 1.0..10.0 && sharpness != 1.0) default = false
+                                if (rotation > 0) default = false
+
+                                if (metadata.getType() != null && metadata.getType()!!.lowercase().contains("video")) {
+                                    default = true
+                                }
+
+                                val outFile = File(tempExportBaseDir.toString(), if (default) "${basename}_${shortString}.${expectedExt}" else "${basename}_edited_${shortString}.${expectedExt}")
+
+                                if (default) {
+                                    // Fast path: copy file bytes
+                                    if (outFile.createNewFile()) {
+                                        Files.copy(Path(imagePath), outFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                                    }
+                                } else {
+                                    var bufferedImage: BufferedImage = ImageIO.read(imageFile)
+
+                                    // Apply transforms
+                                    val transformed = ImageProcessing.transformAndAdjust(
+                                        bufferedImage,
+                                        rotation.toDouble(),
+                                        flipX,
+                                        flipY,
+                                        brightness,
+                                        contrast,
+                                        saturation.toFloat(),
+                                        sharpness
+                                    )
+
+                                    extension = "jpg"
+
+                                    // Ensure parent exists
+                                    outFile.parentFile?.mkdirs()
+                                    ImageIO.write(transformed, extension, outFile)
+                                }
+
                                 // Build a unique destination filename to avoid collisions (use albumPhoto id or metadata id)
                                 val safeFileName = metadata.getFileName()?.substringBeforeLast(".") + "_" + TextUtils.createBase64EncodedUuid(metadata.getId()) + "." + metadata.getFileName()?.substringAfterLast(".")
                                 val destFinal = tempExportBaseDir.resolve(safeFileName.toString())
                                 val destTmp = tempExportBaseDir.resolve("$safeFileName.tmp")
 
                                 try {
-                                    // copy using explicit streams to ensure closure (Windows is picky about open handles)
-                                    Files.newInputStream(source.toPath()).use { input ->
-                                        Files.newOutputStream(destTmp, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).use { out ->
-                                            input.copyTo(out)
-                                        }
-                                    }
-
                                     // Try atomic move to final name; fall back to non-atomic if not supported
                                     try {
                                         Files.move(destTmp, destFinal, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
@@ -2019,7 +2074,7 @@ class AlbumsController: BaseController() {
                                 } catch (ex: Exception) {
                                     // Clean up partial tmp file and log
                                     try { Files.deleteIfExists(destTmp) } catch (_: Exception) {}
-                                    logger.log(Level.SEVERE, "Error copying album file ${source.absolutePath}", ex)
+                                    logger.log(Level.SEVERE, "Error copying album file ${outFile.absolutePath}", ex)
                                     throw ex
                                 }
                             }
@@ -2122,7 +2177,9 @@ class AlbumsController: BaseController() {
         if (metadataList.isEmpty()) return null
 
         // Create base temp directory for exports
-        val tempExportBaseDir: Path = Files.createTempDirectory(albumId.toString())
+        val tempExportBaseDir: Path = Files.createTempDirectory("shashin_"+albumObj.get().getName().toString()+"_")
+
+        val tempDirFile = tempExportBaseDir.toFile()
         val metricsUtil = MetricsUtil()
 
         // Determine a reasonable thread pool size and create executor
@@ -2149,18 +2206,78 @@ class AlbumsController: BaseController() {
                             return@Callable null
                         }
 
-                        // Keep filename logic identical to original:
-                        val originalFileName = metadata.getFileName() ?: srcFile.name
-                        val base = originalFileName.substringBeforeLast(".")
-                        val ext = originalFileName.substringAfterLast(".", "")
-                        val destFileName = if (ext.isNotEmpty())
-                            "${base}_${TextUtils.createBase64EncodedUuid(metadata.getId())}.$ext"
-                        else
-                            "${base}_${TextUtils.createBase64EncodedUuid(metadata.getId())}"
+                        // Get transformations
+                        val imagePath = metadata.getPath()!!
+                        val imageFile = File(imagePath)
+                        val shortString = TextUtils.createBase64EncodedUuid(metadata.getId())
+                        val basename = metadata.getFileName()?.substringBeforeLast(".") ?: "file"
+                        val expectedExt = metadata.getExpectedExtension() ?: srcFile.extension
+                        var extension = srcFile.extension.ifEmpty { expectedExt }
 
-                        val destFile = tempExportBaseDir.resolve(destFileName).toFile()
-                        Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                        destFile
+                        val sharpness = metadata.getSharpness()?.toString()?.toDoubleOrNull() ?: 1.0
+                        val contrast = metadata.getContrast()?.toString()?.toDoubleOrNull() ?: 1.0
+                        val saturation = metadata.getSaturation()?.toString()?.toDoubleOrNull() ?: 1.0
+                        val brightness = metadata.getBrightness()?.toString()?.toDoubleOrNull() ?: 1.0
+                        val rotation = metadata.getRotation()?.toString()?.toIntOrNull() ?: 0
+                        val flipX = metadata.getFlipHorizontally() as? Boolean ?: false
+                        val flipY = metadata.getFlipVertically() as? Boolean ?: false
+
+                        var default = true
+
+                        if (flipX || flipY) default = false
+                        if (brightness in 0.1..1.9 && brightness != 1.0) default = false
+                        if (contrast in 0.1..1.9 && contrast != 1.0) default = false
+                        if (saturation in 0.1..1.9 && saturation != 1.0) default = false
+                        if (sharpness in 1.0..10.0 && sharpness != 1.0) default = false
+                        if (rotation > 0) default = false
+
+                        if (metadata.getType() != null && metadata.getType()!!.lowercase().contains("video")) {
+                            default = true
+                        }
+
+                        val outFile = File(tempDirFile, if (default) "${basename}_${shortString}.${expectedExt}" else "${basename}_edited_${shortString}.${expectedExt}")
+
+                        if (default) {
+                            // Fast path: copy file bytes
+                            if (outFile.createNewFile()) {
+                                Files.copy(Path(imagePath), outFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                            }
+                        } else {
+                            var bufferedImage: BufferedImage = ImageIO.read(imageFile)
+
+                            // Apply transforms
+                            val transformed = ImageProcessing.transformAndAdjust(
+                                bufferedImage,
+                                rotation.toDouble(),
+                                flipX,
+                                flipY,
+                                brightness,
+                                contrast,
+                                saturation.toFloat(),
+                                sharpness
+                            )
+
+                            extension = "jpg"
+
+                            // Ensure parent exists
+                            outFile.parentFile?.mkdirs()
+                            ImageIO.write(transformed, extension, outFile)
+                        }
+
+                        // Keep filename logic identical to original:
+//                        val originalFileName = metadata.getFileName() ?: srcFile.name
+//                        val base = originalFileName.substringBeforeLast(".")
+//                        val ext = originalFileName.substringAfterLast(".", "")
+//                        val destFileName = if (ext.isNotEmpty())
+//                            "${base}_${TextUtils.createBase64EncodedUuid(metadata.getId())}.$ext"
+//                        else
+//                            "${base}_${TextUtils.createBase64EncodedUuid(metadata.getId())}"
+//
+//                        val destFile = tempExportBaseDir.resolve(destFileName).toFile()
+//                        Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+//                        destFile
+
+                        outFile
                     } catch (t: Throwable) {
                         logger.log(Level.WARNING, "Error copying file for metadata ${metadata.getId()}: ${t.message}", t)
                         null
