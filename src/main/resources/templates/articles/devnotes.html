@@ -80,7 +80,11 @@
         <p>Place <code>shashin.printMessageToConsole(&lt;message&gt;,{&lt;options&gt;})</code> in JS code where you'd like to see console outputs. Options are a hash map of allowable options.</p>
         <p>
             <code>tag</code> - tags messages to be used as a filter.<br>
-            <code>consoleType</code> - allows for different console types to be used for a message, <code>shashin.consoleTypes.error</code>, <code>shashin.consoleTypes.info</code>, <code>shashin.consoleTypes.log</code>, or <code>shashin.consoleTypes.warn</code>. Default is <code>shashin.consoleTypes.info</code>
+            <code>consoleType</code> - allows for different console types to be used for a message. Default is <code>shashin.consoleTypes.info</code>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.consoleTypes.error<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.consoleTypes.info<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.consoleTypes.log<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.consoleTypes.warn<br>
         </p>
         <p>Example: <br>
             <code>shashin.printMessageToConsole("test",{<br>
@@ -105,7 +109,9 @@
         <p>Pop-up messages can be used to notify users. There are 9 quadrants you can see pop-ups.</p>
 
         <h5>Show toast messages</h5>
-        <p>Place <code>shashin.showToastMessage(&lt;title&gt;, &lt;message&gt;, {&lt;options&gt;})</code> in JS code. Options are a hash map of allowable options.</p>
+        <p>Place <code>shashin.showToastMessage(&lt;title&gt;, &lt;message&gt;, {&lt;options&gt;})</code> in JS code.</p>
+        <p>Keep the title <code>null</code> if you want a toast message without a title and title bar.</p>
+        <p>Options are a hash map of allowable options:</p>
         <p>
             <code>icon</code> - use Bootstrap Icons. eg. bi-info-circle. Default is empty.<br>
             <code>iconColor</code> - allows for different CSS colors for the icon eg. "red" or "#FF0000". Default "lightgray"<br>
