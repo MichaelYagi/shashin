@@ -2102,7 +2102,8 @@ class AlbumsController: BaseController() {
                             val tempFile = File(metadata.get().getPath()!!)
                             if (tempFile.exists()) {
                                 val tempFileTo =
-                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
+                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName()?.substringBeforeLast(".") + "_" + TextUtils.createBase64EncodedUuid(metadata.get().getId()) + "." + metadata.get().getFileName()?.substringAfterLast("."))
+
                                 Files.copy(
                                     tempFile.toPath(),
                                     tempFileTo.toPath(),
@@ -2134,7 +2135,7 @@ class AlbumsController: BaseController() {
                             val tempFile = File(metadata.get().getPath()!!)
                             if (tempFile.exists()) {
                                 val tempFileTo =
-                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName() + "_" + TextUtils.createBase64EncodedUuid(metadata.get().getId()))
+                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName()?.substringBeforeLast(".") + "_" + TextUtils.createBase64EncodedUuid(metadata.get().getId()) + "." + metadata.get().getFileName()?.substringAfterLast("."))
                                 Files.copy(
                                     tempFile.toPath(),
                                     tempFileTo.toPath(),
