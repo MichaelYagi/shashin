@@ -98,8 +98,8 @@
         <p>
             <code>tags</code> - an array of tags to filter on. Tag value "all" shows all logs without tag filtering. Default is for all tags to be shown.<br>
             <code>consoleTypes</code> - an array of console types to filter on. Default is for all console types to be shown.<br>
-            <code>showTrace</code> - if set to true, shows the stack trace for the output. Default is false.<br>
-            <code>writeLog</code> - if set to true, makes network requests to the backend to write console outputs to the app logs. Default is false.
+            <code>showTrace</code> - if set to true, shows the stack trace for the output. Default is <code>false</code>.<br>
+            <code>writeLog</code> - if set to true, makes network requests to the backend to write console outputs to the app logs. Default is <code>false</code>.
         </p>
 
         <h5>Disable debug messages in the console</h5>
@@ -114,11 +114,11 @@
         <p>Options are a hash map of allowable options:</p>
         <p>
             <code>icon</code> - use Bootstrap Icons. eg. bi-info-circle. Default is empty.<br>
-            <code>iconColor</code> - allows for different CSS colors for the icon eg. "red" or "#FF0000". Default "lightgray"<br>
+            <code>iconColor</code> - allows for different CSS colors for the icon eg. "red" or "#FF0000". Default is <code>lightgray</code><br>
             <code>headerSubtext</code> - Text that sits beside the title in smaller print. Default is an empty string.<br>
-            <code>autohide</code> - Flag whether the toast will automatically hide. If false, user will be forced to close the notification. Default is true.<br>
-            <code>delay</code> - Time in which toast message will close in milliseconds. This option will be ignored if autohide is set to true. Default is 5000 ms.<br>
-            <code>placement</code> - Determines the placement of the toast message. Default is bottom middle. Options are: <br>
+            <code>autohide</code> - Flag whether the toast will automatically hide. If false, user will be forced to close the notification. Default is <code>true</code>.<br>
+            <code>delay</code> - Time in which toast message will close in milliseconds. This option will be ignored if autohide is set to true. Default is <code>5000</code> ms.<br>
+            <code>placement</code> - Determines the placement of the toast message. Default is <code>shashin.toast.placement.bottom.center</code>. Options are: <br>
             &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.default<br>
             &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.top.left<br>
             &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.top.center<br>
@@ -129,10 +129,10 @@
             &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.left<br>
             &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.center<br>
             &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.right<br>
-            <code>borderColor</code> - The border color of the toast notification. Default is secondary. Options are: primary, secondary, success, danger, warning, info, light, dark, white<br>
+            <code>borderColor</code> - The border color of the toast notification. Default is <code>secondary</code>. Options are: primary, secondary, success, danger, warning, info, light, dark, white<br>
             <code>tag</code> - A string that identifies and labels the toast. Default is empty.<br>
             <code>refreshTag</code> - If tag is defined, overwrites the tag content with any updated content. Default is empty.<br>
-            <code>closeButton</code> - Hide close button if false. Default is true.
+            <code>closeButton</code> - Hide close button if false. Default is <code>true</code>.
         </p>
         <p>Example:<br>
             <code>shashin.showToastMessage("test title","test message"{<br>
@@ -163,7 +163,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.center<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.right<br>
             <code>placements</code> - Targets multiple placements to close.<br>
-            <code>hide</code> - Flag to remove or hide toast message. If set to true, will only hide the element, else it will remove the element from the DOM. Default is false.
+            <code>hide</code> - Flag to remove or hide toast message. If set to true, will only hide the element, else it will remove the element from the DOM. Default is <code>false</code>.
         </p>
         <p>Examples: <br>
             <code>// Hides toast messages tagged 'testcode' or 'anothertag' targeting bottom center toast messages<br>
