@@ -2082,86 +2082,114 @@ class AlbumsController: BaseController() {
     }
 
     @PostMapping("/download/share/{shareLink}/album/{albumId}")
-    fun postShareAlbumDownloadStream(
-        model: Model,
-        @RequestParam download: Optional<Int>,
-        @RequestParam downloadArray: Optional<String>,
-        @PathVariable shareLink: String,
-        @PathVariable albumId: Int,
-        response: HttpServletResponse
-    ): ResponseEntity<StreamingResponseBody>? {
-        if (!(albumId > 0 && (download.isPresent && download.get() == albumId || (downloadArray.isPresent && downloadArray.get() != "")))) {
-            return null
-        }
+    fun postShareAlbumDownload(model: Model, @RequestParam download: Optional<Int>, @RequestParam downloadArray: Optional<String>, @PathVariable shareLink: String, @PathVariable albumId: Int, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
+        if (albumId > 0 && (download.isPresent && download.get() == albumId) || (downloadArray.isPresent && downloadArray.get() != "")) {
 
-        val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
-        val albumObj = albumRepository.findById(albumId)
-        if (albumPhotos == null || !albumObj.isPresent || albumObj.get().getShareUrl() != shareLink) {
-            return null
-        }
+            // Get album photos
+            val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+            val albumObj = albumRepository.findById(albumId)
 
-        // Build metadata list similar to earlier (download vs downloadArray)
-        val metadataList = mutableListOf<Any>()
-        if (download.isPresent && download.get() == albumId) {
-            for (albumPhoto in albumPhotos) {
-                if (albumPhoto == null) continue
-                val mOpt = metadataRepository.findById(albumPhoto.getMetadataId()!!)
-                if (mOpt.isPresent) metadataList.add(mOpt.get())
-            }
-        } else if (downloadArray.isPresent && downloadArray.get() != "") {
-            val metadataIdArray: Array<String>? = mapper.readValue(downloadArray.get(), object : TypeReference<Array<String>>() {})
-            if (metadataIdArray != null) {
-                for (id in metadataIdArray) {
-                    val mOpt = metadataRepository.findById(id)
-                    if (mOpt.isPresent) metadataList.add(mOpt.get())
-                }
-            }
-        }
+            if (albumPhotos != null && albumObj.isPresent && albumObj.get().getShareUrl() == shareLink) {
+                val tempExportBaseDir = Files.createTempDirectory(albumId.toString())
+                val metricsUtil = MetricsUtil()
 
-        if (metadataList.isEmpty()) return null
-
-        val zipName = "shashin_${albumObj.get().getName()}.zip".replace("\\s".toRegex(), "_")
-        val headers = HttpHeaders()
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$zipName\"")
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
-        headers.add("Pragma", "no-cache")
-        headers.add("Expires", "0")
-        // Note: can't set precise size cookie since we don't know total size without scanning files first
-
-        val stream = StreamingResponseBody { outStream ->
-            ZipOutputStream(BufferedOutputStream(outStream)).use { zipOut ->
-                val buffer = ByteArray(64 * 1024) // 64KB buffer for large file throughput
-                for (mAny in metadataList) {
-                    val metadata = mAny as Metadata // replace with your actual Metadata class
-                    val pathStr = metadata.getPath()
-                    if (pathStr.isNullOrBlank()) continue
-                    val file = File(pathStr)
-                    if (!file.exists()) continue
-
-                    // Optional: adjust ZipEntry name to original filename
-                    val entryName = metadata.getFileName()?.substringBeforeLast(".") + "_" + TextUtils.createBase64EncodedUuid(metadata.getId()) + "." + metadata.getFileName()?.substringAfterLast(".")
-                    val entry = ZipEntry(entryName)
-                    // We don't set entry.size or crc (DEFLATED), so long files are supported without pre-scan
-                    zipOut.putNextEntry(entry)
-
-                    BufferedInputStream(FileInputStream(file)).use { input ->
-                        var read = input.read(buffer)
-                        while (read >= 0) {
-                            zipOut.write(buffer, 0, read)
-                            read = input.read(buffer)
+                if (download.isPresent && download.get() == albumId) {
+                    for (albumPhoto in albumPhotos) {
+                        if (albumPhoto != null) {
+                            val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                            //if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                            metricsUtil.start("Share album download: " + metadata.get().getPath()!!)
+                            val tempFile = File(metadata.get().getPath()!!)
+                            if (tempFile.exists()) {
+                                val tempFileTo =
+                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
+                                Files.copy(
+                                    tempFile.toPath(),
+                                    tempFileTo.toPath(),
+                                    StandardCopyOption.REPLACE_EXISTING
+                                )
+                            } else {
+                                logger.log(
+                                    Level.INFO,
+                                    "Exporting album photo. File does not exist: " + tempFile.absolutePath
+                                )
+                            }
+                            metricsUtil.end()
+//                            } else {
+//                                logger.log(
+//                                    Level.INFO,
+//                                    "Ignoring album video: " + metadata.get().getPath()
+//                                )
+//                            }
                         }
                     }
-                    zipOut.closeEntry()
+                } else if (downloadArray.isPresent && downloadArray.get() != "") {
+                    val metadataIdArray: Array<String>? = mapper.readValue(downloadArray.get(), object : TypeReference<Array<String>>() {})
+
+                    if (metadataIdArray != null) {
+                        for (metadataId in metadataIdArray) {
+                            val metadata = metadataRepository.findById(metadataId)
+                            //if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                            metricsUtil.start("Share album download: " + metadata.get().getPath()!!)
+                            val tempFile = File(metadata.get().getPath()!!)
+                            if (tempFile.exists()) {
+                                val tempFileTo =
+                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName() + "_" + TextUtils.createBase64EncodedUuid(metadata.get().getId()))
+                                Files.copy(
+                                    tempFile.toPath(),
+                                    tempFileTo.toPath(),
+                                    StandardCopyOption.REPLACE_EXISTING
+                                )
+                            } else {
+                                logger.log(
+                                    Level.INFO,
+                                    "Exporting album photo. File does not exist: " + tempFile.absolutePath
+                                )
+                            }
+                            metricsUtil.end()
+                            //}
+                        }
+                    }
                 }
-                zipOut.finish()
-                zipOut.flush()
+
+                if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
+                    val tempDir = tempExportBaseDir.toFile()
+                    val outputZipFile = FileUtils.zipFolder(tempDir, albumObj.get().getName()!!)
+                    FileUtils.deleteDirectory(tempDir)
+
+                    if (outputZipFile != null) {
+                        metricsUtil.start("Sending")
+                        outputZipFile.deleteOnExit()
+
+                        val resource = InputStreamResource(FileInputStream(outputZipFile))
+                        val contentLength = outputZipFile.length()
+
+                        val headers = HttpHeaders()
+                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinShareAlbumName",
+                            outputZipFile.name.replace("\\s".toRegex(), "_").lowercase(Locale.getDefault())
+                        ).path("/").build().toString())
+                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinShareAlbumSize",contentLength.toString()).path("/").build().toString())
+                        headers.add(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=" + outputZipFile.name
+                        )
+                        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                        headers.add("Pragma", "no-cache")
+                        headers.add("Expires", "0")
+
+                        metricsUtil.end()
+
+                        return ResponseEntity.ok()
+                            .headers(headers)
+                            .contentLength(contentLength)
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                            .body(resource)
+                    }
+                }
             }
         }
 
-        return ResponseEntity.ok()
-            .headers(headers)
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-            .body(stream)
+        return null
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
