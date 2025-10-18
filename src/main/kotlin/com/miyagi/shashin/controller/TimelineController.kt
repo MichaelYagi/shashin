@@ -167,7 +167,7 @@ class TimelineController: BaseController() {
             val albumIdCopy = albumId.orElse(0)
             val personIdCopy = personId.orElse(0)
             val folderNameCopy = folderName.orElse("")
-            val searchTermCopy = searchTerm.orElse("")
+            var searchTermCopy = searchTerm.orElse("")
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
@@ -287,7 +287,80 @@ class TimelineController: BaseController() {
                     } else if (view == "folder" && folderNameCopy.isNotEmpty()) {
                         metadataRepository.findAllByFolderByDates(startDate, endDate, folderNameCopy)
                     } else if (view == "search" && searchTermCopy.isNotEmpty()) {
-                        searchRepository.findMetadataBySearchTermByDate(startDate, endDate, searchTermCopy)
+                        val possibleDate = TextUtils.convertDateToYMD(searchTermCopy)
+                        if (possibleDate != null) {
+                            searchTermCopy = possibleDate
+                        }
+
+                        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute(
+                                "authority"
+                            ).toString() == model.getAttribute("superRole")
+                        ) {
+
+                            if (searchTermCopy == "nolatlng") {
+                                metadataRepository.findAllMissingCoordByDate(
+                                    startDate,
+                                    endDate
+                                )
+                            } else if (searchTermCopy == "latlng") {
+                                metadataRepository.findAllWithCoordByDate(
+                                    startDate,
+                                    endDate
+                                )
+                            } else if (searchTermCopy == "description") {
+                                metadataRepository.findAllDescriptionByDate(
+                                    startDate,
+                                    endDate
+                                )
+                            } else if (searchTermCopy.lowercase() == "shashinedit" || searchTermCopy.lowercase() == "shashinedited") {
+                                searchRepository.findMetadataEditedPhotosByDate(
+                                    startDate,
+                                    endDate
+                                )
+                            } else {
+                                searchRepository.findMetadataBySearchTermByDate(startDate, endDate, searchTermCopy)
+                            }
+                        } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole") && currentUserObj != null) {
+                            if (searchTermCopy.lowercase() == "shashinedit" || searchTermCopy.lowercase() == "shashinedited") {
+                                searchRepository?.findMetadataEditedPhotosAndUserIdByDate(
+                                    currentUserObj.getId(),
+                                    startDate,
+                                    endDate
+                                )
+                            } else if (searchTermCopy == "nolatlng") {
+                                metadataRepository.findAllMissingCoordAndUserIdByDate(
+                                    currentUserObj.getId(),
+                                    startDate,
+                                    endDate
+                                )
+                            } else if (searchTermCopy == "latlng") {
+                                metadataRepository.findAllWithCoordAndUserIdByDate(
+                                    currentUserObj.getId(),
+                                    startDate,
+                                    endDate
+                                )
+                            } else if (searchTermCopy == "description") {
+                                metadataRepository.findAllDescriptionAndUserIdByDate(
+                                    currentUserObj.getId(),
+                                    startDate,
+                                    endDate
+                                )
+                            } else {
+                                searchRepository?.findMetadataBySearchTermAndUserIdByDate(
+                                    searchTermCopy,
+                                    currentUserObj.getId(),
+                                    startDate,
+                                    endDate
+                                )
+                            }
+                        } else {
+                            searchRepository.findMetadataBySearchTermAndUserIdByDate(
+                                searchTermCopy,
+                                currentUserObj?.getId() ?: 0,
+                                startDate,
+                                endDate
+                            )
+                        }
                     } else if (view == "favorites" && personIdCopy > 0) {
                         if (mediaType == "all") {
                             favoriteRepository.findAllByUserIdAndDate(startDate, endDate, personIdCopy)
