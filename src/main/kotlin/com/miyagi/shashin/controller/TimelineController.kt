@@ -322,7 +322,7 @@ class TimelineController: BaseController() {
                             }
                         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole") && currentUserObj != null) {
                             if (searchTermCopy.lowercase() == "shashinedit" || searchTermCopy.lowercase() == "shashinedited") {
-                                searchRepository?.findMetadataEditedPhotosAndUserIdByDate(
+                                searchRepository.findMetadataEditedPhotosAndUserIdByDate(
                                     currentUserObj.getId(),
                                     startDate,
                                     endDate
@@ -346,7 +346,7 @@ class TimelineController: BaseController() {
                                     endDate
                                 )
                             } else {
-                                searchRepository?.findMetadataBySearchTermAndUserIdByDate(
+                                searchRepository.findMetadataBySearchTermAndUserIdByDate(
                                     searchTermCopy,
                                     currentUserObj.getId(),
                                     startDate,
