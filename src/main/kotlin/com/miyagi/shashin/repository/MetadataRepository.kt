@@ -108,20 +108,38 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingCoordOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   fun findAllMissingCoordByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllWithCoordOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   fun findAllWithCoordByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllWithCoordAndUserIdOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\" AND m.taken_at >= :startDate AND m.taken_at <= :endDate ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+   fun findAllWithCoordAndUserIdByDate(@Param("userId") userId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingCoordAndUserIdOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) AND m.taken_at >= :startDate AND m.taken_at <= :endDate ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+   fun findAllMissingCoordAndUserIdByDate(@Param("userId") userId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllDescriptionOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   fun findAllDescriptionByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.description IS NOT NULL AND m.description != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllDescriptionAndUserIdOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.description IS NOT NULL AND m.description != \"\" AND m.taken_at >= :startDate AND m.taken_at <= :endDate ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+   fun findAllDescriptionAndUserIdByDate(@Param("userId") userId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    fun findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDescTimeDesc(): Metadata?
 
