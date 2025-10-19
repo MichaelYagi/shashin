@@ -1549,7 +1549,8 @@
                 lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
-                const videoData = '{"source": [{"src":"' + encodeURI(metadata.videoUrl).replace(";", "%3B") + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
+                const autoplayVideo = $("#autoplayVideo").val();
+                const videoData = '{"source": [{"src":"' + encodeURI(metadata.videoUrl).replace(";", "%3B") + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": '+autoplayVideo+'}}';
                 let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata, videoData:videoData, uuid:Util.getMetadataLocalStorage(), isMobile:Util.isMobile(), thumbnailType:timelineSettings.thumbnailType, thumbnailHeight:timelineSettings.thumbnailHeight});
                 html += loopedHtml;
                 internalHtml += loopedHtml;

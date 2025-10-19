@@ -99,6 +99,7 @@
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <input type="hidden" id="mediaTypeFilter" name="mediaTypeFilter" th:value="${mediaTypeFilter}">
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
+            <input type="hidden" id="autoplayVideo" name="autoplayVideo" th:value="${currentUser.autoplayVideo}">
 
             <div th:replace="~{fragments/metadatamodal :: metadatamodal(${currentUser})}"></div>
 
@@ -167,10 +168,10 @@
                            th:data-metadata-id="${metadata.id}"
                            th:data-lg-size="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? (isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth) + '-' + (isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight) : (metadata.originalImageWidth + '-' + metadata.originalImageHeight)}"
                            th:attr="
-                             data-sub-html=${metadata.description != null ? Util.encodeHtml(metadata.description) : null},
-                             data-video=${metadata.type.contains('video') ? videoData : null},
+                             data-sub-html=${metadata.description != null ? metadata.description : null},
+                             data-video=${metadata.type.contains('video') ? '{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true, &quot;autoplay&quot;: '+currentUser.autoplayVideo+'}}' : null},
                              data-poster=${metadata.type.contains('video') ? ((metadata.thumbnailUrlOriginal == null || #strings.isEmpty(metadata.thumbnailUrlOriginal)) ? '/api/v1/thumbnails/225/' + metadata.id + '?v=' + randomString : '/api/v1/thumbnails/original/' + metadata.id + '?v=' + randomString) : null},
-                             data-src=${metadata.type.contains('video') ? null : ('/api/v1/image/' + metadata.id + '?v=' + randomString)}
+                             data-src=${metadata.type.contains('video') ? null : '/api/v1/image/' + metadata.id + '?v=' + randomString}
                            "
                         >
                             <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
