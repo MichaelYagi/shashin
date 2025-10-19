@@ -1291,13 +1291,13 @@
             $("#briconcount" + metadata.id).text(favoriteCount);
         }
 
-        // if ($("#image" + metadata.id).length === 1) {
-        //     const version = Util.getMetadataLocalStorage();
-        //     if ($("#image" + metadata.id).attr("src") === Util.getPlaceholderBackground()) {
-        //         $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+timelineSettings.thumbnailType+"/" + metadata.id + (version === "" ? "" : "?v=" + version));
-        //     }
-        //     $("#image" + metadata.id).css("background-color", "transparent");
-        // }
+        if ($("#image" + metadata.id).length === 1) {
+            const version = Util.getMetadataLocalStorage();
+            if ($("#image" + metadata.id).attr("src") === Util.getPlaceholderBackground()) {
+                $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+timelineSettings.thumbnailType+"/" + metadata.id + (version === "" ? "" : "?v=" + version));
+            }
+            $("#image" + metadata.id).css("background-color", "transparent");
+        }
 
         if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {
             $("#tnbl" + metadata.id).addClass("thumbnail-bl");
