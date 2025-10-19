@@ -94,7 +94,7 @@ class TimelineTemplates {
             data-width="${metadata.originalImageWidth}"
             ` : ''}
             >
-            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}">
+                <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
             </a>
             `}
             
