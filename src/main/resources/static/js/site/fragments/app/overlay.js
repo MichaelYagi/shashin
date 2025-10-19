@@ -51,6 +51,10 @@
 
         $("#image" + metadata.id).on("click", function (e) {
             e.preventDefault();
+            // if images in batch select node, don't make image clickable
+            if ($('.bi-circle-fill').length > 0 || metadataIdArray.length > 0) {
+                e.stopPropagation();
+            }
 
             // Check for single click, avoid dblclick events
             if (Util.isMobile() === true) {
@@ -72,7 +76,7 @@
                     shashin.lastSelectedMetadataId = metadata.id;
                     shashin.lastSelectedMetadataSelected = isSelected;
 
-                    shashin.updateSelectionUI(metadata.id, isSelected, opaque);
+                    shashin.updateSelectionUI(metadata.id, isSelected, opaque, transparent, true);
 
                     shashin.updateSelectionState(metadata.id, isSelected, isVideo, view);
 
@@ -148,37 +152,37 @@
             }
         });
 
-        $("#image" + metadata.id).hover(function () {
-            // Only show overlays when scrolling stopped in timeline view
-            //if (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false)) {
-            shashin.imageHover(this, metadata.id);
-            //}
-        }, function () {
-            metadataIdArray = shashin.getMetadataIdList();
-            const index = metadataIdArray.indexOf(metadata.id);
+        // $("#image" + metadata.id).hover(function () {
+        //     // Only show overlays when scrolling stopped in timeline view
+        //     //if (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false)) {
+        //     shashin.imageHover(this, metadata.id);
+        //     //}
+        // }, function () {
+        //     metadataIdArray = shashin.getMetadataIdList();
+        //     const index = metadataIdArray.indexOf(metadata.id);
+        //
+        //     if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
+        //         $(this).css("opacity", 1.0);
+        //         $(this).siblings(".thumbnail-tl").hide();
+        //         $(this).siblings(".thumbnail-bl").hide();
+        //         $(this).siblings(".thumbnail-centered").hide();
+        //         //$(this).siblings(".thumbnail-tr").hide();
+        //         $(this).siblings(".thumbnail-br").hide();
+        //     } else {
+        //         if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+        //             $('.thumbnail-bl').hide();
+        //             $('.thumbnail-centered').hide();
+        //             //$('.thumbnail-tr').hide();
+        //             $('.thumbnail-br').hide();
+        //         }
+        //         $("#tncentered" + metadata.id).hide();
+        //         $("#tnbl" + metadata.id).hide();
+        //         //$("#tntr" + metadata.id).hide();
+        //         $("#tnbr" + metadata.id).hide();
+        //     }
+        // });
 
-            if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
-                $(this).css("opacity", 1.0);
-                $(this).siblings(".thumbnail-tl").hide();
-                $(this).siblings(".thumbnail-bl").hide();
-                $(this).siblings(".thumbnail-centered").hide();
-                //$(this).siblings(".thumbnail-tr").hide();
-                $(this).siblings(".thumbnail-br").hide();
-            } else {
-                if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-                    $('.thumbnail-bl').hide();
-                    $('.thumbnail-centered').hide();
-                    //$('.thumbnail-tr').hide();
-                    $('.thumbnail-br').hide();
-                }
-                $("#tncentered" + metadata.id).hide();
-                $("#tnbl" + metadata.id).hide();
-                //$("#tntr" + metadata.id).hide();
-                $("#tnbr" + metadata.id).hide();
-            }
-        });
-
-        $("#tncentered" + metadata.id).hover(function () {
+        $("#mediaLink" + metadata.id).hover(function () {
             $('#currentlat').val(metadata.lat === null ? "" : metadata.lat);
             $('#currentlng').val(metadata.lng === null ? "" : metadata.lng);
             $('#currentyear').val(metadata.year === null ? "" : metadata.year);
@@ -187,19 +191,21 @@
             $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
             metadataIdArray = shashin.getMetadataIdList();
 
-            let hoverColor = "white";
-            if (shashin.darkMode === true) {
-                hoverColor = "slategray";
-            }
-            $('.bi-play-btn').css("color", hoverColor);
-            $('.bi-play-circle').css("color", hoverColor);
+            // let hoverColor = "white";
+            // if (shashin.darkMode === true) {
+            //     hoverColor = "slategray";
+            // }
+            // $('.bi-play-btn').css("color", hoverColor);
+            // $('.bi-play-circle').css("color", hoverColor);
+
             $(this).show();
+            $(this).css("opacity", opaque);
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-bl").show();
             $(this).siblings(".thumbnail-br").show();
             $(this).siblings(".thumbnail-tr").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
-            if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+            if ($('.bi-circle-fill').length > 0 || $("#tlicon"+metadata.id).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 //$('.thumbnail-tr').hide();
@@ -208,17 +214,59 @@
         }, function () {
             $('.bi-play-btn').css("color", "lightgray");
             $('.bi-play-circle').css("color", "lightgray");
-            $(this).hide();
-            $(this).siblings(".thumbnail-tl").hide();
+            // $(this).hide(); // hides image
+            $(this).css("opacity", transparent);
+            if (($('.bi-circle-fill').length === 0 && metadataIdArray.length === 0) || $("#tlicon"+metadata.id).attr("class") !== "bi-circle-fill") {
+                $(this).siblings(".thumbnail-tl").hide();
+            }
             $(this).siblings(".thumbnail-bl").hide();
             $(this).siblings(".thumbnail-br").hide();
             //$(this).siblings(".thumbnail-tr").hide();
             $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
 
+        // $("#tncentered" + metadata.id).hover(function () {
+        //     $('#currentlat').val(metadata.lat === null ? "" : metadata.lat);
+        //     $('#currentlng').val(metadata.lng === null ? "" : metadata.lng);
+        //     $('#currentyear').val(metadata.year === null ? "" : metadata.year);
+        //     $('#currentmonth').val(metadata.month === null ? "" : metadata.month);
+        //     $('#currentday').val(metadata.day === null ? "" : metadata.day);
+        //     $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
+        //     metadataIdArray = shashin.getMetadataIdList();
+        //
+        //     let hoverColor = "white";
+        //     if (shashin.darkMode === true) {
+        //         hoverColor = "slategray";
+        //     }
+        //     $('.bi-play-btn').css("color", hoverColor);
+        //     $('.bi-play-circle').css("color", hoverColor);
+        //     $(this).show();
+        //     $(this).siblings(".thumbnail-tl").show();
+        //     $(this).siblings(".thumbnail-bl").show();
+        //     $(this).siblings(".thumbnail-br").show();
+        //     $(this).siblings(".thumbnail-tr").show();
+        //     $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
+        //     if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+        //         $('.thumbnail-bl').hide();
+        //         $('.thumbnail-centered').hide();
+        //         //$('.thumbnail-tr').hide();
+        //         $('.thumbnail-br').hide();
+        //     }
+        // }, function () {
+        //     $('.bi-play-btn').css("color", "lightgray");
+        //     $('.bi-play-circle').css("color", "lightgray");
+        //     $(this).hide();
+        //     $(this).siblings(".thumbnail-tl").hide();
+        //     $(this).siblings(".thumbnail-bl").hide();
+        //     $(this).siblings(".thumbnail-br").hide();
+        //     //$(this).siblings(".thumbnail-tr").hide();
+        //     $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
+        // });
+
         $("#tntl" + metadata.id).hover(function () {
             metadataIdArray = shashin.getMetadataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
+            $("#mediaLink" + metadata.id).css("opacity", opaque);
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
                 $(this).show();
                 $(this).siblings(".thumbnail-centered").show();
@@ -234,6 +282,7 @@
                 }
             }
         }, function () {
+            $("#mediaLink" + metadata.id).css("opacity", transparent);
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill") {
                 $(this).hide();
                 $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
@@ -248,6 +297,7 @@
 
         $("#tnbl" + metadata.id).hover(function () {
             metadataIdArray = shashin.getMetadataIdList();
+            $("#mediaLink" + metadata.id).css("opacity", opaque);
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-centered").show();
@@ -261,6 +311,7 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
+            $("#mediaLink" + metadata.id).css("opacity", transparent);
             $(this).hide();
             $(this).siblings(".thumbnail-tl").hide();
             $(this).siblings(".thumbnail-centered").hide();
@@ -271,6 +322,7 @@
 
         $("#tnbr" + metadata.id).hover(function () {
             metadataIdArray = shashin.getMetadataIdList();
+            $("#mediaLink" + metadata.id).css("opacity", opaque);
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-centered").show();
@@ -284,6 +336,7 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
+            $("#mediaLink" + metadata.id).css("opacity", transparent);
             $(this).hide();
             $(this).siblings(".thumbnail-tl").hide();
             $(this).siblings(".thumbnail-centered").hide();
@@ -294,6 +347,7 @@
 
         $("#tntr" + metadata.id).hover(function () {
             metadataIdArray = shashin.getMetadataIdList();
+            $("#mediaLink" + metadata.id).css("opacity", opaque);
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-centered").show();
@@ -307,6 +361,7 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
+            $("#mediaLink" + metadata.id).css("opacity", transparent);
             if ($(this).siblings(".thumbnail-tl").find('.bi-circle-fill').length === 0) {
                 $(this).siblings(".thumbnail-tl").hide();
                 $(this).siblings(".thumbnail-centered").hide();

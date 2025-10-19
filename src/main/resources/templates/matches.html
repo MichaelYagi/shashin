@@ -29,7 +29,7 @@
                         <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
                             <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                            <img loading="lazy" draggable="false" th:src="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" class="photo-thumbnail-image" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" th:id="'image'+${metadata.id}">
+                            <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},null,${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
                             <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
                             <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
 
@@ -37,8 +37,6 @@
 
                             <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
                             <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)}"></div>
-
-                            <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},null,${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
                         </div>
 
                         <span th:id="'matchesmodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
