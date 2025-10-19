@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ### Changed
 - Batch selection improvements
+- Removed play button from thumbnails
 
 ### Deprecated
 ### Removed
