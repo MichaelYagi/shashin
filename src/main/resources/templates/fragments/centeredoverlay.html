@@ -2,20 +2,16 @@
 <html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="centeredoverlay(metadata,activePage,currentUser,onclickFunctionCall,index,isMobile,thumbnailType,thumbnailHeight)">
 
-<div class="thumbnail-centered" th:id="${'tncentered'+metadata.id}">
+<!--<div class="thumbnail-centered" th:id="${'tncentered'+metadata.id}">-->
     <th:block th:unless="${metadata.type.contains('video')}">
         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                 th:data-metadata-id="${metadata.id}"
                 th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download?v=' + randomString}"
                 th:data-sub-html="${metadata.description}"
-                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}">
-                <th:block th:if="${isMobile}">
-                    <span class="bi-play-btn" style="font-size: 1.5rem;color: lightgray;"></span>
-                </th:block>
-                <th:block th:unless="${isMobile}">
-                    <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
-                </th:block>
+                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}"
+            >
+                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
         </th:block>
         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
@@ -23,13 +19,9 @@
                 th:data-metadata-id="${metadata.id}"
                 th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download?v=' + randomString}"
                 th:data-sub-html="${metadata.description}"
-                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}">
-                <th:block th:if="${isMobile}">
-                    <span class="bi-play-btn" style="font-size: 1.5rem;color: lightgray;"></span>
-                </th:block>
-                <th:block th:unless="${isMobile}">
-                    <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
-                </th:block>
+                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}"
+            >
+                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
         </th:block>
     </th:block>
@@ -44,12 +36,7 @@
                 th:data-poster="${(metadata.thumbnailUrlOriginal == null || metadata.thumbnailUrlOriginal == '') ? '/api/v1/thumbnails/225/' + metadata.id : '/api/v1/thumbnails/original/' + metadata.id}"
                 th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true, &quot;autoplay&quot;: '+currentUser.autoplayVideo+'}}'}"
             >
-                <th:block th:if="${isMobile}">
-                    <span class="bi-play-btn" style="font-size: 1.5rem;color: lightgray;"></span>
-                </th:block>
-                <th:block th:unless="${isMobile}">
-                    <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
-                </th:block>
+                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
         </th:block>
         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
@@ -61,12 +48,7 @@
                 th:data-poster="${(metadata.thumbnailUrlOriginal == null || metadata.thumbnailUrlOriginal == '') ? '/api/v1/thumbnails/225/'+metadata.id : '/api/v1/thumbnails/original/' + metadata.id}"
                 th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true, &quot;autoplay&quot;: '+currentUser.autoplayVideo+'}}'}"
             >
-                <th:block th:if="${isMobile}">
-                    <span class="bi-play-btn" style="font-size: 1.5rem;color: lightgray;"></span>
-                </th:block>
-                <th:block th:unless="${isMobile}">
-                    <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
-                </th:block>
+                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
         </th:block>
     </th:block>
@@ -86,7 +68,7 @@
         });
         /*]]>*/
     </script>
-</div>
+<!--</div>-->
 
 </body>
 </html>

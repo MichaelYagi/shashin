@@ -65,7 +65,7 @@ class TimelineTemplates {
         `}
     `}
 
-    static TimelinePreLoadGalleryBody({metadata,isMobile,thumbnailType,thumbnailHeight}) { return `
+    static TimelinePreLoadGalleryBody({metadata,videoData,uuid,isMobile,thumbnailType,thumbnailHeight}) { return `
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail ${(metadata.type.includes('video') ? `is-video` : `is-not-video`)}" style="width:${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}px;height:${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" id="lightGalleryIndex${metadata.id}"></a>
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
@@ -77,14 +77,31 @@ class TimelineTemplates {
             ` :
             `
             <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}">
-            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
+            <a class="mediaLink" 
+            id="mediaLink${metadata.id}"
+            data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuid}"
+            data-metadata-id="${metadata.id}"
+            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
+            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(videoData)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"` : `data-src="${"/api/v1/image/"+metadata.id+"?v="+uuid}"`}
+            ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
+    
+            ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
+                metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
+                `
+            data-lg-size="${metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
+            data-responsive="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id} ${metadata.thumbnailSmallWidth}"
+            data-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}"
+            data-width="${metadata.originalImageWidth}"
+            ` : ''}
+            >
+            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}">
+            </a>
             `}
             
             <div id="tntl${metadata.id}"></div>
             <div id="tnbr${metadata.id}"></div>
             <div id="tnbl${metadata.id}"></div>
             <div id="tntr${metadata.id}"></div>
-            <div id="tncentered${metadata.id}"></div>
     
             <span id="metadatamodal${metadata.id}"></span>
         </div>
@@ -180,6 +197,28 @@ class TimelineTemplates {
             ` : ''}
             >
             <span class="${(metadata.type.indexOf("video") >= 0) ? `bi-play-circle` : `bi-play-btn`}" style="font-size: ${isMobile ? '1.5' : '4'}rem;color: lightgray;"></span>
+        </a>
+    `}
+
+    static TimelineGalleryImageOverlay({metadata, mediaContent, uuid, isMobile, thumbnailType, thumbnailHeight}) { return `
+        <a class="mediaLink" 
+            id="mediaLink${metadata.id}"
+            data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuidv4()}"
+            data-metadata-id="${metadata.id}"
+            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
+            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${"/api/v1/image/"+metadata.id}"`}
+            ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
+    
+            ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
+            metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
+            `
+            data-lg-size="${metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
+            data-responsive="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id} ${metadata.thumbnailSmallWidth}"
+            data-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}"
+            data-width="${metadata.originalImageWidth}"
+            ` : ''}
+            >
+            <img loading="lazy" draggable="false" class="${"photo-thumbnail-image thumbnailTag_"+metadata.year+'-'+metadata.month+'-'+metadata.day}" id="${"image"+metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}">
         </a>
     `}
 }

@@ -63,12 +63,12 @@
 
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail"
                                  th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
-                                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" class="photo-thumbnail-image"
-                                     th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}">
-
-                                <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
+<!--                                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" class="photo-thumbnail-image"-->
+<!--                                     th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}">-->
 
                                 <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},'shashin.openGallery',${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
+
+                                <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
 
                                 <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata})}"></div>
 
