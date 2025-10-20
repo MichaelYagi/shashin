@@ -39,7 +39,16 @@
             $("#tnbl" + metadata.id).hide();
         }
 
-        $("#select" + metadata.id).on("click", function (e) {
+        $("#tntr" + metadata.id).off("click").on("click", function (e) {
+            e.preventDefault();
+
+            const link = document.getElementById("mediaLink" + metadata.id);
+            if (link) {
+                link.click();
+            }
+        });
+
+        $("#select" + metadata.id).off("click").on("click", function (e) {
             e.preventDefault();
 
             shashin.selectClick(metadata.id, view, opaque, transparent, metadataIdArray, true);
@@ -49,7 +58,7 @@
             $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+(Util.isMobile() ? "100" : "225")+"/"+metadata.id);
         });
 
-        $("#image" + metadata.id).on("click", function (e) {
+        $("#image" + metadata.id).off("click").on("click", function (e) {
             e.preventDefault();
             // if images in batch select node, don't make image clickable
             if ($('.bi-circle-fill').length > 0 || metadataIdArray.length > 0) {

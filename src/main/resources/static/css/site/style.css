@@ -188,6 +188,7 @@ header {
 
 .photo-thumbnail-container {
   position: relative;
+  cursor: pointer;
 }
 
 .thumbnail-br {
