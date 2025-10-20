@@ -55,14 +55,13 @@ workflows:
             ## https://storage.googleapis.com/chrome-for-testing-public/128.0.6613.137/win64/chromedriver-win64.zip
             # CircleCI downloads from here:
             # https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.58-1_amd64.deb
-#            - browser-tools/install_browser_tools:
-#                chrome_for_testing_version: 141.0.7390.115
-#                chrome_version: 128.0.6613.137
+            - browser-tools/install_browser_tools:
+                chrome_version: 141.0.7390.115
 #            # Install latest
-            - browser-tools/install_chrome:
-                timeout: 5m
-            - browser-tools/install_chromedriver:
-                timeout: 5m
+#            - browser-tools/install_chrome:
+#                timeout: 5m
+#            - browser-tools/install_chromedriver:
+#                timeout: 5m
             - run:
                 name: Check Chromedriver install
                 command: |
