@@ -188,7 +188,6 @@ header {
 
 .photo-thumbnail-container {
   position: relative;
-  cursor: pointer;
 }
 
 .thumbnail-br {
@@ -205,16 +204,6 @@ header {
   bottom:11px;
   left:11px;
   position: absolute;
-}
-
-.thumbnail-bl a::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -10px;
-  right: 0;
-  bottom: -10px;
-  background: transparent;
 }
 
 .thumbnail-tr {
