@@ -206,6 +206,16 @@ header {
   position: absolute;
 }
 
+.thumbnail-bl a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -10px;
+  right: 0;
+  bottom: -10px;
+  background: transparent;
+}
+
 .thumbnail-tr {
   /*display: none;*/
   background-color: transparent;
@@ -217,9 +227,19 @@ header {
 .thumbnail-tl {
   display: none;
   background-color: transparent;
-  top:7px;
-  left:11px;
+  top: 7px;
+  left: 11px;
   position: absolute;
+}
+
+.thumbnail-tl a::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: 0;
+  bottom: 0;
+  background: transparent;
 }
 
 .thumbnail-centered {
