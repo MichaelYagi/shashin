@@ -392,7 +392,7 @@
                         const mediaLinkId = "#mediaLink"+metadataId;
                         if ($(mediaLinkId).length > 0) {
                             $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + uuidv4());
-                            $(mediaLinkId).attr("data-lg-size", metadata.originalImageWidth+"-"+metadata.originalImageHeight);
+                            $(mediaLinkId).attr("data-lg-size", ((metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? metadata.thumbnailSmallWidth+"-"+metadata.thumbnailSmallHeight : (Util.isMobile() ? metadata.originalImageHeight : metadata.originalImageWidth)+"-"+(Util.isMobile() ? metadata.originalImageHeight : metadata.originalImageHeight)));
                             $(mediaLinkId).attr("data-width", metadata.originalImageWidth);
                             $(mediaLinkId).attr("data-height", metadata.originalImageHeight);
                             if (parseInt($("img.lg-object.lg-image").attr("data-index")) === lightGalleryIndex) {
