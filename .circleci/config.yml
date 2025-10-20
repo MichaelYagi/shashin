@@ -59,8 +59,10 @@ workflows:
 #                chrome_for_testing_version: 141.0.7390.115
 #                chrome_version: 128.0.6613.137
 #            # Install latest
-            - browser-tools/install-chrome
-            - browser-tools/install-chromedriver
+            - browser-tools/install-chrome:
+                timeout: 5m
+            - browser-tools/install-chromedriver:
+                timeout: 5m
             - run:
                 name: Check Chromedriver install
                 command: |
