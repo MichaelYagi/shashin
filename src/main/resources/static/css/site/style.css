@@ -12,6 +12,8 @@ body {
 .photo-thumbnail-image {
   max-width: 100%;
   overflow-x: hidden;
+  z-index: -1;
+  cursor: pointer;
 }
 
 .feather {
@@ -207,6 +209,7 @@ header {
 }
 
 .thumbnail-tr {
+  cursor: pointer;
   /*display: none;*/
   background-color: transparent;
   top:7px;
@@ -244,10 +247,6 @@ header {
 .photo-thumbnail {
   margin: 0 4px 4px 0;
   background-color: rgba(0,0,0,0.5);
-}
-
-.photo-thumbnail-image {
-  z-index: -1;
 }
 
 footer {
