@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Changed
 - Batch selection improvements
 - Removed play button from thumbnails
+- Updated UI so that photos have a justified row layout
 
 ### Deprecated
 ### Removed
