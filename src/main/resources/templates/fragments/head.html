@@ -166,6 +166,7 @@
             <script src="/js/cast.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-cast-media.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-shashin-editor.js" th:nonce="${cspNonce}"></script>
+
             <link rel="stylesheet" href="/css/lightgallery.min.css">
             <link rel="stylesheet" href="/css/lg-video.min.css">
             <link rel="stylesheet" href="/css/lg-zoom.min.css">
@@ -179,6 +180,10 @@
                 <link rel="stylesheet" href="/css/lg-video-thumbnail.css">
             </th:block>
             <link rel="stylesheet" href="/css/lg-cast-media.css">
+            <th:block th:if="${activePageLower != 'timeline' && activePageLower != 'folder' && activePageLower != 'person' && activePageLower != 'matches'}">
+                <script src="/js/jquery.justifiedGallery.v2.min.js" th:nonce="${cspNonce}"></script>
+                <link rel="stylesheet" href="/css/justifiedGallery.v2.min.css">
+            </th:block>
         </th:block>
         <th:block th:if="${activePageLower == 'timeline'}">
             <style>
@@ -192,6 +197,10 @@
             </style>
         </th:block>
         <script src="/js/bootstrap-pagy.js" th:nonce="${cspNonce}"></script>
+        <th:block th:if="${activePageLower == 'timeline' || activePageLower == 'folder' || activePageLower == 'person' || activePageLower == 'matches'}">
+            <link rel="stylesheet" href="/css/justifiedGallery.v1.min.css">
+            <script src="/js/jquery.justifiedGallery.v1.min.js" th:nonce="${cspNonce}"></script>
+        </th:block>
         <th:block th:if="${activePageLower == 'dashboard'}">
             <script src="/js/chart.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/chartjs-plugin-datalabels.min.js" th:nonce="${cspNonce}"></script>
