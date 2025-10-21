@@ -1,0 +1,56 @@
+:root {
+  --jg-target-row-height: 225px;
+  --jg-gap: 4px; /* 4px between images and 4px outer padding */
+}
+
+/* container that holds dateContainers */
+#infinite-scroll-gallery {
+  width: 100%;
+  max-width: 95%;
+  box-sizing: border-box;
+}
+
+#scroll-gallery {
+  width: 100%;
+  max-width: 95%;
+  box-sizing: border-box;
+}
+
+/* dateContainer rows use .row.image-group-padding in your markup */
+.row.image-group-padding {
+  font-size: 0;
+  line-height: 0;
+  margin-left: 0 !important; /* override any inline negative margins */
+  margin-right: 0;
+  padding: var(--jg-gap); /* outer padding so edges also get the same gap */
+  box-sizing: border-box;
+}
+
+/* thumbnail container will be sized by JS */
+.photo-thumbnail-container {
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-size: initial;
+}
+
+/* make anchors and images fill their container */
+.photo-thumbnail-container .mediaLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.photo-thumbnail-container img.photo-thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  image-orientation: from-image; /* respect EXIF orientation where supported */
+}
+
+/* small screens */
+@media (max-width: 420px) {
+  :root { --jg-target-row-height: 140px; }
+}
