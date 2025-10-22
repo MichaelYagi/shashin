@@ -552,7 +552,7 @@
 
             let metadataIdList = shashin.getMetadataIdList();
             if (shashin.getMetadataIdList().length === 0) {
-                $('.bi-circle-fill').each(function (i, obj) {
+                $('.thumbnail-tl .bi-circle-fill').each(function (i, obj) {
                     metadataIdList.push(obj.id.substring(6, obj.id.length));
                 });
             }
