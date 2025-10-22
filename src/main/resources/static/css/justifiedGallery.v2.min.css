@@ -1,127 +1,114 @@
-:root {
-    --jg-target-row-height: 225px;
-    --jg-gap: 4px;
+/* Parent: allow date blocks to wrap like cards across the page */
+#infinite-scroll-gallery, #scroll-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 24px; /* space between date blocks */
+    padding: 8px 0;
+    box-sizing: border-box;
 }
 
-/* container that holds dateSections */
-#scroll-gallery {
+/* Each date block acts like a row/card (heading above thumbnails) */
+.dateSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: auto;
+    min-width: 240px;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-bottom: 4px;
+}
+
+/* Date header sits above thumbnails */
+.dateHeader {
+    margin-bottom: 8px;
+    white-space: nowrap;
+}
+
+/* IMPORTANT: prevent thumbnails from wrapping vertically.
+   Keep them in a single horizontal line and allow horizontal scrolling when needed. */
+.dateSection > .row,
+#scroll-gallery > .row.image-group-padding > .dateSection > .row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;            /* DO NOT wrap — keep single horizontal line */
+    gap: 8px;
+    align-items: flex-start;
     width: 100%;
-    box-sizing: border-box;
+    overflow-x: auto;             /* horizontal scroll when there's no room */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-bottom: 6px;          /* give room for scrollbar on some platforms */
 }
 
-#infinite-scroll-gallery {
-    width: 100%;
-    box-sizing: border-box;
+/* optional: visually subtle scrollbar sizing */
+.dateSection > .row {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.25) transparent;
 }
+.dateSection > .row::-webkit-scrollbar { height: 8px; }
+.dateSection > .row::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 6px; }
+.dateSection > .row::-webkit-scrollbar-track { background: transparent; }
 
-/* Scope row reset to gallery roots so it does not leak to modals/other UI */
-#scroll-gallery .dateSection .row,
-#infinite-scroll-gallery .dateSection .row {
-    font-size: 0;
-    line-height: 0;
-    margin-left: 0 !important;
-    margin-right: 0;
-    padding: var(--jg-gap); /* outer padding to get equal edge spacing */
-    box-sizing: border-box;
-}
-
-/* Modal override to opt out of inherited layout styles (if you add .no-justify to modal root) */
-.no-justify {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    z-index: 9999;
-    font-size: initial;
-    line-height: normal;
-    box-sizing: border-box;
-}
-
-/* thumbnail container will be sized by JS */
-#scroll-gallery .photo-thumbnail-container,
-#infinite-scroll-gallery .photo-thumbnail-container,
+/* Thumbnail container: keep natural widths, do not stretch, and allow horizontal layout */
 .photo-thumbnail-container {
-    display: inline-block;
-    vertical-align: top;
-    overflow: hidden;
     box-sizing: border-box;
-    font-size: initial;
-    position: relative; /* ensure overlays position relative to the thumbnail */
+    width: auto !important;
+    padding: 0;
+    margin: 0;
+    flex: 0 0 auto; /* prevents shrinking/growing; keeps natural width */
+    position: relative; /* for overlays */
 }
 
-/* anchor and image layout: ensure anchors/images can receive pointer events and have explicit stacking */
-#scroll-gallery .photo-thumbnail-container .mediaLink,
-#infinite-scroll-gallery .photo-thumbnail-container .mediaLink,
-.photo-thumbnail-container .mediaLink {
+/* Enforce consistent thumbnail height (225) while preserving aspect ratio.
+   Use max-height or fixed height depending on whether you want cropping or not.
+   Using max-height here keeps the image's full width if smaller, but keeps rows tidy. */
+.photo-thumbnail-container img,
+.photo-thumbnail-container .mediaLink > img {
+    height: auto !important;
+    max-height: 225px;     /* consistent row height */
+    width: auto !important;
     display: block;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: auto;
-}
-#scroll-gallery .photo-thumbnail-container img.photo-thumbnail-image,
-#infinite-scroll-gallery .photo-thumbnail-container img.photo-thumbnail-image,
-.photo-thumbnail-container img.photo-thumbnail-image {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
-    display: block;
-    pointer-events: auto; /* allow overlay.js to receive image clicks */
-    cursor: pointer;
-    image-orientation: from-image;
-    z-index: 0;
 }
 
-/* overlays should be above image */
-#scroll-gallery .photo-thumbnail-container .thumbnail-br,
-#scroll-gallery .photo-thumbnail-container .thumbnail-bl,
-#scroll-gallery .photo-thumbnail-container .thumbnail-tr,
-#scroll-gallery .photo-thumbnail-container .thumbnail-tl,
-#scroll-gallery .photo-thumbnail-container .thumbnail-centered,
-#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-br,
-#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-bl,
-#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-tr,
-#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-tl,
-#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-centered,
-.photo-thumbnail-container .thumbnail-br,
-.photo-thumbnail-container .thumbnail-bl,
-.photo-thumbnail-container .thumbnail-tr,
-.photo-thumbnail-container .thumbnail-tl,
-.photo-thumbnail-container .thumbnail-centered {
+/* Ensure anchor covers the thumbnail area */
+.mediaLink { display: inline-block; }
+
+/* Video-specific constraints (poster behaves same as image) */
+.photo-thumbnail.is-video img {
+    max-height: 225px;
+    width: auto !important;
+}
+
+/* If you prefer always-exact 225px (cropped) instead of max-height, comment the previous block and
+   uncomment the following rule:
+.photo-thumbnail-container img { height: 225px !important; width: auto !important; object-fit: cover; }
+*/
+
+/* Keep dateSection full width on small viewports but still no vertical wrapping */
+@media (max-width: 520px) {
+    .dateSection { min-width: 100%; }
+    .dateSection > .row { gap: 6px; }
+    .photo-thumbnail-container img { max-height: 200px; }
+}
+
+/* Video overlay styles (for .is-video) */
+.video-overlay-duration {
     position: absolute;
-    z-index: 2;
+    top: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+    padding: 4px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    pointer-events: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
-
-/* Selection-mode fallback CSS:
-   When the document root has .jg-selection-active, disable interactive controls inside thumbnails
-   so only the select buttons and image clicks remain active. */
-.jg-selection-active .photo-thumbnail-container .mediaLink,
-.jg-selection-active .photo-thumbnail-container a,
-.jg-selection-active .photo-thumbnail-container button,
-.jg-selection-active .photo-thumbnail-container input,
-.jg-selection-active .photo-thumbnail-container select,
-.jg-selection-active .photo-thumbnail-container textarea,
-.jg-selection-active .photo-thumbnail-container [role="button"] {
-    pointer-events: none !important;
-}
-
-/* allow images to remain clickable so overlay.js image handler can toggle selection */
-.jg-selection-active .photo-thumbnail-container img.photo-thumbnail-image {
-    pointer-events: auto !important;
-    cursor: pointer;
-}
-
-/* allow select buttons (id starts with select) and their descendants to be clickable in selection mode */
-.jg-selection-active [id^="select"],
-.jg-selection-active [id^="select"] *,
-.jg-selection-active .select,
-.jg-selection-active .select * {
-    pointer-events: auto !important;
-}
-
-/* small screens */
-@media (max-width: 420px) {
-    :root { --jg-target-row-height: 140px; }
-}
+.video-play-badge { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.video-play-badge .circle { width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.28); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+.video-play-badge svg { width: 18px; height: 18px; display: block; }
