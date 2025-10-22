@@ -14,16 +14,6 @@
     box-sizing: border-box;
 }
 
-/* each dateBody.row holds a set of inline-block items */
-/*.dateSection > .row > :not(.modal-wrapper) {*/
-/*    font-size: 0;*/
-/*    line-height: 0;*/
-/*    margin-left: 0 !important;*/
-/*    margin-right: 0;*/
-/*    padding: var(--jg-gap); !* outer padding to get equal edge spacing *!*/
-/*    box-sizing: border-box;*/
-/*}*/
-
 .dateSection .row {
     font-size: 0;
     line-height: 0;
@@ -34,7 +24,7 @@
 }
 
 /* Modal override to opt out of inherited layout styles */
-.modal-wrapper {
+.no-justify {
     position: fixed;
     top: 0;
     left: 0;
