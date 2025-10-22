@@ -293,7 +293,7 @@ $("#albumAppToolsRemoveFavorites").on("click", async function (e) {
     e.preventDefault();
 
     let metadataIdList = [];
-    $('.bi-circle-fill').each(function (i, obj) {
+    $('.thumbnail-tl .bi-circle-fill').each(function (i, obj) {
         metadataIdList.push(obj.id.substring(6, obj.id.length));
     });
 
@@ -328,7 +328,7 @@ $("#albumAppToolsRestore").on("click", async function (e) {
     });
 
     let metadataIdList = [];
-    $('.bi-circle-fill').each(function (i, obj) {
+    $('.thumbnail-tl .bi-circle-fill').each(function (i, obj) {
         metadataIdList.push(obj.id.substring(6, obj.id.length));
     });
 

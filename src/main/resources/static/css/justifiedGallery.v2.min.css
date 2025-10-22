@@ -14,7 +14,9 @@
     box-sizing: border-box;
 }
 
-.dateSection .row {
+/* Scope row reset to gallery roots so it does not leak to modals/other UI */
+#scroll-gallery .dateSection .row,
+#infinite-scroll-gallery .dateSection .row {
     font-size: 0;
     line-height: 0;
     margin-left: 0 !important;
@@ -23,7 +25,7 @@
     box-sizing: border-box;
 }
 
-/* Modal override to opt out of inherited layout styles */
+/* Modal override to opt out of inherited layout styles (if you add .no-justify to modal root) */
 .no-justify {
     position: fixed;
     top: 0;
@@ -38,28 +40,85 @@
 }
 
 /* thumbnail container will be sized by JS */
+#scroll-gallery .photo-thumbnail-container,
+#infinite-scroll-gallery .photo-thumbnail-container,
 .photo-thumbnail-container {
     display: inline-block;
     vertical-align: top;
     overflow: hidden;
     box-sizing: border-box;
     font-size: initial;
+    position: relative; /* ensure overlays position relative to the thumbnail */
 }
 
-/* anchor and image layout */
+/* anchor and image layout: ensure anchors/images can receive pointer events and have explicit stacking */
+#scroll-gallery .photo-thumbnail-container .mediaLink,
+#infinite-scroll-gallery .photo-thumbnail-container .mediaLink,
 .photo-thumbnail-container .mediaLink {
     display: block;
     width: 100%;
     height: 100%;
+    z-index: 0;
+    pointer-events: auto;
 }
+#scroll-gallery .photo-thumbnail-container img.photo-thumbnail-image,
+#infinite-scroll-gallery .photo-thumbnail-container img.photo-thumbnail-image,
 .photo-thumbnail-container img.photo-thumbnail-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    pointer-events: none;
-    /* ensure browsers respect EXIF orientation metadata when present */
+    pointer-events: auto; /* allow overlay.js to receive image clicks */
+    cursor: pointer;
     image-orientation: from-image;
+    z-index: 0;
+}
+
+/* overlays should be above image */
+#scroll-gallery .photo-thumbnail-container .thumbnail-br,
+#scroll-gallery .photo-thumbnail-container .thumbnail-bl,
+#scroll-gallery .photo-thumbnail-container .thumbnail-tr,
+#scroll-gallery .photo-thumbnail-container .thumbnail-tl,
+#scroll-gallery .photo-thumbnail-container .thumbnail-centered,
+#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-br,
+#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-bl,
+#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-tr,
+#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-tl,
+#infinite-scroll-gallery .photo-thumbnail-container .thumbnail-centered,
+.photo-thumbnail-container .thumbnail-br,
+.photo-thumbnail-container .thumbnail-bl,
+.photo-thumbnail-container .thumbnail-tr,
+.photo-thumbnail-container .thumbnail-tl,
+.photo-thumbnail-container .thumbnail-centered {
+    position: absolute;
+    z-index: 2;
+}
+
+/* Selection-mode fallback CSS:
+   When the document root has .jg-selection-active, disable interactive controls inside thumbnails
+   so only the select buttons and image clicks remain active. */
+.jg-selection-active .photo-thumbnail-container .mediaLink,
+.jg-selection-active .photo-thumbnail-container a,
+.jg-selection-active .photo-thumbnail-container button,
+.jg-selection-active .photo-thumbnail-container input,
+.jg-selection-active .photo-thumbnail-container select,
+.jg-selection-active .photo-thumbnail-container textarea,
+.jg-selection-active .photo-thumbnail-container [role="button"] {
+    pointer-events: none !important;
+}
+
+/* allow images to remain clickable so overlay.js image handler can toggle selection */
+.jg-selection-active .photo-thumbnail-container img.photo-thumbnail-image {
+    pointer-events: auto !important;
+    cursor: pointer;
+}
+
+/* allow select buttons (id starts with select) and their descendants to be clickable in selection mode */
+.jg-selection-active [id^="select"],
+.jg-selection-active [id^="select"] *,
+.jg-selection-active .select,
+.jg-selection-active .select * {
+    pointer-events: auto !important;
 }
 
 /* small screens */

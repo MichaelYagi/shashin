@@ -338,7 +338,7 @@
     };
 
     shashin.updateToolbarUI = function(view, metadataIdArray) {
-        const hasSelection = $('.bi-circle-fill').length > 0 || metadataIdArray.length > 0;
+        const hasSelection = $('.thumbnail-tl .bi-circle-fill').length > 0 || metadataIdArray.length > 0;
         $("#appSearch").toggle(!hasSelection);
 
         if (hasSelection) {

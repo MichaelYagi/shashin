@@ -11,7 +11,7 @@
             $("#tnbr" + metadataId).hide();
             //$("#tntr" + metadata.id).hide();
         }
-        if ($('.bi-circle-fill').length > 0 || $(_this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+        if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(_this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
             $('.thumbnail-bl').hide();
             $('.thumbnail-centered').hide();
             //$('.thumbnail-tr').hide();
@@ -61,7 +61,7 @@
         $("#image" + metadata.id).off("click").on("click", function (e) {
             e.preventDefault();
             // if images in batch select node, don't make image clickable
-            if ($('.bi-circle-fill').length > 0 || metadataIdArray.length > 0) {
+            if ($('.thumbnail-tl .bi-circle-fill').length > 0 || metadataIdArray.length > 0) {
                 e.stopPropagation();
             }
 
@@ -78,7 +78,7 @@
 
             function imageClickEvent() {
                 // Fill top left icon when clicking anywhere on thumbnail
-                if ($('.bi-circle-fill').length > 0 || metadataIdArray.length > 0) {
+                if ($('.thumbnail-tl .bi-circle-fill').length > 0 || metadataIdArray.length > 0) {
                     const isSelected = $("#tlicon" + metadata.id).attr("class") === "bi-circle";
                     const isVideo = metadata.type.includes("video");
 
@@ -214,7 +214,7 @@
             $(this).siblings(".thumbnail-br").show();
             $(this).siblings(".thumbnail-tr").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
-            if ($('.bi-circle-fill').length > 0 || $("#tlicon"+metadata.id).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+            if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $("#tlicon"+metadata.id).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 //$('.thumbnail-tr').hide();
@@ -225,7 +225,7 @@
             $('.bi-play-circle').css("color", "lightgray");
             // $(this).hide(); // hides image
             $(this).css("opacity", transparent);
-            if (($('.bi-circle-fill').length === 0 && metadataIdArray.length === 0) || $("#tlicon"+metadata.id).attr("class") !== "bi-circle-fill") {
+            if (($('.thumbnail-tl .bi-circle-fill').length === 0 && metadataIdArray.length === 0) || $("#tlicon"+metadata.id).attr("class") !== "bi-circle-fill") {
                 $(this).siblings(".thumbnail-tl").hide();
             }
             $(this).siblings(".thumbnail-bl").hide();
@@ -283,7 +283,7 @@
                 $(this).siblings(".thumbnail-br").show();
                 $(this).siblings(".thumbnail-bl").show();
                 $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
-                if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+                if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                     $('.thumbnail-bl').hide();
                     $('.thumbnail-centered').hide();
                     //$('.thumbnail-tr').hide();
@@ -313,7 +313,7 @@
             $(this).siblings(".thumbnail-tr").show();
             $(this).siblings(".thumbnail-br").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
-            if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+            if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 //$('.thumbnail-tr').hide();
@@ -338,7 +338,7 @@
             $(this).siblings(".thumbnail-tr").show();
             $(this).siblings(".thumbnail-bl").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
-            if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+            if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 //$('.thumbnail-tr').hide();
@@ -363,7 +363,7 @@
             $(this).siblings(".thumbnail-bl").show();
             $(this).siblings(".thumbnail-br").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
-            if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+            if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 //$('.thumbnail-tr').hide();
