@@ -1,6 +1,6 @@
 class ModalTemplates {
     static AlbumCommentsModalHead({metadata}) { return `
-        <div class="modal fade" id="propalbumphotocomment${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}">
+        <div class="modal fade modal-wrapper" id="propalbumphotocomment${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}">
             <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
