@@ -2,6 +2,15 @@ class GalleryTemplates {
     static PhotoGalleryItem({activePage, metadata, overlayData, uuid, isMobile}) { return `
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${isMobile?120:metadata.thumbnailSmallWidth}px;height:${isMobile?120:metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <span class="lightGalleryIndexAnchor"></span>
+            
+            ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderCenter") && overlayData.data.overlayFlags.renderCenter === true) ? GalleryTemplates.getCenteredOverlay({
+                id: metadata.id,
+                overlays: overlayData.overlays,
+                data: overlayData.data,
+                uuid: uuid,
+                isMobile: Util.isMobile()
+            }) :''}
+            
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${"/api/v1/thumbnails/centered/"+metadata.id}">
             <input type="hidden" name="dateTaken${metadata.id}" id="dateTaken${metadata.id}" value="${metadata.year}-${metadata.month}-${metadata.day}">
@@ -15,38 +24,31 @@ class GalleryTemplates {
             :''}
     
             ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderTopRight") && overlayData.data.overlayFlags.renderTopRight === true) ? GalleryTemplates.getTopRightOverlay({
-            id: metadata.id,
-            overlays: overlayData.overlays,
-            data: overlayData.data
-        }) : ''}
+                id: metadata.id,
+                overlays: overlayData.overlays,
+                data: overlayData.data
+            }) : ''}
             
             ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderTopLeft") && overlayData.data.overlayFlags.renderTopLeft === true) ? GalleryTemplates.getTopLeftOverlay({
-            id: metadata.id,
-            overlays: overlayData.overlays,
-            data: overlayData.data
-        }) : ''}
+                id: metadata.id,
+                overlays: overlayData.overlays,
+                data: overlayData.data
+            }) : ''}
             
             ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderBottomLeft") && overlayData.data.overlayFlags.renderBottomLeft === true) ? GalleryTemplates.getBottomLeftOverlay({
-            metadata: metadata,
-            overlays: overlayData.overlays,
-            data: overlayData.data
-        }) : ''}
+                metadata: metadata,
+                overlays: overlayData.overlays,
+                data: overlayData.data
+            }) : ''}
             
             ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderBottomRight") && overlayData.data.overlayFlags.renderBottomRight === true) ? GalleryTemplates.getBottomRightOverlay({
-            id: metadata.id,
-            overlays: overlayData.overlays,
-            data: overlayData.data
-        }) : ''}
-            
-            ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderCenter") && overlayData.data.overlayFlags.renderCenter === true) ? GalleryTemplates.getCenteredOverlay({
-            id: metadata.id,
-            overlays: overlayData.overlays,
-            data: overlayData.data,
-            uuid: uuid,
-            isMobile: Util.isMobile()
-        }) : ''}
+                id: metadata.id,
+                overlays: overlayData.overlays,
+                data: overlayData.data
+            }) : ''}
             
         </div>
+        
         ${(activePage === "album") ? `<span id="albummodal${metadata.id}" style="width:0;height:0;padding:0"></span>` : ''}
         ${(activePage === "person") ? `<span id="personmodal${metadata.id}" style="width:0;height:0;padding:0"></span>` : ''}
         
