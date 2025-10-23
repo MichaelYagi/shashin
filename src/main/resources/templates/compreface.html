@@ -31,6 +31,15 @@
                                 const opaque = 0.3
                                 const transparent = 1.0
 
+                                $("#tntr" + compreFaceImageId).off("click").on("click", function (e) {
+                                    e.preventDefault();
+
+                                    const link = document.getElementById("mediaLink" + compreFaceImageId);
+                                    if (link && $('.thumbnail-tl .bi-circle-fill').length === 0) {
+                                        link.click();
+                                    }
+                                });
+
                                 $("#select" + compreFaceImageId).on("click", function (e) {
                                     e.preventDefault();
 
