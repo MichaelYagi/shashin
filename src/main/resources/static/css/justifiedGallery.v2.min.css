@@ -6,27 +6,20 @@
     gap: 24px;
     padding: 24px;
     align-items: flex-start;
-    font-family: sans-serif;
 }
 
 /* --- Each Date Group --- */
 .dateSection {
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 0 0 auto;
     max-width: fit-content;
-    background: white;
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* --- Date Header --- */
 .dateHeader {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #444;
-    padding-left: 4px;
+    font-weight: bold;
 }
 
 /* --- Thumbnail Containers --- */
@@ -36,8 +29,6 @@
     height: 90px;
     margin: 3px;
     overflow: hidden;
-    border-radius: 6px;
-    background-color: #eee;
     vertical-align: top;
 }
 
