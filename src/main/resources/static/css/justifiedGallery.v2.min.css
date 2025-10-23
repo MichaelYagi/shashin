@@ -1,114 +1,59 @@
-/* Parent: allow date blocks to wrap like cards across the page */
+/* --- Gallery Container --- */
 #infinite-scroll-gallery, #scroll-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 24px; /* space between date blocks */
-    padding: 8px 0;
-    box-sizing: border-box;
+    display: block;               /* Let inline-blocks wrap naturally */
+    position: relative;           /* For absolute-positioned headers */
+    text-align: left;
+    font-size: 0;                 /* Remove whitespace between inline-blocks */
 }
 
-/* Each date block acts like a row/card (heading above thumbnails) */
+/* --- Each Date Section --- */
 .dateSection {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: auto;
-    min-width: 240px;
-    max-width: 100%;
-    box-sizing: border-box;
-    padding-bottom: 4px;
+    display: contents;
 }
 
-/* Date header sits above thumbnails */
-.dateHeader {
-    margin-bottom: 8px;
-    white-space: nowrap;
-}
-
-/* IMPORTANT: prevent thumbnails from wrapping vertically.
-   Keep them in a single horizontal line and allow horizontal scrolling when needed. */
-.dateSection > .row,
-#scroll-gallery > .row.image-group-padding > .dateSection > .row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;            /* DO NOT wrap — keep single horizontal line */
-    gap: 8px;
-    align-items: flex-start;
-    width: 100%;
-    overflow-x: auto;             /* horizontal scroll when there's no room */
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    padding-bottom: 6px;          /* give room for scrollbar on some platforms */
-}
-
-/* optional: visually subtle scrollbar sizing */
-.dateSection > .row {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,0,0,0.25) transparent;
-}
-.dateSection > .row::-webkit-scrollbar { height: 8px; }
-.dateSection > .row::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 6px; }
-.dateSection > .row::-webkit-scrollbar-track { background: transparent; }
-
-/* Thumbnail container: keep natural widths, do not stretch, and allow horizontal layout */
-.photo-thumbnail-container {
-    box-sizing: border-box;
-    width: auto !important;
-    padding: 0;
-    margin: 0;
-    flex: 0 0 auto; /* prevents shrinking/growing; keeps natural width */
-    position: relative; /* for overlays */
-}
-
-/* Enforce consistent thumbnail height (225) while preserving aspect ratio.
-   Use max-height or fixed height depending on whether you want cropping or not.
-   Using max-height here keeps the image's full width if smaller, but keeps rows tidy. */
-.photo-thumbnail-container img,
-.photo-thumbnail-container .mediaLink > img {
-    height: auto !important;
-    max-height: 225px;     /* consistent row height */
-    width: auto !important;
+/* Shim to force line break */
+.dateHeader::before {
+    content: "";
     display: block;
-    object-fit: cover;
+    width: 100%;
+    height: 0;
+    margin-top: 24px;
 }
 
-/* Ensure anchor covers the thumbnail area */
-.mediaLink { display: inline-block; }
-
-/* Video-specific constraints (poster behaves same as image) */
-.photo-thumbnail.is-video img {
-    max-height: 225px;
-    width: auto !important;
-}
-
-/* If you prefer always-exact 225px (cropped) instead of max-height, comment the previous block and
-   uncomment the following rule:
-.photo-thumbnail-container img { height: 225px !important; width: auto !important; object-fit: cover; }
-*/
-
-/* Keep dateSection full width on small viewports but still no vertical wrapping */
-@media (max-width: 520px) {
-    .dateSection { min-width: 100%; }
-    .dateSection > .row { gap: 6px; }
-    .photo-thumbnail-container img { max-height: 200px; }
-}
-
-/* Video overlay styles (for .is-video) */
-.video-overlay-duration {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    font-size: 12px;
-    line-height: 1;
-    padding: 4px 7px;
-    border-radius: 3px;
+/* Header styling */
+.dateHeader {
+    display: inline-block;
+    width: auto;
+    padding: 6px 8px;
     font-weight: 600;
-    pointer-events: none;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    font-size: 0.9rem;
+    color: #555;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    border-radius: 4px;
+    vertical-align: top;
 }
-.video-play-badge { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-.video-play-badge .circle { width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.28); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
-.video-play-badge svg { width: 18px; height: 18px; display: block; }
+
+/* --- Individual Photo Container --- */
+.photo-thumbnail-container {
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Images --- */
+.photo-thumbnail-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Optional spacing between items */
+.photo-thumbnail-container + .photo-thumbnail-container {
+    margin-left: 0;
+}
+
