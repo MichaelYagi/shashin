@@ -43,7 +43,7 @@
             e.preventDefault();
 
             const link = document.getElementById("mediaLink" + metadata.id);
-            if (link) {
+            if (link && ($('.thumbnail-tl .bi-circle-fill').length === 0 || metadataIdArray.length === 0)) {
                 link.click();
             }
         });
