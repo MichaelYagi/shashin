@@ -1,4 +1,4 @@
-function initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody, language) {
+function initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody) {
     // API management
     $("#copyapikey").on("click", function (e) {
         e.preventDefault();
