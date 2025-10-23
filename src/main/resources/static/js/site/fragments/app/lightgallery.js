@@ -40,7 +40,12 @@
         }
     };
 
-    shashin.updateMediaContent = function(mediaContentList,additionalMediaContentList) {
+    shashin.updateMediaContent = function(mediaContentList,additionalMediaContentList,activePage = "") {
+        // Remove place name if date headings too long
+        if (activePage !== 'timeline' && activePage !== 'person' && activePage !== 'matches') {
+            Util.headingTruncate();
+        }
+
         if (additionalMediaContentList && additionalMediaContentList.length > 0) {
             mediaContentList = mediaContentList.concat(additionalMediaContentList);
             shashin.refreshAndActivateLgListener(mediaContentList);

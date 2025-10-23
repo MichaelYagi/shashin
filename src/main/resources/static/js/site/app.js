@@ -156,6 +156,10 @@
     shashin.pageLoader = function(func, appendClass, list, activePage) {
         let eol = false;
 
+        if (activePage !== 'timeline' && activePage !== 'person' && activePage !== 'matches') {
+            Util.headingTruncate();
+        }
+
         const refreshIntervalId = window.setInterval(function () {
             if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
                 setTimeout(async () => {

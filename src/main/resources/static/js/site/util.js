@@ -1,4 +1,36 @@
 class Util {
+    static headingTruncate() {
+        $('.dateSection').each(function () {
+            const $section = $(this);
+            const $muted = $section.find('.dateHeader > .text-muted');
+            const $date = $section.find('.dateHeader > strong:first');
+            // const $heading = $section.find('.dateHeader').first();
+            const originalAttr = $date.attr("style");
+            $date.removeAttr("style");
+            const $body = $section.find('.row');
+            const $photos = $body.find('.photo-thumbnail-container');
+
+            let dateHeadingWidth = 0;
+            $muted.each(function() {
+                dateHeadingWidth += $(this).width();
+            });
+            dateHeadingWidth += $date.width();
+
+            let bodyWidth = 0;
+            $photos.each(function() {
+                bodyWidth += $(this).innerWidth();
+            });
+
+            $date.attr("style", originalAttr);
+
+            if (dateHeadingWidth === 0 || bodyWidth === 0) return;
+
+            if (dateHeadingWidth > bodyWidth) {
+                $($section.find('.dateHeader > .text-muted:nth-child(4)')).hide();
+            }
+        });
+    }
+
     static showSpinner(show = true) {
         if (show === true) {
             $("#mediaScanSpinner").css("display", "block");

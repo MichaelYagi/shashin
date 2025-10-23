@@ -41,7 +41,7 @@
                 albumSettings.getPagedAlbum(albumId, mediaTypeFilter, albumSettings.page, activePage).then(function (additionalMediaContentList) {
                     // console.log(additionalMediaContentList)
                     albumSettings.page++;
-                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList, "album");
 
                     if (albumSettings.eol) {
                         setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);

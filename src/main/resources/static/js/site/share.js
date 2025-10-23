@@ -27,7 +27,7 @@ class ShareAlbum {
             this.updateAlbum(this.albumId, this.page, this.activePage).then(function (additionalMediaContentList) {
                 // console.log(additionalMediaContentList)
                 this.page++;
-                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, "share");
             }.bind(this));
         }
 

@@ -39,7 +39,7 @@ class Taken {
             this.updateTaken(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
                 // console.log(additionalMediaContentList)
                 this.page++;
-                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
 
                 if (this.eol) {
                     setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
