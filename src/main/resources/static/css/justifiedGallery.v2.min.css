@@ -4,7 +4,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
-    padding: 24px;
+    padding: 24px 24px 24px 0;
     align-items: flex-start;
 }
 
@@ -17,17 +17,12 @@
     max-width: fit-content;
 }
 
-/* --- Date Header --- */
-.dateHeader {
-    font-weight: bold;
-}
-
 /* --- Thumbnail Containers --- */
 .dateSection .photo-thumbnail-container {
     display: inline-block;
     width: 120px;
     height: 90px;
-    margin: 3px;
+    margin: 2px;
     overflow: hidden;
     vertical-align: top;
 }
@@ -38,4 +33,12 @@
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+.image-group-padding {
+    padding-left: 13px !important;
+}
+
+.dateHeader {
+    margin-bottom: -10px;
 }
