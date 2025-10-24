@@ -43,8 +43,14 @@
             e.preventDefault();
 
             const link = document.getElementById("mediaLink" + metadata.id);
-            if (link && ($('.thumbnail-tl .bi-circle-fill').length === 0 || metadataIdArray.length === 0)) {
-                link.click();
+            if (link) {
+                // View in gallery
+                if ($('.thumbnail-tl .bi-circle-fill').length === 0 || metadataIdArray.length === 0) {
+                    link.click();
+                } else {
+                    // Deselect/select select
+                    shashin.selectClick(metadata.id, view, opaque, transparent, metadataIdArray, true);
+                }
             }
         });
 
