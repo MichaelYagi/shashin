@@ -1,10 +1,10 @@
 class Util {
-    static headingTruncate() {
+    static truncateHeading() {
         $('.dateSection').each(function () {
             const $section = $(this);
             const $muted = $section.find('.dateHeader > .text-muted');
             const $date = $section.find('.dateHeader > strong:first');
-            // const $heading = $section.find('.dateHeader').first();
+            const $heading = $section.find('.dateHeader').first();
             const originalAttr = $date.attr("style");
             $date.removeAttr("style");
             const $body = $section.find('.row');
@@ -22,6 +22,11 @@ class Util {
             });
 
             $date.attr("style", originalAttr);
+
+            shashin.printMessageToConsole($heading,{tag:"truncateHeading"});
+            shashin.printMessageToConsole("dateHeadingWidth: "+dateHeadingWidth,{tag:"truncateHeading"});
+            shashin.printMessageToConsole("bodyWidth: "+bodyWidth,{tag:"truncateHeading"});
+            shashin.printMessageToConsole("muted text: "+$($section.find('.dateHeader > .text-muted:nth-child(4)')),{tag:"truncateHeading"});
 
             if (dateHeadingWidth === 0 || bodyWidth === 0) return;
 

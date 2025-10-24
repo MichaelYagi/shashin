@@ -43,7 +43,7 @@
     shashin.updateMediaContent = function(mediaContentList,additionalMediaContentList,activePage = "") {
         // Remove place name if date headings too long
         if (activePage !== 'timeline' && activePage !== 'person' && activePage !== 'matches') {
-            Util.headingTruncate();
+            Util.truncateHeading();
         }
 
         if (additionalMediaContentList && additionalMediaContentList.length > 0) {

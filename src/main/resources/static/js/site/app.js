@@ -157,7 +157,7 @@
         let eol = false;
 
         if (activePage !== 'timeline' && activePage !== 'person' && activePage !== 'matches') {
-            Util.headingTruncate();
+            Util.truncateHeading();
         }
 
         const refreshIntervalId = window.setInterval(function () {
