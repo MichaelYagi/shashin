@@ -274,18 +274,25 @@ function initializeEditor(editMetadataObj, lgIndex) {
         const flipY = isFlippedVertically ? -1 : 1;
         const isEvenRotation = rotation % 180 === 0;
 
-        let style = {
-            "transform": `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
-            "max-width": isEvenRotation ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1,
-            "max-height": isEvenRotation ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1
-        };
-        if (showTransition === true) {
-            style.transition = "transform 0.3s ease-in-out";
-        } else {
-            style.transition = "none";
-        }
+        // Calculate target dimensions
+        const targetWidth = isEvenRotation ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1;
+        const targetHeight = isEvenRotation ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1;
 
-        $("#editShashinImage").css(style);
+        // Apply transition styles
+        const style = {
+            transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
+            maxWidth: targetWidth,
+            maxHeight: targetHeight,
+            transition: showTransition ?
+                "transform 0.3s ease-in-out, max-width 0.3s ease-in-out, max-height 0.3s ease-in-out"
+                : "none"
+        };
+
+        // Apply styles with a frame delay to ensure smooth transition
+        window.requestAnimationFrame(() => {
+            $("#editShashinImage").css(style);
+        });
+
     }
 
     // Slider icon
