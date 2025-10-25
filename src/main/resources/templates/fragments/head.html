@@ -185,9 +185,11 @@
 <!--                    <script src="/js/jquery.justifiedGallery.v1.min.js" th:nonce="${cspNonce}"></script>-->
 <!--                    <link rel="stylesheet" href="/css/justifiedGallery.v1.min.css">-->
 <!--                </th:block>-->
-                <th:block th:if="${activePageLower != 'timeline' && activePageLower != 'person' && activePageLower != 'matches' && (isMobile == false && (activePageLower == 'recent' || activePageLower == 'modified' || activePageLower == 'taken' || activePageLower == 'accessed'))}">
-                    <script src="/js/jquery.justifiedGallery.v2.min.js" th:nonce="${cspNonce}"></script>
-                    <link rel="stylesheet" href="/css/justifiedGallery.v2.min.css">
+                <th:block th:if="${activePageLower != 'timeline' && activePageLower != 'person' && activePageLower != 'matches'}">
+                    <th:block th:if="${isMobile == false || (isMobile == true && activePageLower != 'recent' && activePageLower != 'modified' && activePageLower != 'taken' && activePageLower != 'accessed')}">
+                        <script src="/js/jquery.justifiedGallery.v2.min.js" th:nonce="${cspNonce}"></script>
+                        <link rel="stylesheet" href="/css/justifiedGallery.v2.min.css">
+                    </th:block>
                 </th:block>
 <!--            </th:block>-->
         </th:block>
