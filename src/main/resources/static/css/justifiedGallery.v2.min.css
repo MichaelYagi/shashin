@@ -5,8 +5,8 @@
 
 /* --- Multiple sections in a row --- */
 /* --- Gallery Containers --- */
-#scroll-gallery,
-#infinite-scroll-gallery {
+/* Use :is() so rules apply to either gallery container ID */
+:is(#scroll-gallery, #infinite-scroll-gallery) {
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
@@ -31,7 +31,8 @@
 }
 
 /* --- Thumbnail Containers --- */
-#scroll-gallery .photo-thumbnail-container,
+/* Apply to containers inside either gallery id, and also keep the .dateSection rule */
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container,
 .dateSection .photo-thumbnail-container {
     display: inline-block;
     vertical-align: top;
@@ -42,7 +43,7 @@
 }
 
 /* Anchors and images fill container */
-#scroll-gallery .photo-thumbnail-container .mediaLink {
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .mediaLink {
     display: block;
     width: 100%;
     height: 100%;
@@ -50,7 +51,7 @@
     pointer-events: auto;
 }
 
-#scroll-gallery .photo-thumbnail-container img.photo-thumbnail-image {
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container img.photo-thumbnail-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -70,11 +71,11 @@
 }
 
 /* Overlay positioning */
-#scroll-gallery .photo-thumbnail-container .thumbnail-br,
-#scroll-gallery .photo-thumbnail-container .thumbnail-bl,
-#scroll-gallery .photo-thumbnail-container .thumbnail-tr,
-#scroll-gallery .photo-thumbnail-container .thumbnail-tl,
-#scroll-gallery .photo-thumbnail-container .thumbnail-centered {
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-br,
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-bl,
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-tr,
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-tl,
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-centered {
     position: absolute;
     z-index: 2;
 }
