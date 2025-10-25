@@ -211,7 +211,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             '#editorSharpnessAction, ' +
             '#editorBlock'
         ).length) {
-            if ($("#editorSpinner").css("display") === "none") {
+            if (isSpinnerHidden()) {
                 hideModule();
             }
         }
@@ -756,7 +756,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorRestoreActionButton").off("click").on("click", function (e) {
         e.preventDefault();
 
-        if ($("#editorSpinner").css("display") === "none") {
+        if (isSpinnerHidden()) {
             if ($("#glcanvas").length > 0) {
                 $("#glcanvas").remove();
             }
