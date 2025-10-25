@@ -229,11 +229,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
             // Rotate left
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) {
                 e.preventDefault();
-                if (isSpinnerHidden()) {
-                    rotation -= 90;
-                    updateTransform();
-                }
-                toggleResetSaveButtons();
+
+                setTimeout(function () {
+                    if (isSpinnerHidden()) {
+                        rotation -= 90;
+                        updateTransform();
+                    }
+                    toggleResetSaveButtons();
+                }, 100);
             }
 
             // Flip horizontally
@@ -253,11 +256,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
             // Rotate right
             if (e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
                 e.preventDefault();
-                if (isSpinnerHidden()) {
-                    rotation += 90;
-                    updateTransform();
-                }
-                toggleResetSaveButtons();
+
+                setTimeout(function () {
+                    if (isSpinnerHidden()) {
+                        rotation += 90;
+                        updateTransform();
+                    }
+                    toggleResetSaveButtons();
+                }, 100);
             }
 
             // Flip vertically
