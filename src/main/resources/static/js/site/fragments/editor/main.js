@@ -3,7 +3,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // console.log(editMetadataObj.id);
     // console.log(editMetadataObj);
     // console.log(lgIndex);
-
+    $("#editorContainer").css('cursor', 'auto');
     // 1. Load original from path
     // 2. Apply transformations stored in DB
     // 3. When reseting, do step 1 & 2
@@ -96,48 +96,28 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let thirdRowButtons = [
         { id: "#editorBrightnessActionButton", fontSize: "2rem", top: "130px" }
     ];
-    let thirdRowMenuHeightWidth = 0;
-    // if (Util.isMobile()) {
-    //     styleBottomControl("#editorBrightnessActionButton", "2em", "215px", "right", "10px", "#editorBrightnessIcon");
-    // } else {
-        thirdRowMenuHeightWidth = applyStyles(thirdRowButtons, sideValue, "right");
-    // }
+    let thirdRowMenuHeightWidth = applyStyles(thirdRowButtons, sideValue, "right");
 
     // Fourth row buttons
     sideValue = 10+20;
     let fourthRowButtons = [
         { id: "#editorContrastActionButton", fontSize: "2rem", top: "200px" }
     ];
-    let fourthRowMenuHeightWidth = 0;
-    // if (Util.isMobile()) {
-    //     styleBottomControl("#editorContrastActionButton", "2em", "155px", "right", "10px", "#editorContrastIcon");
-    // } else {
-        fourthRowMenuHeightWidth = applyStyles(fourthRowButtons, sideValue, "right");
-    // }
+    let fourthRowMenuHeightWidth = applyStyles(fourthRowButtons, sideValue, "right");
 
     // Fifth row buttons
     sideValue = 10+20;
     let fifthRowButtons = [
         { id: "#editorSaturationActionButton", fontSize: "2rem", top: "270px" }
     ];
-    let fifthRowMenuHeightWidth = 0;
-    // if (Util.isMobile()) {
-    //     styleBottomControl("#editorSaturationActionButton", "2em", "95px", "right", "10px", "#editorSaturationIcon");
-    // } else {
-        fifthRowMenuHeightWidth = applyStyles(fifthRowButtons, sideValue, "right");
-    // }
+    let fifthRowMenuHeightWidth = applyStyles(fifthRowButtons, sideValue, "right");
 
     // Sixth row buttons
     sideValue = 10+20;
     let sixthRowButtons = [
         { id: "#editorSharpnessActionButton", fontSize: "2rem", top: "340px" }
     ];
-    let sixthRowMenuHeightWidth = 0;
-    // if (Util.isMobile()) {
-    //     styleBottomControl("#editorSharpnessActionButton", "2em", "35px", "right", "10px", "#editorSharpnessIcon");
-    // } else {
-        sixthRowMenuHeightWidth = applyStyles(sixthRowButtons, sideValue, "right");
-    // }
+    let sixthRowMenuHeightWidth = applyStyles(sixthRowButtons, sideValue, "right");
 
     const rowWidths = [
         firstRowMenuHeightWidth[0],
@@ -167,21 +147,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
         });
     }
 
-    // function styleBottomControl(id, fontSize, bottom, side, sideValue, iconId) {
-    //     $(id).css({
-    //         "font-size": fontSize,
-    //         "color": "#FFFFFF",
-    //         "z-index": 99998,
-    //         "position": "absolute",
-    //         "bottom": bottom,
-    //         [side]: sideValue
-    //     });
-    //
-    //     $(iconId).css({
-    //         "z-index": 999999
-    //     });
-    // }
-
     function applyStyles(buttons, startValue, side) {
         let offset = startValue;
         let maxTop = 0;
@@ -201,26 +166,17 @@ function initializeEditor(editMetadataObj, lgIndex) {
         return [offset, maxTop];
     }
 
-    // if (!Util.isMobile()) {
-        $("#editorBlock").css({
-            "position": "absolute",
-            "height": (blockHeight - 589) + "px",
-            "width": (blockWidth + 5) + "px",
-            "right": "0"
-        });
-    // }
+    $("#editorBlock").css({
+        "position": "absolute",
+        "height": (blockHeight - 589) + "px",
+        "width": (blockWidth + 5) + "px",
+        "right": "0"
+    });
 
     showModule();
     toggleResetSaveButtons();
 
-    $("#editorContainer").css({
-        "width": "100%",
-        "height": "100%",
-        "display": "block",
-        "z-index": 9999,
-        "background-color": "#000000",
-        "overflow": "hidden"
-    });
+    $("#editorContainer").css("display", "block");
 
     $(".centerFit").css({
         "max-width": $(window).innerWidth() + 1,
@@ -261,10 +217,75 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     });
 
+    // Key actions
+    $("body").off("keydown").on("keydown", async function (e) {
+        if (isSpinnerHidden()) {
+            // Close editor - setTimeout 100 so it doesn't also close LightGallery slide
+            if (e.key === "Escape" || e.code === "Escape" || e.which === 27 || e.keyCode === 27) {
+                e.preventDefault();
+                setTimeout(hideModule, 100);
+            }
+
+            // Rotate left
+            if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) {
+                e.preventDefault();
+                if (isSpinnerHidden()) {
+                    rotation -= 90;
+                    updateTransform();
+                }
+                toggleResetSaveButtons();
+            }
+
+            // Flip horizontally
+            if (e.key === "ArrowUp" || e.code === "ArrowUp" || e.which === 38 || e.keyCode === 38) {
+                e.preventDefault();
+                if (isSpinnerHidden()) {
+                    if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
+                        isFlippedHorizontally = !isFlippedHorizontally;
+                    } else {
+                        isFlippedVertically = !isFlippedVertically;
+                    }
+                    updateTransform();
+                }
+                toggleResetSaveButtons();
+            }
+
+            // Rotate right
+            if (e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
+                e.preventDefault();
+                if (isSpinnerHidden()) {
+                    rotation += 90;
+                    updateTransform();
+                }
+                toggleResetSaveButtons();
+            }
+
+            // Flip vertically
+            if (e.key === "ArrowDown" || e.code === "ArrowDown" || e.which === 40 || e.keyCode === 40) {
+                e.preventDefault();
+                if (isSpinnerHidden()) {
+                    if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
+                        isFlippedVertically = !isFlippedVertically;
+                    } else {
+                        isFlippedHorizontally = !isFlippedHorizontally;
+                    }
+                    updateTransform();
+                }
+                toggleResetSaveButtons();
+            }
+
+            // Save
+            if (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83) {
+                e.preventDefault();
+                saveImage();
+            }
+        }
+    });
+
     $("#editorCloseAction").off("click").on("click", function (e) {
         e.preventDefault();
 
-        if ($("#editorSpinner").css("display") === "none") {
+        if (isSpinnerHidden()) {
             hideModule();
         }
     });
@@ -833,7 +854,10 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorSaveActionButton").off("click").on("click", function (e) {
         e.preventDefault();
+        saveImage();
+    });
 
+    function saveImage() {
         disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").css("display", "none");
@@ -884,7 +908,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             $("#editorCloseActionButton").css("display", "block");
             hideModule();
         });
-    });
+    }
 
     function enableButtons() {
         const buttonIds = [
