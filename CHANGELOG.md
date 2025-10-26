@@ -11,23 +11,27 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Added Sharpness
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
 
+## [2.15.0] - 2025-10-26
+### Added
+- Added Sharpness to editor
+- 
 ### Changed
 - Batch selection improvements
 - Removed play button from thumbnails
 - Updated UI so that photos have a justified row layout
 
-### Deprecated
-### Removed
 ### Fixed
 - Shift selecting same image
 
-### Security
-
 ## [2.14.1] - 2025-10-08
 ### Added
-- Added Saturation
+- Added Saturation to editor
 
 ### Fixed
 - Improvements to image editor
