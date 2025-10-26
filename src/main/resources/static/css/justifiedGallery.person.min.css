@@ -8,24 +8,30 @@
   width: 100%;
   max-width: 95%;
   box-sizing: border-box;
+  padding: var(--jg-gap); /* outer padding so edges also get the same gap */
 }
 
 #scroll-gallery {
   width: 100%;
   max-width: 95%;
   box-sizing: border-box;
+  padding: var(--jg-gap);
 }
 
-/* dateContainer rows use .row.image-group-padding in your markup
-   Scoped to gallery roots to avoid leaking font-size:0 into other UI (e.g., modals) */
+/* Use flex on the row so thumbnails align to the same top baseline reliably.
+   JS still controls each thumbnail's width/height and margins; flex merely
+   gives us robust vertical alignment (no font-size hacks or inline-block gaps). */
 #scroll-gallery .row.image-group-padding,
 #infinite-scroll-gallery .row.image-group-padding {
-  font-size: 0;
-  line-height: 0;
-  margin-left: 0 !important; /* override any inline negative margins */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start; /* ensure items line up at the top of the row */
+  gap: 0; /* JS provides margins; keep gap 0 to match the JS math */
+  margin-left: 0 !important; /* override any inline negative margins (e.g. bootstrap .row) */
   margin-right: 0;
-  padding: var(--jg-gap); /* outer padding so edges also get the same gap */
+  padding: 0; /* outer padding moved to gallery root */
   box-sizing: border-box;
+  width: 100%;
 }
 
 /* Modal override to opt out of inherited layout styles (if you add .no-justify to modal root) */
@@ -42,11 +48,14 @@
   box-sizing: border-box;
 }
 
-/* thumbnail container will be sized by JS */
+/* thumbnail container will be sized by JS.
+   Make them flex items that do not shrink or grow, and let JS set exact widths.
+   Use display:block so anchors/images fully fill the box. */
 #scroll-gallery .photo-thumbnail-container,
 #infinite-scroll-gallery .photo-thumbnail-container,
 .photo-thumbnail-container {
-  display: inline-block;
+  display: block;
+  flex: 0 0 auto; /* don't shrink/grow — width is controlled by JS */
   vertical-align: top;
   overflow: hidden;
   box-sizing: border-box;
@@ -117,7 +126,7 @@
 
 /* allow select buttons (id starts with select) and their descendants to be clickable in selection mode */
 .jg-selection-active [id^="select"],
-.jg-selection-active [id^="select"] *,
+.jg-selection-active [id^="select"] * ,
 .jg-selection-active .select,
 .jg-selection-active .select * {
   pointer-events: auto !important;
