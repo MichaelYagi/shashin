@@ -27,7 +27,7 @@
 /* ensure the date-body row collapses inline-block whitespace so tiny gaps don't push items */
 .dateSection .row {
     font-size: 0;
-    line-height: 0;
+    /*line-height: 0;*/
 }
 
 /* --- Thumbnail Containers --- */
