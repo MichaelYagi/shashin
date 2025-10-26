@@ -183,11 +183,11 @@
 
 <!--            TODO: Adapt multi date row justification with smooth scrolling on timeline-->
 <!--            activePageLower == 'timeline' ||-->
-            <th:block th:if="${activePageLower == 'person' || activePageLower == 'matches'}">
+            <th:block th:if="${activePageLower == 'person' || activePageLower == 'matches' || activePageLower == 'folder'}">
                 <script src="/js/justifiedGallery.person.min.js" th:nonce="${cspNonce}"></script>
                 <link rel="stylesheet" href="/css/justifiedGallery.person.min.css">
             </th:block>
-            <th:block th:if="${activePageLower != 'timeline' && activePageLower != 'person' && activePageLower != 'matches'}">
+            <th:block th:if="${activePageLower != 'timeline' && activePageLower != 'person' && activePageLower != 'matches' && activePageLower != 'folder'}">
                 <script src="/js/justifiedGallery.explore.min.js" th:nonce="${cspNonce}"></script>
                 <link rel="stylesheet" href="/css/justifiedGallery.explore.min.css">
             </th:block>
