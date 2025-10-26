@@ -85,36 +85,13 @@
 }
 
 /* Overlay positioning */
-:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-br,
+/* keep thumbnail-bl / thumbnail-br untouched by selection-mode and font-size:0 */
 :is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-bl,
-:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-tr,
-:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-tl,
-:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-centered {
-    position: absolute;
-    z-index: 2;
-}
-
-/* Selection mode overrides */
-.jg-selection-active .photo-thumbnail-container .mediaLink,
-.jg-selection-active .photo-thumbnail-container a,
-.jg-selection-active .photo-thumbnail-container button,
-.jg-selection-active .photo-thumbnail-container input,
-.jg-selection-active .photo-thumbnail-container select,
-.jg-selection-active .photo-thumbnail-container textarea,
-.jg-selection-active .photo-thumbnail-container [role="button"] {
-    pointer-events: none !important;
-}
-
-.jg-selection-active .photo-thumbnail-container img.photo-thumbnail-image {
-    pointer-events: auto !important;
-    cursor: pointer;
-}
-
-.jg-selection-active [id^="select"],
-.jg-selection-active [id^="select"] *,
-.jg-selection-active .select,
-.jg-selection-active .select * {
-    pointer-events: auto !important;
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-br,
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-bl *,
+:is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container .thumbnail-br * {
+    font-size: initial !important;
+    line-height: normal !important;
 }
 
 /* Small screens */
