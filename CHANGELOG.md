@@ -20,7 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [2.15.0] - 2025-10-26
 ### Added
 - Added Sharpness to editor
-- 
+
 ### Changed
 - Batch selection improvements
 - Removed play button from thumbnails
