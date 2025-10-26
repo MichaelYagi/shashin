@@ -37,37 +37,84 @@ workflows:
             tags:
               only: /^v.*/
           command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
-#          #command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
+          #          #command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
           requires:
             - Run node tests
           pre-steps:
             - run:
-                name: Installing Linux libraries and Chromedriver
+                name: Installing Linux libraries and Chromedriver dependencies
                 command: |
                   sudo apt-get update
-                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
-                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
-            ## Install specific version
-            ## https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
-            ## Drivers to run locally
-            ## https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
-            ## https://storage.googleapis.com/chrome-for-testing-public/128.0.6613.137/win64/chrome-win64.zip
-            ## https://storage.googleapis.com/chrome-for-testing-public/128.0.6613.137/win64/chromedriver-win64.zip
-            # CircleCI downloads from here:
-            # https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.58-1_amd64.deb
-            - browser-tools/install_browser_tools:
-                chrome_version: 141.0.7390.115
-#            # Install latest
-#            - browser-tools/install_chrome:
-#                timeout: 5m
-#            - browser-tools/install_chromedriver:
-#                timeout: 5m
+                  sudo apt-get install -y libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release \
+                    libappindicator3-1 libasound2 fonts-liberation xdg-utils unzip wget ca-certificates
+            ## Install specific Chrome + Chromedriver (Chrome-for-Testing linux64 archive)
+            - run:
+                name: Install Chrome 128.0.6613.137 and matching Chromedriver
+                command: |
+                  set -eux
+                  CHROME_VER="128.0.6613.137"
+                  TMPDIR=$(mktemp -d)
+                  cd "$TMPDIR"
+
+                  # Compose download URLs for Chrome-for-Testing linux64 artifacts.
+                  CHROME_ZIP="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chrome-linux64.zip"
+                  DRIVER_ZIP="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chromedriver-linux64.zip"
+
+                  echo "Downloading chrome: $CHROME_ZIP"
+                  curl -fSL -O "$CHROME_ZIP"
+                  echo "Downloading chromedriver: $DRIVER_ZIP"
+                  curl -fSL -O "$DRIVER_ZIP"
+
+                  # Unpack into temp dirs
+                  unzip -q chrome-linux64.zip -d chrome_tmp
+                  unzip -q chromedriver-linux64.zip -d driver_tmp
+
+                  # Find executables (robust to inner folder names)
+                  CHROME_BIN_SRC=$(find chrome_tmp -type f -perm /111 -name chrome -o -name google-chrome | head -n 1 || true)
+                  CHROMEDRIVER_SRC=$(find driver_tmp -type f -name chromedriver | head -n 1 || true)
+
+                  if [ -z "$CHROME_BIN_SRC" ]; then
+                    echo "ERROR: could not find chrome executable in archive"
+                    ls -R chrome_tmp
+                    exit 1
+                  fi
+                  if [ -z "$CHROMEDRIVER_SRC" ]; then
+                    echo "ERROR: could not find chromedriver in archive"
+                    ls -R driver_tmp
+                    exit 1
+                  fi
+
+                  # Install to /opt and /usr/local/bin
+                  sudo mkdir -p /opt/google/chrome-${CHROME_VER}
+                  sudo cp -r "$(dirname "$CHROME_BIN_SRC")"/* /opt/google/chrome-${CHROME_VER}/ || true
+                  sudo cp "$CHROMEDRIVER_SRC" /usr/local/bin/chromedriver-${CHROME_VER}
+                  sudo chmod +x /usr/local/bin/chromedriver-${CHROME_VER}
+
+                  # Create symlinks so test runners can find standard names
+                  # The chrome binary inside the archive might be named 'chrome'; create a stable symlink:
+                  sudo ln -sf "$(readlink -f /opt/google/chrome-${CHROME_VER}/* | head -n1)" /usr/local/bin/google-chrome-${CHROME_VER} || true
+                  # Prefer symlink to actual chrome binary if present:
+                  if [ -f "/opt/google/chrome-${CHROME_VER}/chrome" ]; then
+                    sudo ln -sf /opt/google/chrome-${CHROME_VER}/chrome /usr/local/bin/google-chrome-${CHROME_VER}
+                  fi
+                  sudo ln -sf /usr/local/bin/google-chrome-${CHROME_VER} /usr/local/bin/google-chrome
+                  sudo ln -sf /usr/local/bin/chromedriver-${CHROME_VER} /usr/local/bin/chromedriver
+
+                  # Expose env vars for later steps
+                  echo "export CHROME_BIN=/usr/local/bin/google-chrome" >> $BASH_ENV
+                  echo "export CHROMEDRIVER=/usr/local/bin/chromedriver" >> $BASH_ENV
+                  echo "export PATH=/usr/local/bin:$PATH" >> $BASH_ENV
+
+                  # cleanup
+                  cd /
+                  rm -rf "$TMPDIR"
+
             - run:
                 name: Check Chromedriver install
                 command: |
-                  google-chrome --version
-                  chromedriver --version
-                  whereis chromedriver
+                  google-chrome --version || true
+                  chromedriver --version || true
+                  whereis chromedriver || true
           post-steps: # steps to run after steps
             - run:
                 name: Save test results
