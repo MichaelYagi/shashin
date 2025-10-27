@@ -731,14 +731,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 $("#sharpnessTick").css("display", "none");
             }
 
-            $("#editorContainer").css({
-                "width": "100%",
-                "height": "100%",
-                "display": "block",
-                "z-index": 9999,
-                "background-color": "#000000",
-                "overflow": "hidden"
-            });
+            $("#editorContainer").css("display", "block");
 
             $(".centerFit").css({
                 "max-width": $(window).innerWidth() + 1,
