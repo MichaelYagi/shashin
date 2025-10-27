@@ -237,16 +237,19 @@ function setupImageAdjustments(
         // Use toBlob + createObjectURL (non-blocking) and set #editShashinImage.src
         canvas.toBlob((blob) => {
             if (!blob) {
-                resolve(null);
+                resolve(false);
                 return;
             }
             const url = URL.createObjectURL(blob);
             const imgEl = document.getElementById('editShashinImage');
             if (imgEl) {
                 imgEl.src = url;
+            } else {
+                resolve(false);
+                return;
             }
             // Note: caller should revoke URL when no longer needed.
-            resolve(url);
+            resolve(true);
         }, 'image/jpeg', 0.2);
 
         const endTime = performance.now();

@@ -554,27 +554,53 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 canvas.width = img.width;
                 canvas.height = img.height;
 
-                setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness).then(() => {
-                    updateTransform(false);
-                    enableButtons();
-                    toggleResetSaveButtons();
-                    $("#editorSpinner").css("display", "none");
-                    $("#editorCloseActionButton").css("display", "block");
+                setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness)
+                .then((success) => {
+                    if (success === true) {
+                        updateTransform(false);
+                        enableButtons();
+                        toggleResetSaveButtons();
+                        $("#editorSpinner").css("display", "none");
+                        $("#editorCloseActionButton").css("display", "block");
+                    } else {
+
+                        if ($("#glcanvas").length > 0) {
+                            $("#glcanvas").remove();
+                        }
+                        fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
+                    }
+                }).catch(err => {
+                    shashin.printMessageToConsole("Error rendering image: " + err, {tag: "editor"});
+                    fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
                 });
             };
+
+            img.onerror = () => {
+                shashin.printMessageToConsole("Error rendering image", {tag: "editor"});
+                fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
+            };
         } else {
+            shashin.printMessageToConsole("WebGL not present", {tag: "editor"});
+            fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
+        }
+
+        function fallbackRender(id, path, brightness, contrast, saturation, sharpness) {
             // Make network call to transform: inputs - brightness, contrast, and saturation
-            shashin.processEditedPreviewThumbnail(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness, function (data) {
+            shashin.processEditedPreviewThumbnail(id, path, brightness, contrast, saturation, sharpness, function (data) {
                 if (data !== null) {
                     shashin.printMessageToConsole("--------------",{tag:"editor"});
                     shashin.printMessageToConsole("Editing time: " + data.totalTimeMS + "ms", {tag: "editor"});
                     // console.log("Total time editing image: "+data.totalTimeMS+"ms");
+
+                    const img = $("#editShashinImage");
+                    img.off("load").on("load", () => {
+                        updateTransform(false);
+                        enableButtons();
+                        toggleResetSaveButtons();
+                        $("#editorSpinner").css("display", "none");
+                        $("#editorCloseActionButton").css("display", "block");
+                    });
                     $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
-                    updateTransform(false);
-                    enableButtons();
-                    toggleResetSaveButtons();
-                    $("#editorSpinner").css("display", "none");
-                    $("#editorCloseActionButton").css("display", "block");
                 }
             });
         }
