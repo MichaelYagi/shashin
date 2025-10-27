@@ -274,7 +274,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
             isMobile = TextUtils.isMobile(browserDetails)
         }
-//        logger.log(Level.INFO,"Browser Name: $browser")
+
+        logger.log(Level.INFO,"UA: $browserDetails")
+
         model["isMobile"] = isMobile
         var thumbnailType = "225"
         var thumbnailHeight = "225"
