@@ -72,12 +72,22 @@
         <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
             /*<![CDATA[*/
             const isMobile = /*[[${isMobile}]]*/ false;
+            const agentName = /*[[${agentName}]]*/ '';
+            const agentOS = /*[[${agentOS}]]*/ '';
             const activePage = /*[[${activePage}]]*/ "";
             /*]]>*/
 
             // Use value already implemented in Kotlin
             Util.isMobile = function () {
                 return isMobile;
+            };
+
+            Util.agentName = function () {
+                return agentName;
+            };
+
+            Util.agentOS = function () {
+                return agentOS;
             };
 
             Util.konamiCodeListener(function(sequenceComplete) {

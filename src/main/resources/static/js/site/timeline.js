@@ -138,7 +138,7 @@
                         shashin.dayHeadingListener(id, "timeline", mediaTypeFilter);
 
                         // Scrolling behavior different on Chrome iOS
-                        if (Util.isFirefox() === true || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                        if (Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                     timelineSettings.setScrollSpyActive(id);
@@ -162,7 +162,7 @@
 
                 if (Util.isMobile() === false) {
                     // Scrolling behavior different on Chrome iOS
-                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && Util.isFirefox() === false && (Util.isMobile() === false && Util.agentOS() === "Android") === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
                         timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                             if (msg === timelineSettings.success) {
                                 // Set TOC active element
@@ -218,7 +218,7 @@
             {}
         );
 
-        let depth = (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
+        let depth = (Util.isSafari() === true || Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
         let depthDown = depth-1;
         let depthUp = depth;
 
@@ -314,7 +314,7 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true))
+        if ((Util.isSafari() === true || Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true))
             //&& timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0
         ) {
             $("#container").scrollTop(tempScrollTop - topHeight);
@@ -525,7 +525,7 @@
                     Util.isInViewport($("#container_" + element.id)) === false &&
                     Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
                 ) {
-                    if (Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                    if (Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                         section.invisible();
                     }
 
@@ -567,7 +567,7 @@
             const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
             const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length - 1] : null;
 
-            if (Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+            if (Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                 if (firstVisibleContainer !== null && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                     //$('#container').scrollTop(tempScrollTop - removeHeight);
                     scrollToElementSmoothly(firstVisibleContainer.id);
@@ -620,8 +620,8 @@
                     shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
 
                     if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                        if ($("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
-                            ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                        if ($("#" + currentDate).length === 0 && ((Util.isFirefox() === false && (Util.isMobile() === false && Util.agentOS() === "Android") === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
+                            ((Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
                             // Render currentDate
                             const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
 
@@ -672,7 +672,7 @@
                         if (timelineSettings.currentScrollDirection ===
                             timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 &&
                             ((index - 2) > -1) &&
-                            ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                            ((Util.isFirefox() === false && (Util.isMobile() === false && Util.agentOS() === "Android") === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
                             const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
                             let sectionHeight = 0;
