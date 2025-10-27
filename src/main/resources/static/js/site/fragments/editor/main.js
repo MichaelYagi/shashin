@@ -178,15 +178,15 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorContainer").css("display", "block");
 
-    $(".centerFit").css({
-        "max-width": $(window).innerWidth() + 1,
-        "height": "auto",
-        "max-height": $(window).innerHeight() + 1,
-        "position": "absolute",
-        "top": "50%",
-        "left": "50%",
-        "transform": "translate(-50%, -50%)"
-    });
+    // $(".centerFit").css({
+    //     "max-width": $(window).innerWidth() + 1,
+    //     "height": "auto",
+    //     "max-height": $(window).innerHeight() + 1,
+    //     "position": "absolute",
+    //     "top": "50%",
+    //     "left": "50%",
+    //     "transform": "translate(-50%, -50%)"
+    // });
 
     $("#editorContainer").off("click").on('click', function(event) {
         event.preventDefault();
@@ -733,15 +733,15 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
             $("#editorContainer").css("display", "block");
 
-            $(".centerFit").css({
-                "max-width": $(window).innerWidth() + 1,
-                "height": "auto",
-                "max-height": $(window).innerHeight() + 1,
-                "position": "absolute",
-                "top": "50%",
-                "left": "50%",
-                "transform": "translate(-50%, -50%)"
-            });
+            // $(".centerFit").css({
+            //     "max-width": $(window).innerWidth() + 1,
+            //     "height": "auto",
+            //     "max-height": $(window).innerHeight() + 1,
+            //     "position": "absolute",
+            //     "top": "50%",
+            //     "left": "50%",
+            //     "transform": "translate(-50%, -50%)"
+            // });
         }
         toggleResetSaveButtons();
     });
@@ -962,13 +962,32 @@ function initializeEditor(editMetadataObj, lgIndex) {
     }
 
     function showModule() {
-        $("#editorContainer").css("display", "block");
-
-        $("#editorMedia").css("display", "block");
         $("#editorMedia").html("<img class='centerFit' id='editShashinImage' src='/api/v1/image/" + editMetadataObj.id + "?v=" + uuidv4() + "'>");
         $("#editShashinImage").on('load', function () {
+            const vv = window.visualViewport;
+            const vw = vv ? Math.round(vv.width) : Math.round(window.innerWidth);
+            const vh = vv ? Math.round(vv.height) : Math.round(window.innerHeight);
+            const vLeft = vv ? (vv.offsetLeft || 0) : 0;
+            const vTop = vv ? (vv.offsetTop || 0) : 0;
+
+            // center in pixel coords relative to the visible viewport
+            const centerX = Math.round(vLeft + vw / 2);
+            const centerY = Math.round(vTop + vh / 2);
+
+            $(".centerFit").css({
+                "max-width": (vw + 1) + "px",
+                "height": "auto",
+                "max-height": (vh + 1) + "px",
+                "position": "fixed",
+                "left": centerX + "px",
+                "top": centerY + "px",
+                "transform": "translate(-50%, -50%)",
+                "pointer-events": "none"   // let clicks pass through to controls
+            });
             $("#editorToolContainer").css("display", "block");
             $("#editorBlock").css("display", "block");
+            $("#editorContainer").css("display", "block");
+            $("#editorMedia").css("display", "block");
         });
     }
 
