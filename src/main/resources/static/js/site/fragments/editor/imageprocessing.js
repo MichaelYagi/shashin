@@ -27,38 +27,69 @@ const fragmentShaderSource = `
     uniform vec2 u_resolution;
     varying vec2 v_texCoord;
 
-    void main() {
-        vec4 center = texture2D(u_image, v_texCoord);
-        vec4 color = center;
+    // Helper: apply same color adjustments as Kotlin (brightness -> contrast -> saturation adjustments)
+    vec3 applyColorAdjust(vec3 color) {
+        // color assumed in [0.0,1.0]
+        // Brightness (multiplicative)
+        color *= u_brightness;
 
-        float sharpenWeight = max((u_sharpness - 1.0) / 4.5, 0.0);
-        if (sharpenWeight > 0.0) {
-            vec2 onePixel = vec2(1.0) / u_resolution;
-            float scale = clamp(sqrt(u_resolution.x * u_resolution.y) / 512.0, 0.5, 2.0);
-            vec2 offset = onePixel * scale;
+        // Contrast: ((c - 0.5) * contrast) + 0.5
+        color = ((color - 0.5) * u_contrast) + 0.5;
 
-            vec4 sum = center * (1.0 + 4.0 * sharpenWeight);
-            sum -= texture2D(u_image, v_texCoord + vec2(-offset.x, 0.0)) * sharpenWeight;
-            sum -= texture2D(u_image, v_texCoord + vec2(offset.x, 0.0)) * sharpenWeight;
-            sum -= texture2D(u_image, v_texCoord + vec2(0.0, -offset.y)) * sharpenWeight;
-            sum -= texture2D(u_image, v_texCoord + vec2(0.0, offset.y)) * sharpenWeight;
-            color = sum;
-        }
+        // Saturation adjustment (RGB domain, match Kotlin)
+        float gray = dot(color, vec3(0.299, 0.587, 0.114));
+        vec3 delta = color - vec3(gray);
+        vec3 sat = vec3(gray) + delta * u_saturation;
 
-        color.rgb = ((color.rgb * u_brightness - 0.5) * u_contrast) + 0.5;
-
-        float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
-        vec3 delta = color.rgb - vec3(gray);
-        vec3 saturated = vec3(gray) + delta * u_saturation;
-
+        // Red dampening if sat > 1.0
         if (u_saturation > 1.0) {
             float redFactor = 1.0 - 0.10 * (u_saturation - 1.0);
-            saturated.r = gray + (color.r - gray) * u_saturation * redFactor;
+            sat.r = gray + (color.r - gray) * u_saturation * redFactor;
         }
 
-        saturated += vec3(max((u_saturation - 1.0) * 0.006, 0.0));
+        // Perceptual brightness boost for saturation > 1.0
+        if (u_saturation > 1.0) {
+            float brightnessBoost = (u_saturation - 1.0) * 0.006;
+            sat += vec3(brightnessBoost);
+        }
 
-        gl_FragColor = vec4(clamp(saturated, 0.0, 1.0), color.a);
+        return clamp(sat, 0.0, 1.0);
+    }
+
+    void main() {
+        // compute sharpenWeight & sampling scale exactly like Kotlin
+        float sharpenWeight = (u_sharpness > 1.0) ? ((u_sharpness - 1.0) / 4.5) : 0.0;
+        if (sharpenWeight <= 0.0) {
+            // No sharpening: just sample once and apply color adjustments (match Kotlin order)
+            vec4 src = texture2D(u_image, v_texCoord);
+            vec3 adjusted = applyColorAdjust(src.rgb);
+            gl_FragColor = vec4(adjusted, src.a);
+            return;
+        }
+
+        vec2 onePixel = vec2(1.0) / u_resolution;
+        float scale = clamp(sqrt(u_resolution.x * u_resolution.y) / 512.0, 0.5, 2.0);
+        vec2 offset = onePixel * scale;
+
+        float centerWeight = 1.0 + 4.0 * sharpenWeight;
+        float neighborWeight = -sharpenWeight;
+
+        // Sample center and neighbors, but apply color adjustments to each sample BEFORE combining
+        vec3 c0 = applyColorAdjust(texture2D(u_image, v_texCoord).rgb);
+
+        vec3 cl = applyColorAdjust(texture2D(u_image, v_texCoord + vec2(-offset.x, 0.0)).rgb);
+        vec3 cr = applyColorAdjust(texture2D(u_image, v_texCoord + vec2(offset.x, 0.0)).rgb);
+        vec3 cu = applyColorAdjust(texture2D(u_image, v_texCoord + vec2(0.0, -offset.y)).rgb);
+        vec3 cd = applyColorAdjust(texture2D(u_image, v_texCoord + vec2(0.0, offset.y)).rgb);
+
+        vec3 sum = c0 * centerWeight;
+        sum += cl * neighborWeight;
+        sum += cr * neighborWeight;
+        sum += cu * neighborWeight;
+        sum += cd * neighborWeight;
+
+        vec3 finalColor = clamp(sum, 0.0, 1.0);
+        gl_FragColor = vec4(finalColor, 1.0);
     }
 `;
 
