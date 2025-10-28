@@ -1097,10 +1097,111 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val dest = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
             val destPixels = (dest.raster.dataBuffer as DataBufferInt).data
 
+            // Helpers
+            fun sampleBilinear(fx: Double, fy: Double): Triple<Double, Double, Double> {
+                // clamp to image extent (CLAMP_TO_EDGE)
+                val cx = fx.coerceIn(0.0, (width - 1).toDouble())
+                val cy = fy.coerceIn(0.0, (height - 1).toDouble())
+
+                val x0 = floor(cx).toInt()
+                val y0 = floor(cy).toInt()
+                val x1 = min(x0 + 1, width - 1)
+                val y1 = min(y0 + 1, height - 1)
+
+                val wx = cx - x0
+                val wy = cy - y0
+
+                val i00 = y0 * width + x0
+                val i10 = y0 * width + x1
+                val i01 = y1 * width + x0
+                val i11 = y1 * width + x1
+
+                val rgb00 = srcPixels[i00]
+                val rgb10 = srcPixels[i10]
+                val rgb01 = srcPixels[i01]
+                val rgb11 = srcPixels[i11]
+
+                val r00 = ((rgb00 ushr 16) and 0xFF).toDouble() / 255.0
+                val g00 = ((rgb00 ushr 8) and 0xFF).toDouble() / 255.0
+                val b00 = (rgb00 and 0xFF).toDouble() / 255.0
+
+                val r10 = ((rgb10 ushr 16) and 0xFF).toDouble() / 255.0
+                val g10 = ((rgb10 ushr 8) and 0xFF).toDouble() / 255.0
+                val b10 = (rgb10 and 0xFF).toDouble() / 255.0
+
+                val r01 = ((rgb01 ushr 16) and 0xFF).toDouble() / 255.0
+                val g01 = ((rgb01 ushr 8) and 0xFF).toDouble() / 255.0
+                val b01 = (rgb01 and 0xFF).toDouble() / 255.0
+
+                val r11 = ((rgb11 ushr 16) and 0xFF).toDouble() / 255.0
+                val g11 = ((rgb11 ushr 8) and 0xFF).toDouble() / 255.0
+                val b11 = (rgb11 and 0xFF).toDouble() / 255.0
+
+                // bilinear interpolation
+                val rTop = r00 * (1.0 - wx) + r10 * wx
+                val rBot = r01 * (1.0 - wx) + r11 * wx
+                val r = rTop * (1.0 - wy) + rBot * wy
+
+                val gTop = g00 * (1.0 - wx) + g10 * wx
+                val gBot = g01 * (1.0 - wx) + g11 * wx
+                val g = gTop * (1.0 - wy) + gBot * wy
+
+                val bTop = b00 * (1.0 - wx) + b10 * wx
+                val bBot = b01 * (1.0 - wx) + b11 * wx
+                val b = bTop * (1.0 - wy) + bBot * wy
+
+                return Triple(r, g, b)
+            }
+
+            fun applyColorAdjust(rgb: Triple<Double, Double, Double>, brightness: Double, contrast: Double, saturation: Double): Triple<Double, Double, Double> {
+                var (r, g, b) = rgb
+                // brightness (multiplicative)
+                r *= brightness; g *= brightness; b *= brightness
+
+                // contrast: ((c - 0.5) * contrast) + 0.5
+                r = ((r - 0.5) * contrast) + 0.5
+                g = ((g - 0.5) * contrast) + 0.5
+                b = ((b - 0.5) * contrast) + 0.5
+
+                // saturation
+                val gray = 0.299 * r + 0.587 * g + 0.114 * b
+                val dr = r - gray
+                val dg = g - gray
+                val db = b - gray
+                var sr = gray + dr * saturation
+                var sg = gray + dg * saturation
+                var sb = gray + db * saturation
+
+                // red dampening when saturation > 1.0 (match JS shader)
+                if (saturation > 1.0) {
+                    val redFactor = 1.0 - 0.10 * (saturation - 1.0)
+                    sr = gray + (r - gray) * saturation * redFactor
+                }
+
+                // perceptual brightness boost for saturation > 1.0
+                if (saturation > 1.0) {
+                    val brightnessBoost = (saturation - 1.0) * 0.006
+                    sr += brightnessBoost; sg += brightnessBoost; sb += brightnessBoost
+                }
+
+                sr = sr.coerceIn(0.0, 1.0)
+                sg = sg.coerceIn(0.0, 1.0)
+                sb = sb.coerceIn(0.0, 1.0)
+                return Triple(sr, sg, sb)
+            }
+
+            // Match JS parameter behavior: resolutionScale is fractional and used directly as offsets,
+            // and JS applies color adjustments to each sample BEFORE combining.
             val resolutionScale = (sqrt((width * height).toDouble()) / 512.0).coerceIn(0.5, 2.0)
             val sharpenWeight = if (sharpness > 1.0) (sharpness - 1.0) / 4.5 else 0.0
             val centerWeight = 1.0 + 4.0 * sharpenWeight
             val neighborWeight = -sharpenWeight
+
+            // If you have brightness/contrast/saturation params in the Kotlin pipeline, replace these placeholders
+            // with the actual parameters used by your JS call. If not used, default to 1.0.
+            val brightness = 1.0
+            val contrast = 1.0
+            val saturation = 1.0
 
             val rowsPerChunk = maxOf(1, height / NCPUS)
             val exec = Executors.newFixedThreadPool(NCPUS)
@@ -1116,39 +1217,42 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             for (x in 0 until width) {
                                 val idx = rowBase + x
 
-                                val rgbC = srcPixels[idx]
-                                val rC = ((rgbC ushr 16) and 0xFF).toDouble()
-                                val gC = ((rgbC ushr 8) and 0xFF).toDouble()
-                                val bC = (rgbC and 0xFF).toDouble()
+                                // Compute fractional sample positions in the same way the shader computes UVs:
+                                // center sample at pixel center: x + 0.5, y + 0.5
+                                val cx = x + 0.5
+                                val cy = y + 0.5
 
-                                var rTotal = rC * centerWeight
-                                var gTotal = gC * centerWeight
-                                var bTotal = bC * centerWeight
-
+                                // offsets are fractional resolutionScale (not truncated)
                                 val offs = arrayOf(
-                                    intArrayOf((-1.0 * resolutionScale).toInt(), 0),
-                                    intArrayOf((1.0 * resolutionScale).toInt(), 0),
-                                    intArrayOf(0, (-1.0 * resolutionScale).toInt()),
-                                    intArrayOf(0, (1.0 * resolutionScale).toInt())
+                                    doubleArrayOf(-resolutionScale, 0.0),
+                                    doubleArrayOf(resolutionScale, 0.0),
+                                    doubleArrayOf(0.0, -resolutionScale),
+                                    doubleArrayOf(0.0, resolutionScale)
                                 )
 
-                                for (off in offs) {
-                                    val nx = x + off[0]
-                                    val ny = y + off[1]
-                                    val nIdx = if (nx in 0 until width && ny in 0 until height) ny * width + nx else idx
-                                    val rgbN = srcPixels[nIdx]
-                                    val rN = ((rgbN ushr 16) and 0xFF).toDouble()
-                                    val gN = ((rgbN ushr 8) and 0xFF).toDouble()
-                                    val bN = (rgbN and 0xFF).toDouble()
+                                // sample center and apply color adjustments to each sample before combining (match JS)
+                                val c0Raw = sampleBilinear(cx, cy)
+                                val c0 = applyColorAdjust(c0Raw, brightness, contrast, saturation)
 
-                                    rTotal += rN * neighborWeight
-                                    gTotal += gN * neighborWeight
-                                    bTotal += bN * neighborWeight
+                                var rSum = c0.first * centerWeight
+                                var gSum = c0.second * centerWeight
+                                var bSum = c0.third * centerWeight
+
+                                for (off in offs) {
+                                    val fx = cx + off[0]
+                                    val fy = cy + off[1]
+                                    val nRaw = sampleBilinear(fx, fy)
+                                    val n = applyColorAdjust(nRaw, brightness, contrast, saturation)
+                                    rSum += n.first * neighborWeight
+                                    gSum += n.second * neighborWeight
+                                    bSum += n.third * neighborWeight
                                 }
 
-                                val rF = rTotal.roundToInt().coerceIn(0, 255)
-                                val gF = gTotal.roundToInt().coerceIn(0, 255)
-                                val bF = bTotal.roundToInt().coerceIn(0, 255)
+                                // clamp and convert to 0..255
+                                val rF = (rSum.coerceIn(0.0, 1.0) * 255.0).roundToInt().coerceIn(0, 255)
+                                val gF = (gSum.coerceIn(0.0, 1.0) * 255.0).roundToInt().coerceIn(0, 255)
+                                val bF = (bSum.coerceIn(0.0, 1.0) * 255.0).roundToInt().coerceIn(0, 255)
+
                                 destPixels[idx] = (rF shl 16) or (gF shl 8) or bF
                             }
                         }
