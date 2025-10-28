@@ -1,9 +1,11 @@
-// Usage examples:
-//   // pass an element
-//   setupImageAdjustments(imgEl, document.getElementById('glCanvas'), ...);
-//   // or pass an id (string)
-//   setupImageAdjustments(imgEl, 'glCanvas', ...);
-//   // make sure to call after DOMContentLoaded or place script after elements.
+// Optimized setupImageAdjustments.js
+// - Caches WebGL resources per-canvas (program, buffers, texture, locations) to avoid
+//   recompiling/linking shaders and recreating buffers/textures on repeated calls.
+// - Uses texSubImage2D when possible to avoid reallocating texture storage.
+// - Minimizes GL calls where safe and updates only when inputs change.
+// - Keeps the same function names and signatures as requested.
+
+// Usage: same as original. Make sure to call after DOMContentLoaded or place script after elements.
 
 const vertexShaderSource = `
     attribute vec2 a_position;
@@ -100,13 +102,99 @@ function createProgram(gl, vsSource, fsSource) {
     return program;
 }
 
+// Per-canvas cache of GL resources. WeakMap ensures canvas GC is not prevented.
+const canvasGLCache = new WeakMap();
+
+function initResourcesForCanvas(canvas) {
+    // Returns an object with gl, program, buffers, locations, texture, etc.
+    const gl = canvas.getContext('webgl', { preserveDrawingBuffer: false });
+    if (!gl) return null;
+
+    const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
+    gl.useProgram(program);
+
+    // Create and populate static buffers (positions & texcoords)
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    // Fullscreen triangle pair (6 verts)
+    const positions = new Float32Array([
+        -1, -1, 1, -1, -1, 1,
+        1, -1, 1,  1, -1, 1
+    ]);
+    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+    const aPosition = gl.getAttribLocation(program, 'a_position');
+    if (aPosition >= 0) {
+        gl.enableVertexAttribArray(aPosition);
+        // vertexAttribPointer binds to the currently bound ARRAY_BUFFER (positionBuffer)
+        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+    }
+
+    const texCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+    const texcoords = new Float32Array([
+        0, 0, 1, 0, 0, 1,
+        1, 0, 1, 1, 0, 1
+    ]);
+    gl.bufferData(gl.ARRAY_BUFFER, texcoords, gl.STATIC_DRAW);
+
+    const aTexCoord = gl.getAttribLocation(program, 'a_texCoord');
+    if (aTexCoord >= 0) {
+        gl.enableVertexAttribArray(aTexCoord);
+        gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, 0, 0);
+    }
+
+    // Create texture (but do not upload image yet)
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // Default parameters (safe for NPOT textures)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    // Cache uniform/attribute locations
+    const uniforms = {
+        brightness: gl.getUniformLocation(program, 'u_brightness'),
+        contrast: gl.getUniformLocation(program, 'u_contrast'),
+        saturation: gl.getUniformLocation(program, 'u_saturation'),
+        sharpness: gl.getUniformLocation(program, 'u_sharpness'),
+        resolution: gl.getUniformLocation(program, 'u_resolution'),
+        image: gl.getUniformLocation(program, 'u_image')
+    };
+
+    // Initial state
+    const resources = {
+        gl,
+        program,
+        positionBuffer,
+        texCoordBuffer,
+        texture,
+        uniforms,
+        lastImageWidth: 0,
+        lastImageHeight: 0,
+        lastParams: {
+            brightness: null,
+            contrast: null,
+            saturation: null,
+            sharpness: null,
+            width: null,
+            height: null
+        }
+    };
+
+    // Store in cache
+    canvasGLCache.set(canvas, resources);
+    return resources;
+}
+
 /**
  * Applies image adjustments and updates #editShashinImage src.
  * - image: HTMLImageElement/HTMLCanvasElement/HTMLVideoElement
  * - canvasOrId: either a <canvas> element or its id string
  * - brightnessInput, contrastInput, saturationInput, sharpnessInput: numbers
  *
- * Returns a Promise that resolves with the created object URL (or null on failure).
+ * Returns a Promise that resolves with true/false depending on success.
+ * (Preserves original signature and general behavior.)
  */
 function setupImageAdjustments(
     image,
@@ -129,131 +217,146 @@ function setupImageAdjustments(
 
         if (!canvas) {
             const msg = 'Canvas element not found. Pass a valid canvas element or id, and call after DOM ready.';
-            shashin.printMessageToConsole(msg,{tag:"editor", consoleType: shashin.consoleTypes.error});
+            if (typeof shashin !== 'undefined' && shashin.printMessageToConsole) {
+                shashin.printMessageToConsole(msg, { tag: "editor", consoleType: shashin.consoleTypes.error });
+            }
             reject(new Error(msg));
             return;
         }
 
-        // Make sure canvas has correct size for the image
-        // Some image elements may not have width/height filled until loaded; try to use naturalWidth
+        // Ensure image has dimensions
         const imgWidth = image.width || image.naturalWidth || image.videoWidth;
         const imgHeight = image.height || image.naturalHeight || image.videoHeight;
         if (!imgWidth || !imgHeight) {
             const msg = 'Image has no dimensions. Ensure image is loaded before calling setupImageAdjustments.';
-            shashin.printMessageToConsole(msg,{tag:"editor", consoleType: shashin.consoleTypes.error});
+            if (typeof shashin !== 'undefined' && shashin.printMessageToConsole) {
+                shashin.printMessageToConsole(msg, { tag: "editor", consoleType: shashin.consoleTypes.error });
+            }
             reject(new Error(msg));
             return;
         }
 
+        // Resize canvas only if necessary
         if (canvas.width !== imgWidth || canvas.height !== imgHeight) {
             canvas.width = imgWidth;
             canvas.height = imgHeight;
         }
 
-        const gl = canvas.getContext('webgl', { preserveDrawingBuffer: false });
-        if (!gl) {
-            const msg = 'WebGL not supported or failed to initialize.';
-            shashin.printMessageToConsole(msg,{tag:"editor", consoleType: shashin.consoleTypes.error});
-            reject(new Error(msg));
-            return;
+        // Get or initialize cached resources for this canvas
+        let resources = canvasGLCache.get(canvas);
+        if (!resources) {
+            resources = initResourcesForCanvas(canvas);
+            if (!resources) {
+                const msg = 'WebGL not supported or failed to initialize.';
+                if (typeof shashin !== 'undefined' && shashin.printMessageToConsole) {
+                    shashin.printMessageToConsole(msg, { tag: "editor", consoleType: shashin.consoleTypes.error });
+                }
+                reject(new Error(msg));
+                return;
+            }
         }
 
-        let program;
-        try {
-            program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
-        } catch (err) {
-            shashin.printMessageToConsole(err,{tag:"editor", consoleType: shashin.consoleTypes.error});
-            reject(err);
-            return;
-        }
+        const gl = resources.gl;
+        const program = resources.program;
         gl.useProgram(program);
+
+        // Update viewport & resolution uniform if changed
         gl.viewport(0, 0, canvas.width, canvas.height);
-
-        // Geometry (fullscreen quad)
-        const positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            -1, -1, 1, -1, -1, 1,
-            1, -1, 1, 1, -1, 1
-        ]), gl.STATIC_DRAW);
-
-        const aPosition = gl.getAttribLocation(program, 'a_position');
-        if (aPosition >= 0) {
-            gl.enableVertexAttribArray(aPosition);
-            gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+        if (resources.lastParams.width !== canvas.width || resources.lastParams.height !== canvas.height) {
+            if (resources.uniforms.resolution) {
+                gl.uniform2f(resources.uniforms.resolution, canvas.width, canvas.height);
+            }
+            resources.lastParams.width = canvas.width;
+            resources.lastParams.height = canvas.height;
         }
 
-        const texCoordBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            0, 0, 1, 0, 0, 1,
-            1, 0, 1, 1, 0, 1
-        ]), gl.STATIC_DRAW);
-
-        const aTexCoord = gl.getAttribLocation(program, 'a_texCoord');
-        if (aTexCoord >= 0) {
-            gl.enableVertexAttribArray(aTexCoord);
-            gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, 0, 0);
+        // Update uniforms only if changed (reduces gl calls)
+        if (resources.lastParams.brightness !== brightnessInput && resources.uniforms.brightness) {
+            gl.uniform1f(resources.uniforms.brightness, brightnessInput);
+            resources.lastParams.brightness = brightnessInput;
+        }
+        if (resources.lastParams.contrast !== contrastInput && resources.uniforms.contrast) {
+            gl.uniform1f(resources.uniforms.contrast, contrastInput);
+            resources.lastParams.contrast = contrastInput;
+        }
+        if (resources.lastParams.saturation !== saturationInput && resources.uniforms.saturation) {
+            gl.uniform1f(resources.uniforms.saturation, saturationInput);
+            resources.lastParams.saturation = saturationInput;
+        }
+        if (resources.lastParams.sharpness !== sharpnessInput && resources.uniforms.sharpness) {
+            gl.uniform1f(resources.uniforms.sharpness, sharpnessInput);
+            resources.lastParams.sharpness = sharpnessInput;
+        }
+        if (resources.uniforms.image) {
+            // texture unit 0
+            gl.uniform1i(resources.uniforms.image, 0);
         }
 
-        // Texture
-        const texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        // Bind buffers just in case (cheap if same)
+        gl.bindBuffer(gl.ARRAY_BUFFER, resources.positionBuffer);
+        const aPos = gl.getAttribLocation(program, 'a_position');
+        if (aPos >= 0) {
+            // Ensure pointer remains correct (binding to same buffer)
+            gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, resources.texCoordBuffer);
+        const aTex = gl.getAttribLocation(program, 'a_texCoord');
+        if (aTex >= 0) {
+            gl.vertexAttribPointer(aTex, 2, gl.FLOAT, false, 0, 0);
+        }
+
+        // Upload image to texture.
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, resources.texture);
+        // Flip Y so image orientation matches canvas
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        // Upload image
+
+        // If texture size matches previous, use texSubImage2D (avoids realloc)
+        const sameSize = resources.lastImageWidth === imgWidth && resources.lastImageHeight === imgHeight;
         try {
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            if (sameSize && resources.lastImageWidth > 0) {
+                // texSubImage2D can be faster because it does not reallocate texture storage
+                gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            } else {
+                // Allocate/replace texture
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+                resources.lastImageWidth = imgWidth;
+                resources.lastImageHeight = imgHeight;
+            }
         } catch (err) {
-            shashin.printMessageToConsole(`'texImage2D failed - image may not be ready:', : ${err}`,{tag:"editor", consoleType: shashin.consoleTypes.error});
+            if (typeof shashin !== 'undefined' && shashin.printMessageToConsole) {
+                shashin.printMessageToConsole(`'texImage2D/texSubImage2D failed - image may not be ready: ${err}`, { tag: "editor", consoleType: shashin.consoleTypes.error });
+            }
             reject(err);
             return;
         }
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        // Uniforms
-        const uniforms = {
-            brightness: gl.getUniformLocation(program, 'u_brightness'),
-            contrast: gl.getUniformLocation(program, 'u_contrast'),
-            saturation: gl.getUniformLocation(program, 'u_saturation'),
-            sharpness: gl.getUniformLocation(program, 'u_sharpness'),
-            resolution: gl.getUniformLocation(program, 'u_resolution'),
-            image: gl.getUniformLocation(program, 'u_image')
-        };
-
-        if (uniforms.brightness) gl.uniform1f(uniforms.brightness, brightnessInput);
-        if (uniforms.contrast) gl.uniform1f(uniforms.contrast, contrastInput);
-        if (uniforms.saturation) gl.uniform1f(uniforms.saturation, saturationInput);
-        if (uniforms.sharpness) gl.uniform1f(uniforms.sharpness, sharpnessInput);
-        if (uniforms.resolution) gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
-        if (uniforms.image) gl.uniform1i(uniforms.image, 0);
-
-        // Draw
+        // Draw fullscreen triangles
         gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-        // Use toBlob + createObjectURL (non-blocking) and set #editShashinImage.src
+        // Use toBlob + createObjectURL (async)
         canvas.toBlob((blob) => {
             if (!blob) {
                 resolve(false);
                 return;
             }
             const url = URL.createObjectURL(blob);
-            const imgEl = document.getElementById('editShashinImage');
+            const imgEl = $("#editShashinImage");
             if (imgEl) {
-                imgEl.src = url;
+                imgEl.off("load").on("load", () => {
+                    resolve(true);
+                });
+                imgEl.attr("src", url);
             } else {
                 resolve(false);
                 return;
             }
-            // Note: caller should revoke URL when no longer needed.
+            const endTime = performance.now();
+            if (typeof shashin !== 'undefined' && shashin.printMessageToConsole) {
+                shashin.printMessageToConsole(`Call to setupImageAdjustments took ${Math.trunc(endTime - startTime)} milliseconds`, { tag: "editor" });
+            }
             resolve(true);
         }, 'image/jpeg', 0.2);
-
-        const endTime = performance.now();
-        shashin.printMessageToConsole(`Call to setupImageAdjustments took ${Math.trunc(endTime - startTime)} milliseconds`,{tag:"editor"});
     });
 }
 
