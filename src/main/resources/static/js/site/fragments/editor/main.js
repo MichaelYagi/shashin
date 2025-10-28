@@ -755,16 +755,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
 
             $("#editorContainer").css("display", "block");
-
-            // $(".centerFit").css({
-            //     "max-width": $(window).innerWidth() + 1,
-            //     "height": "auto",
-            //     "max-height": $(window).innerHeight() + 1,
-            //     "position": "absolute",
-            //     "top": "50%",
-            //     "left": "50%",
-            //     "transform": "translate(-50%, -50%)"
-            // });
         }
         toggleResetSaveButtons();
     });
