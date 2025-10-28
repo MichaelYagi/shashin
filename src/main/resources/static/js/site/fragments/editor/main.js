@@ -563,10 +563,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                         $("#editorSpinner").css("display", "none");
                         $("#editorCloseActionButton").css("display", "block");
                     } else {
-
-                        if ($("#glcanvas").length > 0) {
-                            $("#glcanvas").remove();
-                        }
+                        shashin.printMessageToConsole("Error rendering image", {tag: "editor"});
                         fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
                     }
                 }).catch(err => {
