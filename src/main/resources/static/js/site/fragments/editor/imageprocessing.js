@@ -341,12 +341,9 @@ function setupImageAdjustments(
                 return;
             }
             const url = URL.createObjectURL(blob);
-            const imgEl = $("#editShashinImage");
+            const imgEl = document.getElementById('editShashinImage');
             if (imgEl) {
-                imgEl.off("load").on("load", () => {
-                    resolve(true);
-                });
-                imgEl.attr("src", url);
+                imgEl.src = url;
             } else {
                 resolve(false);
                 return;
