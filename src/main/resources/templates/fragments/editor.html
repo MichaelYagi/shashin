@@ -100,9 +100,27 @@
     }
 
     /* ---------------------------
+       Desktop / landscape
+    --------------------------- */
+    @media (min-width: 768px) {
+        #editorToolContainer {
+            position: static;
+            display: block;
+            height: 100vh;
+            overflow: auto;
+        }
+        .mobile-carousel-prev, .mobile-carousel-next { display: none !important; }
+    }
+
+    :root {
+        /* Negative = move the blue thumb up; positive = move it down. Tweak as needed. */
+        --editor-thumb-nudge: -5px;
+    }
+
+    /* ---------------------------
        Mobile / portrait overrides
-       --------------------------- */
-    @media (max-width: 767.98px) {
+    --------------------------- */
+    @media (max-width: 767.98px) and (orientation: portrait) {
         /* Reverted: keep container anchored above safe-area but moved slightly up so
            on-screen taskbar won't block it. This is an in-place change (no external JS).
            Increase the "+12px" value to move further up; reduce to move down. */
@@ -292,27 +310,7 @@
             :root { --editor-carousel-side-gap: 18px; }
             .tool-group .slider-wrapper { width: 62%; }
         }
-    }
 
-    /* ---------------------------
-       Desktop / landscape
-       --------------------------- */
-    @media (min-width: 768px) {
-        #editorToolContainer {
-            position: static;
-            display: block;
-            height: 100vh;
-            overflow: auto;
-        }
-        .mobile-carousel-prev, .mobile-carousel-next { display: none !important; }
-    }
-
-    :root {
-        /* Negative = move the blue thumb up; positive = move it down. Tweak as needed. */
-        --editor-thumb-nudge: -5px;
-    }
-
-    @media (max-width: 767.98px) {
         /* Apply only on mobile portrait so desktop remains unchanged */
         .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
             position: relative;
@@ -325,9 +323,7 @@
             position: relative;
             transform: translateY(var(--editor-thumb-nudge));
         }
-    }
 
-    @media (max-width: 767.98px) {
         /* Target the exact element (row with id="orientation" that has mb-4) */
         #orientation.mb-4 {
             margin-bottom: 0 !important;
@@ -340,9 +336,7 @@
             margin-bottom: 0 !important;
             padding-bottom: 0 !important;
         }
-    }
 
-    @media (max-width: 767.98px) {
         /* Prevent any vertical scrolling on the carousel track while keeping horizontal scroll */
         .tool-carousel-track {
             overflow-x: auto;
@@ -370,9 +364,7 @@
             max-height: 100%;
             overflow: hidden;
         }
-    }
 
-    @media (max-width: 767.98px) and (orientation: portrait) {
         /* Move the slider wrapper down a bit so the visible track aligns lower.
            Increase value to move further down, decrease to move up. */
         .tool-group .slider-wrapper {
