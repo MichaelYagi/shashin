@@ -4,11 +4,13 @@
 
 <style>
     :root {
-        /* tweak this value to change mobile carousel height */
-        --editor-carousel-height: 120px;
+        /* adjust this to change carousel height on mobile */
+        --editor-carousel-height: 100px;
         --editor-carousel-bg: rgba(0,0,0,0.92);
+        --editor-carousel-side-gap: 48px; /* space to keep content away from prev/next buttons */
     }
 
+    /* ---------- shared styles (unchanged) ---------- */
     .slider-wrapper {
         position: relative;
         width: 100%;
@@ -31,17 +33,18 @@
         font-size: 1.2rem;
         color: gray;
         pointer-events: none;
-        z-index: 2;
+        z-index: 3;
+        user-select: none;
     }
 
     .center-tick {
         left: 50%;
-        transform: translate(-50%, -53%);
+        transform: translate(-50%, -50%);
     }
 
     .left-tick {
-        left: 0;
-        transform: translateY(-53%);
+        left: 8px;
+        transform: translateY(-50%);
     }
 
     #state .col {
@@ -77,8 +80,6 @@
         display: none;
     }
 
-    /* Keep this after your base editor CSS */
-
     /* Media area fixes */
     #editorMedia {
         padding: 0;
@@ -96,19 +97,19 @@
         object-fit:contain;
     }
 
-    /* Slider baseline (desktop) */
+    /* Desktop slider baseline */
     .slider-wrapper { position: relative; width: 100%; height: 2.5rem; }
     .slider-wrapper input[type="range"] {
         position: absolute; top:50%; left:0; width:100%; transform:translateY(-50%);
         z-index:1; -webkit-appearance:none; height:0.5rem; background:rgba(255,255,255,0.06); border-radius:6px;
     }
-    .slider-tick { position:absolute; top:50%; transform:translateY(-50%); font-size:1.2rem; color:gray; pointer-events:none; z-index:2; }
-    .center-tick { left:50%; transform:translate(-50%,-53%); }
-    .left-tick { left:0; transform:translateY(-53%); }
+    .slider-tick { position:absolute; top:50%; transform:translateY(-50%); font-size:1.2rem; color:gray; pointer-events:none; z-index:3; }
+    .center-tick { left:50%; transform:translate(-50%,-50%); }
+    .left-tick { left:8px; transform:translateY(-50%); }
 
-    /* MOBILE: fixed bottom scroll-snap track - vertical-only UI tweaks */
+    /* ---------- MOBILE / PORTRAIT (overrides) ---------- */
     @media (max-width: 767.98px) {
-        /* Make container flush to bottom; include safe-area inset so it truly sits at edge on iOS devices */
+        /* Make tool container flush to bottom; use safe-area-inset for phones with a notch */
         #editorToolContainer {
             position: fixed;
             left: 0;
@@ -116,14 +117,15 @@
             bottom: 0;
             height: var(--editor-carousel-height);
             background: linear-gradient(180deg, rgba(0,0,0,0.45), var(--editor-carousel-bg));
-            /* keep small internal padding but avoid extra bottom space */
-            padding: 8px 8px calc(env(safe-area-inset-bottom, 0px) + 8px);
+            padding: 6px 6px calc(env(safe-area-inset-bottom, 0px) + 6px);
             z-index: 1000000;
             box-sizing: border-box;
             margin: 0;
         }
 
-        /* track - make slightly narrower padding to avoid pushing content left */
+        /* track padding reduced so slides align flush with edges.
+           We keep a small horizontal padding here but reserve extra side gap inside slides
+           so prev/next buttons won't intersect interactive controls. */
         .tool-carousel-track {
             display: flex;
             gap: 0.5rem;
@@ -132,13 +134,11 @@
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
-            /* left/right padding small so first/last pages align visually */
             padding: 0 6px;
             margin: 0;
         }
 
-        /* Each slide is full width. Remove Bootstrap row negative margins inside slides
-           and center the content. This fixes left justification caused by .row gutters. */
+        /* Each slide is full width. Reset .row gutters and center contents */
         .tool-group {
             flex: 0 0 100%;
             min-width: 100%;
@@ -148,46 +148,85 @@
             justify-content: center;
             scroll-snap-align: center;
             box-sizing: border-box;
-            padding: 0 10px;
+            /* reserve side gap so controls don't collide with prev/next buttons */
+            padding: 0 var(--editor-carousel-side-gap);
             margin: 0;
         }
 
-        /* Reset .row margins inside tool-groups and center its columns */
+        /* Reset .row behavior inside slides and center columns */
         .tool-group .row {
             margin-left: 0 !important;
             margin-right: 0 !important;
             width: 100%;
             display: flex;
             align-items: center;
-            justify-content: center; /* horizontally center columns inside the row */
+            justify-content: center; /* center row contents horizontally */
             padding: 0;
         }
 
-        /* Ensure individual cols inside state/orientation are centered and have no extra padding */
-        .tool-group .col-3 {
-            padding-left: 0;
-            padding-right: 0;
-            display:flex;
-            align-items:center;
-            justify-content:center;
+        /* Center the icon + slider row and add small gap */
+        .tool-group .d-flex.align-items-center {
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 0;
         }
 
-        /* Make sliders larger and relative (so thumb is fully draggable across full width) */
-        .tool-group .slider-wrapper {
-            width: 100%;
-            max-width: none;
-            height: calc(var(--editor-carousel-height) * 0.6);
-            padding: 8px 0; /* give hit area vertically */
+        /* Make the icon area a fixed sized block so it doesn't shift or overlap */
+        .tool-group .d-flex.align-items-center > [class*="bi-"] {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 40px;
+            margin-left: 6px; /* push icon slightly inward from left reserved gap */
+            color: #fff;
         }
+
+        /* Narrower slider so it doesn't touch edges — makes it visually balanced and avoids overlap with prev/next */
+        .tool-group .slider-wrapper {
+            /* Make slider narrower (as % of slide) and centered */
+            width: 58%;
+            max-width: 520px;
+            height: calc(var(--editor-carousel-height) * 0.55);
+            padding: 4px 0;
+            margin: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Make the input track centered vertically within the wrapper */
         .tool-group .slider-wrapper input[type="range"] {
-            position: relative;     /* allow full-width thumb dragging */
+            position: relative;
             height: 0.6rem;
             width: 100%;
-            padding: 0;
             margin: 0;
+            padding: 0;
+            background: rgba(255,255,255,0.12);
+            border-radius: 6px;
+            z-index: 2;
+            display: block;
+            outline: none;
         }
 
-        /* Larger thumb for webkit browsers */
+        /* Align slider ticks with the visual center of the slider track */
+        .tool-group .slider-wrapper .slider-tick {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .tool-group .slider-wrapper .center-tick {
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .tool-group .slider-wrapper .left-tick {
+            left: 8px;
+            transform: translateY(-50%);
+        }
+
+        /* Webkit thumb */
         .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 22px;
@@ -197,6 +236,7 @@
             border: 2px solid #fff;
             box-shadow: 0 0 4px rgba(0,0,0,0.5);
             cursor: pointer;
+            margin-top: 0; /* ensure centered */
         }
         .tool-group .slider-wrapper input[type="range"]::-webkit-slider-runnable-track {
             height: 6px;
@@ -204,7 +244,7 @@
             background: rgba(255,255,255,0.12);
         }
 
-        /* Firefox thumb */
+        /* Firefox */
         .tool-group .slider-wrapper input[type="range"]::-moz-range-thumb {
             width: 22px;
             height: 22px;
@@ -219,13 +259,13 @@
             border-radius: 6px;
         }
 
-        /* Prev/Next buttons visible on mobile */
+        /* Prev/Next buttons visible on mobile - keep them on top of content */
         .mobile-carousel-prev, .mobile-carousel-next {
             display: inline-flex;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 1000001;
+            z-index: 1000002; /* above slider ticks */
             background: rgba(0,0,0,0.45);
             border: none;
             color: #fff;
@@ -239,12 +279,11 @@
         .mobile-carousel-prev { left: 6px; }
         .mobile-carousel-next { right: 6px; }
 
-        /* make sure title clone wrapper (if inadvertently present) doesn't show on mobile;
-           we keep the original title pinned in CSS or JS handles moving it */
+        /* Ensure any portrait title wrapper (if present) does not display; we keep original title visible */
         #editorTitlePortraitWrapper { display: none !important; }
     }
 
-    /* DESKTOP: show original side panel layout */
+    /* DESKTOP: show original side panel layout (unchanged) */
     @media (min-width: 768px) {
         #editorToolContainer {
             position: static;
