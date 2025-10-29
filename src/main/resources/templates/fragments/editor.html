@@ -4,28 +4,37 @@
 
 <style>
     :root {
-        /* adjust this to change carousel height on mobile */
+        /* Carousel layout */
         --editor-carousel-height: 100px;
         --editor-carousel-bg: rgba(0,0,0,0.92);
         --editor-carousel-side-gap: 48px; /* space to keep content away from prev/next buttons */
+
+        /* Small vertical nudge for fine-tuning slider vertical alignment (negative = move up) */
+        --editor-slider-nudge: 4px;
     }
 
-    /* ---------- shared styles (unchanged) ---------- */
+    /* ---------------------------
+       Shared / desktop baseline
+       --------------------------- */
+
+    /* Slider baseline */
     .slider-wrapper {
         position: relative;
         width: 100%;
         height: 2.5rem;
     }
-
     .slider-wrapper input[type="range"] {
         position: absolute;
-        top: 50%;
+        top: 40%;
         left: 0;
         width: 100%;
         transform: translateY(-50%);
         z-index: 1;
+        -webkit-appearance: none;
+        height: 0.5rem;
+        background: rgba(255,255,255,0.06);
+        border-radius: 6px;
     }
-
     .slider-tick {
         position: absolute;
         top: 50%;
@@ -36,80 +45,65 @@
         z-index: 3;
         user-select: none;
     }
+    .slider-tick.center-tick { left: 50%; transform: translate(-50%, -70%); }
+    .slider-tick.left-tick { left: 8px; transform: translateY(-70%); }
 
-    .center-tick {
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .left-tick {
-        left: 8px;
-        transform: translateY(-50%);
-    }
-
+    /* State row columns */
     #state .col {
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 0;
     }
+    #state .col span { line-height: 1; }
 
-    #state .col span {
-        line-height: 1;
-    }
-
+    /* Close button */
     #editorCloseActionButton {
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 0;
     }
-
     #editorCloseAction {
         font-size: 3rem;
         line-height: 1;
-        color:#FFFFFF;
-        text-shadow:#000000 2px 2px 5px;
+        color: #FFFFFF;
+        text-shadow: #000000 2px 2px 5px;
     }
 
+    /* Spinner */
     #editorSpinner {
         margin: 10px 0 8px 10px;
         padding-bottom: 5px;
-        color:#FFFFFF;
-        text-shadow:#000000 2px 2px 5px;
+        color: #FFFFFF;
+        text-shadow: #000000 2px 2px 5px;
         display: none;
     }
 
-    /* Media area fixes */
+    /* Media area */
     #editorMedia {
         padding: 0;
         box-sizing: border-box;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        background:#000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
     }
-    #editorMedia img, #editorMedia canvas, #editorMedia video {
-        display:block;
-        max-width:100%;
-        max-height:100%;
-        margin:0 auto;
-        object-fit:contain;
+    #editorMedia img,
+    #editorMedia canvas,
+    #editorMedia video {
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+        margin: 0 auto;
+        object-fit: contain;
     }
 
-    /* Desktop slider baseline */
-    .slider-wrapper { position: relative; width: 100%; height: 2.5rem; }
-    .slider-wrapper input[type="range"] {
-        position: absolute; top:50%; left:0; width:100%; transform:translateY(-50%);
-        z-index:1; -webkit-appearance:none; height:0.5rem; background:rgba(255,255,255,0.06); border-radius:6px;
-    }
-    .slider-tick { position:absolute; top:50%; transform:translateY(-50%); font-size:1.2rem; color:gray; pointer-events:none; z-index:3; }
-    .center-tick { left:50%; transform:translate(-50%,-50%); }
-    .left-tick { left:8px; transform:translateY(-50%); }
-
-    /* ---------- MOBILE / PORTRAIT (overrides) ---------- */
+    /* ---------------------------
+       Mobile / portrait overrides
+       --------------------------- */
     @media (max-width: 767.98px) {
-        /* Make tool container flush to bottom; use safe-area-inset for phones with a notch */
+        /* Make tool container flush to bottom; consider safe-area-inset for notches */
         #editorToolContainer {
             position: fixed;
             left: 0;
@@ -123,9 +117,7 @@
             margin: 0;
         }
 
-        /* track padding reduced so slides align flush with edges.
-           We keep a small horizontal padding here but reserve extra side gap inside slides
-           so prev/next buttons won't intersect interactive controls. */
+        /* Horizontal scroll track with snap */
         .tool-carousel-track {
             display: flex;
             gap: 0.5rem;
@@ -138,7 +130,7 @@
             margin: 0;
         }
 
-        /* Each slide is full width. Reset .row gutters and center contents */
+        /* Each slide is full width. Reserve side gap so prev/next don't overlap controls */
         .tool-group {
             flex: 0 0 100%;
             min-width: 100%;
@@ -148,31 +140,32 @@
             justify-content: center;
             scroll-snap-align: center;
             box-sizing: border-box;
-            /* reserve side gap so controls don't collide with prev/next buttons */
             padding: 0 var(--editor-carousel-side-gap);
             margin: 0;
         }
 
-        /* Reset .row behavior inside slides and center columns */
+        /* Reset Bootstrap .row inside slides and center columns */
         .tool-group .row {
             margin-left: 0 !important;
             margin-right: 0 !important;
             width: 100%;
             display: flex;
             align-items: center;
-            justify-content: center; /* center row contents horizontally */
+            justify-content: center;
             padding: 0;
         }
 
-        /* Center the icon + slider row and add small gap */
+        /* Center icon + slider row and add gap */
         .tool-group .d-flex.align-items-center {
             justify-content: center;
             gap: 12px;
             width: 100%;
             padding: 0;
+            align-items: center !important;
+            height: 100%;
         }
 
-        /* Make the icon area a fixed sized block so it doesn't shift or overlap */
+        /* Icon block: fixed square so its center aligns with slider center */
         .tool-group .d-flex.align-items-center > [class*="bi-"] {
             width: 40px;
             height: 40px;
@@ -180,53 +173,62 @@
             align-items: center;
             justify-content: center;
             flex: 0 0 40px;
-            margin-left: 6px; /* push icon slightly inward from left reserved gap */
+            margin-left: 8px; /* nudge away from absolute left edge */
+            margin-top: 0;
             color: #fff;
+            vertical-align: middle;
         }
 
-        /* Narrower slider so it doesn't touch edges — makes it visually balanced and avoids overlap with prev/next */
+        /* Slider wrapper: make narrower and vertically centered to match icon center */
         .tool-group .slider-wrapper {
-            /* Make slider narrower (as % of slide) and centered */
             width: 58%;
             max-width: 520px;
-            height: calc(var(--editor-carousel-height) * 0.55);
-            padding: 4px 0;
+            /* set height to match icon so centers align; remove internal vertical padding */
+            height: 40px;
+            padding: 0;
             margin: 0;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            transform: translateY(var(--editor-slider-nudge));
         }
 
-        /* Make the input track centered vertically within the wrapper */
+        /* Input track: centered vertically in wrapper; make track thickness explicit */
         .tool-group .slider-wrapper input[type="range"] {
-            position: relative;
-            height: 0.6rem;
+            box-sizing: border-box;
+            height: 6px;
             width: 100%;
             margin: 0;
             padding: 0;
+            display: block;
             background: rgba(255,255,255,0.12);
             border-radius: 6px;
-            z-index: 2;
-            display: block;
             outline: none;
+            z-index: 2;
         }
 
-        /* Align slider ticks with the visual center of the slider track */
-        .tool-group .slider-wrapper .slider-tick {
+        /* Slider ticks: absolutely positioned inside wrapper at center of track */
+        .tool-group .slider-wrapper .slider-tick,
+        .tool-group .slider-wrapper .center-tick,
+        .tool-group .slider-wrapper .left-tick {
+            position: absolute;
             top: 50%;
             transform: translateY(-50%);
+            z-index: 3;
+            pointer-events: none;
+            user-select: none;
         }
         .tool-group .slider-wrapper .center-tick {
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -70%);
         }
         .tool-group .slider-wrapper .left-tick {
-            left: 8px;
-            transform: translateY(-50%);
+            left: 12px;
+            transform: translateY(-70%);
         }
 
-        /* Webkit thumb */
+        /* Range thumb & track visuals */
         .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 22px;
@@ -236,15 +238,13 @@
             border: 2px solid #fff;
             box-shadow: 0 0 4px rgba(0,0,0,0.5);
             cursor: pointer;
-            margin-top: 0; /* ensure centered */
+            margin-top: 0;
         }
         .tool-group .slider-wrapper input[type="range"]::-webkit-slider-runnable-track {
             height: 6px;
             border-radius: 6px;
             background: rgba(255,255,255,0.12);
         }
-
-        /* Firefox */
         .tool-group .slider-wrapper input[type="range"]::-moz-range-thumb {
             width: 22px;
             height: 22px;
@@ -259,7 +259,7 @@
             border-radius: 6px;
         }
 
-        /* Prev/Next buttons visible on mobile - keep them on top of content */
+        /* Prev/Next buttons: keep above content (but reserved side gap avoids collisions) */
         .mobile-carousel-prev, .mobile-carousel-next {
             display: inline-flex;
             position: absolute;
@@ -279,11 +279,19 @@
         .mobile-carousel-prev { left: 6px; }
         .mobile-carousel-next { right: 6px; }
 
-        /* Ensure any portrait title wrapper (if present) does not display; we keep original title visible */
+        /* Hide any portrait title clone wrapper if present (we show original title) */
         #editorTitlePortraitWrapper { display: none !important; }
+
+        /* Very narrow screens: increase reserved gap and slightly widen wrapper to keep usable */
+        @media (max-width: 360px) {
+            :root { --editor-carousel-side-gap: 56px; }
+            .tool-group .slider-wrapper { width: 62%; }
+        }
     }
 
-    /* DESKTOP: show original side panel layout (unchanged) */
+    /* ---------------------------
+       Desktop / landscape
+       --------------------------- */
     @media (min-width: 768px) {
         #editorToolContainer {
             position: static;
