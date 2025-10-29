@@ -103,15 +103,19 @@
        Mobile / portrait overrides
        --------------------------- */
     @media (max-width: 767.98px) {
-        /* Make tool container flush to bottom; consider safe-area-inset for notches */
+        /* Reverted: keep container anchored above safe-area but moved slightly up so
+           on-screen taskbar won't block it. This is an in-place change (no external JS).
+           Increase the "+12px" value to move further up; reduce to move down. */
         #editorToolContainer {
             position: fixed;
             left: 0;
             right: 0;
-            bottom: 0;
+            /* baseline: push up by *px above the safe-area inset (was bottom: 0 previously) */
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 40px);
             height: var(--editor-carousel-height);
             background: linear-gradient(180deg, rgba(0,0,0,0.45), var(--editor-carousel-bg));
-            padding: 6px 6px calc(env(safe-area-inset-bottom, 0px) + 6px);
+            /* padding-bottom keeps the internal spacing and accounts for safe-area inset */
+            padding: 6px 6px calc(env(safe-area-inset-bottom, 0px) + 12px);
             z-index: 1000000;
             box-sizing: border-box;
             margin: 0;
