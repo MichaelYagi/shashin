@@ -3,6 +3,12 @@
 <body th:fragment="editor()">
 
 <style>
+    :root {
+        /* tweak this value to change mobile carousel height */
+        --editor-carousel-height: 120px;
+        --editor-carousel-bg: rgba(0,0,0,0.92);
+    }
+
     .slider-wrapper {
         position: relative;
         width: 100%;
@@ -74,30 +80,50 @@
     /* Keep this after your base editor CSS */
 
     /* Media area fixes */
-    #editorMedia { padding: 0; box-sizing: border-box; display:flex; align-items:center; justify-content:center; background:#000; }
-    #editorMedia img, #editorMedia canvas, #editorMedia video { display:block; max-width:100%; max-height:100%; margin:0 auto; object-fit:contain; }
+    #editorMedia {
+        padding: 0;
+        box-sizing: border-box;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:#000;
+    }
+    #editorMedia img, #editorMedia canvas, #editorMedia video {
+        display:block;
+        max-width:100%;
+        max-height:100%;
+        margin:0 auto;
+        object-fit:contain;
+    }
 
     /* Slider baseline (desktop) */
     .slider-wrapper { position: relative; width: 100%; height: 2.5rem; }
-    .slider-wrapper input[type="range"] { position: absolute; top:50%; left:0; width:100%; transform:translateY(-50%); z-index:1; -webkit-appearance:none; height:0.5rem; background:rgba(255,255,255,0.06); border-radius:6px; }
+    .slider-wrapper input[type="range"] {
+        position: absolute; top:50%; left:0; width:100%; transform:translateY(-50%);
+        z-index:1; -webkit-appearance:none; height:0.5rem; background:rgba(255,255,255,0.06); border-radius:6px;
+    }
     .slider-tick { position:absolute; top:50%; transform:translateY(-50%); font-size:1.2rem; color:gray; pointer-events:none; z-index:2; }
     .center-tick { left:50%; transform:translate(-50%,-53%); }
     .left-tick { left:0; transform:translateY(-53%); }
 
-    /* MOBILE: fixed bottom scroll-snap track */
+    /* MOBILE: fixed bottom scroll-snap track - vertical-only UI tweaks */
     @media (max-width: 767.98px) {
+        /* Make container flush to bottom; include safe-area inset so it truly sits at edge on iOS devices */
         #editorToolContainer {
             position: fixed;
             left: 0;
             right: 0;
             bottom: 0;
-            height: 160px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.92));
-            padding: 8px 12px;
+            height: var(--editor-carousel-height);
+            background: linear-gradient(180deg, rgba(0,0,0,0.45), var(--editor-carousel-bg));
+            /* keep small internal padding but avoid extra bottom space */
+            padding: 8px 8px calc(env(safe-area-inset-bottom, 0px) + 8px);
             z-index: 1000000;
             box-sizing: border-box;
+            margin: 0;
         }
 
+        /* track - make slightly narrower padding to avoid pushing content left */
         .tool-carousel-track {
             display: flex;
             gap: 0.5rem;
@@ -106,9 +132,13 @@
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 6px;
+            /* left/right padding small so first/last pages align visually */
+            padding: 0 6px;
+            margin: 0;
         }
 
+        /* Each slide is full width. Remove Bootstrap row negative margins inside slides
+           and center the content. This fixes left justification caused by .row gutters. */
         .tool-group {
             flex: 0 0 100%;
             min-width: 100%;
@@ -118,14 +148,35 @@
             justify-content: center;
             scroll-snap-align: center;
             box-sizing: border-box;
-            padding: 0 12px;
+            padding: 0 10px;
+            margin: 0;
+        }
+
+        /* Reset .row margins inside tool-groups and center its columns */
+        .tool-group .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* horizontally center columns inside the row */
+            padding: 0;
+        }
+
+        /* Ensure individual cols inside state/orientation are centered and have no extra padding */
+        .tool-group .col-3 {
+            padding-left: 0;
+            padding-right: 0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
         }
 
         /* Make sliders larger and relative (so thumb is fully draggable across full width) */
         .tool-group .slider-wrapper {
             width: 100%;
             max-width: none;
-            height: 2.8rem;
+            height: calc(var(--editor-carousel-height) * 0.6);
             padding: 8px 0; /* give hit area vertically */
         }
         .tool-group .slider-wrapper input[type="range"] {
@@ -170,7 +221,7 @@
 
         /* Prev/Next buttons visible on mobile */
         .mobile-carousel-prev, .mobile-carousel-next {
-            display: inline-block;
+            display: inline-flex;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
@@ -188,21 +239,9 @@
         .mobile-carousel-prev { left: 6px; }
         .mobile-carousel-next { right: 6px; }
 
-        /* Portrait title clone wrapper */
-        #editorTitlePortraitWrapper {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            z-index: 1000002;
-            display:flex;
-            align-items:flex-start;
-            pointer-events:auto;
-        }
-        #editorTitlePortraitWrapper span {
-            font-size: 1.1rem !important;
-            color: #fff;
-            text-shadow: 0 0 6px rgba(0,0,0,0.9);
-        }
+        /* make sure title clone wrapper (if inadvertently present) doesn't show on mobile;
+           we keep the original title pinned in CSS or JS handles moving it */
+        #editorTitlePortraitWrapper { display: none !important; }
     }
 
     /* DESKTOP: show original side panel layout */
