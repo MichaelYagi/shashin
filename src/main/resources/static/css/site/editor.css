@@ -1,0 +1,419 @@
+:root {
+    /* Carousel layout */
+    --editor-carousel-height: 100px;
+    --editor-carousel-bg: rgba(0,0,0,0.92);
+    --editor-carousel-side-gap: 48px; /* space to keep content away from prev/next buttons */
+
+    /* Small vertical nudge for fine-tuning slider vertical alignment (negative = move up) */
+    --editor-slider-nudge: 4px;
+
+    /* Negative = move the blue thumb up; positive = move it down. Tweak as needed. */
+    --editor-thumb-nudge: -5px;
+}
+
+/* ---------------------------
+   Shared / desktop baseline
+   --------------------------- */
+
+/* Slider baseline */
+.slider-wrapper {
+    position: relative;
+    width: 100%;
+    height: 2.5rem;
+}
+.slider-wrapper input[type="range"] {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    z-index: 1;
+    -webkit-appearance: none;
+    height: 0.5rem;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+}
+
+/* Slider ticks (shared) */
+.slider-tick {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: gray;
+    pointer-events: none;
+    z-index: 3;
+    user-select: none;
+}
+.slider-tick.center-tick { left: 50%; transform: translate(-50%, -70%); }
+.slider-tick.left-tick   { left: 0;    transform: translateY(-70%); }
+
+/* State row columns and close button */
+#state .col,
+#editorCloseActionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+#state .col span { line-height: 1; }
+
+#editorCloseAction {
+    font-size: 3rem;
+    line-height: 1;
+    color: #FFFFFF;
+    text-shadow: #000000 2px 2px 5px;
+}
+
+/* Spinner */
+#editorSpinner {
+    margin: 10px 0 8px 10px;
+    padding-bottom: 5px;
+    color: #FFFFFF;
+    text-shadow: #000000 2px 2px 5px;
+    display: none;
+}
+
+/* Media area */
+#editorMedia {
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+#editorMedia img,
+#editorMedia canvas,
+#editorMedia video {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+/* ---------------------------
+   Desktop / landscape (consolidated)
+   --------------------------- */
+@media (min-width: 768px) {
+    #editorToolContainer {
+        position: static;
+        display: block;
+        height: 100vh;
+        overflow: auto;
+    }
+    .mobile-carousel-prev,
+    .mobile-carousel-next {
+        display: none !important;
+    }
+}
+
+/* ---------------------------
+   Mobile / portrait overrides
+   (kept as a single block to preserve order)
+   --------------------------- */
+@media (max-width: 767.98px) and (orientation: portrait) {
+    /* Keep container anchored above safe-area and nudged up so on-screen taskbar won't block it.
+       Increase the "+40px" value to move further up; reduce to move down. */
+    #editorToolContainer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 40px);
+        height: var(--editor-carousel-height);
+        background: linear-gradient(180deg, rgba(0,0,0,0.45), var(--editor-carousel-bg));
+        padding: 6px 6px calc(env(safe-area-inset-bottom, 0px) + 12px);
+        z-index: 1000000;
+        box-sizing: border-box;
+        margin: 0;
+    }
+
+    /* Horizontal scroll track with snap */
+    .tool-carousel-track {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        height: 100%;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 0 6px;
+        margin: 0;
+    }
+
+    /* Each slide is full width. Reserve side gap so prev/next don't overlap controls */
+    .tool-group {
+        flex: 0 0 100%;
+        min-width: 100%;
+        height: calc(100% - 0.5rem);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        scroll-snap-align: center;
+        box-sizing: border-box;
+        padding: 0 var(--editor-carousel-side-gap);
+        margin: 0;
+    }
+
+    /* Reset Bootstrap .row inside slides and center columns */
+    .tool-group .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    /* Center icon + slider row and add gap */
+    .tool-group .d-flex.align-items-center {
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 0;
+        align-items: center !important;
+        height: 100%;
+    }
+
+    /* Icon block: fixed square so its center aligns with slider center */
+    .tool-group .d-flex.align-items-center > [class*="bi-"] {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 40px;
+        margin-left: 8px; /* nudge away from absolute left edge */
+        margin-top: 0;
+        color: #fff;
+        vertical-align: middle;
+    }
+
+    /* Slider wrapper: make narrower and vertically centered to match icon center */
+    .tool-group .slider-wrapper {
+        width: 58%;
+        max-width: 520px;
+        /* set height to match icon so centers align; remove internal vertical padding */
+        height: 40px;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(var(--editor-slider-nudge));
+    }
+
+    /* Input track: centered vertically in wrapper; make track thickness explicit */
+    .tool-group .slider-wrapper input[type="range"] {
+        box-sizing: border-box;
+        height: 6px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: block;
+        background: rgba(255,255,255,0.12);
+        border-radius: 6px;
+        outline: none;
+        z-index: 2;
+    }
+
+    /* Slider ticks: absolutely positioned inside wrapper at center of track */
+    .tool-group .slider-wrapper .slider-tick,
+    .tool-group .slider-wrapper .center-tick,
+    .tool-group .slider-wrapper .left-tick {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+        pointer-events: none;
+        user-select: none;
+    }
+    .tool-group .slider-wrapper .center-tick {
+        left: 50%;
+        transform: translate(-50%, -70%);
+    }
+    .tool-group .slider-wrapper .left-tick {
+        left: 0;
+        transform: translateY(-70%);
+    }
+
+    /* Range thumb & track visuals (mobile: slightly smaller blue dot) */
+    .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;               /* reduced size */
+        height: 16px;              /* reduced size */
+        border-radius: 50%;
+        background: #1e90ff;
+        border: 1px solid #fff;    /* thinner border to suit smaller thumb */
+        box-shadow: 0 0 3px rgba(0,0,0,0.45);
+        cursor: pointer;
+        margin-top: 0;
+    }
+    .tool-group .slider-wrapper input[type="range"]::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 6px;
+        background: rgba(255,255,255,0.12);
+    }
+    .tool-group .slider-wrapper input[type="range"]::-moz-range-thumb {
+        width: 16px;               /* reduced size */
+        height: 16px;              /* reduced size */
+        border-radius: 50%;
+        background: #1e90ff;
+        border: 1px solid #fff;    /* thinner border to suit smaller thumb */
+        cursor: pointer;
+        box-shadow: 0 0 3px rgba(0,0,0,0.45);
+    }
+    .tool-group .slider-wrapper input[type="range"]::-moz-range-track {
+        height: 6px;
+        background: rgba(255,255,255,0.12);
+        border-radius: 6px;
+    }
+
+    /* Prev/Next buttons: keep above content (but reserved side gap avoids collisions) */
+    .mobile-carousel-prev, .mobile-carousel-next {
+        display: inline-flex;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1000002; /* above slider ticks */
+        background: rgba(0,0,0,0.45);
+        border: none;
+        color: #fff;
+        width: 38px;
+        height: 38px;
+        border-radius: 6px;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+    }
+    .mobile-carousel-prev { left: 6px; }
+    .mobile-carousel-next { right: 6px; }
+
+    /* Hide any portrait title clone wrapper if present (we show original title) */
+    #editorTitlePortraitWrapper { display: none !important; }
+
+    /* Apply only on mobile portrait so desktop remains unchanged:
+       nudge the thumb vertically without touching the track */
+    .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+        position: relative;
+        transform: translateY(var(--editor-thumb-nudge));
+    }
+    .tool-group .slider-wrapper input[type="range"]::-moz-range-thumb {
+        position: relative;
+        transform: translateY(var(--editor-thumb-nudge));
+    }
+
+    /* Target the exact element (row with id="orientation" that has mb-4) */
+    #orientation.mb-4 {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    /* Defensive: if mb-4 is applied via a nested selector, ensure no descendant margin remains */
+    #orientation.mb-4 > .mb-4,
+    #orientation.mb-4 .mb-4 {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Prevent any vertical scrolling on the carousel track while keeping horizontal scroll */
+    .tool-carousel-track {
+        overflow-x: auto;
+        overflow-y: hidden !important;
+        -ms-overflow-style: none; /* IE/Edge hide scrollbar */
+        scrollbar-width: none;    /* Firefox hide scrollbar */
+    }
+    /* Hide WebKit scrollbar visually */
+    .tool-carousel-track::-webkit-scrollbar {
+        display: none;
+        height: 0;
+        width: 0;
+    }
+
+    /* Allow flex children to shrink so they don't force vertical overflow */
+    .tool-group {
+        min-height: 0; /* allow the slide to shrink inside the track */
+        box-sizing: border-box;
+        overflow: hidden; /* ensure internal content can't create vertical scroll */
+    }
+    /* Defensive: ensure rows inside slides don't push slide taller */
+    .tool-group .row {
+        max-height: 100%;
+        overflow: hidden;
+    }
+
+    /* Move the slider wrapper down a bit so the visible track aligns lower.
+       Increase value to move further down, decrease to move up. */
+    .tool-group .slider-wrapper {
+        transform: translateY(10px) !important;
+    }
+
+    /* Ensure the input track and thumb remain centered inside the wrapper */
+    .tool-group .slider-wrapper input[type="range"] {
+        margin: 0;
+        padding: 0;
+        display: block;
+    }
+
+    /* Make sure ticks remain vertically centered relative to the wrapper */
+    .tool-group .slider-wrapper .slider-tick,
+    .tool-group .slider-wrapper .center-tick,
+    .tool-group .slider-wrapper .left-tick {
+        top: 35%;
+        transform: translateY(-50%) !important;
+    }
+
+    .tool-carousel-track .tool-group {
+        transform: translateY(6px) !important;
+        /* preserve smooth rendering */
+        will-change: transform;
+    }
+
+    /* Nudge only the icon/button elements that sit beside sliders.
+       This targets the exact pattern used in your markup:
+       .tool-group > .d-flex.align-items-center.mb-2.w-100 > [type="button"].bi-*
+       It will not move other icons elsewhere. Adjust --editor-icon-nudge to tweak. */
+    :root { --editor-icon-nudge: 4px; }
+
+    .tool-group > .d-flex.align-items-center.mb-2.w-100 > [class*="bi-"][type="button"] {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transform: translateY(var(--editor-icon-nudge)) !important;
+        will-change: transform;
+        /* keep original sizing */
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Defensive: if icons are placed without type="button" attribute, include this fallback */
+    .tool-group > .d-flex.align-items-center.mb-2.w-100 > [class*="bi-"] {
+        transform: translateY(var(--editor-icon-nudge)) !important;
+    }
+
+    /* Pin the original title to the upper-left of the viewport */
+    #editorTitle {
+        position: fixed !important;
+        top: 8px !important;
+        left: 8px !important;
+        z-index: 1000003 !important;
+        margin: 0 !important;
+        display: block !important;
+        pointer-events: auto !important;
+        background: transparent;
+    }
+
+    /* If for any reason a title element remains inside the carousel track, hide it there.
+       (Our JS moves the original; this rule is purely defensive.) */
+    .tool-carousel-track #editorTitle {
+        display: none !important;
+    }
+}
+
+/* Very narrow screens: increase reserved gap and slightly widen wrapper to keep usable */
+@media (max-width: 360px) {
+    :root { --editor-carousel-side-gap: 18px; }
+    .tool-group .slider-wrapper { width: 62%; }
+}
