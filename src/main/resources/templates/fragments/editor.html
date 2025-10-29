@@ -392,9 +392,7 @@
             /* preserve smooth rendering */
             will-change: transform;
         }
-    }
 
-    @media (max-width: 767.98px) and (orientation: portrait) {
         /* Nudge only the icon/button elements that sit beside sliders.
            This targets the exact pattern used in your markup:
            .tool-group > .d-flex.align-items-center.mb-2.w-100 > [type="button"].bi-*
@@ -417,9 +415,7 @@
         .tool-group > .d-flex.align-items-center.mb-2.w-100 > [class*="bi-"] {
             transform: translateY(var(--editor-icon-nudge)) !important;
         }
-    }
 
-    @media (max-width: 767.98px) and (orientation: portrait) {
         /* Pin the original title to the upper-left of the viewport */
         #editorTitle {
             position: fixed !important;
