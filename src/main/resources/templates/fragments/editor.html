@@ -422,6 +422,26 @@
             transform: translateY(var(--editor-icon-nudge)) !important;
         }
     }
+
+    @media (max-width: 767.98px) and (orientation: portrait) {
+        /* Pin the original title to the upper-left of the viewport */
+        #editorTitle {
+            position: fixed !important;
+            top: 8px !important;
+            left: 8px !important;
+            z-index: 1000003 !important;
+            margin: 0 !important;
+            display: block !important;
+            pointer-events: auto !important;
+            background: transparent;
+        }
+
+        /* If for any reason a title element remains inside the carousel track, hide it there.
+           (Our JS moves the original; this rule is purely defensive.) */
+        .tool-carousel-track #editorTitle {
+            display: none !important;
+        }
+    }
 </style>
 
 <!--Editor Container-->

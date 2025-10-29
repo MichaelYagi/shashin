@@ -1,8 +1,9 @@
-// editor-carousel-snap.js (updated)
-// - Title is NOT part of the track (we clone & pin portrait title separately).
-// - Prev/Next wrap-around (loop behavior).
-// - Sliders remain original elements and now are touch-friendly via CSS.
-// - Uses scroll-snap; prev/next scrolls by one page; when at end goes to beginning and vice versa.
+// editor-carousel-snap.js (updated - move title outside carousel into #editorContainer for mobile)
+// - DOES NOT clone the title. Moves the original #editorTitle element out of the carousel
+//   into the #editorContainer (so it is no longer a child of the tool track) when mobile+portrait.
+// - Restores the original DOM position when not mobile.
+// - Keeps existing carousel behavior (prev/next, keyboard, scroll-snap).
+// - Stores the original parent/nextSibling to restore exact placement when leaving mobile.
 
 (function () {
     'use strict';
@@ -13,10 +14,62 @@
     const prevBtnSelector = '.mobile-carousel-prev';
     const nextBtnSelector = '.mobile-carousel-next';
     const titleId = 'editorTitle';
-    const titlePortraitWrapperId = 'editorTitlePortraitWrapper';
 
-    function id(id) { return document.getElementById(id); }
+    function id(name) { return document.getElementById(name); }
     function q(sel) { return document.querySelector(sel); }
+
+    let titleOriginalParent = null;
+    let titleOriginalNextSibling = null;
+    let titleSaved = false;
+
+    function saveTitleLocation() {
+        const title = id(titleId);
+        if (!title || titleSaved) return;
+        titleOriginalParent = title.parentNode;
+        titleOriginalNextSibling = title.nextSibling; // may be null
+        titleSaved = true;
+    }
+
+    // Move the original title element to be a child of #editorContainer (outside the carousel track)
+    function moveTitleOutOfCarousel() {
+        const title = id(titleId);
+        const editorContainer = id(editorContainerId);
+        if (!title || !editorContainer) return;
+        // If already moved into editorContainer, do nothing
+        if (title.parentNode === editorContainer) return;
+        // Save original location first time
+        saveTitleLocation();
+        // Append into editorContainer (keeps same document, no cloning)
+        editorContainer.appendChild(title);
+        title.setAttribute('data-editor-title-moved', 'true');
+    }
+
+    function restoreTitlePosition() {
+        const title = id(titleId);
+        if (!title || !titleSaved) return;
+        // If title already back to its original parent, nothing to do
+        if (titleOriginalParent === title.parentNode) {
+            title.removeAttribute('data-editor-title-moved');
+            return;
+        }
+        // Insert at original position (before the original nextSibling if present)
+        try {
+            if (titleOriginalNextSibling && titleOriginalParent.contains(titleOriginalNextSibling)) {
+                titleOriginalParent.insertBefore(title, titleOriginalNextSibling);
+            } else {
+                titleOriginalParent.appendChild(title);
+            }
+            title.removeAttribute('data-editor-title-moved');
+        } catch (e) {
+            // fallback: place back before the carousel track inside the tool container
+            const tc = id(toolContainerId);
+            const track = q(wrapperTrackSelector);
+            if (tc && track) {
+                tc.insertBefore(title, track);
+            }
+            title.removeAttribute('data-editor-title-moved');
+        }
+    }
 
     function isPortrait() {
         if (window.matchMedia) {
@@ -25,63 +78,39 @@
         return window.innerHeight > window.innerWidth;
     }
 
-    function ensurePortraitTitleClone() {
-        const editorContainer = id(editorContainerId);
-        const titleOrig = id(titleId);
-        if (!editorContainer || !titleOrig) return null;
-        let wrapper = id(titlePortraitWrapperId);
-        if (!wrapper) {
-            wrapper = document.createElement('div');
-            wrapper.id = titlePortraitWrapperId;
-            editorContainer.appendChild(wrapper);
-            // ensure positioned ancestor
-            const comp = window.getComputedStyle(editorContainer).position;
-            if (!comp || comp === 'static') editorContainer.style.position = 'relative';
+    // Safety move: if title still ends up inside the track, move it to be before the track in tool container
+    function ensureTitleOutsideTrack() {
+        const title = id(titleId);
+        const track = q(wrapperTrackSelector);
+        const toolContainer = id(toolContainerId);
+        if (!title || !track || !toolContainer) return;
+        if (track.contains(title)) {
+            toolContainer.insertBefore(title, track);
+            title.style.display = '';
         }
-        // clone title, remove id to prevent duplicate id
-        const clone = titleOrig.cloneNode(true);
-        if (clone.removeAttribute) clone.removeAttribute('id');
-        (function stripIds(node) {
-            if (node.nodeType !== 1) return;
-            if (node.hasAttribute && node.hasAttribute('id')) node.removeAttribute('id');
-            Array.from(node.children || []).forEach(c => stripIds(c));
-        })(clone);
-        wrapper.innerHTML = '';
-        wrapper.appendChild(clone);
-        $("#editorTitle").hide();
-        return wrapper;
     }
 
-    function removePortraitTitleClone() {
-        const wrapper = id(titlePortraitWrapperId);
-        if (wrapper && wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
-    }
-
-    function getTrack() {
-        return q(wrapperTrackSelector);
-    }
+    function getTrack() { return q(wrapperTrackSelector); }
 
     function pageCount(track) {
         if (!track) return 0;
-        // count the number of child .tool-group elements visible as slides
         return track.querySelectorAll('.tool-group').length;
     }
 
     function pageWidth(track) {
-        // width of one view page is track.clientWidth
         return track ? track.clientWidth : 0;
     }
 
     function currentPageIndex(track) {
         if (!track) return 0;
-        return Math.round(track.scrollLeft / pageWidth(track));
+        const w = pageWidth(track) || 1;
+        return Math.round(track.scrollLeft / w);
     }
 
     function scrollToPage(track, index, smooth = true) {
         if (!track) return;
         const pages = pageCount(track);
         if (pages === 0) return;
-        // wrap index into [0, pages-1]
         let idx = ((index % pages) + pages) % pages;
         const left = idx * pageWidth(track);
         track.scrollTo({ left: left, behavior: smooth ? 'smooth' : 'auto' });
@@ -94,15 +123,15 @@
         const nextBtn = q(nextBtnSelector);
         if (!toolContainer || !track) return;
 
-        // show panel and controls
+        // Move the original title out of the carousel into the editor container
+        moveTitleOutOfCarousel();
+
+        // Show container & controls
         toolContainer.style.display = '';
         if (prevBtn) prevBtn.style.display = '';
         if (nextBtn) nextBtn.style.display = '';
 
-        // create title clone
-        ensurePortraitTitleClone();
-
-        // Prev button: go to previous page (wrap)
+        // Prev/Next
         if (prevBtn) {
             prevBtn.onclick = function () {
                 const pages = pageCount(track);
@@ -122,31 +151,34 @@
             };
         }
 
-        // keyboard left/right support
-        track.addEventListener('keydown', function (ev) {
+        // Keyboard support
+        function onKey(ev) {
             if (ev.key === 'ArrowLeft') {
-                const curr = currentPageIndex(track);
-                const prev = (curr - 1 + pageCount(track)) % pageCount(track);
+                const prev = (currentPageIndex(track) - 1 + pageCount(track)) % pageCount(track);
                 scrollToPage(track, prev, true);
             } else if (ev.key === 'ArrowRight') {
-                const curr = currentPageIndex(track);
-                const next = (curr + 1) % pageCount(track);
+                const next = (currentPageIndex(track) + 1) % pageCount(track);
                 scrollToPage(track, next, true);
             }
-        });
+        }
+        track.addEventListener('keydown', onKey);
 
-        // after user scroll ends, snap to closest page (so partial drags round nicely)
+        // Scroll snapping after end of scroll
         let isScrolling;
-        track.addEventListener('scroll', function () {
+        function onScroll() {
             window.clearTimeout(isScrolling);
             isScrolling = setTimeout(function () {
                 const idx = currentPageIndex(track);
                 scrollToPage(track, idx, true);
             }, 120);
-        }, { passive: true });
+        }
+        track.addEventListener('scroll', onScroll, { passive: true });
 
-        // ensure initial position is 0
+        // start at page 0
         scrollToPage(track, 0, false);
+
+        // keep handlers for cleanup
+        track._editorHandlers = { onKey, onScroll };
     }
 
     function deactivateMobileUI() {
@@ -158,31 +190,55 @@
         if (prevBtn) prevBtn.style.display = 'none';
         if (nextBtn) nextBtn.style.display = 'none';
 
-        removePortraitTitleClone();
+        // cleanup handlers if attached
+        if (track && track._editorHandlers) {
+            const h = track._editorHandlers;
+            track.removeEventListener('keydown', h.onKey);
+            track.removeEventListener('scroll', h.onScroll);
+            delete track._editorHandlers;
+        }
 
-        // cleanup handlers (simple approach: remove by replacing nodes)
-        const prev = q(prevBtnSelector);
-        const next = q(nextBtnSelector);
-        if (prev) { prev.onclick = null; }
-        if (next) { next.onclick = null; }
-
-        // reset track scroll
+        // reset scroll
         if (track) track.scrollTo({ left: 0, behavior: 'auto' });
+
+        // Restore the title back to its original place in the DOM
+        restoreTitlePosition();
+
+        // ensure title visible
+        const title = id(titleId);
+        if (title) title.style.display = '';
     }
 
     function updateUI() {
+        // make sure original location is saved early
+        saveTitleLocation();
+        // small safety: ensure title isn't inside the track
+        ensureTitleOutsideTrack();
+
         const isSmall = window.matchMedia('(max-width: 767.98px)').matches;
         if (isSmall && isPortrait()) {
             activateMobileUI();
         } else {
-            $("#editorTitle").show();
             deactivateMobileUI();
         }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        // save original location now
+        saveTitleLocation();
         updateUI();
         window.addEventListener('orientationchange', function () { setTimeout(updateUI, 120); }, { passive: true });
         window.addEventListener('resize', function () { updateUI(); }, { passive: true });
     });
+
+    // debug API
+    window.editorCarouselSnap = {
+        updateUI,
+        moveTitleOutOfCarousel,
+        restoreTitlePosition,
+        scrollToPageIndex: (i) => {
+            const t = getTrack();
+            scrollToPage(t, i, true);
+        }
+    };
 })();
