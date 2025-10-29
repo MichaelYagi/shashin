@@ -46,7 +46,7 @@
         user-select: none;
     }
     .slider-tick.center-tick { left: 50%; transform: translate(-50%, -70%); }
-    .slider-tick.left-tick { left: 8px; transform: translateY(-70%); }
+    .slider-tick.left-tick { left: 0; transform: translateY(-70%); }
 
     /* State row columns */
     #state .col {
@@ -224,19 +224,19 @@
             transform: translate(-50%, -70%);
         }
         .tool-group .slider-wrapper .left-tick {
-            left: 12px;
+            left: 0;
             transform: translateY(-70%);
         }
 
-        /* Range thumb & track visuals */
+        /* Range thumb & track visuals (mobile: slightly smaller blue dot) */
         .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
+            width: 16px;               /* reduced size */
+            height: 16px;              /* reduced size */
             border-radius: 50%;
             background: #1e90ff;
-            border: 2px solid #fff;
-            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            border: 1px solid #fff;    /* thinner border to suit smaller thumb */
+            box-shadow: 0 0 3px rgba(0,0,0,0.45);
             cursor: pointer;
             margin-top: 0;
         }
@@ -246,12 +246,13 @@
             background: rgba(255,255,255,0.12);
         }
         .tool-group .slider-wrapper input[type="range"]::-moz-range-thumb {
-            width: 22px;
-            height: 22px;
+            width: 16px;               /* reduced size */
+            height: 16px;              /* reduced size */
             border-radius: 50%;
             background: #1e90ff;
-            border: 2px solid #fff;
+            border: 1px solid #fff;    /* thinner border to suit smaller thumb */
             cursor: pointer;
+            box-shadow: 0 0 3px rgba(0,0,0,0.45);
         }
         .tool-group .slider-wrapper input[type="range"]::-moz-range-track {
             height: 6px;
@@ -300,6 +301,26 @@
             overflow: auto;
         }
         .mobile-carousel-prev, .mobile-carousel-next { display: none !important; }
+    }
+
+    :root {
+        /* Negative = move the blue thumb up; positive = move it down. Tweak as needed. */
+        --editor-thumb-nudge: -5px;
+    }
+
+    @media (max-width: 767.98px) {
+        /* Apply only on mobile portrait so desktop remains unchanged */
+        .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+            position: relative;
+            /* nudge the thumb vertically without touching the track */
+            transform: translateY(var(--editor-thumb-nudge));
+            /* keep existing visual styling */
+        }
+
+        .tool-group .slider-wrapper input[type="range"]::-moz-range-thumb {
+            position: relative;
+            transform: translateY(var(--editor-thumb-nudge));
+        }
     }
 </style>
 
