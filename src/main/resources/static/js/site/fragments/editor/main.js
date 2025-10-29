@@ -94,7 +94,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             '#editorSaturationAction, ' +
             '#editorSharpnessActionButton, ' +
             '#editorSharpnessAction, ' +
-            '#editorBlock'
+            '#editorToolContainer'
         ).length) {
             if (isSpinnerHidden()) {
                 hideModule();
@@ -880,7 +880,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
             });
 
             $("#editorToolContainer").css("display", "block");
-            $("#editorBlock").css("display", "block");
             $("#editorContainer").css("display", "block");
         });
     }
@@ -893,7 +892,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
         // $(".lg-object.lg-image").on('load', function() {
         $("#editorContainer").css("display", "none");
         $("#editorToolContainer").css("display", "none");
-        $("#editorBlock").css("display", "none");
 
         $("#editorMedia").css("display", "none");
         $("#editorMedia").html("");

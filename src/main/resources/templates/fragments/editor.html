@@ -70,79 +70,252 @@
         text-shadow:#000000 2px 2px 5px;
         display: none;
     }
+
+    /* Keep this after your base editor CSS */
+
+    /* Media area fixes */
+    #editorMedia { padding: 0; box-sizing: border-box; display:flex; align-items:center; justify-content:center; background:#000; }
+    #editorMedia img, #editorMedia canvas, #editorMedia video { display:block; max-width:100%; max-height:100%; margin:0 auto; object-fit:contain; }
+
+    /* Slider baseline (desktop) */
+    .slider-wrapper { position: relative; width: 100%; height: 2.5rem; }
+    .slider-wrapper input[type="range"] { position: absolute; top:50%; left:0; width:100%; transform:translateY(-50%); z-index:1; -webkit-appearance:none; height:0.5rem; background:rgba(255,255,255,0.06); border-radius:6px; }
+    .slider-tick { position:absolute; top:50%; transform:translateY(-50%); font-size:1.2rem; color:gray; pointer-events:none; z-index:2; }
+    .center-tick { left:50%; transform:translate(-50%,-53%); }
+    .left-tick { left:0; transform:translateY(-53%); }
+
+    /* MOBILE: fixed bottom scroll-snap track */
+    @media (max-width: 767.98px) {
+        #editorToolContainer {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 160px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.92));
+            padding: 8px 12px;
+            z-index: 1000000;
+            box-sizing: border-box;
+        }
+
+        .tool-carousel-track {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            height: 100%;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 6px;
+        }
+
+        .tool-group {
+            flex: 0 0 100%;
+            min-width: 100%;
+            height: calc(100% - 0.5rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: center;
+            box-sizing: border-box;
+            padding: 0 12px;
+        }
+
+        /* Make sliders larger and relative (so thumb is fully draggable across full width) */
+        .tool-group .slider-wrapper {
+            width: 100%;
+            max-width: none;
+            height: 2.8rem;
+            padding: 8px 0; /* give hit area vertically */
+        }
+        .tool-group .slider-wrapper input[type="range"] {
+            position: relative;     /* allow full-width thumb dragging */
+            height: 0.6rem;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Larger thumb for webkit browsers */
+        .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #1e90ff;
+            border: 2px solid #fff;
+            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            cursor: pointer;
+        }
+        .tool-group .slider-wrapper input[type="range"]::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* Firefox thumb */
+        .tool-group .slider-wrapper input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #1e90ff;
+            border: 2px solid #fff;
+            cursor: pointer;
+        }
+        .tool-group .slider-wrapper input[type="range"]::-moz-range-track {
+            height: 6px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 6px;
+        }
+
+        /* Prev/Next buttons visible on mobile */
+        .mobile-carousel-prev, .mobile-carousel-next {
+            display: inline-block;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000001;
+            background: rgba(0,0,0,0.45);
+            border: none;
+            color: #fff;
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+        .mobile-carousel-prev { left: 6px; }
+        .mobile-carousel-next { right: 6px; }
+
+        /* Portrait title clone wrapper */
+        #editorTitlePortraitWrapper {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 1000002;
+            display:flex;
+            align-items:flex-start;
+            pointer-events:auto;
+        }
+        #editorTitlePortraitWrapper span {
+            font-size: 1.1rem !important;
+            color: #fff;
+            text-shadow: 0 0 6px rgba(0,0,0,0.9);
+        }
+    }
+
+    /* DESKTOP: show original side panel layout */
+    @media (min-width: 768px) {
+        #editorToolContainer {
+            position: static;
+            display: block;
+            height: 100vh;
+            overflow: auto;
+        }
+        .mobile-carousel-prev, .mobile-carousel-next { display: none !important; }
+    }
 </style>
 
 <!--Editor Container-->
-<div id="editorContainer" class="editorbox container-fluid" style="height: 101vh;background-color: #000000;overflow: hidden;z-index: 999999;display: none;">
-    <div class="row">
-        <!-- image-->
-        <div id="editorMedia" class="col-10 d-flex justify-content-center align-items-center" style="position: relative; overflow: hidden; height: 101vh; display: none;"></div>
-        <div id="editorToolContainer" class="col-2" style="display: none;">
-            <div id="editorTitle" class="row">
-                <span style="font-size: 3rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span>
-            </div>
-            <!--Row: reset, restore, save, close, spinner-->
-            <div id="state" class="row">
-                <div class="col-3" type="button" id="editorResetActionButton" th:title="#{main.pages.map.modal.reset}">
-                    <span class="bi-skip-backward" id="editorResetAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
-                </div>
-                <div class="col-3" type="button" id="editorRestoreActionButton" th:title="#{main.pages.map.modal.restore}">
-                    <span class="bi-clock-history" id="editorRestoreAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
-                </div>
-                <div class="col-3" type="button" id="editorSaveActionButton" th:title="#{main.modal.save}">
-                    <span class="bi-floppy" id="editorSaveAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
-                </div>
-                <div class="col-3" type="button" id="editorCloseActionButton" th:title="#{main.modal.cancel}">
-                    <span class="bi-x" id="editorCloseAction"></span>
-                </div>
-                <div class="spinner-border col-3" id="editorSpinner" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-
-            <!--Row: rotate right, left, flip vertically, horizontally, restore, save, close-->
-            <div id="orientation" class="row mb-4">
-                <div class="col-3" type="button" id="editorRotateRightActionButton" th:title="#{main.pages.lg.plugins.editor.rotateright}">
-                    <span class="bi-arrow-clockwise" id="editorRotateRightAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
-                </div>
-                <div class="col-3" type="button" id="editorRotateLeftActionButton" th:title="#{main.pages.lg.plugins.editor.rotateleft}">
-                    <span class="bi-arrow-counterclockwise" id="editorRotateLeftAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
-                </div>
-                <div class="col-3" type="button" id="editorFlipVerticalActionButton" th:title="#{main.pages.lg.plugins.editor.flipy}">
-                    <span class="bi-symmetry-vertical" id="editorFlipVerticalAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
-                </div>
-                <div class="col-3" type="button" id="editorFlipHorizontalActionButton" th:title="#{main.pages.lg.plugins.editor.flipx}">
-                    <span class="bi-symmetry-horizontal" id="editorFlipHorizontalAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
-                </div>
-            </div>
-
-            <!--Row: brightness-->
-            <div type="button" class="bi-brightness-high" id="editorBrightnessIcon" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></div>
-            <div id="editorBrightnessActionButton" th:title="#{main.pages.lg.plugins.editor.brightness}" class="slider-wrapper position-relative">
-                <span id="brightnessTick" class="slider-tick center-tick">&bull;</span>
-                <input type="range" class="form-range" id="editorBrightnessAction" min="-9" max="9">
-            </div>
-
-            <!--Row: contrast-->
-            <div type="button" class="bi-circle-half" id="editorContrastIcon" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></div>
-            <div id="editorContrastActionButton" th:title="#{main.pages.lg.plugins.editor.contrast}" class="slider-wrapper position-relative">
-                <span id="contrastTick" class="slider-tick center-tick">&bull;</span>
-                <input type="range" class="form-range" id="editorContrastAction" min="-9" max="9">
-            </div>
-
-            <!--Row: saturation-->
-            <div type="button" class="bi-droplet-half" id="editorSaturationIcon" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></div>
-            <div id="editorSaturationActionButton" th:title="#{main.pages.lg.plugins.editor.saturation}" class="slider-wrapper position-relative">
-                <span id="saturationTick" class="slider-tick center-tick">&bull;</span>
-                <input type="range" class="form-range" id="editorSaturationAction" min="-9" max="9">
-            </div>
-
-            <!--Row: sharpness-->
-            <div type="button" class="bi-gem" id="editorSharpnessIcon" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></div>
-            <div id="editorSharpnessActionButton" th:title="#{main.pages.lg.plugins.editor.sharpness}" class="slider-wrapper position-relative">
-                <span id="sharpnessTick" class="slider-tick left-tick">&bull;</span>
-                <input type="range" class="form-range" id="editorSharpnessAction" min="1" max="9">
-            </div>
+<div id="editorContainer" class="editorbox container-fluid" style="height: 101vh; background-color: #000000; overflow: hidden; z-index: 999999; display: none;">
+    <div class="row d-flex flex-column flex-md-row" style="min-height:100vh;">
+        <!-- MEDIA -->
+        <div id="editorMedia" class="col-12 col-md-10 d-flex justify-content-center align-items-center p-0"
+             style="position: relative; overflow: hidden; min-height: 100vh; display: none;">
+            <img id="editorImage" alt="preview" style="display:block; max-width:100%; max-height:100%; object-fit:contain;" />
         </div>
+
+        <!-- TOOLS -->
+        <div id="editorToolContainer" class="col-12 col-md-2 p-3" style="display: none;">
+            <!-- TITLE stays outside the carousel track so it is NOT a slide -->
+            <div id="editorTitle" class="row" style="display:block;">
+                <span style="font-size: 3rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span>
+            </div>
+
+            <!-- track holds the tool-group slides (title NOT included) -->
+            <div class="tool-carousel-wrapper">
+                <div class="tool-carousel-track" tabindex="0">
+                    <div id="state" class="row tool-group" data-tool-group="state">
+                        <div class="col-3" type="button" id="editorResetActionButton" th:title="#{main.pages.map.modal.reset}">
+                            <span class="bi-skip-backward" id="editorResetAction" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></span>
+                        </div>
+                        <div class="col-3" type="button" id="editorRestoreActionButton" th:title="#{main.pages.map.modal.restore}">
+                            <span class="bi-clock-history" id="editorRestoreAction" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></span>
+                        </div>
+                        <div class="col-3" type="button" id="editorSaveActionButton" th:title="#{main.modal.save}">
+                            <span class="bi-floppy" id="editorSaveAction" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></span>
+                        </div>
+                        <div class="col-3" type="button" id="editorCloseActionButton" th:title="#{main.modal.cancel}">
+                            <span class="bi-x" id="editorCloseAction" style="font-size:3rem; color:#FFFFFF;"></span>
+                        </div>
+                        <div class="spinner-border col-3" id="editorSpinner" role="status" style="display:none;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div id="orientation" class="row mb-4 tool-group" data-tool-group="orientation">
+                        <div class="col-3" type="button" id="editorRotateRightActionButton" th:title="#{main.pages.lg.plugins.editor.rotateright}">
+                            <span class="bi-arrow-clockwise" id="editorRotateRightAction" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></span>
+                        </div>
+                        <div class="col-3" type="button" id="editorRotateLeftActionButton" th:title="#{main.pages.lg.plugins.editor.rotateleft}">
+                            <span class="bi-arrow-counterclockwise" id="editorRotateLeftAction" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></span>
+                        </div>
+                        <div class="col-3" type="button" id="editorFlipVerticalActionButton" th:title="#{main.pages.lg.plugins.editor.flipy}">
+                            <span class="bi-symmetry-vertical" id="editorFlipVerticalAction" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></span>
+                        </div>
+                        <div class="col-3" type="button" id="editorFlipHorizontalActionButton" th:title="#{main.pages.lg.plugins.editor.flipx}">
+                            <span class="bi-symmetry-horizontal" id="editorFlipHorizontalAction" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column tool-group" data-tool-group="brightness" id="brightness-group">
+                        <div class="d-flex align-items-center mb-2 w-100">
+                            <div type="button" class="bi-brightness-high me-2" id="editorBrightnessIcon" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></div>
+                            <div id="editorBrightnessActionButton" th:title="#{main.pages.lg.plugins.editor.brightness}" class="slider-wrapper position-relative flex-fill">
+                                <span id="brightnessTick" class="slider-tick center-tick">&bull;</span>
+                                <input type="range" class="form-range" id="editorBrightnessAction" min="-9" max="9" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column tool-group" data-tool-group="contrast" id="contrast-group">
+                        <div class="d-flex align-items-center mb-2 w-100">
+                            <div type="button" class="bi-circle-half me-2" id="editorContrastIcon" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></div>
+                            <div id="editorContrastActionButton" th:title="#{main.pages.lg.plugins.editor.contrast}" class="slider-wrapper position-relative flex-fill">
+                                <span id="contrastTick" class="slider-tick center-tick">&bull;</span>
+                                <input type="range" class="form-range" id="editorContrastAction" min="-9" max="9" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column tool-group" data-tool-group="saturation" id="saturation-group">
+                        <div class="d-flex align-items-center mb-2 w-100">
+                            <div type="button" class="bi-droplet-half me-2" id="editorSaturationIcon" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></div>
+                            <div id="editorSaturationActionButton" th:title="#{main.pages.lg.plugins.editor.saturation}" class="slider-wrapper position-relative flex-fill">
+                                <span id="saturationTick" class="slider-tick center-tick">&bull;</span>
+                                <input type="range" class="form-range" id="editorSaturationAction" min="-9" max="9" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column tool-group" data-tool-group="sharpness" id="sharpness-group">
+                        <div class="d-flex align-items-center mb-2 w-100">
+                            <div type="button" class="bi-gem me-2" id="editorSharpnessIcon" style="font-size: 2rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;"></div>
+                            <div id="editorSharpnessActionButton" th:title="#{main.pages.lg.plugins.editor.sharpness}" class="slider-wrapper position-relative flex-fill">
+                                <span id="sharpnessTick" class="slider-tick left-tick">&bull;</span>
+                                <input type="range" class="form-range" id="editorSharpnessAction" min="1" max="9" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div> <!-- /.tool-carousel-track -->
+            </div>   <!-- /.tool-carousel-wrapper -->
+
+            <!-- Prev/Next controls for mobile carousel -->
+            <button type="button" class="mobile-carousel-prev btn btn-link" aria-label="Previous" style="display:none;"><span class="carousel-control-prev-icon" aria-hidden="true"></span></button>
+            <button type="button" class="mobile-carousel-next btn btn-link" aria-label="Next" style="display:none;"><span class="carousel-control-next-icon" aria-hidden="true"></span></button>
+        </div>
+
     </div>
 </div>
