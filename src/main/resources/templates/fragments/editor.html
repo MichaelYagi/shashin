@@ -337,6 +337,60 @@
             padding-bottom: 0 !important;
         }
     }
+
+    @media (max-width: 767.98px) {
+        /* Prevent any vertical scrolling on the carousel track while keeping horizontal scroll */
+        .tool-carousel-track {
+            overflow-x: auto;
+            overflow-y: hidden !important;
+            -ms-overflow-style: none; /* IE/Edge hide scrollbar */
+            scrollbar-width: none;    /* Firefox hide scrollbar */
+        }
+
+        /* Hide WebKit scrollbar visually */
+        .tool-carousel-track::-webkit-scrollbar {
+            display: none;
+            height: 0;
+            width: 0;
+        }
+
+        /* Allow flex children to shrink so they don't force vertical overflow */
+        .tool-group {
+            min-height: 0; /* allow the slide to shrink inside the track */
+            box-sizing: border-box;
+            overflow: hidden; /* ensure internal content can't create vertical scroll */
+        }
+
+        /* Defensive: ensure rows inside slides don't push slide taller */
+        .tool-group .row {
+            max-height: 100%;
+            overflow: hidden;
+        }
+    }
+
+    @media (max-width: 767.98px) and (orientation: portrait) {
+        /* Move the slider wrapper down a bit so the visible track aligns lower.
+           Increase value to move further down, decrease to move up. */
+        .tool-group .slider-wrapper {
+            transform: translateY(6px) !important;
+        }
+
+        /* Ensure the input track and thumb remain centered inside the wrapper */
+        .tool-group .slider-wrapper input[type="range"] {
+            /* keep track vertically centered */
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+
+        /* Make sure ticks remain vertically centered relative to the wrapper */
+        .tool-group .slider-wrapper .slider-tick,
+        .tool-group .slider-wrapper .center-tick,
+        .tool-group .slider-wrapper .left-tick {
+            top: 50%;
+            transform: translateY(-50%) !important;
+        }
+    }
 </style>
 
 <!--Editor Container-->
