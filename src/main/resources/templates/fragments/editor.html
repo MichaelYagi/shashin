@@ -372,7 +372,7 @@
         /* Move the slider wrapper down a bit so the visible track aligns lower.
            Increase value to move further down, decrease to move up. */
         .tool-group .slider-wrapper {
-            transform: translateY(6px) !important;
+            transform: translateY(10px) !important;
         }
 
         /* Ensure the input track and thumb remain centered inside the wrapper */
@@ -387,8 +387,39 @@
         .tool-group .slider-wrapper .slider-tick,
         .tool-group .slider-wrapper .center-tick,
         .tool-group .slider-wrapper .left-tick {
-            top: 50%;
+            top: 35%;
             transform: translateY(-50%) !important;
+        }
+
+        .tool-carousel-track .tool-group {
+            transform: translateY(6px) !important;
+            /* preserve smooth rendering */
+            will-change: transform;
+        }
+    }
+
+    @media (max-width: 767.98px) and (orientation: portrait) {
+        /* Nudge only the icon/button elements that sit beside sliders.
+           This targets the exact pattern used in your markup:
+           .tool-group > .d-flex.align-items-center.mb-2.w-100 > [type="button"].bi-*
+           It will not move other icons elsewhere. Adjust --editor-icon-nudge to tweak. */
+
+        :root { --editor-icon-nudge: 4px; }
+
+        .tool-group > .d-flex.align-items-center.mb-2.w-100 > [class*="bi-"][type="button"] {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transform: translateY(var(--editor-icon-nudge)) !important;
+            will-change: transform;
+            /* keep original sizing */
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Defensive: if icons are placed without type="button" attribute, include this fallback */
+        .tool-group > .d-flex.align-items-center.mb-2.w-100 > [class*="bi-"] {
+            transform: translateY(var(--editor-icon-nudge)) !important;
         }
     }
 </style>
