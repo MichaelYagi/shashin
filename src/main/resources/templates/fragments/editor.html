@@ -11,6 +11,9 @@
 
         /* Small vertical nudge for fine-tuning slider vertical alignment (negative = move up) */
         --editor-slider-nudge: 4px;
+
+        /* Negative = move the blue thumb up; positive = move it down. Tweak as needed. */
+        --editor-thumb-nudge: -5px;
     }
 
     /* ---------------------------
@@ -35,6 +38,8 @@
         background: rgba(255,255,255,0.06);
         border-radius: 6px;
     }
+
+    /* Slider ticks (shared) */
     .slider-tick {
         position: absolute;
         top: 50%;
@@ -46,10 +51,11 @@
         user-select: none;
     }
     .slider-tick.center-tick { left: 50%; transform: translate(-50%, -70%); }
-    .slider-tick.left-tick { left: 0; transform: translateY(-70%); }
+    .slider-tick.left-tick   { left: 0;    transform: translateY(-70%); }
 
-    /* State row columns */
-    #state .col {
+    /* State row columns and close button */
+    #state .col,
+    #editorCloseActionButton {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -57,13 +63,6 @@
     }
     #state .col span { line-height: 1; }
 
-    /* Close button */
-    #editorCloseActionButton {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-    }
     #editorCloseAction {
         font-size: 3rem;
         line-height: 1;
@@ -100,8 +99,8 @@
     }
 
     /* ---------------------------
-       Desktop / landscape
-    --------------------------- */
+       Desktop / landscape (consolidated)
+       --------------------------- */
     @media (min-width: 768px) {
         #editorToolContainer {
             position: static;
@@ -109,30 +108,26 @@
             height: 100vh;
             overflow: auto;
         }
-        .mobile-carousel-prev, .mobile-carousel-next { display: none !important; }
-    }
-
-    :root {
-        /* Negative = move the blue thumb up; positive = move it down. Tweak as needed. */
-        --editor-thumb-nudge: -5px;
+        .mobile-carousel-prev,
+        .mobile-carousel-next {
+            display: none !important;
+        }
     }
 
     /* ---------------------------
        Mobile / portrait overrides
-    --------------------------- */
+       (kept as a single block to preserve order)
+       --------------------------- */
     @media (max-width: 767.98px) and (orientation: portrait) {
-        /* Reverted: keep container anchored above safe-area but moved slightly up so
-           on-screen taskbar won't block it. This is an in-place change (no external JS).
-           Increase the "+12px" value to move further up; reduce to move down. */
+        /* Keep container anchored above safe-area and nudged up so on-screen taskbar won't block it.
+           Increase the "+40px" value to move further up; reduce to move down. */
         #editorToolContainer {
             position: fixed;
             left: 0;
             right: 0;
-            /* baseline: push up by *px above the safe-area inset (was bottom: 0 previously) */
             bottom: calc(env(safe-area-inset-bottom, 0px) + 40px);
             height: var(--editor-carousel-height);
             background: linear-gradient(180deg, rgba(0,0,0,0.45), var(--editor-carousel-bg));
-            /* padding-bottom keeps the internal spacing and accounts for safe-area inset */
             padding: 6px 6px calc(env(safe-area-inset-bottom, 0px) + 12px);
             z-index: 1000000;
             box-sizing: border-box;
@@ -305,20 +300,12 @@
         /* Hide any portrait title clone wrapper if present (we show original title) */
         #editorTitlePortraitWrapper { display: none !important; }
 
-        /* Very narrow screens: increase reserved gap and slightly widen wrapper to keep usable */
-        @media (max-width: 360px) {
-            :root { --editor-carousel-side-gap: 18px; }
-            .tool-group .slider-wrapper { width: 62%; }
-        }
-
-        /* Apply only on mobile portrait so desktop remains unchanged */
+        /* Apply only on mobile portrait so desktop remains unchanged:
+           nudge the thumb vertically without touching the track */
         .tool-group .slider-wrapper input[type="range"]::-webkit-slider-thumb {
             position: relative;
-            /* nudge the thumb vertically without touching the track */
             transform: translateY(var(--editor-thumb-nudge));
-            /* keep existing visual styling */
         }
-
         .tool-group .slider-wrapper input[type="range"]::-moz-range-thumb {
             position: relative;
             transform: translateY(var(--editor-thumb-nudge));
@@ -329,7 +316,6 @@
             margin-bottom: 0 !important;
             padding-bottom: 0 !important;
         }
-
         /* Defensive: if mb-4 is applied via a nested selector, ensure no descendant margin remains */
         #orientation.mb-4 > .mb-4,
         #orientation.mb-4 .mb-4 {
@@ -344,7 +330,6 @@
             -ms-overflow-style: none; /* IE/Edge hide scrollbar */
             scrollbar-width: none;    /* Firefox hide scrollbar */
         }
-
         /* Hide WebKit scrollbar visually */
         .tool-carousel-track::-webkit-scrollbar {
             display: none;
@@ -358,7 +343,6 @@
             box-sizing: border-box;
             overflow: hidden; /* ensure internal content can't create vertical scroll */
         }
-
         /* Defensive: ensure rows inside slides don't push slide taller */
         .tool-group .row {
             max-height: 100%;
@@ -373,7 +357,6 @@
 
         /* Ensure the input track and thumb remain centered inside the wrapper */
         .tool-group .slider-wrapper input[type="range"] {
-            /* keep track vertically centered */
             margin: 0;
             padding: 0;
             display: block;
@@ -397,7 +380,6 @@
            This targets the exact pattern used in your markup:
            .tool-group > .d-flex.align-items-center.mb-2.w-100 > [type="button"].bi-*
            It will not move other icons elsewhere. Adjust --editor-icon-nudge to tweak. */
-
         :root { --editor-icon-nudge: 4px; }
 
         .tool-group > .d-flex.align-items-center.mb-2.w-100 > [class*="bi-"][type="button"] {
@@ -433,6 +415,12 @@
         .tool-carousel-track #editorTitle {
             display: none !important;
         }
+    }
+
+    /* Very narrow screens: increase reserved gap and slightly widen wrapper to keep usable */
+    @media (max-width: 360px) {
+        :root { --editor-carousel-side-gap: 18px; }
+        .tool-group .slider-wrapper { width: 62%; }
     }
 </style>
 
