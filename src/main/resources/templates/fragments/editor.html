@@ -322,6 +322,21 @@
             transform: translateY(var(--editor-thumb-nudge));
         }
     }
+
+    @media (max-width: 767.98px) {
+        /* Target the exact element (row with id="orientation" that has mb-4) */
+        #orientation.mb-4 {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        /* Defensive: if mb-4 is applied via a nested selector, ensure no descendant margin remains */
+        #orientation.mb-4 > .mb-4,
+        #orientation.mb-4 .mb-4 {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+    }
 </style>
 
 <!--Editor Container-->
