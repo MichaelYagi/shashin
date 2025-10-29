@@ -3680,7 +3680,6 @@ class TimelineController: BaseController() {
                     // Order important
                     if (flipX) {
                         metadata.setFlipHorizontally(true)
-//                        editedImage = ImageProcessing.flipHorizontally(editedImage)
                         manualRestore = false
                     } else {
                         metadata.setFlipHorizontally(false)
@@ -3689,27 +3688,26 @@ class TimelineController: BaseController() {
 
                     if (flipY) {
                         metadata.setFlipVertically(true)
-//                        editedImage = ImageProcessing.flipVertically(editedImage)
                         manualRestore = false
                     } else {
                         metadata.setFlipVertically(false)
                     }
 
-                    if (metadata.getBrightness() == null || brightness in 0.9..1.9) {
+                    if (metadata.getBrightness() == null || brightness in 0.1..1.9) {
                         metadata.setBrightness(brightness.toString())
                         if (brightness != 1.0) {
                             manualRestore = false
                         }
                     }
 
-                    if (metadata.getContrast() == null || contrast in 0.9..1.9) {
+                    if (metadata.getContrast() == null || contrast in 0.1..1.9) {
                         metadata.setContrast(contrast.toString())
                         if (contrast != 1.0) {
                             manualRestore = false
                         }
                     }
 
-                    if (metadata.getSaturation() == null || saturation in 0.9..1.9) {
+                    if (metadata.getSaturation() == null || saturation in 0.1..1.9) {
                         metadata.setSaturation(saturation.toString())
                         if (saturation != 1.0) {
                             manualRestore = false
@@ -3722,24 +3720,6 @@ class TimelineController: BaseController() {
                             manualRestore = false
                         }
                     }
-
-//                    if (sharpness != 1.0) {
-//                        editedImage = ImageProcessing.adjustSharpness(editedImage, sharpness)
-//                    }
-//
-//                    if (brightness != 1.0) {
-//                        editedImage = ImageProcessing.adjustBrightness(editedImage, brightness)
-//                    }
-//
-//                    if (contrast != 1.0) {
-//                        editedImage = ImageProcessing.adjustContrast(editedImage, contrast)
-//                    }
-//
-//                    if (saturation != 1.0) {
-//                        editedImage = ImageProcessing.adjustSaturation(editedImage, saturation.toFloat())
-//                    }
-//
-//                    editedImage = ImageProcessing.rotateImage(editedImage, rotation.toDouble())
 
                     editedImage = ImageProcessing.transformAndAdjust(
                         editedImage,
@@ -3804,7 +3784,6 @@ class TimelineController: BaseController() {
                 )
                 metadata.setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadata)
-
                 resp["metadata"] = metadata
                 resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status

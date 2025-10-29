@@ -2,58 +2,147 @@
 <html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="editor()">
 
+<style>
+    .slider-wrapper {
+        position: relative;
+        width: 100%;
+        height: 2.5rem;
+    }
+
+    .slider-wrapper input[type="range"] {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        transform: translateY(-50%);
+        z-index: 1;
+    }
+
+    .slider-tick {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        color: gray;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .center-tick {
+        left: 50%;
+        transform: translate(-50%, -53%);
+    }
+
+    .left-tick {
+        left: 0;
+        transform: translateY(-53%);
+    }
+
+    #state .col {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    #state .col span {
+        line-height: 1;
+    }
+
+    #editorCloseActionButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    #editorCloseAction {
+        font-size: 3rem;
+        line-height: 1;
+        color:#FFFFFF;
+        text-shadow:#000000 2px 2px 5px;
+    }
+
+    #editorSpinner {
+        margin: 10px 0 8px 10px;
+        padding-bottom: 5px;
+        color:#FFFFFF;
+        text-shadow:#000000 2px 2px 5px;
+        display: none;
+    }
+</style>
+
 <!--Editor Container-->
-<div id="editorContainer" class="editorbox" style="width: 100%; height: 100%;background-color: #000000;overflow: hidden;z-index: 999999;display: none;">
-    <div id="editorBlock" style="display: none;"></div>
-    <div id="editorToolContainer" style="display: none;">
-        <span id="editorTitle"><span style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span></span>
-        <span type="button" id="editorSaveActionButton" th:title="#{main.modal.save}"><span class="bi-floppy" id="editorSaveAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
-        <span id="editorBrightnessActionButton" th:title="#{main.pages.lg.plugins.editor.brightness}">
-            <span type="button" class="bi-brightness-high" id="editorBrightnessIcon" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;margin-left: 114px;"></span>
-            <br>
-            <div class="range-ticks d-flex justify-content-between">
-                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="brightnessTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
-                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+<div id="editorContainer" class="editorbox container-fluid" style="height: 101vh;background-color: #000000;overflow: hidden;z-index: 999999;display: none;">
+    <div class="row">
+        <!-- image-->
+        <div id="editorMedia" class="col-10 d-flex justify-content-center align-items-center" style="position: relative; overflow: hidden; height: 101vh; display: none;"></div>
+        <div id="editorToolContainer" class="col-2" style="display: none;">
+            <div id="editorTitle" class="row">
+                <span style="font-size: 3rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span>
             </div>
-            <input type="range" class="form-range" id="editorBrightnessAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
-        </span>
-        <span id="editorContrastActionButton" th:title="#{main.pages.lg.plugins.editor.contrast}">
-            <span type="button" class="bi-circle-half" id="editorContrastIcon" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;margin-left: 114px;"></span>
-            <br>
-            <div class="range-ticks d-flex justify-content-between">
-                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="contrastTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
-                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+            <!--Row: reset, restore, save, close, spinner-->
+            <div id="state" class="row">
+                <div class="col-3" type="button" id="editorResetActionButton" th:title="#{main.pages.map.modal.reset}">
+                    <span class="bi-skip-backward" id="editorResetAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
+                </div>
+                <div class="col-3" type="button" id="editorRestoreActionButton" th:title="#{main.pages.map.modal.restore}">
+                    <span class="bi-clock-history" id="editorRestoreAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
+                </div>
+                <div class="col-3" type="button" id="editorSaveActionButton" th:title="#{main.modal.save}">
+                    <span class="bi-floppy" id="editorSaveAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
+                </div>
+                <div class="col-3" type="button" id="editorCloseActionButton" th:title="#{main.modal.cancel}">
+                    <span class="bi-x" id="editorCloseAction"></span>
+                </div>
+                <div class="spinner-border col-3" id="editorSpinner" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
-            <input type="range" class="form-range" id="editorContrastAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
-        </span>
-        <span id="editorSaturationActionButton" th:title="#{main.pages.lg.plugins.editor.saturation}">
-            <span type="button" class="bi-droplet-half" id="editorSaturationIcon" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;margin-left: 114px;"></span>
-            <br>
-            <div class="range-ticks d-flex justify-content-between">
-                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span id="saturationTick" style="margin-left:7px; color: gray;z-index: 1">&bull;</span>
-                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+
+            <!--Row: rotate right, left, flip vertically, horizontally, restore, save, close-->
+            <div id="orientation" class="row mb-4">
+                <div class="col-3" type="button" id="editorRotateRightActionButton" th:title="#{main.pages.lg.plugins.editor.rotateright}">
+                    <span class="bi-arrow-clockwise" id="editorRotateRightAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
+                </div>
+                <div class="col-3" type="button" id="editorRotateLeftActionButton" th:title="#{main.pages.lg.plugins.editor.rotateleft}">
+                    <span class="bi-arrow-counterclockwise" id="editorRotateLeftAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
+                </div>
+                <div class="col-3" type="button" id="editorFlipVerticalActionButton" th:title="#{main.pages.lg.plugins.editor.flipy}">
+                    <span class="bi-symmetry-vertical" id="editorFlipVerticalAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
+                </div>
+                <div class="col-3" type="button" id="editorFlipHorizontalActionButton" th:title="#{main.pages.lg.plugins.editor.flipx}">
+                    <span class="bi-symmetry-horizontal" id="editorFlipHorizontalAction" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span>
+                </div>
             </div>
-            <input type="range" class="form-range" id="editorSaturationAction" min="-9" max="9" style="width: 260px; padding-bottom: 30px;">
-        </span>
-        <span id="editorSharpnessActionButton" th:title="#{main.pages.lg.plugins.editor.sharpness}">
-            <span type="button" class="bi-gem" id="editorSharpnessIcon" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;margin-left: 114px;"></span>
-            <br>
-            <div class="range-ticks d-flex justify-content-between">
-                <span id="sharpnessTick" style="margin-left:3px; color: gray;z-index: 1">&bull;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
-                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+
+            <!--Row: brightness-->
+            <div type="button" class="bi-brightness-high" id="editorBrightnessIcon" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></div>
+            <div id="editorBrightnessActionButton" th:title="#{main.pages.lg.plugins.editor.brightness}" class="slider-wrapper position-relative">
+                <span id="brightnessTick" class="slider-tick center-tick">&bull;</span>
+                <input type="range" class="form-range" id="editorBrightnessAction" min="-9" max="9">
             </div>
-            <input type="range" class="form-range" id="editorSharpnessAction" min="1" max="9" style="width: 260px; padding-bottom: 30px;">
-        </span>
-        <span type="button" id="editorRestoreActionButton" th:title="#{main.pages.map.modal.restore}"><span class="bi-clock-history" id="editorRestoreAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
-        <span type="button" id="editorResetActionButton" th:title="#{main.pages.map.modal.reset}"><span class="bi-skip-backward" id="editorResetAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
-        <span type="button" id="editorRotateRightActionButton" th:title="#{main.pages.lg.plugins.editor.rotateright}"><span class="bi-arrow-clockwise" id="editorRotateRightAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
-        <span type="button" id="editorRotateLeftActionButton" th:title="#{main.pages.lg.plugins.editor.rotateleft}"><span class="bi-arrow-counterclockwise" id="editorRotateLeftAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
-        <span type="button" id="editorFlipHorizontalActionButton" th:title="#{main.pages.lg.plugins.editor.flipx}"><span class="bi-symmetry-horizontal" id="editorFlipHorizontalAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
-        <span type="button" id="editorFlipVerticalActionButton" th:title="#{main.pages.lg.plugins.editor.flipy}"><span class="bi-symmetry-vertical" id="editorFlipVerticalAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
-        <span type="button" id="editorCloseActionButton" th:title="#{main.modal.cancel}"><span class="bi-x" id="editorCloseAction" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></span></span>
-        <div class="spinner-border" id="editorSpinner" role="status" style="color:#FFFFFF;text-shadow:#000000 2px 2px 5px;display: none;">
-            <span class="visually-hidden">Loading...</span>
+
+            <!--Row: contrast-->
+            <div type="button" class="bi-circle-half" id="editorContrastIcon" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></div>
+            <div id="editorContrastActionButton" th:title="#{main.pages.lg.plugins.editor.contrast}" class="slider-wrapper position-relative">
+                <span id="contrastTick" class="slider-tick center-tick">&bull;</span>
+                <input type="range" class="form-range" id="editorContrastAction" min="-9" max="9">
+            </div>
+
+            <!--Row: saturation-->
+            <div type="button" class="bi-droplet-half" id="editorSaturationIcon" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></div>
+            <div id="editorSaturationActionButton" th:title="#{main.pages.lg.plugins.editor.saturation}" class="slider-wrapper position-relative">
+                <span id="saturationTick" class="slider-tick center-tick">&bull;</span>
+                <input type="range" class="form-range" id="editorSaturationAction" min="-9" max="9">
+            </div>
+
+            <!--Row: sharpness-->
+            <div type="button" class="bi-gem" id="editorSharpnessIcon" style="font-size: 2rem;color:#FFFFFF;text-shadow:#000000 2px 2px 5px;"></div>
+            <div id="editorSharpnessActionButton" th:title="#{main.pages.lg.plugins.editor.sharpness}" class="slider-wrapper position-relative">
+                <span id="sharpnessTick" class="slider-tick left-tick">&bull;</span>
+                <input type="range" class="form-range" id="editorSharpnessAction" min="1" max="9">
+            </div>
         </div>
     </div>
-    <span id="editorMedia" style="display: none;"></span>
 </div>
