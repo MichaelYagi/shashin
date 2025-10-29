@@ -30,7 +30,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let originalSharpness = (editMetadataObj.hasOwnProperty("sharpness") && editMetadataObj.sharpness !== null) ? editMetadataObj.sharpness : sharpness;
 
     // Loading spinner
-    styleTopControl("#editorSpinner", "2em", "35px", "right", "25px");
+    // styleTopControl("#editorSpinner", "2em", "35px", "right", "25px");
     $("#editorContainer").css("display", "block");
     $("#editorToolContainer").css("display", "block");
     $("#editorSpinner").css("display", "block");
@@ -44,6 +44,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // console.log("brightness:"+brightness);
     // console.log("contrast:"+contrast);
     // console.log("saturation:"+saturation);
+    // console.log("sharpness:"+sharpness);
 
     shashin.printMessageToConsole("--------------",{tag:"editor"});
     shashin.printMessageToConsole("initializeEditor after applying default transitions",{tag:"editor"});
@@ -68,125 +69,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
         return Math.abs(((rotationInput % 360) + 360) % 360);
     }
 
-    // Title
-    styleTopControl("#editorTitle", "2rem", "23px", "left", "50px");
-
-    // First row buttons
-    let sideValue = 8+20;
-    const firstRowButtons = [
-        { id: "#editorCloseActionButton", fontSize: "3rem", top: "10px" },
-        { id: "#editorSaveActionButton", fontSize: "2rem", top: "23px" },
-        { id: "#editorRestoreActionButton", fontSize: "2rem", top: "23px" },
-        { id: "#editorResetActionButton", fontSize: "2rem", top: "23px" }
-    ];
-    const firstRowMenuHeightWidth = applyStyles(firstRowButtons, sideValue, "right");
-    
-    // Second row buttons
-    sideValue = 13+20;
-    const secondRowButtons = [
-        { id: "#editorFlipHorizontalActionButton", fontSize: "2rem", top: "75px" },
-        { id: "#editorFlipVerticalActionButton", fontSize: "2rem", top: "75px" },
-        { id: "#editorRotateLeftActionButton", fontSize: "2rem", top: "76px" },
-        { id: "#editorRotateRightActionButton", fontSize: "2rem", top: "76px" }
-    ];
-    const secondRowMenuHeightWidth = applyStyles(secondRowButtons, sideValue, "right");
-
-    // Third row buttons
-    sideValue = 10+20;
-    let thirdRowButtons = [
-        { id: "#editorBrightnessActionButton", fontSize: "2rem", top: "130px" }
-    ];
-    let thirdRowMenuHeightWidth = applyStyles(thirdRowButtons, sideValue, "right");
-
-    // Fourth row buttons
-    sideValue = 10+20;
-    let fourthRowButtons = [
-        { id: "#editorContrastActionButton", fontSize: "2rem", top: "200px" }
-    ];
-    let fourthRowMenuHeightWidth = applyStyles(fourthRowButtons, sideValue, "right");
-
-    // Fifth row buttons
-    sideValue = 10+20;
-    let fifthRowButtons = [
-        { id: "#editorSaturationActionButton", fontSize: "2rem", top: "270px" }
-    ];
-    let fifthRowMenuHeightWidth = applyStyles(fifthRowButtons, sideValue, "right");
-
-    // Sixth row buttons
-    sideValue = 10+20;
-    let sixthRowButtons = [
-        { id: "#editorSharpnessActionButton", fontSize: "2rem", top: "340px" }
-    ];
-    let sixthRowMenuHeightWidth = applyStyles(sixthRowButtons, sideValue, "right");
-
-    const rowWidths = [
-        firstRowMenuHeightWidth[0],
-        secondRowMenuHeightWidth[0],
-        thirdRowMenuHeightWidth[0],
-        fourthRowMenuHeightWidth[0],
-        fifthRowMenuHeightWidth[0],
-        sixthRowMenuHeightWidth[0],
-    ];
-    let blockWidth = Math.max(...rowWidths);
-    let blockHeight = firstRowMenuHeightWidth[1] +
-        secondRowMenuHeightWidth[1] +
-        thirdRowMenuHeightWidth[1] +
-        fourthRowMenuHeightWidth[1] +
-        fifthRowMenuHeightWidth[1] +
-        sixthRowMenuHeightWidth[1]
-    ;
-
-    function styleTopControl(id, fontSize, top, side, sideValue) {
-        $(id).css({
-            "font-size": fontSize,
-            "color": "#FFFFFF",
-            "z-index": 99998,
-            "position": "absolute",
-            "top": top,
-            [side]: sideValue
-        });
-    }
-
-    function applyStyles(buttons, startValue, side) {
-        let offset = startValue;
-        let maxTop = 0;
-        for (const { id, fontSize, top } of buttons) {
-            styleTopControl(id, fontSize, top, side, offset + "px");
-            const topPixels = parseInt(top.replace("px", ""));
-            if (topPixels > maxTop) {
-                maxTop = topPixels;
-            }
-            if (id === "#editorBrightnessActionButton" || id === "#editorContrastActionButton" || id === "#editorSaturationActionButton") {
-                offset += 150;
-            } else {
-                offset += 75;
-            }
-        }
-
-        return [offset, maxTop];
-    }
-
-    $("#editorBlock").css({
-        "position": "absolute",
-        "height": (blockHeight - 589) + "px",
-        "width": (blockWidth + 5) + "px",
-        "right": "0"
-    });
-
     showModule();
     toggleResetSaveButtons();
-
     $("#editorContainer").css("display", "block");
-
-    // $(".centerFit").css({
-    //     "max-width": $(window).innerWidth() + 1,
-    //     "height": "auto",
-    //     "max-height": $(window).innerHeight() + 1,
-    //     "position": "absolute",
-    //     "top": "50%",
-    //     "left": "50%",
-    //     "transform": "translate(-50%, -50%)"
-    // });
 
     $("#editorContainer").off("click").on('click', function(event) {
         event.preventDefault();
@@ -295,32 +180,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
             hideModule();
         }
     });
-
-    function updateTransform(showTransition = true) {
-        const flipX = isFlippedHorizontally ? -1 : 1;
-        const flipY = isFlippedVertically ? -1 : 1;
-        const isEvenRotation = rotation % 180 === 0;
-
-        // Calculate target dimensions
-        const targetWidth = isEvenRotation ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1;
-        const targetHeight = isEvenRotation ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1;
-
-        // Apply transition styles
-        const style = {
-            transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
-            maxWidth: targetWidth,
-            maxHeight: targetHeight,
-            transition: showTransition ?
-                "transform 0.3s ease-in-out, max-width 0.3s ease-in-out, max-height 0.3s ease-in-out"
-                : "none"
-        };
-
-        // Apply styles with a frame delay to ensure smooth transition
-        window.requestAnimationFrame(() => {
-            $("#editShashinImage").css(style);
-        });
-
-    }
 
     // Slider icon
     $("#editorBrightnessIcon").off("click").on('click', function(event) {
@@ -562,6 +421,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                         toggleResetSaveButtons();
                         $("#editorSpinner").css("display", "none");
                         $("#editorCloseActionButton").css("display", "block");
+                        $("#editShashinImage").css("display", "block");
                     } else {
                         shashin.printMessageToConsole("Error rendering image", {tag: "editor"});
                         fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
@@ -974,33 +834,54 @@ function initializeEditor(editMetadataObj, lgIndex) {
         });
     }
 
+    function updateTransform(showTransition = true) {
+        const flipX = isFlippedHorizontally ? -1 : 1;
+        const flipY = isFlippedVertically ? -1 : 1;
+        const isEvenRotation = rotation % 180 === 0;
+
+        // Calculate target dimensions
+        const targetWidth = isEvenRotation ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1;
+        const targetHeight = isEvenRotation ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1;
+
+        // Apply transition styles
+        const style = {
+            transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
+            maxWidth: targetWidth,
+            maxHeight: targetHeight,
+            transition: showTransition ?
+                "transform 0.3s ease-in-out, max-width 0.3s ease-in-out, max-height 0.3s ease-in-out"
+                : "none"
+        };
+
+        // Apply styles with a frame delay to ensure smooth transition
+        requestAnimationFrame(() => {
+            $("#editShashinImage").css(style);
+        });
+    }
+
     function showModule() {
-        $("#editorMedia").html("<img class='centerFit' id='editShashinImage' src='/api/v1/image/" + editMetadataObj.id + "?v=" + uuidv4() + "'>");
+        $("#editorMedia").html("<img id='editShashinImage' src='/api/v1/image/" + editMetadataObj.id + "?v=" + uuidv4() + "' style='display: none;'>");
         $("#editShashinImage").on('load', function () {
-            const vv = window.visualViewport;
-            const vw = vv ? Math.round(vv.width) : Math.round(window.innerWidth);
-            const vh = vv ? Math.round(vv.height) : Math.round(window.innerHeight);
-            const vLeft = vv ? (vv.offsetLeft || 0) : 0;
-            const vTop = vv ? (vv.offsetTop || 0) : 0;
+            const flipX = isFlippedHorizontally ? -1 : 1;
+            const flipY = isFlippedVertically ? -1 : 1;
+            const isEvenRotation = rotation % 180 === 0;
 
-            // center in pixel coords relative to the visible viewport
-            const centerX = Math.round(vLeft + vw / 2);
-            const centerY = Math.round(vTop + vh / 2);
+            const targetWidth = isEvenRotation ? $(window).innerWidth() + 1 : $(window).innerHeight() + 1;
+            const targetHeight = isEvenRotation ? $(window).innerHeight() + 1 : $(window).innerWidth() + 1;
 
-            $(".centerFit").css({
-                "max-width": (vw + 1) + "px",
-                "height": "auto",
-                "max-height": (vh + 1) + "px",
-                "position": "fixed",
-                "left": centerX + "px",
-                "top": centerY + "px",
-                "transform": "translate(-50%, -50%)",
-                "pointer-events": "none"   // let clicks pass through to controls
+            $("#editShashinImage").css({
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${flipX}, ${flipY})`,
+                transformOrigin: "center center",
+                maxWidth: targetWidth,
+                maxHeight: targetHeight
             });
+
             $("#editorToolContainer").css("display", "block");
             $("#editorBlock").css("display", "block");
             $("#editorContainer").css("display", "block");
-            $("#editorMedia").css("display", "block");
         });
     }
 
