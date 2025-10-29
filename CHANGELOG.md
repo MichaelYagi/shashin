@@ -12,9 +12,13 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
+- Rebuilding editor UI using bootstrap
+
 ### Deprecated
 ### Removed
 ### Fixed
+- Backend range check for brightness, contrast, and saturation
+
 ### Security
 
 ## [2.15.0] - 2025-10-26
