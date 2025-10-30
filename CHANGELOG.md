@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Viewer and player
+
 ### Security
 
 ## [2.15.1] - 2025-10-29
