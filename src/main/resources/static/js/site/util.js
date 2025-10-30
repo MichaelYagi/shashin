@@ -1300,7 +1300,7 @@ class Util {
                     }
 
                     if (shashin) {
-                        shashin.closeToastMessages({tags:["subhtml"]});
+                        shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml"]});
                     }
 
                     shashin.lg = null;

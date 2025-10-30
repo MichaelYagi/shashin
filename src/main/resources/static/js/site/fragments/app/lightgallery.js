@@ -85,7 +85,7 @@
             });
 
             shashin.infiniteScrollGallery.addEventListener('lgAfterClose', _ => {
-                shashin.closeToastMessages({tags: ["subhtml"]});
+                shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml"]});
             });
 
             // Hide sidebar when going to next slide
@@ -101,14 +101,14 @@
                     const currentIndex = e.detail.index;
                     const galleryItem = galleryItems[currentIndex];
 
-                    if (galleryItem.hasOwnProperty("subHtml") && galleryItem.subHtml !== "") {
-                        let subhtml = galleryItem.subHtml;
-                        shashin.showToastMessage(null, subhtml, {
-                            tag: "subhtml",
-                            autohide: false,
-                            closeButton: false
-                        });
-                    }
+                    // if (galleryItem.hasOwnProperty("subHtml") && galleryItem.subHtml !== "") {
+                    //     let subhtml = galleryItem.subHtml;
+                    //     shashin.showToastMessage(null, subhtml, {
+                    //         tag: "shashinSubhtml",
+                    //         autohide: false,
+                    //         closeButton: false
+                    //     });
+                    // }
 
                     if (galleryItem.hasOwnProperty("src")) {
                         shashin.lg.galleryItems[currentIndex].src = shashin.lg.galleryItems[currentIndex].src+"?v="+uuidv4();
