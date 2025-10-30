@@ -93,18 +93,18 @@
         });
 
         function setDescription() {
+            clearTimeout(lgSubHtmlTimeout);
+            lgSubHtmlTimeout = setTimeout(function () {
+                shashin.closeToastMessages({tag: "viewer"});
+            }, 7000);
+
             if (description !== "") {
                 shashin.showToastMessage(null, description, {
-                    tag: "subhtml",
+                    tag: "viewer",
                     autohide: false,
                     closeButton: false
                 });
             }
-
-            clearTimeout(lgSubHtmlTimeout);
-            lgSubHtmlTimeout = setTimeout(function () {
-                shashin.closeToastMessages({tags: ["subhtml"]});
-            }, 7000);
         }
 
         const photoImageEl = $("#photoImage");
