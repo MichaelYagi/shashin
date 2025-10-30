@@ -53,7 +53,8 @@
         error: 0,
         info: 1,
         log: 2,
-        warn: 3
+        warn: 3,
+        trace: 4
     });
     shashin.uglified = false;
 }( window.shashin = window.shashin || {}, jQuery ));

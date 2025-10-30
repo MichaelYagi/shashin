@@ -150,6 +150,8 @@
                         log = "console.info: " + msg;
                     } else if (consoleType === shashin.consoleTypes.warn && $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1) {
                         log = "console.warn: " + msg;
+                    } else if (consoleType === shashin.consoleTypes.trace && $.inArray(shashin.consoleTypes.trace, shashin.consoleFilterTypes) !== -1) {
+                        log = "console.trace: " + msg;
                     }
 
                     if (log.length > 0) {
