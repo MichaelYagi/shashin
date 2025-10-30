@@ -4,6 +4,10 @@
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <th:block th:if="${agentName != 'Safari'}">
 <style>
+    .cursor-wait, .cursor-wait * {
+        cursor: wait !important;
+    }
+
     #container {
         -webkit-overflow-scrolling: touch;
         overflow-y: scroll;
@@ -21,8 +25,6 @@
     }
 </style>
 </th:block>
-
-<div id="blocker"></div>
 
 <body class="thumb d-flex flex-column vh-100 overflow-hidden">
 
