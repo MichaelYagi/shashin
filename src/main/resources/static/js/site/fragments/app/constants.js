@@ -4,7 +4,7 @@
     shashin.openedInfoFromLG = false;
     shashin.showDebug = false;
     shashin.showTrace = false;
-    shashin.writeLog = false;
+    shashin.writeToLog = false;
     shashin.consoleFilterTypes = [];
     shashin.consoleTags = ["all"];
     shashin.map = null;
