@@ -81,7 +81,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
 
                 $("#mediaSrcContainer, #playPauseContainer, #prevSlideButton, #nextSlideButton, #closeActionButton, #shortcutActionButton, #infoActionButton, #screenActionButton, #downloadContainer").css("display", "block");
 
-                shashin.closeToastMessages({tags:["subhtml"]});
+                shashin.closeToastMessages();
             }
         });
     });

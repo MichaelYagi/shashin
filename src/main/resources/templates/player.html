@@ -100,12 +100,12 @@
         function setDescription() {
             clearTimeout(lgSubHtmlTimeout);
             lgSubHtmlTimeout = setTimeout(function () {
-                shashin.closeToastMessages({tag: "player"});
+                shashin.closeToastMessages({tag: "playerSubhtml"});
             }, 7000);
 
             if (description !== "") {
                 shashin.showToastMessage(null, description, {
-                    tag: "player",
+                    tag: "playerSubhtml",
                     autohide: false,
                     closeButton: false
                 });
