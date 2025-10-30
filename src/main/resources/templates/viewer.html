@@ -93,7 +93,6 @@
         });
 
         function setDescription() {
-            clearTimeout(lgSubHtmlTimeout);
             if (description !== "") {
                 shashin.showToastMessage(null, description, {
                     tag: "subhtml",
@@ -101,10 +100,10 @@
                     closeButton: false
                 });
             }
-            // $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+
+            clearTimeout(lgSubHtmlTimeout);
             lgSubHtmlTimeout = setTimeout(function () {
                 shashin.closeToastMessages({tags: ["subhtml"]});
-                // $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
             }, 7000);
         }
 
