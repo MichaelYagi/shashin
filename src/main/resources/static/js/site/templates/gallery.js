@@ -83,40 +83,43 @@ class GalleryTemplates {
         </script>        
     `}
 
-    static getTopRightOverlay({id, overlays, data}) { return `
-        <div class="thumbnail-tr" id="tntr${id}">
+    static getTopRightOverlay({id, overlays, data}) {
+        const icons = [];
 
-        ${($.inArray("isVideo", overlays) !== -1) ?
-            `
+        if ($.inArray("isVideo", overlays) !== -1) {
+            icons.push(`
             <span class="overlayIconBackground"><span id="duration${id}">${data.duration}</span>
                 <span id="video${id}" class="bi-camera-video overlayIcon" title="video"></span>
             </span>
-            <br>
-            ` : ''
-        } 
-        
-        ${($.inArray("isPan", overlays) !== -1) ?
-            `
+        `);
+        }
+
+        if ($.inArray("isPan", overlays) !== -1) {
+            icons.push(`
             <span id="panorama${id}" class="bi-arrows-expand-vertical overlayIcon overlayIconBackground" title="panorama"></span>
-            <br>
-            ` : ''
+        `);
         }
-        
-        ${($.inArray("isGif", overlays) !== -1) ?
-            `
+
+        if ($.inArray("isGif", overlays) !== -1) {
+            icons.push(`
             <span id="gif${id}" class="bi-layers overlayIcon overlayIconBackground" title="gif"></span>
-            <br>
-            ` : ''
+        `);
         }
-        
-        ${($.inArray("isTagged", overlays) !== -1) ?
-            `
+
+        if ($.inArray("isTagged", overlays) !== -1) {
+            icons.push(`
             <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>
-            ` : ''
+        `);
         }
-    
+
+        const iconHtml = icons.length > 0 ? `${icons.join('<br>\n')}<br>` : '';
+
+        return `
+        <div class="thumbnail-tr" id="tntr${id}">
+            ${iconHtml}
         </div>
-    `}
+    `;
+    }
 
     static getTopLeftOverlay({id, overlays, data}) { return `
         <div class="thumbnail-tl" id="tntl${id}">
@@ -126,73 +129,89 @@ class GalleryTemplates {
         </div>
     `}
 
-    static getBottomRightOverlay({id, overlays, data}) { return `
-        <div class="thumbnail-br" id="tnbr${id}">
-            ${($.inArray("isComments", overlays) !== -1) ?
-            `
-            
+    static getBottomRightOverlay({id, overlays, data}) {
+        const links = [];
+
+        if ($.inArray("isComments", overlays) !== -1) {
+            links.push(`
             <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment${id}" class="overlayCommentIconBackground overlayCommentText">
                 <span id="brcommentcount${id}">${data.albumPhotoCommentsMap.hasOwnProperty(id) ? data.albumPhotoCommentsMap[id].length : `0`}</span> 
-                <span id="bricon${id}" class="bi-chat-square position-relative overlayCommentIcon">
-                </span>
+                <span id="bricon${id}" class="bi-chat-square position-relative overlayCommentIcon"></span>
             </a>
-            ` : ''}
-            ${($.inArray("isFavorites", overlays) !== -1) ?
-            `
-            <br>
+        `);
+        }
+
+        if ($.inArray("isFavorites", overlays) !== -1) {
+            links.push(`
             <a href="#" id="favorite${id}" class="text-decoration-none">
                 <span class="overlayIconBackground">
                     <span id="briconcount${id}">${data.favoriteCount}</span>&nbsp;<span class="${data.favoriteIcon} overlayIcon" id="brfavoriteicon${id}"></span>
                 </span>
             </a>
-            ` : ''}
-        </div>
-    `}
+        `);
+        }
 
-    static getBottomLeftOverlay({metadata, overlays, data}) { return `
-        <div class="thumbnail-bl" id="tnbl${metadata.id}">
-            ${($.inArray("isBlOnClickFunction", overlays) !== -1) ?
-        `
-            <br>
+        const linkHtml = links.length > 0 ? `<br>${links.join('<br>\n')}` : '';
+
+        return `
+        <div class="thumbnail-br" id="tnbr${id}">
+            ${linkHtml}
+        </div>
+    `;
+    }
+
+    static getBottomLeftOverlay({metadata, overlays, data}) {
+        const links = [];
+
+        if ($.inArray("isBlOnClickFunction", overlays) !== -1) {
+            links.push(`
             <a href="#" id="${data.onClickIdPrefix}${metadata.id}">
                 <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;" title="${shashin.getTranslatedValue("main.gallery.album.cover")}"></span>
             </a>
-    
+
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
             $(document).ready(function () {
                 $("#${data.onClickIdPrefix}${metadata.id}").on("click", function (e) {
                     e.preventDefault();
                     ${data.blOnClickFunction}(e,"${metadata.id}");
                 });
-                });
+            });
             </script>
-            ` : ''}
-            
-            ${($.inArray("isOnClickIdPrefix", overlays) !== -1) ?
-        `
-            <br>
+        `);
+        }
+
+        if ($.inArray("isOnClickIdPrefix", overlays) !== -1) {
+            links.push(`
             <a href="#" data-bs-toggle="modal" data-bs-target="#${data.onClickIdPrefix}${metadata.id}">
                 <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
             </a>
-            ` : ''}
-            
-            ${($.inArray("isInfo", overlays) !== -1) ?
-        `
-            <br>
+        `);
+        }
+
+        if ($.inArray("isInfo", overlays) !== -1) {
+            links.push(`
             <a href="#" id="infoModalEdit${metadata.id}" tag="${metadata.id}">
                 <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;" title="${shashin.getTranslatedValue("main.gallery.album.cover")}"></span>
             </a>
-            ` : ''}
-            
-            ${($.inArray("isEditControls", overlays) !== -1) ?
-        `
-            <br>
+        `);
+        }
+
+        if ($.inArray("isEditControls", overlays) !== -1) {
+            links.push(`
             <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal" tag="${metadata.id}">
                 <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
-            ` : ''}
+        `);
+        }
+
+        const linkHtml = links.length > 0 ? `<br>${links.join('<br>\n')}` : '';
+
+        return `
+        <div class="thumbnail-bl" id="tnbl${metadata.id}">
+            ${linkHtml}
         </div>
-    `}
+    `;
+    }
 
     static getCenteredOverlay({id, overlays, data, uuid, isMobile}) { return `
         ${($.inArray("isVideo", overlays) !== -1) ?
