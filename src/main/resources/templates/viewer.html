@@ -111,6 +111,8 @@
 
         lightGallery(document.getElementById("photo"), {
             plugins: [lgZoom, lgFullscreen, lgRotate],
+            hideBarsDelay: 5000,
+            showBarsAfter: 5000,
             counter: false,
             swipeToClose: false,
             closeOnTap: false,
@@ -118,7 +120,6 @@
             allowMediaOverlap: true,
             fullScreen: true,
             download: true,
-            hideBarsDelay: 5000,
             rotate: true,
             rotateLeft: true,
             rotateRight: true,
