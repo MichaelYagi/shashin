@@ -90,8 +90,14 @@
 
         let lgSubHtmlTimeout = null;
 
+        setDescription();
+
         // Hide caption when showing lg gallery
         $("html").mousemove(function() {
+            setDescription();
+        });
+
+        function setDescription() {
             clearTimeout(lgSubHtmlTimeout);
             if (description !== "") {
                 shashin.showToastMessage(null, description, {
@@ -105,7 +111,7 @@
                 shashin.closeToastMessages({tags: ["subhtml"]});
                 // $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
             }, 7000);
-        });
+        }
 
         const photoImageEl = $("#photoImage");
 
