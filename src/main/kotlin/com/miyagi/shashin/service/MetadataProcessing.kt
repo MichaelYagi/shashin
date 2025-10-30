@@ -371,7 +371,7 @@ class MetadataProcessing() {
                                     "ISO set for " + file.name
                                 )
                             }
-                            "Compression Type" -> {
+                            "Compressor Name", "Compression Type" -> {
                                 this.metadataObj.setCompressionType(tag.description)
                                 logger.log(
                                     Level.INFO,
