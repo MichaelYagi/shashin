@@ -20,11 +20,11 @@
     };
 
     // Call in console
-    // eg: shashin.enableDebug({tags: all, consoleTypes:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
+    // eg: shashin.enableDebug({tags: all, consoleTypes:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeToLog:true})
     shashin.enableDebug = function (options) {
         this.showDebug = true;
         shashin.showTrace = false;
-        shashin.writeLog = false;
+        shashin.writeToLog = false;
         shashin.consoleFilterTypes = [];
 
         let showTrace = false;
@@ -35,7 +35,7 @@
         if (options === undefined || options === null) {
             showTrace = false;
             consoleTypes = [];
-            shashin.writeLog = false;
+            shashin.writeToLog = false;
             tags = ["all"];
         } else {
             if (options.hasOwnProperty("showTrace")) {
@@ -46,8 +46,8 @@
                 consoleTypes = options.consoleTypes;
             }
 
-            if (options.hasOwnProperty("writeLog")) {
-                shashin.writeLog = options.writeLog;
+            if (options.hasOwnProperty("writeToLog")) {
+                shashin.writeToLog = options.writeToLog;
             }
 
             if (options.hasOwnProperty("tags")) {
@@ -77,7 +77,7 @@
     shashin.disableDebug = function () {
         this.showDebug = false;
         shashin.showTrace = false;
-        shashin.writeLog = false;
+        shashin.writeToLog = false;
         shashin.consoleFilterTypes = [];
         shashin.consoleTags = ["all"];
 
@@ -137,7 +137,7 @@
                 console.log(getStackTrace().join('\n'));
             }
 
-            if (shashin.writeLog === true) {
+            if (shashin.writeToLog === true) {
                 let log = "";
                 if (msg.length > 0) {
                     if (shashin.consoleFilterTypes.length === 0) {
@@ -159,7 +159,7 @@
                         }
 
                         setTimeout(function () {
-                            let json = {consoleType: consoleType, log: log, tag: tag};
+                            let json = {consoleType: consoleType, log: log, tag: tags};
                             http.ajax("post", "/console/log", JSON.stringify(json)).then(function (data) {
                                 if (data.hasOwnProperty("status") && data.status === "fail" && data.hasOwnProperty("msg")) {
                                     console.error("Could not log console output");
