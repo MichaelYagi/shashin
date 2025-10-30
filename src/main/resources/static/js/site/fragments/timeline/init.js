@@ -72,7 +72,7 @@
         timelineSettings.disableScroll();
 
         Util.showSpinner(true);
-        $("#blocker").css({"display": "block", "cursor": "wait"});
+        $("#container").addClass("cursor-wait");
         $("#dLabel").addClass("disabled");
         $("#dLabel").attr("aria-disabled", "true");
         $("#dLabel").attr("tabindex", "-1");
@@ -160,7 +160,7 @@
 
             timelineSettings.enableScroll();
             Util.showSpinner(false);
-            $("#blocker").css({"display": "none", "cursor": "default"});
+            $("#container").removeClass("cursor-wait");
         } else if ($('.scrollspy').length > 0) {
             renderInitPage(mediaTypeFilter);
         } else {
@@ -456,7 +456,7 @@
             timelineSettings.scrollByN(2);
             timelineSettings.enableScroll();
             Util.showSpinner(false);
-            $("#blocker").css({"display": "none", "cursor": "default"});
+            $("#container").removeClass("cursor-wait");
 
             $("#dLabel").removeClass("disabled");
             $("#dLabel").removeAttr("aria-disabled");
