@@ -36,6 +36,45 @@ class Util {
         });
     }
 
+    static subHtmlObserver(toastTagName, description) {
+        // Check if lg toolbar is hidden
+        if (description !== null && description.trim() !== "") {
+            (function waitForLgOuter() {
+                const targets = document.querySelectorAll('.lg-outer');
+                if (targets.length === 0) {
+                    setTimeout(waitForLgOuter, 100); // Retry after 100ms
+                    return;
+                }
+
+                const tag = toastTagName;
+
+                const observer = new MutationObserver((mutationsList) => {
+                    for (const mutation of mutationsList) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            const el = mutation.target;
+                            if (el.classList.contains('lg-hide-items')) {
+                                shashin.closeToastMessages({tag: tag});
+                            } else if (description.trim() !== "") {
+                                shashin.showToastMessage(null, description, {
+                                    tag: tag,
+                                    autohide: false,
+                                    closeButton: false
+                                });
+                            }
+                        }
+                    }
+                });
+
+                targets.forEach((el) => {
+                    observer.observe(el, {
+                        attributes: true,
+                        attributeFilter: ['class'],
+                    });
+                });
+            })();
+        }
+    }
+
     static showSpinner(show = true) {
         if (show === true) {
             $("#mediaScanSpinner").css("display", "block");
