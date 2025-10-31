@@ -156,10 +156,8 @@
     };
 
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
-        // shashin.autoplayVideo = $("#autoplayVideoSwitch").is(':checked');
-
         const configs = {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, /*lgRotate,*/ lgCastMedia, lgShashinEditor],
+            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgCastMedia, lgShashinEditor],
             videojs: false,
             hideBarsDelay: 5000,
             showBarsAfter: 5000,
@@ -170,7 +168,6 @@
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,
-            // videoMaxSize: "7680-4320",
             speed: 0,
             preload: 0,
             autoplayFirstVideo: true,

@@ -11,7 +11,16 @@ class ShareAlbum {
         this.eol = false;
         this.lastDate = lastDate;
         this.locale = locale;
-        this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,dynamicEl:shashin.getInitMediaContent('.mediaLink')},'.mediaLink');
+
+        const mediaElement = '.mediaLink';
+
+        const lgConfig = {
+            dynamic:true,
+            dynamicEl:shashin.getInitMediaContent(mediaElement),
+            shashinEditor: false // No editing on share page
+        };
+
+        this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',lgConfig,mediaElement);
     }
 
     async init() {
