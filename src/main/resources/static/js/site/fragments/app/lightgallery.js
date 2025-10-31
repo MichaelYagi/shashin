@@ -57,9 +57,6 @@
     shashin.refreshAndActivateLgListener = function (mediaContentList) {
         if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
             shashin.getLightGallery().refresh(mediaContentList);
-            // shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function (e) {
-            //     shashin.jumpToLightGalleryIndex(e.detail.index);
-            // })
         }
     };
 
@@ -100,15 +97,6 @@
                     const galleryItems = shashin.lg.galleryItems;
                     const currentIndex = e.detail.index;
                     const galleryItem = galleryItems[currentIndex];
-
-                    // if (galleryItem.hasOwnProperty("subHtml") && galleryItem.subHtml !== "") {
-                    //     let subhtml = galleryItem.subHtml;
-                    //     shashin.showToastMessage(null, subhtml, {
-                    //         tag: "shashinSubhtml",
-                    //         autohide: false,
-                    //         closeButton: false
-                    //     });
-                    // }
 
                     if (galleryItem.hasOwnProperty("src")) {
                         shashin.lg.galleryItems[currentIndex].src = shashin.lg.galleryItems[currentIndex].src+"?v="+uuidv4();
