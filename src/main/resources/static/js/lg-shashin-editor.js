@@ -45,12 +45,14 @@
                 if (shashin &&
                     /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)
                 ) {
-                    if ($("#metadataId").val().length > 0 && $("#metadataId").val() === metadataId) {
-                        return metadataId;
-                    }
+                    if ($("#metadataId").length > 0) {
+                        if ($("#metadataId").val().length > 0 && $("#metadataId").val() === metadataId) {
+                            return metadataId;
+                        }
 
-                    if ($("#metadataId").val().length > 0) {
-                        return $("#metadataId").val();
+                        if ($("#metadataId").val().length > 0) {
+                            return $("#metadataId").val();
+                        }
                     }
 
                     return metadataId;
