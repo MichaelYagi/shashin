@@ -11,7 +11,7 @@ class ShareAlbum {
         this.eol = false;
         this.lastDate = lastDate;
         this.locale = locale;
-        this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
+        this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,dynamicEl:shashin.getInitMediaContent('.mediaLink')},'.mediaLink');
     }
 
     async init() {
@@ -23,11 +23,11 @@ class ShareAlbum {
 
     async loadNextPage() {
         if (this.albumId > 0 && this.rendering === false) {
-            // console.log(this.page)
             this.updateAlbum(this.albumId, this.page, this.activePage).then(function (additionalMediaContentList) {
-                // console.log(additionalMediaContentList)
-                this.page++;
-                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, "share");
+                if (additionalMediaContentList.length > 0) {
+                    this.page++;
+                    this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, "share");
+                }
             }.bind(this));
         }
 

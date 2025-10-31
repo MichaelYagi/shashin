@@ -3,6 +3,14 @@
         shashin.setLightGalleryElement(lgElement);
         shashin.setLightGallery(additionalLgConfigs);
 
+        let mediaContentList = shashin.getInitMediaContent(mediaElement);
+
+        shashin.initMediaContent(mediaContentList);
+
+        return mediaContentList;
+    };
+
+    shashin.getInitMediaContent = function(mediaElement) {
         let mediaContentList = [];
         $.each($(mediaElement), function() {
             const mediaContent = {};
@@ -28,8 +36,6 @@
             mediaContent.metadataId = $(this).attr("data-metadata-id");
             mediaContentList.push(mediaContent);
         });
-
-        shashin.initMediaContent(mediaContentList);
 
         return mediaContentList;
     };
@@ -108,14 +114,6 @@
 
                             if ($("#image"+metadataId).length > 0 && ($("#image"+metadataId).attr("src")).indexOf("?v=") < 0) {
                                 $("#image"+metadataId).attr("src", $("#image"+metadataId).attr("src")+"?v="+uuidv4());
-                            }
-
-                            const mediaLinkId = "#mediaLink" + metadataId;
-                            if ($(mediaLinkId).length > 0) {
-                                $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + Util.getMetadataLocalStorage());
-                                if (parseInt($("img.lg-object.lg-image").attr("data-index")) === parseInt(currentIndex)) {
-                                    $("img.lg-object.lg-image").attr("src", ($("img.lg-object.lg-image").attr("src") + "?v=" + Util.getMetadataLocalStorage()));
-                                }
                             }
                         }
                     }

@@ -39,19 +39,19 @@
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
+            <input id="albumId" type="hidden" th:value="${album.id}">
+            <input id="albumName" type="hidden" th:value="${album.name}">
+            <input id="shareLink" type="hidden" th:value="${shareLink}">
+
+            <th:block th:if="${pageParam == null}">
+                <div><a th:href="${'/share/' + shareLink + '/album/' + album.id}" class="ms-1" style="text-decoration:none;"><th:block th:text="#{main.view.default}"></th:block></a></div>
+            </th:block>
+            <th:block th:if="${pageParam != null}">
+                <div><a th:href="${'/share/' + shareLink + '/album/' + album.id + '/0'}" class="ms-1" style="text-decoration:none;"><th:block th:text="#{main.view.paged}"></th:block></a></div>
+            </th:block>
+
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
-                    <input id="albumId" type="hidden" th:value="${album.id}">
-                    <input id="albumName" type="hidden" th:value="${album.name}">
-                    <input id="shareLink" type="hidden" th:value="${shareLink}">
-
-                    <th:block th:if="${pageParam == null}">
-                        <div><a th:href="${'/share/' + shareLink + '/album/' + album.id}" class="ms-1" style="text-decoration:none;"><th:block th:text="#{main.view.default}"></th:block></a></div>
-                    </th:block>
-                    <th:block th:if="${pageParam != null}">
-                        <div><a th:href="${'/share/' + shareLink + '/album/' + album.id + '/0'}" class="ms-1" style="text-decoration:none;"><th:block th:text="#{main.view.paged}"></th:block></a></div>
-                    </th:block>
-
                     <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                         <th:block th:each="metadata, iterStat: ${albumMetadataList}">
 

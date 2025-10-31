@@ -17,8 +17,11 @@
         albumSettings.lastDate = lastDate;
         albumSettings.locale = locale;
 
+        const mediaElement = '.mediaLink';
+
         const lgConfig = {
             dynamic:true,
+            dynamicEl:shashin.getInitMediaContent(mediaElement),
             plugins:[]
         };
         if (typeof lgMetadataDetail !== "undefined") {
@@ -32,19 +35,25 @@
             lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
 
-        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', lgConfig, '.mediaLink');
+        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', lgConfig, mediaElement);
         $("#uploadToAlbumForm").attr("action", "/album/media/upload/batch/"+albumId);
 
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
-                // console.log(albumSettings.page)
                 albumSettings.getPagedAlbum(albumId, mediaTypeFilter, albumSettings.page, activePage).then(function (additionalMediaContentList) {
-                    // console.log(additionalMediaContentList)
-                    albumSettings.page++;
-                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList, "album");
+                    if (additionalMediaContentList.length > 0) {
+                        albumSettings.page++;
+                        mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList, "album");
 
-                    if (albumSettings.eol) {
-                        setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
+                        if (albumSettings.eol) {
+                            setTimeout(() => {
+                                Util.reinitLightGalleryInstance({
+                                    timeoutValue: 0,
+                                    mediaContentList: additionalMediaContentList,
+                                    refreshContent: true
+                                });
+                            }, 0);
+                        }
                     }
                 });
             }

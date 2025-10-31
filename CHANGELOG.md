@@ -16,6 +16,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 - Viewer and player
+- LightGallery integration
+- Metadata look up permission
 
 ### Security
 

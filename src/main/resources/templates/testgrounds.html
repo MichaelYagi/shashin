@@ -76,55 +76,69 @@
 
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        let lgEl = document.getElementById("infinite-scroll-gallery");
-        const configs = {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgCastMedia, lgShashinEditor],
-            videojs: false,
-            hideBarsDelay: 5000,
-            showBarsAfter: 5000,
-            allowMediaOverlap: true,
-            counter: false,
-            castMedia: true,
-            shashinEditor: true,
-            fullScreen: true,
-            download: true,
-            zoomFromOrigin: true,
-            speed: 0,
-            preload: 0,
-            autoplayFirstVideo: true,
-            autoplayVideoOnSlide: true,
-            gotoNextSlideOnVideoEnd: false,
-            rotate: true,
-            rotateLeft: true,
-            rotateRight: true,
-            flipHorizontal: true,
-            flipVertical: false,
-            licenseKey: Util.lgApiKey()
-        };
-        const lg = lightGallery(lgEl, configs);
-
+        let lgElName = "infinite-scroll-gallery";
+        let lgEl = document.getElementById(lgElName);
         let mediaContentList = [];
         $.each($(".mediaLink"), function() {
             const mediaContent = {};
+            mediaContent.metadataDetailFun = shashin.openEditMetadataModal;
+            mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
+            mediaContent.args = "";
+            try {
+                mediaContent.args = $(this).attr("tag");
+            } catch(e) {}
+
+            // let thumbnail = $(this).attr("data-thumb");
+            // if (typeof thumbnail !== 'undefined' && thumbnail !== false) {
+            //     mediaContent.thumb = thumbnail;
+            // }
+
+            mediaContent.thumb = "/api/v1/thumbnails/225/"+$(this).attr("data-metadata-id");
 
             let subHtmlAttr = $(this).attr("data-sub-html");
             if (typeof subHtmlAttr !== 'undefined' && subHtmlAttr !== false) {
                 mediaContent.subHtml = subHtmlAttr;
             }
+
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
                 mediaContent.downloadUrl = $(this).attr("data-download-url");
-            } else if ($(this).attr("data-video")) {
+            }
+
+            if ($(this).attr("data-video")) {
                 mediaContent.video = $(this).attr("data-video");
                 mediaContent.poster = $(this).attr("data-poster");
                 mediaContent.lgSize = $(this).attr("data-lg-size");
-                mediaContent.downloadUrl = $(this).attr("data-download-url");
             }
+
             mediaContent.metadataId = $(this).attr("data-metadata-id");
             mediaContentList.push(mediaContent);
         });
 
-        lg.refresh(mediaContentList);
+        // Shashin execution
+        const additionalConfig = {
+            dynamic: true,
+            dynamicEl: mediaContentList
+        };
+        mediaContentList = shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
+        console.log(mediaContentList);
+
+        if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
+            shashin.getLightGallery().openGallery();
+        }
+
+        // Manual execution
+        // const configs = {
+        //     dynamic: true,
+        //     dynamicEl: mediaContentList,
+        //     licenseKey: Util.lgApiKey()
+        // };
+        //
+        // console.log(mediaContentList);
+        //
+        // const lg = lightGallery(lgEl, configs);
+        //
+        // lg.openGallery();
     })
 </script>
 

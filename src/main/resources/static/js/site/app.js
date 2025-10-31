@@ -642,8 +642,11 @@
     };
 
     shashin.createPagination = function(currentPage,totalPages,activePage,mediaTypeFilter,identifier=0,shareId="") {
+        const mediaElement = '.mediaLink';
+
         const lgConfig = {
             dynamic: true,
+            dynamicEl:shashin.getInitMediaContent(mediaElement),
             plugins: []
         };
         if (typeof lgMetadataDetail !== "undefined") {
@@ -674,7 +677,7 @@
         }
 
         if (initGallery === true) {
-            shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
+            shashin.initLightGallery(lgElement, lgConfig, mediaElement);
         }
 
         if (totalPages > 1 && currentPage <= totalPages) {
