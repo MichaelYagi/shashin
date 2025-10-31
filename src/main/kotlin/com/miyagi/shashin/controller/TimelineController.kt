@@ -2997,8 +2997,8 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/api/v1/metadata/{id}", "/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
-    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMetadata(model: Model, request: HttpServletRequest, @PathVariable(required = true) id: String): ResponseEntity<String> {
+println("testzzz")
         val response = mutableMapOf<String, Any?>()
         val keywordArray = mutableListOf<String>()
         val keywords = keywordRepository.findKeywordsByMetadataId(id)
@@ -3047,46 +3047,48 @@ class TimelineController: BaseController() {
             var metadataObjCopy: Metadata? = null
             metadataObjCopy = metadataObj
             // Hide info from users
-            if (currentUserObj?.getAuthority()!! == "ROLE_USER") {
-                metadataObjCopy.setLastAccessedAt(null)
-                metadataObjCopy.setLastAccessedBy(null)
-                metadataObjCopy.setUploadedBy(null)
-                metadataObjCopy.setFreeFormString(null)
-            } else if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
-                val accessInfo = metadataRecord.get().getFreeFormString()
-                val freeFormObj = TextUtils.parseMetadataFreeformString(accessInfo)
-                if (freeFormObj != null) {
-                    val accessClientIP = freeFormObj.getClientIP()
-                    val accessBrowser = freeFormObj.getBrowser()
-                    val accessRequestResourceType = freeFormObj.getRequestResourceType()
-                    val accessOS = freeFormObj.getOperatingSystem()
-                    val accessPage = freeFormObj.getViewPage()
-                    val accessInfoString = " $accessPage - $accessOS $accessBrowser $accessRequestResourceType"
+            if (currentUserObj != null && currentUserObj.getAuthority() != null) {
+                if (currentUserObj.getAuthority()!! == "ROLE_USER") {
+                    metadataObjCopy.setLastAccessedAt(null)
+                    metadataObjCopy.setLastAccessedBy(null)
+                    metadataObjCopy.setUploadedBy(null)
+                    metadataObjCopy.setFreeFormString(null)
+                } else if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                    val accessInfo = metadataRecord.get().getFreeFormString()
+                    val freeFormObj = TextUtils.parseMetadataFreeformString(accessInfo)
+                    if (freeFormObj != null) {
+                        val accessClientIP = freeFormObj.getClientIP()
+                        val accessBrowser = freeFormObj.getBrowser()
+                        val accessRequestResourceType = freeFormObj.getRequestResourceType()
+                        val accessOS = freeFormObj.getOperatingSystem()
+                        val accessPage = freeFormObj.getViewPage()
+                        val accessInfoString = " $accessPage - $accessOS $accessBrowser $accessRequestResourceType"
 
-                    val uploadedByUserId = metadataRecord.get().getUploadedBy()
-                    if (uploadedByUserId != null && uploadedByUserId > 0) {
-                        val userUploaded = userRepository.findById(uploadedByUserId)
-                        response["uploadedByDetails"] = userUploaded.get().getUsername()
-                    }
+                        val uploadedByUserId = metadataRecord.get().getUploadedBy()
+                        if (uploadedByUserId != null && uploadedByUserId > 0) {
+                            val userUploaded = userRepository.findById(uploadedByUserId)
+                            response["uploadedByDetails"] = userUploaded.get().getUsername()
+                        }
 
-                    if (metadataObj.getLastAccessedBy() != null && metadataObj.getLastAccessedBy()!! > 0) {
-                        val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
+                        if (metadataObj.getLastAccessedBy() != null && metadataObj.getLastAccessedBy()!! > 0) {
+                            val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
 
-                        if (userObj != null) {
-                            response["lastAccessedByDetails"] =
-                                userObj.getUsername() + " " + accessClientIP + accessInfoString
+                            if (userObj != null) {
+                                response["lastAccessedByDetails"] =
+                                    userObj.getUsername() + " " + accessClientIP + accessInfoString
+                            } else {
+                                response["lastAccessedByDetails"] = accessClientIP + accessInfoString
+                            }
                         } else {
                             response["lastAccessedByDetails"] = accessClientIP + accessInfoString
                         }
-                    } else {
-                        response["lastAccessedByDetails"] = accessClientIP + accessInfoString
                     }
-                }
 
-                val fileStats = FileStats()
-                val imageFileStats = fileStats.getMetadataFileStats(metadataObj)
-                response["fileSize"] = imageFileStats["fileSize"]
-                response["sidecarSize"] = imageFileStats["sidecarSize"]
+                    val fileStats = FileStats()
+                    val imageFileStats = fileStats.getMetadataFileStats(metadataObj)
+                    response["fileSize"] = imageFileStats["fileSize"]
+                    response["sidecarSize"] = imageFileStats["sidecarSize"]
+                }
             }
             response["metadata"] = metadataObjCopy
 

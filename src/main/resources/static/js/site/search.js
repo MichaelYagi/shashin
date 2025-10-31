@@ -10,8 +10,11 @@ class Search {
         this.lastDate = lastDate;
         this.eol = false;
 
+        const mediaElement = '.mediaLink';
+
         const lgConfig = {
             dynamic:true,
+            dynamicEl:shashin.getInitMediaContent(mediaElement),
             plugins:[]
         };
         if (typeof lgMetadataDetail !== "undefined") {
@@ -27,7 +30,7 @@ class Search {
         this.mediaContentList = shashin.initLightGallery(
             'scroll-gallery',
             lgConfig,
-            '.mediaLink'
+            mediaElement
         );
     }
 
@@ -39,14 +42,20 @@ class Search {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            // console.log(this.page)
             this.updateSearch(this.page, this.term, this.activePage).then(function (additionalMediaContentList) {
-                // console.log(additionalMediaContentList)
-                this.page++;
-                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
+                if (additionalMediaContentList.length > 0) {
+                    this.page++;
+                    this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
 
-                if (this.eol) {
-                    setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
+                    if (this.eol) {
+                        setTimeout(() => {
+                            Util.reinitLightGalleryInstance({
+                                timeoutValue: 0,
+                                mediaContentList: additionalMediaContentList,
+                                refreshContent: true
+                            });
+                        }, 0);
+                    }
                 }
             }.bind(this));
         }

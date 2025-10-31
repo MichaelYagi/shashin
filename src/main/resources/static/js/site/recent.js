@@ -10,8 +10,12 @@ class Recent {
         this.lastDate = lastDate;
         this.eol = false;
         this.locale = locale;
+
+        const mediaElement = '.mediaLink';
+
         const lgConfig = {
             dynamic:true,
+            dynamicEl:shashin.getInitMediaContent(mediaElement),
             plugins:[]
         };
         if (typeof lgMetadataDetail !== "undefined") {
@@ -24,7 +28,7 @@ class Recent {
             lgConfig.videoThumbnail = true;
             lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
-        this.mediaContentList = shashin.initLightGallery('scroll-gallery',lgConfig,'.mediaLink');
+        this.mediaContentList = shashin.initLightGallery('scroll-gallery',lgConfig,mediaElement);
     }
 
     async init() {
@@ -35,15 +39,21 @@ class Recent {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            // console.log(this.page)
             this.updateRecent(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
-                // console.log(additionalMediaContentList)
-                this.page++;
+                if (additionalMediaContentList.length > 0) {
+                    this.page++;
 
-                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
+                    this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
 
-                if (this.eol) {
-                    setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
+                    if (this.eol) {
+                        setTimeout(() => {
+                            Util.reinitLightGalleryInstance({
+                                timeoutValue: 0,
+                                mediaContentList: additionalMediaContentList,
+                                refreshContent: true
+                            });
+                        }, 0);
+                    }
                 }
             }.bind(this));
         }
