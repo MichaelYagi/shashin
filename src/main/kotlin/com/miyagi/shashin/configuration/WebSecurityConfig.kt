@@ -117,7 +117,6 @@ class MultiSecurityConfig {
             "/settings/scanmessage",
             "/dashboard/statmessages",
             "/dashboard/statmessage",
-//            "/download/share/**/album/**",
             "/download/share/**",
             "/share/**",
             "/image/**",
