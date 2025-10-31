@@ -170,8 +170,8 @@
             zoomFromOrigin: true,
             speed: 0,
             preload: 0,
-            autoplayFirstVideo: true,
-            autoplayVideoOnSlide: true,
+            autoplayFirstVideo: shashin.autoplayVideo,
+            autoplayVideoOnSlide: shashin.autoplayVideo,
             gotoNextSlideOnVideoEnd: false,
             rotate: true,
             rotateLeft: true,
@@ -180,11 +180,6 @@
             flipVertical: false,
             licenseKey: Util.lgApiKey()
         };
-
-        if (shashin.autoplayVideo === false) {
-            configs.autoplayFirstVideo = false;
-            configs.autoplayVideoOnSlide = false;
-        }
 
         for (const key in additionalConfigs) {
             if (key === "plugins") {
