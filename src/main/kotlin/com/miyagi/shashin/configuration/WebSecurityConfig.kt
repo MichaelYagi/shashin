@@ -100,8 +100,7 @@ class MultiSecurityConfig {
             "/fonts/**",
             "/images/**",
             "/media/**",
-            "/users/register",
-
+            "/users/register"
         )
 
         var publicApiList = arrayOf(
