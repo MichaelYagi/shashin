@@ -11,15 +11,18 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Pause on video screenshot
-
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
-- Fixed poster after taking video screenshot
-
 ### Security
+
+## [2.15.3] - 2025-11-01
+### Added
+- Pause on video screenshot
+
+### Fixed
+- Fixed poster after taking video screenshot
 
 ## [2.15.2] - 2025-10-31
 ### Changed
