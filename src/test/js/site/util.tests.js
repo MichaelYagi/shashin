@@ -603,4 +603,18 @@ describe('#Util tests', function() {
 
         global.window = windowRef;
     });
+
+    it('Get deleteAfterSubstring test', function() {
+        let url = "http://127.0.0.1:6624/api/v1/thumbnails/225/e9b8b0da-e2a8-39bc-a116-807d0ea7b6e3?v=f3b2e1f5-be89-40e1-93f7-af9936bb4b2d";
+        let src = Util.deleteAfterSubstring(url, "?v=");
+        assert.equal(src, "http://127.0.0.1:6624/api/v1/thumbnails/225/e9b8b0da-e2a8-39bc-a116-807d0ea7b6e3");
+
+        url = "http://127.0.0.1:6624/api/v1/thumbnails/225/e9b8b0da-e2a8-39bc-a116-807d0ea7b6e3?v=f3b2e1f5-be89-40e1-93f7-af9936bb4b2d?v=f3b2e1f5-be89-40e1-93f7-af9936bb4b2d";
+        src = Util.deleteAfterSubstring(url, "?v=");
+        assert.equal(src, "http://127.0.0.1:6624/api/v1/thumbnails/225/e9b8b0da-e2a8-39bc-a116-807d0ea7b6e3");
+
+        url = "http://127.0.0.1:6624/api/v1/thumbnails/225/e9b8b0da-e2a8-39bc-a116-807d0ea7b6e3";
+        src = Util.deleteAfterSubstring(url, "?v=");
+        assert.equal(src, "http://127.0.0.1:6624/api/v1/thumbnails/225/e9b8b0da-e2a8-39bc-a116-807d0ea7b6e3");
+    });
 });
