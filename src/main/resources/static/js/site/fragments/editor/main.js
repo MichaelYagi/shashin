@@ -766,8 +766,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 editMetadataObj.rotation = normalizedRotation(rotation);
                 editMetadataObj.flipHorizontally = isFlippedHorizontally;
                 editMetadataObj.flipVertically = isFlippedVertically;
-
-
             } else {
                 shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                     icon: "bi-exclamation-triangle",
