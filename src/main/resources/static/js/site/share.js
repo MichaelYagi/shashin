@@ -1,6 +1,6 @@
 class ShareAlbum {
 
-    constructor(shareLink, activePage, albumId, albumMetadataList, lastDate, locale) {
+    constructor(shareLink, activePage, albumId, albumMetadataList, lastDate, locale, clearMultiSelectListener) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -11,6 +11,7 @@ class ShareAlbum {
         this.eol = false;
         this.lastDate = lastDate;
         this.locale = locale;
+        this.clearMultiSelectListener = clearMultiSelectListener;
 
         const mediaElement = '.mediaLink';
 
@@ -27,7 +28,7 @@ class ShareAlbum {
         setTimeout(async () => {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList, this.activePage);
         }, 0);
-        await this.clearMultiSelectListener();
+        await this.clearMultiSelectListener(this.shareLink, this.albumId);
     }
 
     async loadNextPage() {
@@ -152,22 +153,5 @@ class ShareAlbum {
 
         $("#spinner").css("display","none");
         return mediaContentList;
-    }
-
-    async clearMultiSelectListener() {
-        const albumId = this.albumId;
-        const shareLink = this.shareLink;
-
-        $("#clearMultiSelect").off("click").on("click", function() {
-            shashin.clearSelection("album");
-            $("#clearMultiSelect").hide();
-            $("#albumNumberSelected").hide();
-            shashin.removeAllMetadataIdList();
-            $("#downloadWrapper").attr("action", '/download/share/' + shareLink + '/album/' + albumId);
-            const downloadEl = $("#download" + albumId);
-            downloadEl.attr("name", "download");
-            downloadEl.attr("value", albumId);
-            downloadEl.attr("title", "Download all photos");
-        });
     }
 }
