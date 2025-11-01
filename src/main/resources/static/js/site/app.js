@@ -370,7 +370,8 @@
                         "width": thumbnailSmallWidth + "px",
                         "height": thumbnailSmallHeight + "px"
                     });
-                    $("#image" + metadataId).attr("src", $("#image" + metadataId).attr("src") + "?v=" + uuidv4());
+                    const src = Util.deleteAfterSubstring($("#image" + metadataId).attr("src"), "?v=");
+                    $("#image" + metadataId).attr("src", src + "?v=" + uuidv4());
                     $("#image" + metadataId).attr("width", thumbnailSmallWidth);
                     $("#image" + metadataId).attr("height", thumbnailSmallHeight);
                 }
@@ -388,19 +389,25 @@
                     if (mediaContent.hasOwnProperty("downloadUrl") &&
                         mediaContent.downloadUrl.includes(metadataId)
                     ) {
-                        mediaContentList[lightGalleryIndex].src = mediaContentList[lightGalleryIndex].src + "?v=" + uuidv4();
+                        let src = Util.deleteAfterSubstring(mediaContentList[lightGalleryIndex].src, "?v=");
+                        mediaContentList[lightGalleryIndex].src = src + "?v=" + uuidv4();
                         mediaContentList[lightGalleryIndex].lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
                         mediaContentList[lightGalleryIndex].width = metadata.originalImageWidth;
                         mediaContentList[lightGalleryIndex].height = metadata.originalImageHeight;
 
                         const mediaLinkId = "#mediaLink"+metadataId;
                         if ($(mediaLinkId).length > 0) {
-                            $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + uuidv4());
+                            src = Util.deleteAfterSubstring(encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B"), "?v=");
+                            $(mediaLinkId).attr("data-src", src + "?v=" + uuidv4());
                             $(mediaLinkId).attr("data-lg-size", ((metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? metadata.thumbnailSmallWidth+"-"+metadata.thumbnailSmallHeight : (Util.isMobile() ? metadata.originalImageHeight : metadata.originalImageWidth)+"-"+(Util.isMobile() ? metadata.originalImageHeight : metadata.originalImageHeight)));
                             $(mediaLinkId).attr("data-width", metadata.originalImageWidth);
                             $(mediaLinkId).attr("data-height", metadata.originalImageHeight);
-                            if (parseInt($("img.lg-object.lg-image").attr("data-index")) === lightGalleryIndex) {
-                                $("img.lg-object.lg-image").attr("src", ($("img.lg-object.lg-image").attr("src") + "?v=" + uuidv4()));
+
+                            const activeImageEl = $('[data-index="'+lightGalleryIndex+'"]');
+                            const activeImageUrl = activeImageEl.attr("src");
+                            if (activeImageUrl.length > 0) {
+                                src = Util.deleteAfterSubstring(activeImageUrl, "?v=");
+                                activeImageEl.attr("src", (src + "?v=" + uuidv4()));
                             }
                         }
                     }
@@ -468,7 +475,8 @@
                             // Refresh image
                             Util.setMetadataLocalStorage();
                             const version = Util.getMetadataLocalStorage();
-                            $("#image" + metadataId).attr("src", $("#image" + metadataId).attr("src") + (version === "" ? "" : "?v=" + version));
+                            const src = Util.deleteAfterSubstring($("#image" + metadataId).attr("src"), "?v=");
+                            $("#image" + metadataId).attr("src", src + (version === "" ? "" : "?v=" + version));
                             shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.upload"), shashin.getTranslatedValue("main.toast.app.image.upload"), {
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
@@ -480,14 +488,14 @@
                                 const mediaContent = mediaContentList[lightGalleryIndex];
 
                                 if (mediaContent.hasOwnProperty("video") &&
-                                    // mediaContent.hasOwnProperty("poster") &&
                                     mediaContent.hasOwnProperty("downloadUrl") &&
                                     mediaContent.downloadUrl.includes(metadataId)
                                 ) {
                                     mediaContentList[lightGalleryIndex].poster = data.posterUrl;
                                     const mediaLinkId = "#mediaLink"+metadataId;
                                     if ($(mediaLinkId).length > 0) {
-                                        $(mediaLinkId).attr("data-poster", encodeURI(data.posterUrl).replace(";", "%3B")+"?v="+Util.getMetadataLocalStorage());
+                                        const src = Util.deleteAfterSubstring(data.posterUrl, "?v=");
+                                        $(mediaLinkId).attr("data-poster", encodeURI(src).replace(";", "%3B")+"?v="+Util.getMetadataLocalStorage());
                                     }
                                 }
 
