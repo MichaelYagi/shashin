@@ -156,6 +156,8 @@
     };
 
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
+        shashin.autoplayVideo = $("#autoplayVideo").val() === "true";
+
         const configs = {
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgCastMedia, lgShashinEditor],
             videojs: false,

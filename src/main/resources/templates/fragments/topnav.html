@@ -33,6 +33,7 @@
         <div class="flex-shrink-0">
             <input type="hidden" id="shashinLocale" th:value="${locale}">
             <input type="hidden" id="activePage" th:value="${activePage}">
+            <input type="hidden" id="autoplayVideo" th:value="${currentUser.autoplayVideo}">
             <input type="hidden" id="scanPhotoMsg">
             <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasMenu" aria-controls="offcanvasMenu" th:title="#{main.pages.tooltip.topnav.msg.menu}">
                 <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;">
