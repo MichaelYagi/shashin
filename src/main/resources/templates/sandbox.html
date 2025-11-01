@@ -1,427 +1,68 @@
 <!DOCTYPE html>
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
-<style>
-    .hide-scrollbar {
-        /* Apply the scrollbar hiding styles here */
-        ::-webkit-scrollbar {
-            display: none;
-        }
-        scrollbar-width: none; /* For Firefox */
-        -ms-overflow-style: none; /* For IE/Edge */
-    }
-</style>
-<script src="/js/dexie.js" th:nonce="${cspNonce}"></script>
+<html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
+<!--<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>-->
+<script src="/js/jquery-3.5.1.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/jquery-ui.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/popper.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/bootstrap.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/date.format.js" th:nonce="${cspNonce}"></script>
+<script src="/js/uuid4.min.js" th:nonce="${cspNonce}"></script>
+
+<script src="/js/site/util.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/constants.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/toast.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/modal.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/batch.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/lightgallery.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/map.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/metadata.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/overlay.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/fragments/app/util.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/app.js" th:nonce="${cspNonce}"></script>
+
+<script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-relative-caption.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-rotate.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-fullscreen.js" th:nonce="${cspNonce}"></script>
+<script src="/js/ol.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/ol-contextmenu.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-metadata-detail.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-video-thumbnail.js" th:nonce="${cspNonce}"></script>
+<script src="/js/cast.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-cast-media.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-shashin-editor.js" th:nonce="${cspNonce}"></script>
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+
+<link rel="stylesheet" href="/css/lightgallery.min.css">
+<link rel="stylesheet" href="/css/lg-video.min.css">
+<link rel="stylesheet" href="/css/lg-zoom.min.css">
+<link rel="stylesheet" href="/css/lg-relative-caption.min.css">
+<link rel="stylesheet" href="/css/lg-rotate.min.css">
+<link rel="stylesheet" href="/css/lg-fullscreen.min.css">
+<link rel="stylesheet" href="/css/ol.min.css">
+<link rel="stylesheet" href="/css/ol-contextmenu.css">
+<link rel="stylesheet" href="/css/lg-metadata-detail.css">
+<link rel="stylesheet" href="/css/lg-video-thumbnail.css">
+<link rel="stylesheet" href="/css/lg-cast-media.css">
+
 <body class="thumb d-flex flex-column vh-100">
 
-<script type="text/babel" src="/js/site/test.js"></script>
+<span th:replace="~{fragments/translations.html :: translations()}"></span>
 
-<div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
+<div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>
 
-<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
-    <div class="row flex-grow-sm-1 flex-grow-0">
-        <main role="main" class="col overflow-auto h-100">
-            <div id="infinite-scroll-gallery">
-                <th:block th:if="${not #lists.isEmpty(metadataList)}">
-                    <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
-                        <th:block th:each="metadata, iterStat: ${metadataList}">
-                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
-                                <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><a th:href="'timeline#'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" target="_blank"><strong th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></strong></a></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
-                                </th:block>
-                            </th:block>
+<!--Code here-->
 
-                            <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
-                                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
-                            </div>
-
-                            <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.year!=null and (metadataList[iterStat.index+1].year+'-'+metadataList[iterStat.index+1].month+'-'+metadataList[iterStat.index+1].day)!=metadata.year+'-'+metadata.month+'-'+metadata.day}">
-                                <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
-                                <span class="appendMetadataPhotos" th:id="${'append'+metadata.year+'-'+metadata.month+'-'+metadata.day}" style="width:0;height:0;padding:0"></span>
-                            </th:block>
-                            <th:block th:if="${iterStat.last and metadata.year!=null}">
-                                <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
-                                <span class="appendMetadataPhotos" th:id="${'append'+metadata.year+'-'+metadata.month+'-'+metadata.day}" style="width:0;height:0;padding:0"></span>
-                            </th:block>
-                        </th:block>
-                    </div>
-                </th:block>
-            </div>
-
-            <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
-            <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
-        </main>
-    </div>
-</div>
-
-<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        let useDexie = true;
-
-        shashin.showToastMessage("Using Dexie", "Using Dexie", {
-            tag:"usedexie",
-            icon:"bi-info-circle",
-            iconColor:"#777777"
-        });
-
-        const keys = {37: 1, 38: 1, 39: 1, 40: 1};
-
-        function preventDefault(e) {
-            e.preventDefault();
-        }
-
-        function preventDefaultForScrollKeys(e) {
-            if (keys[e.keyCode]) {
-                preventDefault(e);
-                return false;
-            }
-        }
-
-        // modern Chrome requires { passive: false } when adding event
-        let supportsPassive = false;
-        try {
-            window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
-                get: function () { supportsPassive = true; }
-            }));
-        } catch(e) {}
-
-        const wheelOpt = supportsPassive ? { passive: false } : false;
-        const wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
-
-        const disableScroll = function() {
-            window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
-            window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
-            window.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
-            window.addEventListener('keydown', preventDefaultForScrollKeys, false);
-            $("#container").addClass("hide-scrollbar");
-        };
-
-        // call this to Enable
-        const enableScroll = function() {
-            window.removeEventListener('DOMMouseScroll', preventDefault, false);
-            window.removeEventListener(wheelEvent, preventDefault, wheelOpt);
-            window.removeEventListener('touchmove', preventDefault, wheelOpt);
-            window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
-            $("#container").removeClass("hide-scrollbar");
-        };
-
-        // Disable scroll
-        disableScroll();
-
-        const offset = 30;
-        let direction = "down";
-        let addingSection = false;
-        const calculateDistanceToFooter = function() {
-            return $(window).height() - $('footer').offset().top - offset - 1;
-        };
-
-        setTimeout(function () {
-            let http = new Http("timeline");
-            http.ajax("get", "/sandbox/data").then(function (data) {
-                if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataDatesHash")) {
-                    const metadataList = data.metadataList;
-                    const timelineDatesData = data["metadataDates"];
-                    const timelineDatesHash = data["metadataDatesHash"];
-                    const timelineDatesHashCount = Object.keys(timelineDatesHash).length;
-
-                    // Dexie - works smoother than connecting to the backend
-                    // You need to load lots of data at once which is slow at the onset
-                    let dbOperationComplete = false;
-                    const db = new Dexie("MetadataDatabase");
-                    db.version(1).stores({
-                        metadataList: `id, [year+month+day]`
-                    });
-                    setTimeout(function () {
-                        db.metadataList.bulkPut(metadataList).then(() => {
-                            // Re-enable scrolling
-                            enableScroll();
-                            dbOperationComplete = true;
-                        });
-                    }, 0);
-
-                    console.log(timelineDatesData);
-                    console.log(timelineDatesHash);
-
-                    // Switch between Dexie and backend calls
-                    $("#doit").on("click", function (e) {
-                        e.preventDefault();
-
-                        if (useDexie === true) {
-                            useDexie = false;
-                            $("#doitspan").addClass("bi-arrow-through-heart").removeClass("bi-arrow-through-heart-fill");
-                            shashin.showToastMessage("Using backend", "Using backend", {
-                                tag:"usebe",
-                                icon:"bi-info-circle",
-                                iconColor:"#777777"
-                            });
-                        } else {
-                            useDexie = true;
-                            $("#doitspan").removeClass("bi-arrow-through-heart").addClass("bi-arrow-through-heart-fill");
-                            shashin.showToastMessage("Using Dexie", "Using Dexie", {
-                                tag:"usedexie",
-                                icon:"bi-info-circle",
-                                iconColor:"#777777"
-                            });
-                        }
-                    })
-
-                    function getDateGalleryHeight(id) {
-                        if ($("#" + id).length === 0) {
-                            return 0;
-                        }
-
-                        return $("#" + id).outerHeight(true);
-                    }
-
-                    function removeDate(date) {
-                        $("#br"+date).remove();
-                        $("#row"+date).remove();
-                        $("#amp_"+date).remove();
-                        $("#tail_"+date).remove();
-                        $("#"+date).remove();
-                        $("#container_"+date).remove();
-                        $("#append"+date).remove();
-                    }
-
-                    $("section").each(function(index, element) {
-                        isInViewport($(element), function (inViewport) {
-                            if (inViewport === false) {
-                                removeDate($(element).attr("id"));
-                            }
-                        });
-                    });
-
-                    document.body.addEventListener('wheel', function (event) {
-                        direction = event.deltaY > 0 ? 'down' : 'up';
-                    });
-
-                    function createSection(year, month, day, attachDate) {
-                        if (useDexie === false) {
-                            setTimeout(function () {
-                                let http = new Http("timeline");
-                                http.ajax("get", "/sandbox/data/" + year + "/" + month + "/" + day).then(function (data) {
-                                    console.log(data);
-                                    if (data.hasOwnProperty("metadataList") && data.metadataList.length > 0) {
-                                        const metadataArray = data.metadataList;
-
-                                        let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
-                                            "<p><a href='/timeline#" + year + "-" + month + "-" + day + "' target='_blank'><strong>" + year + "-" + month + "-" + day + "</strong></a></p>" +
-                                            "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
-
-                                        for (const index in metadataArray) {
-                                            const metadata = metadataArray[index];
-
-                                            html += "<div id='photoThumbnailContainer" + metadata.id + "' class='photo-thumbnail-container photo-thumbnail' style='width:" + metadata.thumbnailSmallWidth + "px;height:" + metadata.thumbnailSmallHeight + "px;padding-left:0;padding-right:0;'>" +
-                                                "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/" + metadata.id + "' class='photo-thumbnail-image' id='image" + metadata.id + "' width='" + metadata.thumbnailSmallWidth + "' th:height='" + metadata.thumbnailSmallHeight + "' style='background-color:lightgray;'>" +
-                                                "</div>"
-                                        }
-
-                                        html += "</div></section>" +
-                                            "<span class='appendMetadataPhotos' id='append" + year + "-" + month + "-" + day + "' style='width:0;height:0;padding:0'></span>";
-
-
-                                        if ($("#" + year + "-" + month + "-" + day).length === 0) {
-                                            let htmlContent = $(html);
-
-                                            const viewportTop = $("#container").scrollTop();
-
-                                            if (direction === "up") {
-                                                $("#" + attachDate).before(htmlContent);
-                                            } else {
-                                                htmlContent.insertAfter($("#append" + attachDate));
-                                            }
-
-                                            // TODO: Create - look in timeline - needed for all browsers
-                                            const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
-
-                                            console.log("====================");
-                                            console.log("created date: " + year + "-" + month + "-" + day);
-                                            console.log("direction: " + direction);
-                                            console.log("viewportTop: " + viewportTop);
-                                            console.log("contentHeight: " + contentHeight);
-
-                                            if (direction === "up") {
-                                                $("#container")[0].scrollTop = contentHeight;
-                                            } else {
-                                                $("#container")[0].scrollTop = viewportTop
-                                            }
-                                        }
-                                    }
-                                });
-                            }, 0);
-                        } else {
-                            db.metadataList.where({
-                                year: year,
-                                month: month,
-                                day: day
-                            }).reverse().sortBy("time", function (metadataArray) {
-                                if (metadataArray.length > 0) {
-                                    let html = "<section class='dateSection' id='" + year + "-" + month + "-" + day + "'>" +
-                                        "<p><a href='/timeline#" + year + "-" + month + "-" + day + "' target='_blank'><strong>" + year + "-" + month + "-" + day + "</strong></a></p>" +
-                                        "<div id='dateBody" + year + "-" + month + "-" + day + "' class='row' style='margin-left: -2px;'>";
-
-                                    for (const index in metadataArray) {
-                                        const metadata = metadataArray[index];
-
-                                        html += "<div id='photoThumbnailContainer" + metadata.id + "' class='photo-thumbnail-container photo-thumbnail' style='width:" + metadata.thumbnailSmallWidth + "px;height:" + metadata.thumbnailSmallHeight + "px;padding-left:0;padding-right:0;'>" +
-                                            "<img loading='lazy' draggable='false' src='/api/v1/thumbnails/225/" + metadata.id + "' class='photo-thumbnail-image' id='image" + metadata.id + "' width='" + metadata.thumbnailSmallWidth + "' th:height='" + metadata.thumbnailSmallHeight + "' style='background-color:lightgray;'>" +
-                                            "</div>"
-                                    }
-
-                                    html += "</div></section>" +
-                                        "<span class='appendMetadataPhotos' id='append" + year + "-" + month + "-" + day + "' style='width:0;height:0;padding:0'></span>";
-
-                                    let htmlContent = $(html);
-
-                                    const viewportTop = $("#container").scrollTop();
-
-                                    if (direction === "up") {
-                                        $("#" + attachDate).before(htmlContent);
-                                    } else {
-                                        htmlContent.insertAfter($("#append" + attachDate));
-                                    }
-
-                                    // TODO: Create Dates - look in timeline - needed for all browsers
-                                    const contentHeight = getDateGalleryHeight(year + "-" + month + "-" + day);
-
-                                    console.log("====================");
-                                    console.log("created date: " + year + "-" + month + "-" + day);
-                                    console.log("direction: " + direction);
-                                    console.log("viewportTop: " + viewportTop);
-                                    console.log("contentHeight: " + contentHeight);
-
-                                    if (direction === "up") {
-                                        $("#container")[0].scrollTop = contentHeight;
-                                    } else {
-                                        $("#container")[0].scrollTop = viewportTop
-                                    }
-                                }
-                            });
-                        }
-                    }
-
-                    function isInViewport(element, callback) {
-                        let retVal = false;
-
-                        if (element.length > 0) {
-                            if (Util.isSafari()) {
-                                const rect = element[0].getBoundingClientRect();
-                                const containerRect = document.getElementById("container").getBoundingClientRect();
-                                retVal = rect.bottom > containerRect.top && rect.top < containerRect.bottom;
-                            } else {
-                                const header = $('header');
-                                const elementTop = element.offset().top;
-                                const elementBottom = elementTop + element.outerHeight();
-                                const viewportTop = header.outerHeight() - $(window).scrollTop();
-                                const viewportBottom = viewportTop + ($(window).height() - header.outerHeight());
-
-                                retVal = elementBottom > viewportTop && elementTop < viewportBottom;
-                            }
-                        }
-
-                        callback(retVal);
-                    }
-
-                    // Scroll
-                    let scrollTimeout;
-                    document.getElementById("container").addEventListener('scroll', function() {
-                        if (scrollTimeout) clearTimeout(scrollTimeout);
-
-                        let timeoutVal = 0;
-                        if (Util.isSafari()) {
-                            timeoutVal = 100;
-                        }
-
-                        scrollTimeout = setTimeout(() => {
-                            requestAnimationFrame(() => {
-                                const viewportTop = $("#container").scrollTop();
-                                const firstEl = $("section")[0];
-                                const firstDate = $(firstEl).attr("id");
-                                const lastEl = $("section")[$("section").length - 1];
-                                const lastDate = $(lastEl).attr("id");
-
-                                // View top 0 add more to the top
-                                console.log(direction);
-                                console.log(viewportTop);
-                                console.log(offset);
-                                console.log(firstDate);
-                                console.log(lastDate);
-                                console.log(timelineDatesHash);
-                                addingSection = true;
-
-                                if (direction === "up" && viewportTop < offset && timelineDatesHash[firstDate] !== 0 && timelineDatesHash[lastDate] - 1 > -1) {
-                                    const prevDate = timelineDatesData[timelineDatesHash[firstDate] - 1];
-                                    if ($("#"+prevDate.year+"-"+prevDate.month+"-"+prevDate.day).length === 0) {
-                                        console.log("testzzz")
-                                        console.log(prevDate)
-                                        createSection(prevDate.year, prevDate.month, prevDate.day, firstDate);
-                                    }
-                                } else if (direction === "down" && calculateDistanceToFooter() >= -offset && calculateDistanceToFooter() <= 0 && timelineDatesHash[lastDate] + 1 <= timelineDatesHashCount) {
-                                    const nextDate = timelineDatesData[timelineDatesHash[lastDate] + 1];
-                                    if ($("#"+nextDate.year+"-"+nextDate.month+"-"+nextDate.day).length === 0) {
-                                        createSection(nextDate.year, nextDate.month, nextDate.day, lastDate);
-                                    }
-                                }
-                                addingSection = false;
-
-                                // Removing anything not in viewport
-                                setTimeout(function () {
-                                    $("section").each(function (index, element) {
-                                        isInViewport($(element), function (inViewport) {
-                                            console.log("-----");
-                                            console.log($(element).attr("id") + " element in viewport: " + inViewport);
-
-                                            if (inViewport === false && addingSection === false) {
-                                                const viewportTop = $("#container").scrollTop();
-                                                const contentHeight = getDateGalleryHeight($(element).attr("id"));
-
-                                                removeDate($(element).attr("id"));
-
-                                                // TODO: Date Removal - Needed for Safari
-                                                if (Util.isSafari()) {
-                                                    const container = document.getElementById('container');
-
-                                                    // --- Anti-bounce fix ---
-                                                    const maxScroll = container.scrollHeight - container.clientHeight;
-                                                    let newScrollTop = direction === "down"
-                                                        ? viewportTop - contentHeight
-                                                        : viewportTop + contentHeight;
-
-                                                    // Clamp within bounds
-                                                    if (newScrollTop > maxScroll) newScrollTop = maxScroll;
-                                                    if (newScrollTop < 0) newScrollTop = 0;
-
-                                                    // Temporarily disable smooth/momentum scroll
-                                                    container.style.scrollBehavior = 'auto';
-                                                    requestAnimationFrame(() => {
-                                                        container.scrollTop = newScrollTop;
-                                                        // Restore scroll behaviour on the next frame
-                                                        requestAnimationFrame(() => {
-                                                            container.style.scrollBehavior = '';
-                                                        });
-                                                    });
-                                                }
-                                            }
-                                        })
-                                    });
-                                }, 0);
-                            });
-                        }, timeoutVal); // Delay to allow scroll momentum to settle
-                    }, { passive: true });
-
-                    // Scroll stop
-                    // document.getElementById("container").addEventListener("scrollend", () => {
-                    //
-                    // });
-                }
-            });
-        }, 0);
-    });
+        // Code here
+    })
 </script>
-
-
-<script src="/js/site/test.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 
 </body>
 </html>
