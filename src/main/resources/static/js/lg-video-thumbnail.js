@@ -61,6 +61,7 @@
                     $("#captureThumbnail").prop( "disabled", true);
                     $("#captureThumbnailSpinner").prop( "disabled", true);
 
+                    // shashin.processVideoThumbnail
                     const funObject = Util.getLgFunction(this, "videoThumbnailFun");
 
                     // Execute function
