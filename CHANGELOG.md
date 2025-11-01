@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Share page paged video thumbnails
+
 ### Security
 
 ## [2.15.3] - 2025-11-01
