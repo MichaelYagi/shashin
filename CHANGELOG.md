@@ -17,6 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Fixed poster after taking video screenshot
+
 ### Security
 
 ## [2.15.2] - 2025-10-31
