@@ -93,6 +93,7 @@ class MultiSecurityConfig {
             "/articles/**",
             "/health",
             "/testgrounds",
+            "/sandbox",
             "/bcrypt/**",
             "/features",
             "/css/**",
