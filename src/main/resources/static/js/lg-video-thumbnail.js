@@ -52,47 +52,6 @@
                 this.videoThumbnail();
             }
 
-            this.core.LGel.on('lgHasVideo', (event) => {
-                // Video thumbnail icon
-                $("."+captureIcon+".lg-icon").css("display", "none");
-
-                if (event.detail.hasPoster === false ||
-                    ((this.settings.hasOwnProperty("autoplayFirstVideo") && this.settings.autoplayFirstVideo === true) &&
-                    (this.settings.hasOwnProperty("autoplayVideoOnSlide") && this.settings.autoplayVideoOnSlide === true))
-                ) {
-                    $("."+captureIcon+".lg-icon").css("display", "block");
-                } else if (event.detail.hasPoster === true) {
-                    this.core.LGel.on('lgPosterClick', () => {
-                        $("."+captureIcon+".lg-icon").css("display", "block");
-                    });
-                }
-            });
-
-            this.core.LGel.on('lgBeforeOpen', (e) => {
-                $("."+captureIcon+".lg-icon").css("display", "none");
-            });
-
-            this.core.LGel.on('lgAfterClose', () => {
-                $("."+captureIcon+".lg-icon").css("display", "none");
-            });
-
-            this.core.LGel.on('lgBeforeSlide', (e) => {
-                $("."+captureIcon+".lg-icon").css("display", "none");
-
-                // Show screenshot button when changing slides
-                if ($(".lg-outer").length > 0) {
-                    const lgItemId = "lg-item-" + this.core.lgId + "-" + e.detail.index;
-                    const lgItemEl = $("#" + lgItemId);
-
-                    if (lgItemEl.length > 0 && lgItemEl.children().find('video')[0] !== undefined) {
-                        const video = lgItemEl.children().find('video')[0];
-                        if (video.paused || video.ended || !!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
-                            $("."+captureIcon+".lg-icon").css("display", "block");
-                        }
-                    }
-                }
-            });
-
             this.core.outer
                 .find('.'+captureIcon)
                 .first()
