@@ -12,16 +12,19 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
-- Centralized lightgallery events to a single location
-
 ### Deprecated
 ### Removed
+### Fixed
+### Security
+
+## [2.15.2] - 2025-10-31
+### Changed
+- Centralized lightgallery events to a single location
+
 ### Fixed
 - Viewer and player
 - LightGallery integration
 - Metadata look up permission
-
-### Security
 
 ## [2.15.1] - 2025-10-29
 ### Changed
