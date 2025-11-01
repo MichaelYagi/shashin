@@ -492,10 +492,11 @@
                                     mediaContent.hasOwnProperty("downloadUrl") &&
                                     mediaContent.downloadUrl.includes(metadataId)
                                 ) {
-                                    mediaContentList[lightGalleryIndex].poster = data.posterUrl;
+                                    const posterUrl = "/api/v1/thumbnails/original/"+metadataId;
+                                    mediaContentList[lightGalleryIndex].poster = posterUrl;
                                     const mediaLinkId = "#mediaLink"+metadataId;
                                     if ($(mediaLinkId).length > 0) {
-                                        const src = Util.deleteAfterSubstring(data.posterUrl, "?v=");
+                                        const src = Util.deleteAfterSubstring(posterUrl, "?v=");
                                         $(mediaLinkId).attr("data-poster", encodeURI(src).replace(";", "%3B")+"?v="+Util.getMetadataLocalStorage());
                                     }
                                 }
