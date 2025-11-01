@@ -452,6 +452,7 @@
 
                         let ctx = canvas.getContext('2d');
                         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        video.pause();
                         image = canvas.toDataURL('image/jpeg');
                     }
                 } catch (e) {
