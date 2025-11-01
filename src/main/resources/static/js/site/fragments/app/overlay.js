@@ -115,7 +115,7 @@
         });
 
         // Multiselect doubletap logic
-        if (Util.isMobile() === true) {
+        if (view !== "share" && Util.isMobile() === true) {
             $("#photoThumbnailContainer" + metadata.id).on("pointerup", shashin.detectDoubleTap(200));
             $("#photoThumbnailContainer" + metadata.id).on("doubletap", function(e) {
                 e.preventDefault();
@@ -130,22 +130,24 @@
             e.preventDefault();
 
             // Multi select
-            $(document).bind("keydown", function (e) {
-                e.preventDefault();
+            if (view !== "share") {
+                $(document).bind("keydown", function (e) {
+                    e.preventDefault();
 
-                // Shift key may not be available for Mac
-                if (Util.getOS() === "MacOS" && (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83)) {
-                    shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
+                    // Shift key may not be available for Mac
+                    if (Util.getOS() === "MacOS" && (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83)) {
+                        shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
 
-                    metadataIdArray = shashin.batchSelect(metadata.id, view);
-                }
+                        metadataIdArray = shashin.batchSelect(metadata.id, view);
+                    }
 
-                if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.which === 16 || e.keyCode === 16) {
-                    shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
+                    if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.which === 16 || e.keyCode === 16) {
+                        shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
 
-                    metadataIdArray = shashin.batchSelect(metadata.id, view);
-                }
-            });
+                        metadataIdArray = shashin.batchSelect(metadata.id, view);
+                    }
+                });
+            }
 
             if (metadata.type.includes("video") && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
@@ -167,36 +169,6 @@
             }
         });
 
-        // $("#image" + metadata.id).hover(function () {
-        //     // Only show overlays when scrolling stopped in timeline view
-        //     //if (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false)) {
-        //     shashin.imageHover(this, metadata.id);
-        //     //}
-        // }, function () {
-        //     metadataIdArray = shashin.getMetadataIdList();
-        //     const index = metadataIdArray.indexOf(metadata.id);
-        //
-        //     if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
-        //         $(this).css("opacity", 1.0);
-        //         $(this).siblings(".thumbnail-tl").hide();
-        //         $(this).siblings(".thumbnail-bl").hide();
-        //         $(this).siblings(".thumbnail-centered").hide();
-        //         //$(this).siblings(".thumbnail-tr").hide();
-        //         $(this).siblings(".thumbnail-br").hide();
-        //     } else {
-        //         if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-        //             $('.thumbnail-bl').hide();
-        //             $('.thumbnail-centered').hide();
-        //             //$('.thumbnail-tr').hide();
-        //             $('.thumbnail-br').hide();
-        //         }
-        //         $("#tncentered" + metadata.id).hide();
-        //         $("#tnbl" + metadata.id).hide();
-        //         //$("#tntr" + metadata.id).hide();
-        //         $("#tnbr" + metadata.id).hide();
-        //     }
-        // });
-
         $("#mediaLink" + metadata.id).hover(function () {
             $('#currentlat').val(metadata.lat === null ? "" : metadata.lat);
             $('#currentlng').val(metadata.lng === null ? "" : metadata.lng);
@@ -205,13 +177,6 @@
             $('#currentday').val(metadata.day === null ? "" : metadata.day);
             $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
             metadataIdArray = shashin.getMetadataIdList();
-
-            // let hoverColor = "white";
-            // if (shashin.darkMode === true) {
-            //     hoverColor = "slategray";
-            // }
-            // $('.bi-play-btn').css("color", hoverColor);
-            // $('.bi-play-circle').css("color", hoverColor);
 
             $(this).show();
             $(this).css("opacity", opaque);
@@ -239,44 +204,6 @@
             //$(this).siblings(".thumbnail-tr").hide();
             $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
-
-        // $("#tncentered" + metadata.id).hover(function () {
-        //     $('#currentlat').val(metadata.lat === null ? "" : metadata.lat);
-        //     $('#currentlng').val(metadata.lng === null ? "" : metadata.lng);
-        //     $('#currentyear').val(metadata.year === null ? "" : metadata.year);
-        //     $('#currentmonth').val(metadata.month === null ? "" : metadata.month);
-        //     $('#currentday').val(metadata.day === null ? "" : metadata.day);
-        //     $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
-        //     metadataIdArray = shashin.getMetadataIdList();
-        //
-        //     let hoverColor = "white";
-        //     if (shashin.darkMode === true) {
-        //         hoverColor = "slategray";
-        //     }
-        //     $('.bi-play-btn').css("color", hoverColor);
-        //     $('.bi-play-circle').css("color", hoverColor);
-        //     $(this).show();
-        //     $(this).siblings(".thumbnail-tl").show();
-        //     $(this).siblings(".thumbnail-bl").show();
-        //     $(this).siblings(".thumbnail-br").show();
-        //     $(this).siblings(".thumbnail-tr").show();
-        //     $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
-        //     if ($('.bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-        //         $('.thumbnail-bl').hide();
-        //         $('.thumbnail-centered').hide();
-        //         //$('.thumbnail-tr').hide();
-        //         $('.thumbnail-br').hide();
-        //     }
-        // }, function () {
-        //     $('.bi-play-btn').css("color", "lightgray");
-        //     $('.bi-play-circle').css("color", "lightgray");
-        //     $(this).hide();
-        //     $(this).siblings(".thumbnail-tl").hide();
-        //     $(this).siblings(".thumbnail-bl").hide();
-        //     $(this).siblings(".thumbnail-br").hide();
-        //     //$(this).siblings(".thumbnail-tr").hide();
-        //     $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
-        // });
 
         $("#tntl" + metadata.id).hover(function () {
             metadataIdArray = shashin.getMetadataIdList();
