@@ -428,6 +428,7 @@
 
     shashin.processVideoThumbnail = function(metadataId, lightGalleryId, lightGalleryIndex) {
         const mediaContentList = shashin.getLightGallery().galleryItems;
+        const lgItem = $("#lg-item-" + lightGalleryId + "-" + lightGalleryIndex);
 
         shashin.getMetadata(metadataId).then(function (data) {
             let metadata = data;
@@ -439,8 +440,8 @@
                 $(canvas).attr("id", "videoCanvas");
 
                 let video = null;
-                if ($("#lg-item-"+lightGalleryId+"-"+lightGalleryIndex).length > 0) {
-                    video = $("#lg-item-" + lightGalleryId + "-" + lightGalleryIndex).find(".lg-video-object")[0];
+                if (lgItem.length > 0) {
+                    video = lgItem.find(".lg-video-object")[0];
                 }
 
                 let image = "";
@@ -518,7 +519,7 @@
                         $("#captureThumbnail").prop("disabled", false);
                         $("#captureThumbnailSpinner").prop("disabled", false);
                     });
-                } else if (parseInt($(".lg-video-play-button").css("opacity")) === 1) {
+                } else if (parseInt(lgItem.find(".lg-video-play-button").css("opacity")) === 1) {
                     // noop - center play button is visible
                     $(".lg-current").css("background-color", "transparent");
                     $("#captureThumbnail").show();
