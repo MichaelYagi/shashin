@@ -482,22 +482,22 @@
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
                                 delay: 2000,
-                                borderColor:"success"
+                                borderColor: "success"
                             });
 
-                            if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null  && typeof shashin.getLightGallery().refresh === 'function' && mediaContentList.length > 0) {
+                            if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function' && mediaContentList.length > 0) {
                                 const mediaContent = mediaContentList[lightGalleryIndex];
 
                                 if (mediaContent.hasOwnProperty("video") &&
                                     mediaContent.hasOwnProperty("downloadUrl") &&
                                     mediaContent.downloadUrl.includes(metadataId)
                                 ) {
-                                    const posterUrl = "/api/v1/thumbnails/original/"+metadataId;
+                                    const posterUrl = "/api/v1/thumbnails/original/" + metadataId;
                                     mediaContentList[lightGalleryIndex].poster = posterUrl;
-                                    const mediaLinkId = "#mediaLink"+metadataId;
+                                    const mediaLinkId = "#mediaLink" + metadataId;
                                     if ($(mediaLinkId).length > 0) {
                                         const src = Util.deleteAfterSubstring(posterUrl, "?v=");
-                                        $(mediaLinkId).attr("data-poster", encodeURI(src).replace(";", "%3B")+"?v="+Util.getMetadataLocalStorage());
+                                        $(mediaLinkId).attr("data-poster", encodeURI(src).replace(";", "%3B") + "?v=" + Util.getMetadataLocalStorage());
                                     }
                                 }
 
@@ -509,21 +509,30 @@
                             shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000",
-                                borderColor:"danger"
+                                borderColor: "danger"
                             });
                             $(".lg-current").css("background-color", "transparent");
                         }
                         $("#captureThumbnail").show();
                         $("#captureThumbnailSpinner").hide();
-                        $("#captureThumbnail").prop( "disabled", false);
-                        $("#captureThumbnailSpinner").prop( "disabled", false);
+                        $("#captureThumbnail").prop("disabled", false);
+                        $("#captureThumbnailSpinner").prop("disabled", false);
                     });
+                } else if (parseInt($(".lg-video-play-button").css("opacity")) === 1) {
+                    // noop - center play button is visible
+                    $(".lg-current").css("background-color", "transparent");
+                    $("#captureThumbnail").show();
+                    $("#captureThumbnailSpinner").hide();
+                    $("#captureThumbnail").prop("disabled", false);
+                    $("#captureThumbnailSpinner").prop("disabled", false);
                 } else {
                     shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         borderColor:"danger"
                     });
+
+                    $(".lg-current").css("background-color", "transparent");
                     $("#captureThumbnail").show();
                     $("#captureThumbnailSpinner").hide();
                     $("#captureThumbnail").prop( "disabled", false);
