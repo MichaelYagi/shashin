@@ -119,7 +119,8 @@
                         }
 
                         if (galleryItem.hasOwnProperty("src")) {
-                            shashin.lg.galleryItems[currentIndex].src = shashin.lg.galleryItems[currentIndex].src+"?v="+uuidv4();
+                            const src = Util.deleteAfterSubstring(shashin.lg.galleryItems[currentIndex].src, "?v=");
+                            shashin.lg.galleryItems[currentIndex].src = src+"?v="+uuidv4();
                         }
 
                         if (galleryItem.hasOwnProperty("metadataId")) {

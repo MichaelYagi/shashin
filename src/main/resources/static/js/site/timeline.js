@@ -1293,7 +1293,7 @@
 
         if ($("#image" + metadata.id).length === 1) {
             const version = Util.getMetadataLocalStorage();
-            if ($("#image" + metadata.id).attr("src") === Util.getPlaceholderBackground()) {
+            if ($("#image" + metadata.id).attr("src").includes(Util.getPlaceholderBackground())) {
                 $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+timelineSettings.thumbnailType+"/" + metadata.id + (version === "" ? "" : "?v=" + version));
             }
             $("#image" + metadata.id).css("background-color", "transparent");
