@@ -1,4 +1,16 @@
 class Util {
+    static deleteAfterSubstring(originalString, substring) {
+        const index = originalString.indexOf(substring);
+
+        if (index !== -1) {
+            // Substring found, return the part before it
+            return originalString.slice(0, index).trim();
+        } else {
+            // Substring not found, return the original string
+            return originalString.trim();
+        }
+    }
+
     static truncateHeading() {
         $('.dateSection').each(function () {
             const $section = $(this);
@@ -818,7 +830,8 @@ class Util {
                             "width": thumbnailSmallWidth + "px",
                             "height": thumbnailSmallHeight + "px"
                         });
-                        $("#image" + metadata.id).attr("src", $("#image" + metadata.id).attr("src") + (version === "" ? "" : "?v=" + version));
+                        const src = Util.deleteAfterSubstring($("#image" + metadata.id).attr("src"), "?v=");
+                        $("#image" + metadata.id).attr("src", src + (version === "" ? "" : "?v=" + version));
                         $("#image" + metadata.id).attr("width", thumbnailSmallWidth);
                         $("#image" + metadata.id).attr("height", thumbnailSmallHeight);
 
@@ -837,9 +850,14 @@ class Util {
                                     mediaContentList[lightGalleryIndex].src = mediaContentList[lightGalleryIndex].src + "?v=" + Util.getMetadataLocalStorage();
                                     const mediaLinkId = "#mediaLink" + metadata.id;
                                     if ($(mediaLinkId).length > 0) {
-                                        $(mediaLinkId).attr("data-src", encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B") + "?v=" + Util.getMetadataLocalStorage());
-                                        if (parseInt($("img.lg-object.lg-image").attr("data-index")) === lightGalleryIndex) {
-                                            $("img.lg-object.lg-image").attr("src", ($("img.lg-object.lg-image").attr("src") + "?v=" + Util.getMetadataLocalStorage()));
+                                        let src = Util.deleteAfterSubstring($(mediaLinkId).attr("data-src"), "?v=");
+                                        $(mediaLinkId).attr("data-src", encodeURI(src).replace(";", "%3B") + "?v=" + Util.getMetadataLocalStorage());
+
+                                        const activeImageEl = $('[data-index="'+lightGalleryIndex+'"]');
+                                        const activeImageUrl = activeImageEl.attr("src");
+                                        if (activeImageUrl.length > 0) {
+                                            src = Util.deleteAfterSubstring(activeImageUrl, "?v=");
+                                            activeImageEl.attr("src", (src + "?v=" + uuidv4()));
                                         }
                                     }
                                 }

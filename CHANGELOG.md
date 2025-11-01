@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
+- Centralized lightgallery events to a single location
+
 ### Deprecated
 ### Removed
 ### Fixed
