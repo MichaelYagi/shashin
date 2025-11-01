@@ -145,6 +145,20 @@
         const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
 
+        function clearMultiSelectListener(shareLinkUrl, albumIdInt) {
+            $("#clearMultiSelect").off("click").on("click", function () {
+                shashin.clearSelection("album");
+                $("#clearMultiSelect").hide();
+                $("#albumNumberSelected").hide();
+                shashin.removeAllMetadataIdList();
+                $("#downloadWrapper").attr("action", '/download/share/' + shareLinkUrl + '/album/' + albumIdInt);
+                const downloadEl = $("#download" + albumIdInt);
+                downloadEl.attr("name", "download");
+                downloadEl.attr("value", albumIdInt);
+                downloadEl.attr("title", "Download all photos");
+            });
+        }
+
         $("#languageSelect li a").on("click", async function (e) {
             e.preventDefault();
 
@@ -165,16 +179,14 @@
             http.ajax("get", "/share/" + shareLink + "/album/" + albumId + "/page/0").then(function (data) {
                 if (data.hasOwnProperty("albumMetadataList") === true) {
                     const albumMetadataList = data["albumMetadataList"];
-                    const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList, lastDate, locale);
+                    const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList, lastDate, locale, clearMultiSelectListener);
                     shareAlbumInstance.init();
-                    // Util.checkErrorImage();
                 }
             });
         } else {
             Util.scrollToTopListener("#container");
             shashin.createPagination(currentPage,totalPages,activePage,null,albumId,shareLink);
-            const shareAlbumInstance = new ShareAlbum();
-            shareAlbumInstance.clearMultiSelectListener();
+            clearMultiSelectListener(shareLink, albumId);
         }
     });
 </script>
