@@ -88,6 +88,11 @@
             });
 
             shashin.infiniteScrollGallery.addEventListener('lgAfterClose', _ => {
+                if (Util.localStorageAvailable() === true) {
+                    localStorage.removeItem("metadata");
+                } else {
+                    $("#metadata").val("");
+                }
                 shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml"]});
             });
 
@@ -104,8 +109,18 @@
                     const currentIndex = e.detail.index;
                     const galleryItem = galleryItems[currentIndex];
 
-                    if (galleryItem.hasOwnProperty("src")) {
-                        shashin.lg.galleryItems[currentIndex].src = shashin.lg.galleryItems[currentIndex].src+"?v="+uuidv4();
+                    if (galleryItem.hasOwnProperty("metadataId")) {
+                        const metadataId = galleryItem.metadataId;
+                        $("#metadataId").val(metadataId);
+                        $("#lgIndex").val(currentIndex);
+
+                        if ($("#image"+metadataId).length > 0 && ($("#image"+metadataId).attr("src")).indexOf("?v=") < 0) {
+                            $("#image"+metadataId).attr("src", $("#image"+metadataId).attr("src")+"?v="+uuidv4());
+                        }
+
+                        if (galleryItem.hasOwnProperty("src")) {
+                            shashin.lg.galleryItems[currentIndex].src = shashin.lg.galleryItems[currentIndex].src+"?v="+uuidv4();
+                        }
 
                         if (galleryItem.hasOwnProperty("metadataId")) {
                             const metadataId = galleryItem.metadataId;
@@ -115,6 +130,28 @@
                             if ($("#image"+metadataId).length > 0 && ($("#image"+metadataId).attr("src")).indexOf("?v=") < 0) {
                                 $("#image"+metadataId).attr("src", $("#image"+metadataId).attr("src")+"?v="+uuidv4());
                             }
+                        }
+
+                        if (metadataId !== null) {
+                            shashin.getMetadata(metadataId).then(function (metadata) {
+                                if (Util.localStorageAvailable() === true) {
+                                    localStorage.setItem("metadata", JSON.stringify(metadata));
+                                } else {
+                                    $("#metadata").val(JSON.stringify(metadata));
+                                }
+
+                                if (metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
+                                    $("#shashineditor").css("display", "block");
+                                } else {
+                                    $("#shashineditor").css("display", "none");
+                                }
+
+                                if (metadata.type.indexOf("video") >= 0) {
+                                    $("#captureThumbnail").css("display", "block");
+                                } else {
+                                    $("#captureThumbnail").css("display", "none");
+                                }
+                            });
                         }
                     }
                 }

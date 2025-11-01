@@ -8,9 +8,6 @@
 }(this, (function() {
     "use strict";
 
-    let metadataId = null;
-    let metadataObj = null;
-
     var e = function() {
             return (e = Object.assign || function(e) {
                 for (var l, n = 1, t = arguments.length; n < t; n++)
@@ -31,47 +28,6 @@
             }
         }
 
-        function getMediaMetadataId(currentDynamicEl, index) {
-            let metadataId = null;
-            let currentDynamicElIndex = currentDynamicEl[index];
-
-            if (typeof currentDynamicElIndex !== 'undefined' && currentDynamicElIndex !== null) {
-                if (currentDynamicElIndex.hasOwnProperty("args")) {
-                    metadataId = currentDynamicElIndex.args;
-                } else if (currentDynamicElIndex.hasOwnProperty("metadataId")) {
-                    metadataId = currentDynamicElIndex.metadataId;
-                }
-
-                if (shashin &&
-                    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)
-                ) {
-                    if ($("#metadataId").length > 0) {
-                        if ($("#metadataId").val().length > 0 && $("#metadataId").val() === metadataId) {
-                            return metadataId;
-                        }
-
-                        if ($("#metadataId").val().length > 0) {
-                            return $("#metadataId").val();
-                        }
-                    }
-
-                    return metadataId;
-                } else {
-                    if (shashin) {
-                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgedit.media.title"), shashin.getTranslatedValue("main.toast.lgedit.media.message"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
-                    }
-                }
-            } else {
-                if (shashin) {
-                    shashin.printMessageToConsole("currentDynamicEl null: "+(currentDynamicEl === null), {
-                        tag: "edit"
-                    });
-                }
-            }
-
-            return metadataId;
-        }
-
         function n(n, t) {
             return this.core = n,
                 this.$LG = t,
@@ -87,39 +43,19 @@
                     this.shashinEditor()
             }
 
-            // Get the media type
-            this.core.LGel.off('lgAfterSlide').on('lgAfterSlide', (e) => {
-
-                const currentDynamicEl = this.settings.dynamicEl[e.detail.index] && this.settings.dynamicEl[e.detail.index].hasOwnProperty("args") ?
-                    this.settings.dynamicEl : this.core.galleryItems;
-                if (shashin) {
-                    shashin.printMessageToConsole("currentDynamicEl null: "+(currentDynamicEl === null), {
-                        tag: "edit"
-                    });
-                    shashin.printMessageToConsole("currentDynamicEl index: "+e.detail.index, {
-                        tag: "edit"
-                    });
-                }
-                metadataId = getMediaMetadataId(currentDynamicEl, e.detail.index);
-
-                if (metadataId !== null) {
-                    shashin.getMetadata(metadataId).then(function (metadata) {
-                        if (metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
-                            metadataObj = metadata;
-                            $("#shashineditor").css("display", "block");
-                        } else {
-                            $("#shashineditor").css("display", "none");
-                        }
-                    });
-                }
-            });
-
             this.core.outer
                 .find('.bi-sliders')
                 .first()
                 .off('click.lg')
                 .on('click.lg', () => {
-                    if (metadataObj !== null) {
+                    let metadataObj = {};
+                    if (Util.localStorageAvailable() === true) {
+                        metadataObj = JSON.parse(localStorage.getItem("metadata"));
+                    } else {
+                        metadataObj = JSON.parse($("#metadata").val());
+                    }
+
+                    if (metadataObj !== null && metadataObj.type.indexOf("image") >= 0 && metadataObj.type.indexOf("gif") < 0) {
                         let lgIndex = this.core.index;
                         if ($("#lgIndex").val().length > 0) {
                             lgIndex = $("#lgIndex").val();
