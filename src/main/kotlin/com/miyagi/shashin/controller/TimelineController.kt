@@ -475,6 +475,10 @@ class TimelineController: BaseController() {
                 response["metadataThumbnailArray"] = retMetadataThumbnailArray
                 response["metadataDatesArray"] = retMetadataDatesArray
             } else {
+                if (((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || view == "share") == false) {
+                    throw org.springframework.security.access.AccessDeniedException("Access Denied")
+                }
+                response["msg"] = messageSource?.getMessage("main.fail", null, locale)
                 response["msg"] = messageSource?.getMessage("main.fail", null, locale)
                 response["status"] = ApiResponse.FAIL.status
                 response["direction"] = direction
