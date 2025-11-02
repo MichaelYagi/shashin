@@ -125,7 +125,8 @@ class MultiSecurityConfig {
             "/*/atom",
             "/users/login",
             "/users/logout",
-            "/metadata/*"
+            "/metadata/*",
+            "/metadata/range/**"
         )
 
         private val adminApiList = arrayOf(

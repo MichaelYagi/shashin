@@ -105,7 +105,7 @@
                 }
 
                 // Multi-select between metadata in a range
-                if (view === "album") {
+                if (view === "album" || view === "share") {
                     const albumId = $("#albumId").val();
                     url += `?albumId=${albumId}&v=${version}`;
                 } else if (view === "person" || view === "matches" || view === "favorites") {

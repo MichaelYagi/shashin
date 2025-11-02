@@ -140,7 +140,8 @@ class TimelineController: BaseController() {
         return buildTimelineModel(model,mediaType,locale)
     }
 
-    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    // Share album needs public access. Check current user
+    //@Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/metadata/range/{anchorId}/{selectId}/{view}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, @PathVariable(required = true) view: String?, @RequestParam albumId: Optional<Int>, @RequestParam personId: Optional<Int>, @RequestParam folderName: Optional<String>, @RequestParam searchTerm: Optional<String>, locale: Locale): String {
@@ -196,7 +197,9 @@ class TimelineController: BaseController() {
             var metadatas: MutableList<Metadata>? = null
             var direction = ""
 
-            if (anchorMetadataDateString != null && anchorMetadataDateString != "" && selectMetadataDateString != null && selectMetadataDateString != "") {
+            if (anchorMetadataDateString != null && anchorMetadataDateString != "" && selectMetadataDateString != null && selectMetadataDateString != ""
+                && ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || view == "share")
+            ) {
                 val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 val anchorMetadataDateObj = sdf.parse(anchorMetadataDateString)
                 val selectMetadataDateObj = sdf.parse(selectMetadataDateString)
@@ -2998,7 +3001,6 @@ class TimelineController: BaseController() {
     @ResponseBody
     @Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
     fun getMetadata(model: Model, request: HttpServletRequest, @PathVariable(required = true) id: String): ResponseEntity<String> {
-println("testzzz")
         val response = mutableMapOf<String, Any?>()
         val keywordArray = mutableListOf<String>()
         val keywords = keywordRepository.findKeywordsByMetadataId(id)
