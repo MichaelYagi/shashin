@@ -105,7 +105,7 @@
 
                     // Execute function
                     if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
-                        // if this.settings.pluginFunctionName is found in settings, metadataId will be in funObject.args
+                        // if this.settings.pluginFunctionName is found in settings, funObject.args also defined in settings
                         funObject.fn(funObject.args, this.core.lgId, this.core.index);
                     } else if (typeof shashin !== 'undefined') {
                         shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgplugin.title"),

@@ -2,37 +2,39 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <!--<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>-->
-<script src="/js/jquery-3.5.1.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/jquery-ui.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/popper.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/bootstrap.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/date.format.js" th:nonce="${cspNonce}"></script>
-<script src="/js/uuid4.min.js" th:nonce="${cspNonce}"></script>
+<script src="/js/jquery-3.5.1.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/date.format.js"></script>
+<script src="/js/uuid4.min.js"></script>
 
-<script src="/js/site/util.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/constants.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/toast.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/modal.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/batch.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/lightgallery.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/map.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/metadata.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/overlay.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/fragments/app/util.js" th:nonce="${cspNonce}"></script>
-<script src="/js/site/app.js" th:nonce="${cspNonce}"></script>
+<script src="/js/site/util.js"></script>
+<script src="/js/site/fragments/app/constants.js"></script>
+<script src="/js/site/fragments/app/toast.js"></script>
+<script src="/js/site/fragments/app/modal.js"></script>
+<script src="/js/site/fragments/app/batch.js"></script>
+<script src="/js/site/fragments/app/lightgallery.js"></script>
+<script src="/js/site/fragments/app/map.js"></script>
+<script src="/js/site/fragments/app/metadata.js"></script>
+<script src="/js/site/fragments/app/overlay.js"></script>
+<script src="/js/site/fragments/app/util.js"></script>
+<script src="/js/site/app.js"></script>
+<script src="/js/site/services/http.js"></script>
 
-<script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-relative-caption.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-rotate.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-fullscreen.js" th:nonce="${cspNonce}"></script>
-<script src="/js/ol.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/ol-contextmenu.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-metadata-detail.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-video-thumbnail.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-shashin-editor.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-plugin-template.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lightgallery.min.js"></script>
+<script src="/js/lg-video.min.js"></script>
+<script src="/js/lg-zoom.min.js"></script>
+<script src="/js/lg-relative-caption.min.js"></script>
+<script src="/js/lg-rotate.min.js"></script>
+<script src="/js/lg-fullscreen.js"></script>
+<script src="/js/ol.min.js"></script>
+<script src="/js/ol-contextmenu.js"></script>
+<script src="/js/lg-metadata-detail.js"></script>
+<script src="/js/lg-video-thumbnail.js"></script>
+<script src="/js/lg-shashin-editor.js"></script>
+<script src="/js/lg-cast-media.js"></script>
+<script src="/js/lg-plugin-template.js"></script>
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
 <link rel="stylesheet" href="/css/bootstrap-icons.css">
@@ -55,106 +57,111 @@
 
 <div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>
 
-<div id="infinite-scroll-gallery">
-    <div class="row image-group-padding">
-        <section class="dateSection" id="2025-10-15"><div class="dateHeader" id="dateHeader2025-10-15"><span id="select2025-10-15" class="bi-circle pe-2 day-select" style="font-size: 0.85rem; color: lightgray; display: none;"></span><strong style="margin-left: 0px;">Wed, Oct 15, 2025</strong></div><div id="dateBody2025-10-15" class="row" style="margin-left: -2px; font-size: 0px; line-height: 0;" data-jg-settled="true" data-jg-key="2|476|1413,667">
-            <div id="photoThumbnailContainer9d2cc401-ae66-338f-aeaf-ae0c053f2dca" class="photo-thumbnail-container photo-thumbnail" style="padding-left: 0px; padding-right: 0px; width: 128px; height: 225px; margin-right: 4px; margin-bottom: 4px;">
-                <a class="mediaLink"
-                   id="mediaLink9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
-                   data-metadata-id="9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
-                   data-src="https://michaelyagi.github.io/images/dragonball/Android16.png"
-                   href="https://michaelyagi.github.io/images/dragonball/Android16.png"
-                   data-msg="Android 16"
-                   data-lg-id="5538313a-22e4-4a76-9a22-c47737331596"
-                   style="opacity: 1;"
-                >
-                    <img loading="lazy"
-                         draggable="false"
-                         data-smallthumb="https://michaelyagi.github.io/images/dragonball/Android16.png"
-                         src="https://michaelyagi.github.io/images/dragonball/Android16.png"
-                         class="photo-thumbnail-image"
-                         id="image9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
-                         width="128"
-                         height="225"
-                         style="background-color: transparent;"
+<div id="infinite-scroll" style="overflow-x: hidden;">
+    <div class="row image-group-padding" style="flex-wrap: wrap;">
+        <section class="dateSection" id="2025-10-15">
+            <div id="dateBody2025-10-15" class="row" style="margin-left: 0; font-size: 0; line-height: 0;" data-jg-settled="true" data-jg-key="2|476|1413,667">
+                <div id="photoThumbnailContainer9d2cc401-ae66-338f-aeaf-ae0c053f2dca" class="photo-thumbnail-container photo-thumbnail" style="padding-left: 0px; padding-right: 0px; width: 128px; height: 225px; margin-right: 4px; margin-bottom: 4px;">
+                    <a class="mediaLink"
+                       id="mediaLink9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                       data-metadata-id="9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                       data-src="https://michaelyagi.github.io/images/dragonball/Android16.png"
+                       href="https://michaelyagi.github.io/images/dragonball/Android16.png"
+                       data-msg="Android 16"
+                       data-lg-id="5538313a-22e4-4a76-9a22-c47737331596"
+                       style="opacity: 1;"
                     >
-                </a>
-            </div>
+                        <img loading="lazy"
+                             draggable="false"
+                             data-smallthumb="https://michaelyagi.github.io/images/dragonball/Android16.png"
+                             src="https://michaelyagi.github.io/images/dragonball/Android16.png"
+                             class="photo-thumbnail-image"
+                             id="image9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                             width="128"
+                             height="225"
+                             style="background-color: transparent;"
+                        >
+                    </a>
+                </div>
 
-            <div id="photoThumbnailContainerd955dfea-4db4-3e39-a350-0fcaa3363b2d" class="photo-thumbnail-container photo-thumbnail" style="padding-left: 0px; padding-right: 0px; width: 225px; height: 225px; margin-right: 0px; margin-bottom: 4px;">
-                <a class="mediaLink"
-                   id="mediaLinkd955dfea-4db4-3e39-a350-0fcaa3363b2d"
-                   data-metadata-id="d955dfea-4db4-3e39-a350-0fcaa3363b2d"
-                   data-sub-html="aasbedasbd"
-                   data-src="https://michaelyagi.github.io/images/earthfeed2.png"
-                   href="https://michaelyagi.github.io/images/earthfeed2.png"
-                   data-msg="Shashin Earth"
-                   data-lg-id="9cdf0aa4-eac4-46b5-ac87-fec625d45278"
-                   style="opacity: 1;"
-                >
-                    <img loading="lazy"
-                         draggable="false"
-                         data-smallthumb="https://michaelyagi.github.io/images/earthfeed2.png"
-                         src="https://michaelyagi.github.io/images/earthfeed2.png"
-                         class="photo-thumbnail-image"
-                         id="imaged955dfea-4db4-3e39-a350-0fcaa3363b2d"
-                         width="225"
-                         height="225"
-                         style="background-color: transparent;"
+                <div id="photoThumbnailContainerd955dfea-4db4-3e39-a350-0fcaa3363b2d" class="photo-thumbnail-container photo-thumbnail" style="padding-left: 0px; padding-right: 0px; width: 225px; height: 225px; margin-right: 0px; margin-bottom: 4px;">
+                    <a class="mediaLink"
+                       id="mediaLinkd955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                       data-metadata-id="d955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                       data-sub-html="I'm a description!"
+                       data-src="https://michaelyagi.github.io/images/earthfeed2.png"
+                       href="https://michaelyagi.github.io/images/earthfeed2.png"
+                       data-msg="Shashin Earth"
+                       data-lg-id="9cdf0aa4-eac4-46b5-ac87-fec625d45278"
+                       style="opacity: 1;"
                     >
-                </a>
-            </div>
+                        <img loading="lazy"
+                             draggable="false"
+                             data-smallthumb="https://michaelyagi.github.io/images/earthfeed2.png"
+                             src="https://michaelyagi.github.io/images/earthfeed2.png"
+                             class="photo-thumbnail-image"
+                             id="imaged955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                             width="225"
+                             height="225"
+                             style="background-color: transparent;"
+                        >
+                    </a>
+                </div>
 
-            <div id="photoThumbnailContainer5a6d004d-c841-3a4b-ad29-71277372a47b" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:277px;height:225px;padding-left:0;padding-right:0;">
-                <a class="mediaLink"
-                   id="mediaLink5a6d004d-c841-3a4b-ad29-71277372a47b"
-                   data-metadata-id="5a6d004d-c841-3a4b-ad29-71277372a47b"
-                   data-src="https://michaelyagi.github.io/images/dragonball/db_macrocosm.png"
-                   data-msg="Macrocosm"
-                   data-lg-id="07d01718-040b-4410-8ab8-bfead3a059e1"
-                   style="opacity: 1;"
-                >
-                    <img loading="lazy"
-                         draggable="false"
-                         class="photo-thumbnail-image thumbnailTag_2025-10-30"
-                         id="image5a6d004d-c841-3a4b-ad29-71277372a47b"
-                         width="277"
-                         height="225"
-                         src="https://michaelyagi.github.io/images/dragonball/db_macrocosm.png"
-                         style="background-color: transparent;"
+                <div id="photoThumbnailContainer5a6d004d-c841-3a4b-ad29-71277372a47b" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:277px;height:225px;padding-left:0;padding-right:0;">
+                    <a class="mediaLink"
+                       id="mediaLink5a6d004d-c841-3a4b-ad29-71277372a47b"
+                       data-metadata-id="5a6d004d-c841-3a4b-ad29-71277372a47b"
+                       data-src="https://michaelyagi.github.io/images/dragonball/db_macrocosm.png"
+                       data-msg="Macrocosm"
+                       data-lg-id="07d01718-040b-4410-8ab8-bfead3a059e1"
+                       style="opacity: 1;"
                     >
-                </a>
-            </div>
+                        <img loading="lazy"
+                             draggable="false"
+                             class="photo-thumbnail-image thumbnailTag_2025-10-30"
+                             id="image5a6d004d-c841-3a4b-ad29-71277372a47b"
+                             width="277"
+                             height="225"
+                             src="https://michaelyagi.github.io/images/dragonball/db_macrocosm.png"
+                             style="background-color: transparent;"
+                        >
+                    </a>
+                </div>
 
-            <div id="photoThumbnailContainer17731417-72df-3a0f-b336-dddf77f6eb2d" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:118px;height:225px;padding-left:0;padding-right:0;">
-                <a class="mediaLink"
-                   id="mediaLink17731417-72df-3a0f-b336-dddf77f6eb2d"
-                   data-metadata-id="17731417-72df-3a0f-b336-dddf77f6eb2d"
-                   data-src="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"
-                   data-thumb="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"
-                   data-width="6144"
-                   data-msg="Goku SSJ4"
-                   data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"
-                   style="opacity: 1;"
-                >
-                    <img loading="lazy"
-                         draggable="false"
-                         class="photo-thumbnail-image thumbnailTag_2025-9-15"
-                         id="image17731417-72df-3a0f-b336-dddf77f6eb2d"
-                         width="118"
-                         height="225"
-                         src="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"
-                         style="background-color: transparent;"
+                <div id="photoThumbnailContainer17731417-72df-3a0f-b336-dddf77f6eb2d" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:118px;height:225px;padding-left:0;padding-right:0;">
+                    <a class="mediaLink"
+                       id="mediaLink17731417-72df-3a0f-b336-dddf77f6eb2d"
+                       data-metadata-id="17731417-72df-3a0f-b336-dddf77f6eb2d"
+                       data-src="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"
+                       data-thumb="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"
+                       data-width="6144"
+                       data-msg="Goku SSJ4"
+                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"
+                       style="opacity: 1;"
                     >
-                </a>
+                        <img loading="lazy"
+                             draggable="false"
+                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             id="image17731417-72df-3a0f-b336-dddf77f6eb2d"
+                             width="118"
+                             height="225"
+                             src="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"
+                             style="background-color: transparent;"
+                        >
+                    </a>
+                </div>
             </div>
         </section>
+        <button id="openGallery">Open Gallery</button>
     </div>
 </div>
 
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        let lgElName = "infinite-scroll-gallery";
+        /*********************************/
+        // Base configs
+        let lgElName = "infinite-scroll";
         let lgEl = document.getElementById(lgElName);
 
         let mediaContentList = [];
@@ -190,19 +197,6 @@
             mediaContentList.push(mediaContent);
         });
 
-        // Shashin execution
-        // const additionalConfig = {
-        //     dynamic: true,
-        //     dynamicEl: mediaContentList
-        // };
-        // mediaContentList = shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
-        // console.log(mediaContentList);
-        //
-        // if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
-        //     shashin.getLightGallery().openGallery();
-        // }
-
-        // Manual execution
         function pluginFunction(message, lgId, lgIndex) {
             shashin.showToastMessage("Slide info",
                 "<strong>message</strong>: " + message + "<br>" +
@@ -215,7 +209,27 @@
                 }
             );
         }
+        /*********************************/
 
+        /*********************************/
+        // Shashin execution
+        // const additionalConfig = {
+        //     plugins: [lgPluginName],
+        //     pluginFunctionName: pluginFunction,
+        //     pluginSettingAttribute: true,
+        //     dynamic: true,
+        //     dynamicEl: mediaContentList,
+        // };
+        // mediaContentList = shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
+        //
+        // if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
+        //     $("#openGallery").on("click", function () {
+        //         shashin.getLightGallery().openGallery();
+        //     });
+        // }
+
+        /*********************************/
+        // Manual execution
         const configs = {
             plugins: [lgPluginName],
             pluginFunctionName: pluginFunction,
@@ -227,7 +241,9 @@
 
         const lg = lightGallery(lgEl, configs);
 
-        lg.openGallery();
+        $("#openGallery").on("click", function () {
+            lg.openGallery();
+        });
     })
 </script>
 
