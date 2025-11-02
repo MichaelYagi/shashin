@@ -615,20 +615,29 @@ class Util {
         return 225;
     }
 
+
+
     static setMetadataLocalStorage(date) {
-        if (Util.localStorageAvailable() === true) {
+        let storageType = null;
+        if (Util.sessionStorageAvailable() === true) {
+            storageType = sessionStorage;
+        } else if (Util.localStorageAvailable() === true) {
+            storageType = localStorage;
+        }
+
+        if (storageType !== null) {
             if (typeof date !== "undefined") {
                 let json = {};
-                if (localStorage.getItem("metadataDateVersion") !== null && localStorage.getItem("metadataDateVersion").length > 0) {
-                    json = JSON.parse(localStorage.getItem("metadataDateVersion"));
+                if (storageType.getItem("metadataDateVersion") !== null && storageType.getItem("metadataDateVersion").length > 0) {
+                    json = JSON.parse(storageType.getItem("metadataDateVersion"));
                     if (typeof date === "undefined") {
-                        localStorage.removeItem("metadataDateVersion");
+                        storageType.removeItem("metadataDateVersion");
                     } else {
                         json[date] = uuidv4();
                     }
 
                     if (Object.keys(json).length > 0) {
-                        localStorage.setItem("metadataDateVersion", JSON.stringify(json));
+                        storageType.setItem("metadataDateVersion", JSON.stringify(json));
                     }
                 } else {
                     let json = {};
@@ -637,36 +646,50 @@ class Util {
                         json[date] = uuidv4();
                     }
 
-                    localStorage.setItem("metadataDateVersion", JSON.stringify(json));
+                    storageType.setItem("metadataDateVersion", JSON.stringify(json));
                 }
             } else {
-                localStorage.setItem("metadataVersion", uuidv4());
+                storageType.setItem("metadataVersion", uuidv4());
             }
         }
     }
 
     static removeMetadataLocalStorage(date) {
-        if (Util.localStorageAvailable() === true) {
+        let storageType = null;
+        if (Util.sessionStorageAvailable() === true) {
+            storageType = sessionStorage;
+        } else if (Util.localStorageAvailable() === true) {
+            storageType = localStorage;
+        }
+
+        if (storageType !== null) {
             if (typeof date !== "undefined") {
                 let json = {};
-                if (localStorage.getItem("metadataDateVersion") !== null && localStorage.getItem("metadataDateVersion").length > 0) {
-                    json = JSON.parse(localStorage.getItem("metadataDateVersion"));
+                if (storageType.getItem("metadataDateVersion") !== null && storageType.getItem("metadataDateVersion").length > 0) {
+                    json = JSON.parse(storageType.getItem("metadataDateVersion"));
                     if (json.hasOwnProperty(date)) {
                         delete json[date];
                     }
-                    localStorage.setItem("metadataDateVersion", JSON.stringify(json));
+                    storageType.setItem("metadataDateVersion", JSON.stringify(json));
                 }
             } else {
-                localStorage.removeItem("metadataVersion");
+                storageType.removeItem("metadataVersion");
             }
         }
     }
 
     static clearMetadataLocalStorage() {
-        if (Util.localStorageAvailable() === true) {
-            if (localStorage.getItem("metadataDateVersion") !== null && localStorage.getItem("metadataDateVersion").length > 0) {
-                localStorage.removeItem("metadataDateVersion");
-                localStorage.removeItem("metadataVersion");
+        let storageType = null;
+        if (Util.sessionStorageAvailable() === true) {
+            storageType = sessionStorage;
+        } else if (Util.localStorageAvailable() === true) {
+            storageType = localStorage;
+        }
+
+        if (storageType !== null) {
+            if (storageType.getItem("metadataDateVersion") !== null && storageType.getItem("metadataDateVersion").length > 0) {
+                storageType.removeItem("metadataDateVersion");
+                storageType.removeItem("metadataVersion");
             }
         }
     }
@@ -945,20 +968,29 @@ class Util {
     }
 
     static getMetadataLocalStorage(date) {
+        let storageType = null;
+        if (Util.sessionStorageAvailable() === true) {
+            storageType = sessionStorage;
+        } else if (Util.localStorageAvailable() === true) {
+            storageType = localStorage;
+        }
+
         let version = "";
-        if (typeof date !== "undefined") {
-            if (Util.localStorageAvailable() === true && "metadataDateVersion" in localStorage && localStorage.getItem("metadataDateVersion").length > 0) {
-                const json = JSON.parse(localStorage.getItem("metadataDateVersion"));
-                if (json.hasOwnProperty(date) && json[date].length > 0) {
-                    version = json[date];
+        if (storageType !== null) {
+            if (typeof date !== "undefined") {
+                if ("metadataDateVersion" in storageType && storageType.getItem("metadataDateVersion").length > 0) {
+                    const json = JSON.parse(storageType.getItem("metadataDateVersion"));
+                    if (json.hasOwnProperty(date) && json[date].length > 0) {
+                        version = json[date];
+                    }
                 }
-            }
-        } else {
-            if (Util.localStorageAvailable() === true && "metadataVersion" in localStorage && localStorage.getItem("metadataVersion").length > 0) {
-                version = localStorage.getItem("metadataVersion");
             } else {
-                Util.setMetadataLocalStorage();
-                version = localStorage.getItem("metadataVersion");
+                if ("metadataVersion" in storageType && storageType.getItem("metadataVersion").length > 0) {
+                    version = storageType.getItem("metadataVersion");
+                } else {
+                    Util.setMetadataLocalStorage();
+                    version = storageType.getItem("metadataVersion");
+                }
             }
         }
 
@@ -983,6 +1015,28 @@ class Util {
             }
         } else {
             // localStorage is not available
+            return false;
+        }
+    }
+
+    static sessionStorageAvailable() {
+        if (typeof sessionStorage !== 'undefined') {
+            try {
+                sessionStorage.setItem('feature_test', 'yes');
+                if (sessionStorage.getItem('feature_test') === 'yes') {
+                    sessionStorage.removeItem('feature_test');
+                    // sessionStorage is enabled
+                    return true;
+                } else {
+                    // sessionStorage is disabled
+                    return false;
+                }
+            } catch(e) {
+                // sessionStorage is disabled
+                return false;
+            }
+        } else {
+            // sessionStorage is not available
             return false;
         }
     }

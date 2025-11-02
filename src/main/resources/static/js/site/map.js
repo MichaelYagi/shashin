@@ -150,25 +150,26 @@ async function showMap(mapdata, keywordMap, locale) {
         } else {
             shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.password.validationerror.title"), shashin.getTranslatedValue("main.toast.map.invalid.latlng"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger", tag: "mainmap"});
         }
-    } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
-        initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
-        initialZoom = shashin.initialMapZoom;
-        startDateField.val("");
-        localStorage.removeItem('lat');
-        localStorage.removeItem('lng');
-    } else if (Util.localStorageAvailable() === true && "latlng" in localStorage) {
-        const latlngArr = localStorage.getItem("latlng").split(",");
-
-        if (latlngArr.length > 1) {
-            const lslat = latlngArr[0].trim();
-            const lslng = latlngArr[1].trim();
-
-            initialCoord = [lslng, lslat];
-            initialZoom = shashin.initialMapZoom;
-            startDateField.val("");
-            localStorage.removeItem('latlng');
-        }
     }
+    // else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
+    //     initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
+    //     initialZoom = shashin.initialMapZoom;
+    //     startDateField.val("");
+    //     localStorage.removeItem('lat');
+    //     localStorage.removeItem('lng');
+    // } else if (Util.localStorageAvailable() === true && "latlng" in localStorage) {
+    //     const latlngArr = localStorage.getItem("latlng").split(",");
+    //
+    //     if (latlngArr.length > 1) {
+    //         const lslat = latlngArr[0].trim();
+    //         const lslng = latlngArr[1].trim();
+    //
+    //         initialCoord = [lslng, lslat];
+    //         initialZoom = shashin.initialMapZoom;
+    //         startDateField.val("");
+    //         localStorage.removeItem('latlng');
+    //     }
+    // }
 
     // Query param takes precedence over localstorage
     if ((qssd !== null && qssd !== "") || (qsed !== null && qsed !== "") || qsvo !== null) {
@@ -191,26 +192,27 @@ async function showMap(mapdata, keywordMap, locale) {
         if (qsvo !== null) {
             videoOnlyCheckbox.prop("checked", qsvo === "true");
         }
-    } else if (
-      Util.localStorageAvailable() === true &&
-        ("sd" in localStorage || "ed" in localStorage || "vo" in localStorage)
-    ) {
-        const sd = localStorage.getItem("sd");
-        const ed = localStorage.getItem("ed");
-        const vo = localStorage.getItem("vo") === "true";
-
-        if (sd !== "" && sd !== null) {
-            startDateField.val(sd);
-        }
-        if (ed !== "" && ed !== null) {
-            endDateField.val(ed);
-        }
-        videoOnlyCheckbox.prop("checked",vo);
-
-        localStorage.removeItem("sd");
-        localStorage.removeItem("ed");
-        localStorage.removeItem("vo");
     }
+    // else if (
+    //   Util.localStorageAvailable() === true &&
+    //     ("sd" in localStorage || "ed" in localStorage || "vo" in localStorage)
+    // ) {
+    //     const sd = localStorage.getItem("sd");
+    //     const ed = localStorage.getItem("ed");
+    //     const vo = localStorage.getItem("vo") === "true";
+    //
+    //     if (sd !== "" && sd !== null) {
+    //         startDateField.val(sd);
+    //     }
+    //     if (ed !== "" && ed !== null) {
+    //         endDateField.val(ed);
+    //     }
+    //     videoOnlyCheckbox.prop("checked",vo);
+    //
+    //     localStorage.removeItem("sd");
+    //     localStorage.removeItem("ed");
+    //     localStorage.removeItem("vo");
+    // }
 
     function checkDateInputs(startDateFormat,endDateFormat,takenAtDateFormat) {
         if (takenAtDateFormat === undefined) {

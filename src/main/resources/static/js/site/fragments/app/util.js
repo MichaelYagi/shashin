@@ -68,7 +68,9 @@
         shashin.consoleFilterTypes = consoleTypes;
         shashin.consoleTags = tags;
 
-        if (Util.localStorageAvailable() === true) {
+        if (Util.sessionStorageAvailable() === true) {
+            sessionStorage.setItem("showDebug", "on");
+        } else if (Util.localStorageAvailable() === true) {
             localStorage.setItem("showDebug", "on");
         }
     };
@@ -81,7 +83,9 @@
         shashin.consoleFilterTypes = [];
         shashin.consoleTags = ["all"];
 
-        if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null) {
+        if (Util.sessionStorageAvailable() === true) {
+            sessionStorage.removeItem("showDebug");
+        } else if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null) {
             localStorage.removeItem("showDebug");
         }
     };
@@ -113,8 +117,16 @@
         }
 
         let localStorageDebugFlag = false;
-        if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null && localStorage.getItem("showDebug").length > 0) {
-            let getFlag = localStorage.getItem("showDebug");
+
+        let storageType = null;
+        if (Util.sessionStorageAvailable() === true) {
+            storageType = sessionStorage;
+        } else if (Util.localStorageAvailable() === true) {
+            storageType = localStorage;
+        }
+
+        if (storageType !== null && storageType.getItem("showDebug") !== null && storageType.getItem("showDebug").length > 0) {
+            let getFlag = storageType.getItem("showDebug");
             if (getFlag === "on") {
                 localStorageDebugFlag = true;
             }

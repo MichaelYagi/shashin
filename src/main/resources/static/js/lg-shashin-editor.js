@@ -49,7 +49,10 @@
                 .off('click.lg')
                 .on('click.lg', () => {
                     let metadataObj = {};
-                    if (Util.localStorageAvailable() === true) {
+
+                    if (Util.sessionStorageAvailable() === true) {
+                        metadataObj = JSON.parse(sessionStorage.getItem("metadata"));
+                    } else if (Util.localStorageAvailable() === true) {
                         metadataObj = JSON.parse(localStorage.getItem("metadata"));
                     } else {
                         metadataObj = JSON.parse($("#metadata").val());
