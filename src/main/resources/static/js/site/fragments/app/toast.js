@@ -10,18 +10,26 @@
             borderColor = one of primary, secondary, success, danger, warning, info, light, dark, white
             tag = string, identifies and labels the toast
             refreshTag = if tag is already defined, overwrites the tag with updated content
+            width = Width of toast - string eg 300px
             closeButton = boolean
         */
     shashin.showToastMessage = function(title, message, options) {
         shashin.printMessageToConsole(title, {tag: "toast"});
         shashin.printMessageToConsole(JSON.stringify(options), {tag: "toast"});
 
-        const createToast = function (index, placement, tag, title, closeButton) {
+        const createToast = function (index, placement, tag, title, width, closeButton) {
 
-            let html = '<div id="'+placement+'_ToastTarget_'+index+'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">';
-            if (tag !== null) {
-                html = '<div id="'+placement+'_ToastTarget_'+index+'" data-tag="'+tag+'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">';
+            let settingWidth = "";
+            if (width !== null) {
+                settingWidth = "width: "+width+";";
             }
+
+            let tagString = "";
+            if (tag !== null) {
+                tagString = " data-tag='"+tag+"'";
+            }
+
+            let html = '<div id="'+placement+'_ToastTarget_'+index+'"'+tagString+' class="toast centered-div" role="alert" aria-live="assertive" aria-atomic="true" style="margin: 0 auto;'+settingWidth+'">';
 
             if (title !== null && title !== "") {
                 html += '<div class="toast-header">' +
@@ -59,6 +67,7 @@
         let tag = null;
         let refreshTag = null;
         let closeButton = true;
+        let width = null;
 
         if (options === undefined || options === null) {
             placement = shashin.toast.placement.bottom.center;
@@ -115,6 +124,11 @@
                 validOptions.push("closeButton");
             }
 
+            if (options.hasOwnProperty("width")) {
+                width = options.width;
+                validOptions.push("width");
+            }
+
             const invalidOptions = [];
             for (let key in options) {
                 if (options.hasOwnProperty(key) === false || (options.hasOwnProperty(key) === true && validOptions.includes(key) === false)) {
@@ -164,7 +178,7 @@
                     }
 
                     if (shashin.hasToast(placement, {tag: tag}) === false) {
-                        createToast(nextIteration, placement, tag, title, closeButton);
+                        createToast(nextIteration, placement, tag, title, width, closeButton);
 
                         const attr = $("#" + toastId).attr('data-tag');
 
@@ -173,7 +187,7 @@
                         }
                     }
                 } else if ($("#" + toastId).length === 0 || ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false)) {
-                    createToast(nextIteration, placement, tag, title, closeButton);
+                    createToast(nextIteration, placement, tag, title, width, closeButton);
                     attached = true;
                 }
 
