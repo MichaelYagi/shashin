@@ -225,8 +225,6 @@
     .tool-group .slider-wrapper .center-tick,
     .tool-group .slider-wrapper .left-tick {
         position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
         z-index: 3;
         pointer-events: none;
         user-select: none;
@@ -355,14 +353,6 @@
         margin: 0;
         padding: 0;
         display: block;
-    }
-
-    /* Make sure ticks remain vertically centered relative to the wrapper */
-    .tool-group .slider-wrapper .slider-tick,
-    .tool-group .slider-wrapper .center-tick,
-    .tool-group .slider-wrapper .left-tick {
-        top: 35%;
-        transform: translateY(-50%) !important;
     }
 
     .tool-carousel-track .tool-group {
