@@ -31,9 +31,8 @@
 <script src="/js/ol-contextmenu.js" th:nonce="${cspNonce}"></script>
 <script src="/js/lg-metadata-detail.js" th:nonce="${cspNonce}"></script>
 <script src="/js/lg-video-thumbnail.js" th:nonce="${cspNonce}"></script>
-<script src="/js/cast.min.js" th:nonce="${cspNonce}"></script>
-<script src="/js/lg-cast-media.js" th:nonce="${cspNonce}"></script>
 <script src="/js/lg-shashin-editor.js" th:nonce="${cspNonce}"></script>
+<script src="/js/lg-plugin-template.js" th:nonce="${cspNonce}"></script>
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
 <link rel="stylesheet" href="/css/bootstrap-icons.css">
@@ -50,17 +49,194 @@
 <link rel="stylesheet" href="/css/lg-video-thumbnail.css">
 <link rel="stylesheet" href="/css/lg-cast-media.css">
 
-<body class="thumb d-flex flex-column vh-100">
+<body>
 
 <span th:replace="~{fragments/translations.html :: translations()}"></span>
 
 <div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>
 
-<!--Code here-->
+<div id="infinite-scroll-gallery">
+    <div class="row image-group-padding">
+        <section class="dateSection" id="2025-10-15"><div class="dateHeader" id="dateHeader2025-10-15"><span id="select2025-10-15" class="bi-circle pe-2 day-select" style="font-size: 0.85rem; color: lightgray; display: none;"></span><strong style="margin-left: 0px;">Wed, Oct 15, 2025</strong></div><div id="dateBody2025-10-15" class="row" style="margin-left: -2px; font-size: 0px; line-height: 0;" data-jg-settled="true" data-jg-key="2|476|1413,667">
+            <div id="photoThumbnailContainer9d2cc401-ae66-338f-aeaf-ae0c053f2dca" class="photo-thumbnail-container photo-thumbnail" style="padding-left: 0px; padding-right: 0px; width: 318px; height: 225px; margin-right: 4px; margin-bottom: 4px;">
+                <a class="mediaLink"
+                   id="mediaLink9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                   data-metadata-id="9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                   data-download-url="/api/v1/image/9d2cc401-ae66-338f-aeaf-ae0c053f2dca/download"
+                   data-src="/api/v1/image/9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                   href="/api/v1/image/9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                   tag="9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                   data-lg-id="5538313a-22e4-4a76-9a22-c47737331596"
+                   style="opacity: 1;"
+                >
+                    <img loading="lazy"
+                         draggable="false"
+                         data-smallthumb="/api/v1/thumbnails/225/9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                         src="/api/v1/thumbnails/225/9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                         class="photo-thumbnail-image"
+                         id="image9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
+                         width="318"
+                         height="225"
+                         style="background-color: transparent;"
+                    >
+                </a>
+            </div>
+
+            <div id="photoThumbnailContainerd955dfea-4db4-3e39-a350-0fcaa3363b2d" class="photo-thumbnail-container photo-thumbnail" style="padding-left: 0px; padding-right: 0px; width: 150px; height: 225px; margin-right: 0px; margin-bottom: 4px;">
+                <a class="mediaLink"
+                   id="mediaLinkd955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                   data-metadata-id="d955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                   data-download-url="/api/v1/image/d955dfea-4db4-3e39-a350-0fcaa3363b2d/download"
+                   data-sub-html="aasbedasbd" data-src="/api/v1/image/d955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                   href="/api/v1/image/d955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                   tag="d955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                   data-lg-id="9cdf0aa4-eac4-46b5-ac87-fec625d45278"
+                   style="opacity: 1;"
+                >
+                    <img loading="lazy"
+                         draggable="false"
+                         data-smallthumb="/api/v1/thumbnails/225/d955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                         src="/api/v1/thumbnails/225/d955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                         class="photo-thumbnail-image"
+                         id="imaged955dfea-4db4-3e39-a350-0fcaa3363b2d"
+                         width="150"
+                         height="225"
+                         style="background-color: transparent;"
+                    >
+                </a>
+            </div>
+
+            <div id="photoThumbnailContainer5a6d004d-c841-3a4b-ad29-71277372a47b" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:297px;height:225px;padding-left:0;padding-right:0;">
+                <a class="mediaLink"
+                   id="mediaLink5a6d004d-c841-3a4b-ad29-71277372a47b"
+                   data-download-url="/api/v1/image/5a6d004d-c841-3a4b-ad29-71277372a47b/download"
+                   data-metadata-id="5a6d004d-c841-3a4b-ad29-71277372a47b"
+                   data-lg-size="1184-896"
+                   data-src="/api/v1/image/5a6d004d-c841-3a4b-ad29-71277372a47b"
+                   tag="07d01718-040b-4410-8ab8-bfead3a059e1"
+                   data-lg-id="07d01718-040b-4410-8ab8-bfead3a059e1"
+                   style="opacity: 1;"
+                >
+                    <img loading="lazy"
+                         draggable="false"
+                         class="photo-thumbnail-image thumbnailTag_2025-10-30"
+                         id="image5a6d004d-c841-3a4b-ad29-71277372a47b"
+                         width="297"
+                         height="225"
+                         src="/api/v1/thumbnails/225/5a6d004d-c841-3a4b-ad29-71277372a47b"
+                         style="background-color: transparent;"
+                    >
+                </a>
+            </div>
+
+            <div id="photoThumbnailContainer17731417-72df-3a0f-b336-dddf77f6eb2d" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:169px;height:225px;padding-left:0;padding-right:0;">
+                <a class="mediaLink"
+                   id="mediaLink17731417-72df-3a0f-b336-dddf77f6eb2d"
+                   data-download-url="/api/v1/image/17731417-72df-3a0f-b336-dddf77f6eb2d/download"
+                   data-metadata-id="17731417-72df-3a0f-b336-dddf77f6eb2d"
+                   data-lg-size="6144-8160"
+                   data-src="/api/v1/image/17731417-72df-3a0f-b336-dddf77f6eb2d"
+                   data-responsive="/api/v1/thumbnails/225/17731417-72df-3a0f-b336-dddf77f6eb2d 169"
+                   data-thumb="/api/v1/thumbnails/225/17731417-72df-3a0f-b336-dddf77f6eb2d"
+                   data-width="6144"
+                   data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"
+                   style="opacity: 1;"
+                >
+                    <img loading="lazy"
+                         draggable="false"
+                         class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                         id="image17731417-72df-3a0f-b336-dddf77f6eb2d"
+                         width="169"
+                         height="225"
+                         src="/api/v1/thumbnails/225/17731417-72df-3a0f-b336-dddf77f6eb2d"
+                         style="background-color: transparent;"
+                    >
+                </a>
+            </div>
+        </section>
+    </div>
+</div>
 
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        // Code here
+        let lgElName = "infinite-scroll-gallery";
+        let lgEl = document.getElementById(lgElName);
+
+        let mediaContentList = [];
+        $.each($(".mediaLink"), function() {
+            const mediaContent = {};
+            mediaContent.metadataDetailFun = shashin.openEditMetadataModal;
+            mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
+            mediaContent.args = "";
+            try {
+                mediaContent.args = $(this).attr("tag");
+            } catch(e) {}
+
+            let thumbnail = $(this).attr("data-thumb");
+            if (typeof thumbnail !== 'undefined' && thumbnail !== false) {
+                mediaContent.thumb = thumbnail;
+            }
+
+            mediaContent.thumb = "/api/v1/thumbnails/225/"+$(this).attr("data-metadata-id");
+
+            let subHtmlAttr = $(this).attr("data-sub-html");
+            if (typeof subHtmlAttr !== 'undefined' && subHtmlAttr !== false) {
+                mediaContent.subHtml = subHtmlAttr;
+            }
+
+            if ($(this).attr("data-src")) {
+                mediaContent.src = $(this).attr("data-src");
+                mediaContent.downloadUrl = $(this).attr("data-download-url");
+            }
+
+            if ($(this).attr("data-video")) {
+                mediaContent.video = $(this).attr("data-video");
+                mediaContent.poster = $(this).attr("data-poster");
+                mediaContent.lgSize = $(this).attr("data-lg-size");
+            }
+
+            mediaContent.metadataId = $(this).attr("data-metadata-id");
+            mediaContentList.push(mediaContent);
+        });
+
+        // Shashin execution
+        // const additionalConfig = {
+        //     dynamic: true,
+        //     dynamicEl: mediaContentList
+        // };
+        // mediaContentList = shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
+        // console.log(mediaContentList);
+        //
+        // if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
+        //     shashin.getLightGallery().openGallery();
+        // }
+
+        // Manual execution
+        function pluginFunction(metadataId, lgId, lgIndex) {
+            shashin.showToastMessage("Slide info",
+                "<strong>metadataId</strong>: " + metadataId + "<br>" +
+                "<strong>lgId</strong>: " + lgId + "<br>" +
+                "<strong>lgIndex</strong>: " + lgIndex,
+                {
+                    tag: "pluginFunction",
+                    autohide: false,
+                    closeButton: true
+                }
+            );
+        }
+
+        const configs = {
+            plugins: [lgPluginName],
+            pluginFunctionName: pluginFunction,
+            pluginSettingAttribute: true,
+            dynamic: true,
+            dynamicEl: mediaContentList,
+            licenseKey: Util.lgApiKey()
+        };
+
+        const lg = lightGallery(lgEl, configs);
+
+        lg.openGallery();
     })
 </script>
 
