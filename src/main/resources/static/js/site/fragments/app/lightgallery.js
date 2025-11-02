@@ -88,7 +88,9 @@
             });
 
             shashin.infiniteScrollGallery.addEventListener('lgAfterClose', _ => {
-                if (Util.localStorageAvailable() === true) {
+                if (Util.sessionStorageAvailable() === true) {
+                    sessionStorage.removeItem("metadata");
+                } else if (Util.localStorageAvailable() === true) {
                     localStorage.removeItem("metadata");
                 } else {
                     $("#metadata").val("");
@@ -135,7 +137,9 @@
 
                         if (metadataId !== null) {
                             shashin.getMetadata(metadataId).then(function (metadata) {
-                                if (Util.localStorageAvailable() === true) {
+                                if (Util.sessionStorageAvailable() === true) {
+                                    sessionStorage.setItem("metadata", JSON.stringify(metadata));
+                                } else if (Util.localStorageAvailable() === true) {
                                     localStorage.setItem("metadata", JSON.stringify(metadata));
                                 } else {
                                     $("#metadata").val(JSON.stringify(metadata));
