@@ -48,6 +48,7 @@
                 .first()
                 .off('click.lg')
                 .on('click.lg', () => {
+                    let lgIndex = parseInt(this.core.index);
                     let metadataObj = {};
 
                     if (Util.sessionStorageAvailable() === true) {
@@ -59,9 +60,8 @@
                     }
 
                     if (metadataObj !== null && metadataObj.type.indexOf("image") >= 0 && metadataObj.type.indexOf("gif") < 0) {
-                        let lgIndex = this.core.index;
-                        if ($("#lgIndex").val().length > 0) {
-                            lgIndex = $("#lgIndex").val();
+                        if ((lgIndex === undefined || lgIndex === null || lgIndex < 0) && $("#lgIndex").val().length > 0) {
+                            lgIndex = parseInt($("#lgIndex").val());
                         }
                         editMedia(metadataObj, lgIndex);
                     }
