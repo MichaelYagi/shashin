@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 - Share page paged video thumbnails
+- Video thumbnails in mobile view
 
 ### Security
 
