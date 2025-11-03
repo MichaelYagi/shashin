@@ -169,8 +169,8 @@
             const mediaContent = {};
 
             // Plugin name and argument, or can be defined in settings
-            mediaContent.pluginFunctionName = pluginFunction;
-            mediaContent.args = $(this).attr("data-msg");
+            // mediaContent.pluginFunctionName = pluginFunction;
+            // mediaContent.args = $(this).attr("data-msg");
 
             let thumbnail = $(this).attr("data-thumb");
             if (typeof thumbnail !== 'undefined' && thumbnail !== false) {
@@ -214,39 +214,38 @@
 
         /*********************************/
         // Shashin execution
-        const additionalConfig = {
-            plugins: [lgPluginName],
-            pluginFunctionName: pluginFunction,
-            // dynamic: true,
-            // dynamicEl: mediaContentList,
-            pluginSettingAttribute: true,
-            overrideBaseConfigs: true,
-        };
-        mediaContentList = shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
-
-        if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
-            $("#openGallery").on("click", function (e) {
-
-                shashin.openGallery(e, 0);
-            });
-        }
+        // const additionalConfig = {
+        //     plugins: [lgPluginName],
+        //     pluginFunctionName: pluginFunction,
+        //     pluginSettingAttribute: true,
+        //     download: false,
+        //     // overrideBaseConfigs: true,
+        // };
+        // mediaContentList = shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
+        //
+        // if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
+        //     $("#openGallery").on("click", function (e) {
+        //         shashin.openGallery(e, 0);
+        //     });
+        // }
 
         /*********************************/
         // Manual execution
-        // const configs = {
-        //     plugins: [lgPluginName],
-        //     pluginSettingAttribute: true,
-        //     // pluginFunctionName: pluginFunction, // Alternatively, define in mediaContentList
-        //     dynamic: true,
-        //     dynamicEl: mediaContentList,
-        //     licenseKey: Util.lgApiKey()
-        // };
-        //
-        // const lg = lightGallery(lgEl, configs);
-        //
-        // $("#openGallery").on("click", function () {
-        //     lg.openGallery();
-        // });
+        const configs = {
+            plugins: [lgPluginName],
+            pluginSettingAttribute: true,
+            pluginFunctionName: pluginFunction, // Alternatively, define in mediaContentList
+            dynamic: true,
+            download: false,
+            dynamicEl: mediaContentList,
+            licenseKey: Util.lgApiKey()
+        };
+
+        const lg = lightGallery(lgEl, configs);
+
+        $("#openGallery").on("click", function () {
+            lg.openGallery();
+        });
     })
 </script>
 
