@@ -371,10 +371,12 @@
         /*********************************/
         let lg = null;
 
+        /*********************************/
+        // Shashin execution
+        /*********************************/
         function initShashinGallery() {
             console.log("Using Shashin");
 
-            // Shashin execution
             const additionalConfig = {
                 plugins: [lgPluginName],
                 dynamic: true,
@@ -398,11 +400,12 @@
             }
         }
 
+        /*********************************/
+        // Lightgallery execution
+        /*********************************/
         function initLgGallery() {
             console.log("Using Lightgallery");
 
-            /*********************************/
-            // Manual execution
             const configs = {
                 plugins: [lgPluginName],
                 pluginSettingAttribute: true,
