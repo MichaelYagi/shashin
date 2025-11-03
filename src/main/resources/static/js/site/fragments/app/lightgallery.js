@@ -135,7 +135,7 @@
                             }
                         }
 
-                        if (metadataId !== null) {
+                        if (metadataId !== undefined && metadataId !== null) {
                             shashin.getMetadata(metadataId).then(function (metadata) {
                                 if (Util.sessionStorageAvailable() === true) {
                                     sessionStorage.setItem("metadata", JSON.stringify(metadata));
