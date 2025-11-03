@@ -200,42 +200,48 @@
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
         shashin.autoplayVideo = $("#autoplayVideo").val() === "true";
 
-        const configs = {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgCastMedia, lgShashinEditor],
-            videojs: false,
-            hideBarsDelay: 5000,
-            showBarsAfter: 5000,
-            allowMediaOverlap: true,
-            counter: false,
-            castMedia: true,
-            shashinEditor: true,
-            fullScreen: true,
-            download: true,
-            zoomFromOrigin: true,
-            speed: 0,
-            preload: 0,
-            autoplayFirstVideo: shashin.autoplayVideo,
-            autoplayVideoOnSlide: shashin.autoplayVideo,
-            gotoNextSlideOnVideoEnd: false,
-            rotate: true,
-            rotateLeft: true,
-            rotateRight: true,
-            flipHorizontal: true,
-            flipVertical: false,
-            licenseKey: Util.lgApiKey()
-        };
+        let configs = {};
+        if (additionalConfigs.hasOwnProperty("overrideBaseConfigs") && additionalConfigs.overrideBaseConfigs === true) {
+            configs = additionalConfigs;
+            configs.licenseKey = Util.lgApiKey();
+        } else {
+            configs = {
+                plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgCastMedia, lgShashinEditor],
+                videojs: false,
+                hideBarsDelay: 5000,
+                showBarsAfter: 5000,
+                allowMediaOverlap: true,
+                counter: false,
+                castMedia: true,
+                shashinEditor: true,
+                fullScreen: true,
+                download: true,
+                zoomFromOrigin: true,
+                speed: 0,
+                preload: 0,
+                autoplayFirstVideo: shashin.autoplayVideo,
+                autoplayVideoOnSlide: shashin.autoplayVideo,
+                gotoNextSlideOnVideoEnd: false,
+                rotate: true,
+                rotateLeft: true,
+                rotateRight: true,
+                flipHorizontal: true,
+                flipVertical: false,
+                licenseKey: Util.lgApiKey()
+            };
 
-        for (const key in additionalConfigs) {
-            if (key === "plugins") {
-                if ($.isArray(additionalConfigs[key])) {
-                    $.each(additionalConfigs[key] , function(index, val) {
-                        configs.plugins.push(val);
-                    });
+            for (const key in additionalConfigs) {
+                if (key === "plugins") {
+                    if ($.isArray(additionalConfigs[key])) {
+                        $.each(additionalConfigs[key], function (index, val) {
+                            configs.plugins.push(val);
+                        });
+                    } else {
+                        configs.plugins.push(additionalConfigs[key]);
+                    }
                 } else {
-                    configs.plugins.push(additionalConfigs[key]);
+                    configs[key] = additionalConfigs[key];
                 }
-            } else {
-                configs[key] = additionalConfigs[key];
             }
         }
 
