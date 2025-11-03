@@ -79,7 +79,10 @@
 
             this.core.LGel.off('lgBeforeSlide').on('lgBeforeSlide', (e) => {
                 console.log("You are on slide " + e.detail.index);
+                shashin.closeToastMessages();
+            });
 
+            this.core.LGel.off('lgBeforeClose').on('lgBeforeClose', (e) => {
                 shashin.closeToastMessages();
             });
 
@@ -103,22 +106,10 @@
                     // Or call an external function, eg. shashin.showToastMessage
                     const funObject = Util.getLgFunction(this, "pluginFunctionName");
 
-                    // Execute function
+                    // Execute function if defined
                     if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
                         // if this.settings.pluginFunctionName is found in settings, funObject.args also defined in settings
                         funObject.fn(funObject.args, this.core.lgId, this.core.index);
-                    } else if (typeof shashin !== 'undefined') {
-                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgplugin.title"),
-                            "Config property pluginFunctionName not defined in configs",
-                            {
-                                icon:"bi-exclamation-triangle",
-                                iconColor:"#FF0000",
-                                autohide: false,
-                                borderColor:"danger"
-                            }
-                        );
-                    } else {
-                        console.warn("Config property pluginFunctionName not defined in config");
                     }
                     /* End optional call */
                 });
