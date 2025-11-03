@@ -2,6 +2,10 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <!--<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>-->
+
+<!--This is key for mobile views-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <script src="/js/jquery-3.5.1.min.js"></script>
 <script src="/js/jquery-ui.min.js"></script>
 <script src="/js/popper.min.js"></script>
@@ -58,10 +62,10 @@
 <div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>
 
 <div id="infinite-scroll" style="overflow-x: hidden;">
-    <div>
+    <div class="container-fluid px-2">
         <section class="dateSection" id="2025-10-15">
-            <div id="dateBody2025-10-15" class="row" style="margin-left: 0; font-size: 0; line-height: 0;" data-jg-settled="true" data-jg-key="2|476|1413,667">
-                <div id="photoThumbnailContainer9d2cc401-ae66-338f-aeaf-ae0c053f2dca" class="photo-thumbnail-container photo-thumbnail" style="padding-left: 0; padding-right: 0; width: 128px; height: 225px; margin: 4px;">
+            <div id="dateBody2025-10-15" class="row gx-2 gy-2" style="margin-left: 0;" data-jg-settled="true" data-jg-key="2|476|1413,667">
+                <div id="photoThumbnailContainer9d2cc401-ae66-338f-aeaf-ae0c053f2dca" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width: 128px; height: 225px; margin: 4px;">
                     <a class="mediaLink"
                        id="mediaLink9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
                        data-src="https://michaelyagi.github.io/images/dragonball/Android16.png"
@@ -73,7 +77,7 @@
                              draggable="false"
                              data-smallthumb="https://michaelyagi.github.io/images/dragonball/Android16.png"
                              src="https://michaelyagi.github.io/images/dragonball/Android16.png"
-                             class="photo-thumbnail-image"
+                             class="photo-thumbnail-image img-fluid"
                              id="image9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
                              width="128"
                              height="225"
@@ -82,7 +86,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainerd955dfea-4db4-3e39-a350-0fcaa3363b2d" class="photo-thumbnail-container photo-thumbnail" style="padding-left: 0; padding-right: 0; width: 225px; height: 225px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
+                <div id="photoThumbnailContainerd955dfea-4db4-3e39-a350-0fcaa3363b2d" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width: 225px; height: 225px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLinkd955dfea-4db4-3e39-a350-0fcaa3363b2d"
                        data-sub-html="I'm a description!"
@@ -95,7 +99,7 @@
                              draggable="false"
                              data-smallthumb="https://michaelyagi.github.io/images/earthfeed2.png"
                              src="https://michaelyagi.github.io/images/earthfeed2.png"
-                             class="photo-thumbnail-image"
+                             class="photo-thumbnail-image img-fluid"
                              id="imaged955dfea-4db4-3e39-a350-0fcaa3363b2d"
                              width="225"
                              height="225"
@@ -104,7 +108,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer5a6d004d-c841-3a4b-ad29-71277372a47b" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:277px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer5a6d004d-c841-3a4b-ad29-71277372a47b" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:277px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink5a6d004d-c841-3a4b-ad29-71277372a47b"
                        data-src="https://michaelyagi.github.io/images/dragonball/db_macrocosm.png"
@@ -114,7 +118,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-10-30"
+                             class="photo-thumbnail-image img-fluid"
                              id="image5a6d004d-c841-3a4b-ad29-71277372a47b"
                              width="277"
                              height="225"
@@ -124,7 +128,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer17731417-72df-3a0f-b336-dddf77f6eb2d" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:118px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer17731417-72df-3a0f-b336-dddf77f6eb2d" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:118px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink17731417-72df-3a0f-b336-dddf77f6eb2d"
                        data-src="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"
@@ -136,7 +140,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             class="photo-thumbnail-image img-fluid"
                              id="image17731417-72df-3a0f-b336-dddf77f6eb2d"
                              width="118"
                              height="225"
@@ -146,7 +150,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer1" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer1" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink1"
                        data-src="https://michaelyagi.github.io/images/shashin/albums.png"
@@ -158,7 +162,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             class="photo-thumbnail-image img-fluid"
                              id="image1"
                              width="475"
                              height="225"
@@ -168,7 +172,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer2" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer2" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink2"
                        data-src="https://michaelyagi.github.io/images/shashin/dashboard.png"
@@ -180,7 +184,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             class="photo-thumbnail-image img-fluid"
                              id="image2"
                              width="475"
                              height="225"
@@ -190,7 +194,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer3" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer3" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink3"
                        data-src="https://michaelyagi.github.io/images/shashin/editmodal.png"
@@ -202,7 +206,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             class="photo-thumbnail-image img-fluid"
                              id="image3"
                              width="475"
                              height="225"
@@ -212,7 +216,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer4" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer4" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink4"
                        data-src="https://michaelyagi.github.io/images/shashin/explore.png"
@@ -224,7 +228,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             class="photo-thumbnail-image img-fluid"
                              id="image4"
                              width="475"
                              height="225"
@@ -234,7 +238,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer5" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer5" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink5"
                        data-src="https://michaelyagi.github.io/images/shashin/maps.png"
@@ -246,7 +250,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             class="photo-thumbnail-image img-fluid"
                              id="image5"
                              width="475"
                              height="225"
@@ -256,7 +260,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer6" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer6" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:475px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink6"
                        data-src="https://michaelyagi.github.io/images/shashin/settings.png"
@@ -268,7 +272,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             class="photo-thumbnail-image img-fluid"
                              id="image6"
                              width="475"
                              height="225"
@@ -278,7 +282,7 @@
                     </a>
                 </div>
 
-                <div id="photoThumbnailContainer7" class="photo-thumbnail-container photo-thumbnail is-not-video" style="width:308px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;padding-left:0;padding-right:0;">
+                <div id="photoThumbnailContainer7" class="photo-thumbnail-container photo-thumbnail col-6 col-sm-4 col-md-3 col-lg-2 mb-2" style="width:308px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
                     <a class="mediaLink"
                        id="mediaLink7"
                        data-src="https://michaelyagi.github.io/images/shashin/timeline.png"
@@ -290,7 +294,7 @@
                     >
                         <img loading="lazy"
                              draggable="false"
-                             class="photo-thumbnail-image thumbnailTag_2025-9-15"
+                             class="photo-thumbnail-image img-fluid"
                              id="image7"
                              width="308"
                              height="225"
@@ -301,10 +305,12 @@
                 </div>
             </div>
 
-            <button id="openGallery" class="btn btn-primary">Open Gallery</button>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="useShashin">
-                <label class="form-check-label" for="useShashin">Use Shashin</label>
+            <div class="d-flex flex-column flex-sm-row align-items-start gap-2 mt-3">
+                <button id="openGallery" class="btn btn-primary">Open Gallery</button>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="useShashin">
+                    <label class="form-check-label" for="useShashin">Use Shashin</label>
+                </div>
             </div>
         </section>
     </div>
@@ -383,6 +389,12 @@
                 dynamicEl: getMediaContentList(),
                 pluginSettingAttribute: true,
                 overrideBaseConfigs: true,
+                mobileSettings: {
+                    controls: true,
+                    showCloseIcon: true,
+                    download: false,
+                    rotate: false
+                }
             };
             shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
 
@@ -413,7 +425,13 @@
                 dynamic: true,
                 download: false,
                 dynamicEl: getMediaContentList(),
-                licenseKey: Util.lgApiKey()
+                licenseKey: Util.lgApiKey(),
+                mobileSettings: {
+                    controls: true,
+                    showCloseIcon: true,
+                    download: false,
+                    rotate: false
+                }
             };
 
             lg = lightGallery(lgEl, configs);
