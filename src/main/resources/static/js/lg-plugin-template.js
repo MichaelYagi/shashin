@@ -55,6 +55,14 @@
 
             this.$LG = $LG;
 
+            this.$LGel = this.core.LGel;
+
+            // TODO: Define the plugin icon
+            this.menuIcon = "bi-0-circle";
+
+            // Optional/Not required
+            this.toggleOperations = false;
+
             // Extends module default settings with lightGallery core settings
             this.settings = __assign(__assign({}, pluginSettings), this.core.settings);
 
@@ -63,40 +71,29 @@
 
         // TODO: Initialize the plugin
         Plugin.prototype.init = function () {
-            // TODO: Define the plugin icon
-            const menuIcon = "bi-0-circle";
-            let toggleOperations = false;
 
             // TODO: Get from attribute in pluginSettings
             if (this.settings.pluginSettingAttribute) {
                 // TODO: Initialize the plugin toolbar button
-                const pluginMenuItem = '<button type="button" aria-label="Plugin Name" title="Plugin Name" id="pluginId" class="'+menuIcon+' lg-icon" style="font-size: 1rem;"></button>';
+                const pluginMenuItem = '<button type="button" aria-label="Plugin Name" title="Plugin Name" id="pluginId" class="'+this.menuIcon+' lg-icon" style="font-size: 1rem;"></button>';
 
                 this.core.$toolbar.append(pluginMenuItem);
 
-                // Additional optional init call
-                this.plugin(this.core);
+                // Listeners
+                this.plugin();
             }
+        };
 
-            // Listeners
-            this.core.LGel.off('lgBeforeSlide').on('lgBeforeSlide', (e) => {
-                console.log("You are on slide " + e.detail.index);
-                toggleOperations = false;
-                shashin.closeToastMessages();
-            });
-
-            this.core.LGel.off('lgBeforeClose').on('lgBeforeClose', () => {
-                toggleOperations = false;
-                shashin.closeToastMessages();
-            });
+        // TODO: Call after button element attached
+        Plugin.prototype.plugin = function () {
 
             // TODO: Define what happens when clicking the button in the menu
             this.core.outer
-                .find('.'+menuIcon)
+                .find('.'+this.menuIcon)
                 .first()
                 .off('click.lg')
                 .on('click.lg', () => {
-                    if (toggleOperations === false) {
+                    if (this.toggleOperations === false) {
                         if (typeof shashin !== 'undefined') {
                             shashin.showToastMessage(null, "This is a template for setting up a plugin!", {
                                 tag: "lgPluginName",
@@ -118,24 +115,30 @@
                         }
                         /* End optional call */
 
-                        toggleOperations = true;
+                        this.toggleOperations = true;
                     } else {
                         shashin.closeToastMessages();
-                        toggleOperations = false;
+                        this.toggleOperations = false;
                     }
 
                 });
-        };
 
-        // TODO: Call after button element attached
-        Plugin.prototype.plugin = function (core) {
+            this.$LGel.off('lgBeforeSlide').on('lgBeforeSlide', (e) => {
+                console.log("You are on slide " + e.detail.index);
+                this.toggleOperations = false;
+                shashin.closeToastMessages();
+            });
 
-            return "";
+            this.$LGel.off('lgBeforeClose').on('lgBeforeClose', () => {
+                this.toggleOperations = false;
+                shashin.closeToastMessages();
+            });
         };
 
         // TODO: Define cleanup procedures
         Plugin.prototype.destroy = function() {
             // Call to clean up stuff
+            console.log("Clean and destroy");
         };
 
         return Plugin;
