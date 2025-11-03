@@ -171,7 +171,7 @@
                            th:id="${'mediaLink' + metadata.id}"
                            th:data-download-url="${metadata.type.contains('video') ? (metadata.videoUrl + '/download?v=' + randomString) : ('/api/v1/image/' + metadata.id + '/download?v=' + randomString)}"
                            th:data-metadata-id="${metadata.id}"
-                           th:data-lg-size="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? (metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight) : (isMobile ? metadata.originalImageHeight : metadata.originalImageWidth) + '-' + (isMobile ? metadata.originalImageHeight : metadata.originalImageHeight)}"
+                           th:data-lg-size="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? (metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight) : (metadata.originalImageWidth + '-' + metadata.originalImageHeight)}"
                            th:attr="
                              data-sub-html=${metadata.description != null ? metadata.description : null},
                              data-video=${metadata.type.contains('video') ? '{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true, &quot;autoplay&quot;: '+currentUser.autoplayVideo+'}}' : null},
