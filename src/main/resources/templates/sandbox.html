@@ -388,13 +388,7 @@
                 dynamic: true,
                 dynamicEl: getMediaContentList(),
                 pluginSettingAttribute: true,
-                overrideBaseConfigs: true,
-                mobileSettings: {
-                    controls: true,
-                    showCloseIcon: true,
-                    download: false,
-                    rotate: false
-                }
+                overrideBaseConfigs: true
             };
             shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
 
@@ -425,13 +419,7 @@
                 dynamic: true,
                 download: false,
                 dynamicEl: getMediaContentList(),
-                licenseKey: Util.lgApiKey(),
-                mobileSettings: {
-                    controls: true,
-                    showCloseIcon: true,
-                    download: false,
-                    rotate: false
-                }
+                licenseKey: Util.lgApiKey()
             };
 
             lg = lightGallery(lgEl, configs);
