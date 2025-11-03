@@ -312,18 +312,6 @@
 
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        Util.konamiCodeListener(function(sequenceComplete) {
-            if (sequenceComplete === true) {
-                if (shashin.uglified === false) {
-                    Util.uglify("");
-                    shashin.uglified = true;
-                } else {
-                    Util.deuglify("");
-                    shashin.uglified = false;
-                }
-            }
-        });
-
         /*********************************/
         // Base configs
         let lgElName = "infinite-scroll";
