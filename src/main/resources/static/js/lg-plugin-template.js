@@ -65,24 +65,26 @@
         Plugin.prototype.init = function () {
             // TODO: Define the plugin icon
             const menuIcon = "bi-0-circle";
+            let toggleOperations = false;
 
             // TODO: Get from attribute in pluginSettings
             if (this.settings.pluginSettingAttribute) {
                 // TODO: Initialize the plugin toolbar button
-                const pluginMenuItem = '<button type="button" aria-label="Plugin Name" title="Plugin Name" id="captureThumbnail" class="'+menuIcon+' lg-icon" style="font-size: 1rem;"></button>';
+                const pluginMenuItem = '<button type="button" aria-label="Plugin Name" title="Plugin Name" id="pluginId" class="'+menuIcon+' lg-icon" style="font-size: 1rem;"></button>';
 
                 this.core.$toolbar.append(pluginMenuItem);
 
                 // Additional optional init call
-                this.plugin();
+                this.plugin(this.core);
             }
 
+            // Listeners
             this.core.LGel.off('lgBeforeSlide').on('lgBeforeSlide', (e) => {
                 console.log("You are on slide " + e.detail.index);
                 shashin.closeToastMessages();
             });
 
-            this.core.LGel.off('lgBeforeClose').on('lgBeforeClose', (e) => {
+            this.core.LGel.off('lgBeforeClose').on('lgBeforeClose', () => {
                 shashin.closeToastMessages();
             });
 
@@ -92,31 +94,39 @@
                 .first()
                 .off('click.lg')
                 .on('click.lg', () => {
-                    if (typeof shashin !== 'undefined') {
-                        shashin.showToastMessage(null, "This is a template for setting up a plugin!", {
-                            tag: "lgPluginName",
-                            autohide: false,
-                            closeButton: true
-                        });
+                    if (toggleOperations === false) {
+                        if (typeof shashin !== 'undefined') {
+                            shashin.showToastMessage(null, "This is a template for setting up a plugin!", {
+                                tag: "lgPluginName",
+                                autohide: false,
+                                closeButton: true
+                            });
+                        } else {
+                            console.log("This is a template for setting up a plugin!");
+                        }
+
+                        /* This is an optional call from the settings depending on integration */
+                        // Or call an external function, eg. shashin.showToastMessage
+                        const funObject = Util.getLgFunction(this, "pluginFunctionName");
+
+                        // Execute function if defined
+                        if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
+                            // if this.settings.pluginFunctionName is found in settings, funObject.args also defined in settings
+                            funObject.fn(funObject.args, this.core.lgId, this.core.index);
+                        }
+                        /* End optional call */
+
+                        toggleOperations = true;
                     } else {
-                        console.log("This is a template for setting up a plugin!");
+                        shashin.closeToastMessages();
+                        toggleOperations = false;
                     }
 
-                    /* This is an optional call from the settings depending on integration */
-                    // Or call an external function, eg. shashin.showToastMessage
-                    const funObject = Util.getLgFunction(this, "pluginFunctionName");
-
-                    // Execute function if defined
-                    if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
-                        // if this.settings.pluginFunctionName is found in settings, funObject.args also defined in settings
-                        funObject.fn(funObject.args, this.core.lgId, this.core.index);
-                    }
-                    /* End optional call */
                 });
         };
 
         // TODO: Call after button element attached
-        Plugin.prototype.plugin = function (e) {
+        Plugin.prototype.plugin = function (core) {
 
             return "";
         };
