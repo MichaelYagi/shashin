@@ -81,10 +81,12 @@
             // Listeners
             this.core.LGel.off('lgBeforeSlide').on('lgBeforeSlide', (e) => {
                 console.log("You are on slide " + e.detail.index);
+                toggleOperations = false;
                 shashin.closeToastMessages();
             });
 
             this.core.LGel.off('lgBeforeClose').on('lgBeforeClose', () => {
+                toggleOperations = false;
                 shashin.closeToastMessages();
             });
 
