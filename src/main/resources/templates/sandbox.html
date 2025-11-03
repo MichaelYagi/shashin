@@ -51,7 +51,7 @@
 <link rel="stylesheet" href="/css/lg-video-thumbnail.css">
 <link rel="stylesheet" href="/css/lg-cast-media.css">
 
-<body style="position: absolute;background-color: black;">
+<body style="position: absolute;"> <!-- background-color: white; -->
 
 <span th:replace="~{fragments/translations.html :: translations()}"></span>
 
@@ -66,7 +66,6 @@
                        id="mediaLink9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
                        data-metadata-id="9d2cc401-ae66-338f-aeaf-ae0c053f2dca"
                        data-src="https://michaelyagi.github.io/images/dragonball/Android16.png"
-                       href="https://michaelyagi.github.io/images/dragonball/Android16.png"
                        data-msg="Android 16"
                        data-lg-id="5538313a-22e4-4a76-9a22-c47737331596"
                        style="opacity: 1;"
@@ -90,7 +89,6 @@
                        data-metadata-id="d955dfea-4db4-3e39-a350-0fcaa3363b2d"
                        data-sub-html="I'm a description!"
                        data-src="https://michaelyagi.github.io/images/earthfeed2.png"
-                       href="https://michaelyagi.github.io/images/earthfeed2.png"
                        data-msg="Shashin Earth"
                        data-lg-id="9cdf0aa4-eac4-46b5-ac87-fec625d45278"
                        style="opacity: 1;"
@@ -152,13 +150,30 @@
                     </a>
                 </div>
             </div>
+
+            <button id="openGallery" class="btn btn-primary">Open Gallery</button>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="useShashin">
+                <label class="form-check-label" for="useShashin">Use Shashin</label>
+            </div>
         </section>
-        <button id="openGallery" class="btn btn-primary">Open Gallery</button>
     </div>
 </div>
 
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
+        Util.konamiCodeListener(function(sequenceComplete) {
+            if (sequenceComplete === true) {
+                if (shashin.uglified === false) {
+                    Util.uglify("");
+                    shashin.uglified = true;
+                } else {
+                    Util.deuglify("");
+                    shashin.uglified = false;
+                }
+            }
+        });
+
         /*********************************/
         // Base configs
         let lgElName = "infinite-scroll";
@@ -169,8 +184,8 @@
             const mediaContent = {};
 
             // Plugin name and argument, or can be defined in settings
-            // mediaContent.pluginFunctionName = pluginFunction;
-            // mediaContent.args = $(this).attr("data-msg");
+            mediaContent.pluginFunctionName = pluginFunction;
+            mediaContent.args = $(this).attr("data-msg");
 
             let thumbnail = $(this).attr("data-thumb");
             if (typeof thumbnail !== 'undefined' && thumbnail !== false) {
@@ -210,41 +225,96 @@
                 }
             );
         }
-        /*********************************/
 
         /*********************************/
-        // Shashin execution
-        // const additionalConfig = {
-        //     plugins: [lgPluginName],
-        //     pluginFunctionName: pluginFunction,
-        //     pluginSettingAttribute: true,
-        //     download: false,
-        //     // overrideBaseConfigs: true,
-        // };
-        // mediaContentList = shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
-        //
-        // if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
-        //     $("#openGallery").on("click", function (e) {
-        //         shashin.openGallery(e, 0);
-        //     });
-        // }
 
         /*********************************/
-        // Manual execution
-        const configs = {
-            plugins: [lgPluginName],
-            pluginSettingAttribute: true,
-            pluginFunctionName: pluginFunction, // Alternatively, define in mediaContentList
-            dynamic: true,
-            download: false,
-            dynamicEl: mediaContentList,
-            licenseKey: Util.lgApiKey()
-        };
+        let lg = null;
+        console.log("Using Lightgallery");
 
-        const lg = lightGallery(lgEl, configs);
+        function initShashinGallery() {
+            // Shashin execution
+            const additionalConfig = {
+                plugins: [lgPluginName],
+                dynamic: true,
+                dynamicEl: mediaContentList,
+                pluginSettingAttribute: true,
+                download: false,
+                overrideBaseConfigs: true,
+            };
+            mediaContentList = shashin.initLightGallery(lgElName,additionalConfig,".mediaLink");
 
-        $("#openGallery").on("click", function () {
-            lg.openGallery();
+            if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
+                $("#openGallery").on("click", function (e) {
+                    shashin.openGallery(e, 0);
+                });
+
+                $(".mediaLink").on("click", function (e) {
+                    e.preventDefault();
+
+                    const index = $('.mediaLink').index(this);
+                    shashin.openGallery(e, index);
+                });
+            }
+        }
+
+        function initLgGallery() {
+            /*********************************/
+            // Manual execution
+            const configs = {
+                plugins: [lgPluginName],
+                pluginSettingAttribute: true,
+                // pluginFunctionName: pluginFunction, // This returns the metadata as the first argument. Alternatively, define in mediaContentList to set first argument
+                dynamic: true,
+                download: false,
+                dynamicEl: mediaContentList,
+                licenseKey: Util.lgApiKey()
+            };
+
+            lg = lightGallery(lgEl, configs);
+
+            $("#openGallery").on("click", function () {
+                lg.openGallery();
+            });
+
+            $(".mediaLink").on("click", function (e) {
+                e.preventDefault();
+
+                const index = $('.mediaLink').index(this);
+                lg.openGallery(index);
+            });
+
+            return lg;
+        }
+
+        if ($('#useShashin').is(':checked')) {
+            initShashinGallery();
+        } else {
+            lg = initLgGallery();
+        }
+
+        $("#useShashin").on("change", function (e) {
+            e.preventDefault();
+
+            if (this.checked) {
+                console.log("Switching to Lightgallery");
+                if (shashin.getLightGallery() !== null) {
+                    shashin.getLightGallery().closeGallery(true);
+
+                    $("#openGallery").off("click");
+                    $(".mediaLink").off("click");
+                }
+                lg = initLgGallery();
+            } else if (this.checked === false && lg !== undefined) {
+                console.log("Switching to Shashin");
+                if (lg !== null) {
+                    lg.closeGallery(true);
+
+                    $("#openGallery").off("click");
+                    $(".mediaLink").off("click");
+                }
+                initShashinGallery();
+            }
         });
     })
 </script>
