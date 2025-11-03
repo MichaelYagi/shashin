@@ -81,14 +81,14 @@ class TimelineTemplates {
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuid}"
             data-metadata-id="${metadata.id}"
-            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${isMobile ? metadata.originalImageHeight : metadata.originalImageWidth}-${isMobile ? metadata.originalImageHeight : metadata.originalImageHeight}`}"
+            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(videoData)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"` : `data-src="${"/api/v1/image/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                 metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
                 `
-            data-lg-size="${metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
+            data-lg-size="${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
             data-responsive="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id} ${metadata.thumbnailSmallWidth}"
             data-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}"
             data-width="${metadata.originalImageWidth}"
@@ -183,14 +183,14 @@ class TimelineTemplates {
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuidv4()}"
             data-metadata-id="${metadata.id}"
-            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
+            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${"/api/v1/image/"+metadata.id}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
             `
-            data-lg-size="${metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
+            data-lg-size="${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
             data-responsive="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id} ${metadata.thumbnailSmallWidth}"
             data-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}"
             data-width="${metadata.originalImageWidth}"
@@ -205,14 +205,14 @@ class TimelineTemplates {
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuidv4()}"
             data-metadata-id="${metadata.id}"
-            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
+            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${"/api/v1/image/"+metadata.id}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
             `
-            data-lg-size="${metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
+            data-lg-size="${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
             data-responsive="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id} ${metadata.thumbnailSmallWidth}"
             data-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}"
             data-width="${metadata.originalImageWidth}"
