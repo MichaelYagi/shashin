@@ -267,7 +267,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         .toFile(tnFile)
                 }
 
-                metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
+//                metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
+                metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadataObj.getId()}")
             }
 
             metadataObj.setOriginalImageWidth(img.width)
@@ -308,7 +309,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         metadataObj.setThumbnailSmallHeight(scaledImage.height)
                         metadataObj.setThumbnailSmallWidth(scaledImage.width)
                         metadataObj.setThumbnailPathSmall(thumbnailFileStr)
-                        metadataObj.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.Companion.thumbnailHeight() + "." + extension)
+//                        metadataObj.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.Companion.thumbnailHeight() + "." + extension)
+                        metadataObj.setThumbnailUrlSmall("/api/$apiVersion/thumbnails/225/${metadataObj.getId()}")
                         logger.log(Level.INFO, "Small thumbnail created: " + file.path)
                     } catch (e: IOException) {
                         logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
@@ -317,48 +319,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     logger.log(Level.WARNING, "File DNE: " + tnFile.path)
                 }
             }
-
-            // Gallery x-small thumbnail
-//            val xsHeight = 112
-//            thumbnailFileStr =
-//                thumbnailDirectory + fileRootDir + "/" + file.name + "_" + xsHeight + "." + extension
-//            tnFile = FileUtils.createFile(
-//                thumbnailFileStr,
-//                overwriteThumbnails
-//            )
-//
-//            if (tnFile != null) {
-//                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
-//
-//                val thumbnails = Thumbnails.of(img)
-//                    .outputQuality(1.0)
-//                if (file.extension.lowercase() == "gif") {
-//                    thumbnails
-//                        .imageType(BufferedImage.TYPE_INT_ARGB)
-//                }
-//                // If panorama dimensions
-//                if (img.width > img.height * 2) {
-//                    thumbnails
-//                        .crop(Positions.CENTER)
-//                        .size(xsHeight, xsHeight)
-//                } else {
-//                    thumbnails
-//                        .height(xsHeight)
-//                }
-//                thumbnails.toFile(tempFile)
-//
-//                val scaledImage: BufferedImage?
-//                try {
-//                    scaledImage = blurImage(ImageIO.read(tempFile))
-//                    tempFile.delete()
-//                    ImageIO.write(scaledImage, "jpg", tnFile)
-//                    metadataObj.setThumbnailPathExtraSmall(thumbnailFileStr)
-//                    metadataObj.setThumbnailUrlExtraSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + xsHeight + "." + extension)
-//                    logger.log(Level.INFO, "X-Small thumbnail created: " + file.path)
-//                } catch (e: IOException) {
-//                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
-//                }
-//            }
 
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
@@ -380,7 +340,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         scaledImage = sharpenAndBrightenImage(bi)
                         ImageIO.write(scaledImage, "jpg", tnFile)
                         metadataObj.setThumbnailPathCentered(thumbnailFileStr)
-                        metadataObj.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
+//                        metadataObj.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
+                        metadataObj.setThumbnailUrlCentered("/api/$apiVersion/thumbnails/centered/${metadataObj.getId()}")
                         logger.log(Level.INFO, "Centered thumbnail created: " + file.path)
                     } catch (e: IOException) {
                         logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
