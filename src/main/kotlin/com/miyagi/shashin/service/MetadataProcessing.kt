@@ -494,29 +494,6 @@ class MetadataProcessing() {
                 }
             }
 
-            // Moved to a separate thread after processing thumbnails and metadata
-//            if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
-//                val geoDataJson = TextUtils.getGeoData(geocodeUrl, lat, lng)
-//
-//                val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
-//                if (buildPlace.isNotBlank()) {
-//                    this.metadataObj.setPlaceName(buildPlace)
-//
-//                    val engine = TimeZoneEngine.initialize()
-//                    val maybeZoneId: Optional<ZoneId> =
-//                        engine.query(lat.toString().toDouble(), lng.toString().toDouble())
-//                    val zone = ZoneId.of(maybeZoneId.get().id)
-//                    val dt = LocalDateTime.now()
-//                    val zdt: ZonedDateTime = dt.atZone(zone)
-//                    val offset = zdt.offset
-//                    this.metadataObj.setTimeZone(offset.toString())
-//                    logger.log(
-//                        Level.INFO,
-//                        "Place set for " + file.name
-//                    )
-//                }
-//            }
-
             if (originalPixelHeight != null && originalPixelWidth != null) {
                 if (rotation == 90 || rotation == 270 || rotation == -90 || rotation == -270) {
                     this.metadataObj.setOriginalImageWidth(originalPixelHeight)
