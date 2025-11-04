@@ -201,7 +201,7 @@
         shashin.autoplayVideo = $("#autoplayVideo").val() === "true";
 
         let configs = {};
-        if (additionalConfigs.hasOwnProperty("overrideBaseConfigs") && additionalConfigs.overrideBaseConfigs === true) {
+        if (additionalConfigs !== undefined && additionalConfigs !== null && additionalConfigs.hasOwnProperty("overrideBaseConfigs") && additionalConfigs.overrideBaseConfigs === true) {
             configs = additionalConfigs;
             configs.licenseKey = Util.lgApiKey();
         } else {
