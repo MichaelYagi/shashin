@@ -372,7 +372,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         scaledImage = borderImage(scaledImage)
                         ImageIO.write(scaledImage, "jpg", tnFile)
                         metadataObj.setMapMarkerPath(thumbnailFileStr)
-                        metadataObj.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
+//                        metadataObj.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
+                        metadataObj.setMapMarkerUrl("/api/$apiVersion/thumbnails/map/${metadataObj.getId()}")
                         logger.log(Level.INFO, "Map thumbnail created: " + file.path)
                     } catch (e: IOException) {
                         logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
