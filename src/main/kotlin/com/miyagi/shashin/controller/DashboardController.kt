@@ -66,16 +66,13 @@ class DashboardController {
     private lateinit var commentRepository: CommentRepository
 
     @Autowired
-    private lateinit var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository
-
-    @Autowired
     private lateinit var keywordRepository: KeywordRepository
 
     @Autowired
-    private lateinit var settingsRepository: SettingsRepository
+    private lateinit var useragentRepository: UseragentRepository
 
     @Autowired
-    private lateinit var useragentRepository: UseragentRepository
+    private lateinit var fileStats: FileStats
 
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
@@ -213,9 +210,7 @@ class DashboardController {
         metricsUtil.start("file stats")
         // Files stats
 
-        val fileStats = FileStats()
         response = fileStats.getFileStats(model, settings)
-
         response["uptimeText"] = TextUtils.getServerUptimeFormatted()
         response["uptimeMS"] = TextUtils.getServerUptimeMS()
 
