@@ -10,7 +10,6 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -21,54 +20,34 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
-import org.apache.commons.text.StringEscapeUtils
-import org.hibernate.query.Page
 import org.springframework.context.MessageSource
 import org.springframework.http.MediaType
 import org.springframework.web.multipart.MultipartFile
-import java.text.SimpleDateFormat
 import kotlin.collections.HashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
 import kotlin.collections.mutableListOf
 import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.round
 
 @Controller
-class BrowseController: BaseController() {
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var albumRepository: AlbumRepository
-
-    @Autowired
-    private lateinit var albumPhotoRepository: AlbumPhotoRepository
-
-    @Autowired
-    private lateinit var favoriteRepository: FavoriteRepository
-
-    @Autowired
-    private lateinit var keywordRepository: KeywordRepository
-
-    @Autowired
-    private var recognitionLabelRepository: RecognitionLabelRepository? = null
-
-    @Autowired
-    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
-
-    @Autowired
-    private var folderDataRepository: FolderDataRepository? = null
-
-    @Autowired
-    private lateinit var settingsController: SettingsController
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
+class BrowseController(
+    private var metadataRepository: MetadataRepository,
+    private var albumRepository: AlbumRepository,
+    private var albumPhotoRepository: AlbumPhotoRepository,
+    private var favoriteRepository: FavoriteRepository,
+    private var keywordRepository: KeywordRepository,
+    private var recognitionLabelRepository: RecognitionLabelRepository,
+    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository,
+    private var folderDataRepository: FolderDataRepository,
+    private var settingsController: SettingsController,
+    var messageSource: MessageSource
+): BaseController(
+    recognitionLabelRepository = recognitionLabelRepository,
+    albumRepository = albumRepository,
+    keywordRepository = keywordRepository,
+    metadataRepository = metadataRepository
+) {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 

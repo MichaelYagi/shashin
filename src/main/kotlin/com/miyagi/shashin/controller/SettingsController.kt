@@ -23,7 +23,6 @@ import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecogniti
 import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.iakovlev.timeshape.TimeZoneEngine
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.event.EventListener
@@ -38,7 +37,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -82,88 +80,40 @@ import kotlin.math.round
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-class SettingsController {
-
+class SettingsController(
+    private val metadataRepository: MetadataRepository,
+    private val mediaDirRepository: MediaDirectoryRepository,
+    private val folderDataRepository: FolderDataRepository,
+    private val slideshowAlbumRepository: SlideshowAlbumRepository,
+    private val userRepository: UserRepository,
+    private val userAlbumRepository: UserAlbumRepository,
+    private val favoriteRepository: FavoriteRepository,
+    private val commentRepository: CommentRepository,
+    private val albumPhotoCommentRepository: AlbumPhotoCommentRepository,
+    private val albumCommentRepository: AlbumCommentRepository,
+    private val albumRepository: AlbumRepository,
+    private val albumPhotoRepository: AlbumPhotoRepository,
+    private val notificationRepository: NotificationRepository,
+    private val recognitionLabelRepository: RecognitionLabelRepository,
+    private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository,
+    private val keywordRepository: KeywordRepository,
+    private val keywordPhotoRepository: KeywordPhotoRepository,
+    private val settingsRepository: SettingsRepository,
+    private val restartService: RestartService,
     @Value("\${app.api.version}")
-    private var apiVersion: String? = null
-
+    private var apiVersion: String,
     @Value("\${app.endpoint.url.geocode}")
-    private var geocodeUrl: String? = null
-
+    private var geocodeUrl: String,
     @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String? = null
-
+    private var relativeSidecarDir: String,
     @Value("\${app.build.properties.name}")
-    private val appName: String? = null
-
-    @Autowired
-    private val metadataRepository: MetadataRepository? = null
-
-    @Autowired
-    private val mediaDirRepository: MediaDirectoryRepository? = null
-
-    @Autowired
-    private val folderDataRepository: FolderDataRepository? = null
-
-    @Autowired
-    private val slideshowAlbumRepository: SlideshowAlbumRepository? = null
-
-    @Autowired
-    private val userRepository: UserRepository? = null
-
-    @Autowired
-    private val userAlbumRepository: UserAlbumRepository? = null
-
-    @Autowired
-    private val favoriteRepository: FavoriteRepository? = null
-
-    @Autowired
-    private val commentRepository: CommentRepository? = null
-
-    @Autowired
-    private val albumPhotoCommentRepository: AlbumPhotoCommentRepository? = null
-
-    @Autowired
-    private val albumCommentRepository: AlbumCommentRepository? = null
-
-    @Autowired
-    private val albumRepository: AlbumRepository? = null
-
-    @Autowired
-    private val albumPhotoRepository: AlbumPhotoRepository? = null
-
-    @Autowired
-    private val notificationRepository: NotificationRepository? = null
-
-    @Autowired
-    private val recognitionLabelRepository: RecognitionLabelRepository? = null
-
-    @Autowired
-    private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
-
-    @Autowired
-    private val keywordRepository: KeywordRepository? = null
-
-    @Autowired
-    private val keywordPhotoRepository: KeywordPhotoRepository? = null
-
-    @Autowired
-    private val settingsRepository: SettingsRepository? = null
-
-    @Autowired
-    private val restartService: RestartService? = null
-
+    private val appName: String,
     @Value("\${app.role.super}")
-    private var superRole: String? = null
-
+    private var superRole: String,
     @Value("\${spring.datasource.url}")
-    private var dataSourceUrl: String? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
-    private var bcrypt = BCryptPasswordEncoder()
-
+    private var dataSourceUrl: String,
+    var messageSource: MessageSource
+) {
     private var shouldStop = AtomicBoolean(false)
 
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)

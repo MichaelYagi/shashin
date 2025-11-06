@@ -13,7 +13,6 @@ import com.miyagi.shashin.util.*
 import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.http.HttpHeaders
@@ -47,47 +46,29 @@ import java.security.Principal
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-class PeopleController: BaseController() {
-
-    @Autowired
-    private var metadataRepository: MetadataRepository? = null
-
-    @Autowired
-    private var albumRepository: AlbumRepository? = null
-
-    @Autowired
-    private var recognitionLabelRepository: RecognitionLabelRepository? = null
-
-    @Autowired
-    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
-
-    @Autowired
-    private lateinit var favoriteRepository: FavoriteRepository
-
-    @Autowired
-    private val keywordRepository: KeywordRepository? = null
-
-    @Autowired
-    private val keywordPhotoRepository: KeywordPhotoRepository? = null
-
-    @Autowired
-    private val notificationRepository: NotificationRepository? = null
-
-    @Autowired
-    private var userRepository: UserRepository? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
+class PeopleController(
+    private var metadataRepository: MetadataRepository,
+    private var albumRepository: AlbumRepository,
+    private var recognitionLabelRepository: RecognitionLabelRepository,
+    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository,
+    private var favoriteRepository: FavoriteRepository,
+    private val keywordRepository: KeywordRepository,
+    private val keywordPhotoRepository: KeywordPhotoRepository,
+    private val notificationRepository: NotificationRepository,
+    private var userRepository: UserRepository,
+    var messageSource: MessageSource,
     @Value("\${app.role.super}")
-    private lateinit var superRole: String
-
+    private var superRole: String,
     @Value("\${app.role.admin}")
-    private lateinit var adminRole: String
-
+    private var adminRole: String,
     @Value("\${app.sidecar.path}")
-    private val relativeSidecarDir: String? = null
-
+    private val relativeSidecarDir: String
+): BaseController(
+    recognitionLabelRepository = recognitionLabelRepository,
+    albumRepository = albumRepository,
+    keywordRepository = keywordRepository,
+    metadataRepository = metadataRepository
+) {
     private var shouldStop = AtomicBoolean(false)
 
     private val threadExtensionName: String = "facescan_shashinscan"

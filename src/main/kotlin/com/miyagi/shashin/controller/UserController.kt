@@ -45,24 +45,18 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import org.springframework.context.MessageSource
-import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.http.ResponseCookie
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.ui.set
 import org.springframework.util.StringUtils
 import org.springframework.web.servlet.support.RequestContextUtils
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.time.Instant
 import kotlin.collections.set
-import kotlin.io.path.Path
 import kotlin.text.toLong
 
 
 @Suppress("UNCHECKED_CAST")
 @Controller
 class UserController {
-
     private var logger: Logger = Logger.getLogger(UserController::class.simpleName)
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()

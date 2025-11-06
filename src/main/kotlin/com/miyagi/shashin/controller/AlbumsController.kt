@@ -68,6 +68,7 @@ class AlbumsController(
     private var albumCommentRepository: AlbumCommentRepository,
     private var albumPhotoCommentRepository: AlbumPhotoCommentRepository,
     private var slideshowAlbumRepository: SlideshowAlbumRepository,
+    private var recognitionLabelRepository: RecognitionLabelRepository,
     private val keywordRepository: KeywordRepository,
     private var settingsController: SettingsController,
     @Value("\${app.role.super}")
@@ -75,7 +76,12 @@ class AlbumsController(
     @Value("\${app.role.admin}")
     private var adminRole: String? = null,
     var messageSource: MessageSource? = null
-): BaseController() {
+): BaseController(
+    recognitionLabelRepository = recognitionLabelRepository,
+    albumRepository = albumRepository,
+    keywordRepository = keywordRepository,
+    metadataRepository = metadataRepository
+) {
     private var logger: Logger = Logger.getLogger(AlbumsController::class.simpleName)
 
     val mapper = ObjectMapper()

@@ -9,11 +9,11 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
@@ -25,20 +25,18 @@ import org.springframework.web.bind.annotation.*
 import java.util.concurrent.TimeUnit
 
 @Controller
-class MapController: BaseController() {
-
-    @Autowired
-    private val metadataRepository: MetadataRepository? = null
-
-    @Autowired
-    private val albumRepository: AlbumRepository? = null
-
-    @Autowired
-    private lateinit var keywordRepository: KeywordRepository
-
+class MapController(
+    private val metadataRepository: MetadataRepository,
+    private val albumRepository: AlbumRepository,
+    private var keywordRepository: KeywordRepository,
+    recognitionLabelRepository: RecognitionLabelRepository,
     @Value("\${app.endpoint.url.geocode}")
-    private lateinit var geocodeUrl: String
-
+    private var geocodeUrl: String
+): BaseController(
+    recognitionLabelRepository = recognitionLabelRepository,
+    albumRepository = albumRepository,
+    keywordRepository = keywordRepository,
+    metadataRepository = metadataRepository) {
     val mapper = ObjectMapper()
 
     @GetMapping("/map")
