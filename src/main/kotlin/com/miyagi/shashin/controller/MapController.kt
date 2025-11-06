@@ -36,7 +36,8 @@ class MapController(
     recognitionLabelRepository = recognitionLabelRepository,
     albumRepository = albumRepository,
     keywordRepository = keywordRepository,
-    metadataRepository = metadataRepository) {
+    metadataRepository = metadataRepository
+) {
     val mapper = ObjectMapper()
 
     @GetMapping("/map")
