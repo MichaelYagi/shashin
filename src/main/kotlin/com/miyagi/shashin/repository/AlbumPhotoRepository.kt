@@ -1,7 +1,6 @@
 package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.AlbumPhoto
-import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
