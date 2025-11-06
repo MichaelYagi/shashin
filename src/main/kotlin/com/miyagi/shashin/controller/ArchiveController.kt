@@ -22,17 +22,11 @@ import java.util.*
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN")
-class ArchiveController {
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private val keywordRepository: KeywordRepository? = null
-
-    @Autowired
+class ArchiveController(
+    private var metadataRepository: MetadataRepository,
+    private val keywordRepository: KeywordRepository,
     var messageSource: MessageSource? = null
-
+) {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 

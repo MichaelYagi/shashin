@@ -16,7 +16,6 @@ import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders
@@ -44,77 +43,39 @@ import jakarta.transaction.Transactional
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpHeaders.SET_COOKIE
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
 import java.awt.image.BufferedImage
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 import java.nio.file.Path
-import java.nio.file.StandardOpenOption
 import java.time.Duration
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 import javax.imageio.ImageIO
 import kotlin.collections.count
 import kotlin.io.path.Path
-import kotlin.io.path.isDirectory
 import kotlin.math.ceil
-
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-class AlbumsController: BaseController() {
-
-    @Autowired
-    private lateinit var albumRepository: AlbumRepository
-
-    @Autowired
-    private lateinit var albumPhotoRepository: AlbumPhotoRepository
-
-    @Autowired
-    private lateinit var userAlbumRepository: UserAlbumRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var commentRepository: CommentRepository
-
-    @Autowired
-    private lateinit var favoriteRepository: FavoriteRepository
-
-    @Autowired
-    private lateinit var notificationRepository: NotificationRepository
-
-    @Autowired
-    private lateinit var albumCommentRepository: AlbumCommentRepository
-
-    @Autowired
-    private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
-
-    @Autowired
-    private lateinit var slideshowAlbumRepository: SlideshowAlbumRepository
-
-    @Autowired
-    private val keywordRepository: KeywordRepository? = null
-
-    @Autowired
-    private lateinit var settingsController: SettingsController
-
+class AlbumsController(
+    private var albumRepository: AlbumRepository,
+    private var albumPhotoRepository: AlbumPhotoRepository,
+    private var userAlbumRepository: UserAlbumRepository,
+    private var userRepository: UserRepository,
+    private var metadataRepository: MetadataRepository,
+    private var commentRepository: CommentRepository,
+    private var favoriteRepository: FavoriteRepository,
+    private var notificationRepository: NotificationRepository,
+    private var albumCommentRepository: AlbumCommentRepository,
+    private var albumPhotoCommentRepository: AlbumPhotoCommentRepository,
+    private var slideshowAlbumRepository: SlideshowAlbumRepository,
+    private val keywordRepository: KeywordRepository,
+    private var settingsController: SettingsController,
     @Value("\${app.role.super}")
-    private var superRole: String? = null
-
+    private var superRole: String? = null,
     @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Autowired
+    private var adminRole: String? = null,
     var messageSource: MessageSource? = null
-
+): BaseController() {
     private var logger: Logger = Logger.getLogger(AlbumsController::class.simpleName)
 
     val mapper = ObjectMapper()
