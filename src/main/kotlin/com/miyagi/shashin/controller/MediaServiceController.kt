@@ -14,7 +14,6 @@ import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
@@ -48,37 +47,22 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
 import java.io.IOException
-import java.net.URL
-import java.nio.file.Path
 import javax.imageio.ImageIO
 import kotlin.collections.set
 import kotlin.text.split
 
 @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
 @Controller
-class MediaServiceController {
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var albumRepository: AlbumRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    private lateinit var notificationRepository: NotificationRepository
-
-    @Autowired
-    private lateinit var slideshowAlbumRepository: SlideshowAlbumRepository
-
+class MediaServiceController(
+    private var metadataRepository: MetadataRepository,
+    private var albumRepository: AlbumRepository,
+    private var userRepository: UserRepository,
+    private var notificationRepository: NotificationRepository,
+    private var slideshowAlbumRepository: SlideshowAlbumRepository,
     @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
+    private var relativeSidecarDir: String,
+    var messageSource: MessageSource
+) {
     private var logger: Logger = Logger.getLogger(MediaServiceController::class.simpleName)
 
     private var validFileNameRegex = "[^a-zA-Z0-9.-]".toRegex()

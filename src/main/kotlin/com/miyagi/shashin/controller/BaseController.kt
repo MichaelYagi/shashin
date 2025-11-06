@@ -5,27 +5,18 @@ import com.miyagi.shashin.model.Keyword
 import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 
 @Controller
-class BaseController {
-
-    @Autowired
-    private var recognitionLabelRepository: RecognitionLabelRepository? = null
-
-    @Autowired
-    private var albumRepository: AlbumRepository? = null
-
-    @Autowired
-    private var keywordRepository: KeywordRepository? = null
-
-    @Autowired
-    private var metadataRepository: MetadataRepository? = null
-
-    protected fun getAllAttributeData(model: Model): MutableMap<String, Any> {
+class BaseController(
+    private var recognitionLabelRepository: RecognitionLabelRepository,
+    private var albumRepository: AlbumRepository,
+    private var keywordRepository: KeywordRepository,
+    private var metadataRepository: MetadataRepository
+) {
+    fun getAllAttributeData(model: Model): MutableMap<String, Any> {
         val response = mutableMapOf<String,Any>()
 
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()

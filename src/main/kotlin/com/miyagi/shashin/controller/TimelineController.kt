@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.Operation
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
@@ -43,13 +42,10 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
-import net.coobird.thumbnailator.Thumbnails
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -59,76 +55,38 @@ import kotlin.String
 import kotlin.collections.ArrayList
 import kotlin.collections.set
 import kotlin.io.path.Path
-import kotlin.io.path.isDirectory
-import kotlin.io.path.pathString
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-class TimelineController: BaseController() {
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var albumRepository: AlbumRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    private lateinit var notificationRepository: NotificationRepository
-
-    @Autowired
-    private lateinit var albumPhotoRepository: AlbumPhotoRepository
-
-    @Autowired
-    private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
-
-    @Autowired
-    private lateinit var favoriteRepository: FavoriteRepository
-
-    @Autowired
-    private lateinit var userAlbumRepository: UserAlbumRepository
-
-    @Autowired
-    private lateinit var commentRepository: CommentRepository
-
-    @Autowired
-    private lateinit var albumCommentRepository: AlbumCommentRepository
-
-    @Autowired
-    private lateinit var keywordRepository: KeywordRepository
-
-    @Autowired
-    private lateinit var keywordPhotoRepository: KeywordPhotoRepository
-
-    @Autowired
-    private lateinit var searchRepository: SearchRepository
-
-    @Autowired
-    private var recognitionLabelRepository: RecognitionLabelRepository? = null
-
-    @Autowired
-    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
+class TimelineController(
+    private var metadataRepository: MetadataRepository,
+    private var albumRepository: AlbumRepository,
+    private var userRepository: UserRepository,
+    private var notificationRepository: NotificationRepository,
+    private var albumPhotoRepository: AlbumPhotoRepository,
+    private var albumPhotoCommentRepository: AlbumPhotoCommentRepository,
+    private var favoriteRepository: FavoriteRepository,
+    private var userAlbumRepository: UserAlbumRepository,
+    private var commentRepository: CommentRepository,
+    private var albumCommentRepository: AlbumCommentRepository,
+    private var keywordRepository: KeywordRepository,
+    private var keywordPhotoRepository: KeywordPhotoRepository,
+    private var searchRepository: SearchRepository,
+    private var recognitionLabelRepository: RecognitionLabelRepository,
+    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository,
+    var messageSource: MessageSource,
     @Value("\${app.endpoint.url.geocode}")
-    private var geocodeUrl: String? = null
-
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Value("\${app.role.super}")
-    private var superRole: String? = null
-
+    private var geocodeUrl: String,
     @Value("\${app.api.version}")
-    private var apiVersion: String? = null
-
+    private var apiVersion: String,
     @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String? = null
-
+    private var relativeSidecarDir: String
+): BaseController(
+    recognitionLabelRepository = recognitionLabelRepository,
+    albumRepository = albumRepository,
+    keywordRepository = keywordRepository,
+    metadataRepository = metadataRepository
+) {
     private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
 
     val mapper = ObjectMapper()

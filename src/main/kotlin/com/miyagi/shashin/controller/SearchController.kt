@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -14,7 +16,6 @@ import com.miyagi.shashin.util.SearchHistoryTypes
 import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -33,23 +34,20 @@ import kotlin.math.ceil
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-class SearchController: BaseController() {
-
-    @Autowired
-    private val searchRepository: SearchRepository? = null
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private val searchHistoryRepository: SearchHistoryRepository? = null
-
-    @Autowired
-    private val keywordRepository: KeywordRepository? = null
-
-    @Autowired
-    private val favoriteRepository: FavoriteRepository? = null
-
+class SearchController(
+    private val searchRepository: SearchRepository,
+    private var metadataRepository: MetadataRepository,
+    private val searchHistoryRepository: SearchHistoryRepository,
+    private val keywordRepository: KeywordRepository,
+    private val favoriteRepository: FavoriteRepository,
+    recognitionLabelRepository: RecognitionLabelRepository,
+    albumRepository: AlbumRepository
+): BaseController(
+    recognitionLabelRepository = recognitionLabelRepository,
+    albumRepository = albumRepository,
+    keywordRepository = keywordRepository,
+    metadataRepository = metadataRepository
+) {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 

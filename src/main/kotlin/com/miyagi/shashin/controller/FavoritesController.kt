@@ -14,7 +14,6 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -30,32 +29,25 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
 import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.round
 
 @Suppress("UNCHECKED_CAST")
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-class FavoritesController: BaseController() {
-
-    @Autowired
-    private lateinit var favoriteRepository: FavoriteRepository
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var notificationRepository: NotificationRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    private val keywordRepository: KeywordRepository? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
+class FavoritesController(
+    private var favoriteRepository: FavoriteRepository,
+    private var metadataRepository: MetadataRepository,
+    private var notificationRepository: NotificationRepository,
+    private var userRepository: UserRepository,
+    private val keywordRepository: KeywordRepository,
+    recognitionLabelRepository: RecognitionLabelRepository,
+    albumRepository: AlbumRepository,
+    var messageSource: MessageSource
+): BaseController(
+    recognitionLabelRepository = recognitionLabelRepository,
+    albumRepository = albumRepository,
+    keywordRepository = keywordRepository,
+    metadataRepository = metadataRepository
+) {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 

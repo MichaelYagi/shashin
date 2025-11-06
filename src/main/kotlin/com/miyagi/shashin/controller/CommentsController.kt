@@ -12,7 +12,6 @@ import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -25,44 +24,23 @@ import org.springframework.context.MessageSource
 import org.springframework.web.bind.annotation.*
 
 @Controller
-class CommentsController {
-
-    @Autowired
-    private lateinit var commentRepository: CommentRepository
-
-    @Autowired
-    private lateinit var albumRepository: AlbumRepository
-
-    @Autowired
-    private lateinit var userAlbumRepository: UserAlbumRepository
-
-    @Autowired
-    private lateinit var albumCommentRepository: AlbumCommentRepository
-
-    @Autowired
-    private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
-
-    @Autowired
-    private lateinit var notificationRepository: NotificationRepository
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
+class CommentsController(
+    private var commentRepository: CommentRepository,
+    private var albumRepository: AlbumRepository,
+    private var userAlbumRepository: UserAlbumRepository,
+    private var albumCommentRepository: AlbumCommentRepository,
+    private var albumPhotoCommentRepository: AlbumPhotoCommentRepository,
+    private var notificationRepository: NotificationRepository,
+    private var metadataRepository: MetadataRepository,
+    private var userRepository: UserRepository,
+    var messageSource: MessageSource,
     @Value("\${app.role.user}")
-    private var userRole: String? = null
-
+    private var userRole: String,
     @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
+    private var adminRole: String,
     @Value("\${app.role.super}")
-    private var superRole: String? = null
-
+    private var superRole: String
+) {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
