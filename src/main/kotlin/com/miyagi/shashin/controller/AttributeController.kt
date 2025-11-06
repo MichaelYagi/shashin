@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
 import org.springframework.beans.TypeMismatchException
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.i18n.LocaleContextHolder
@@ -47,77 +46,49 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
-
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
-class AttributeController: ResponseEntityExceptionHandler() {
-
-    @Autowired
-    private val environment: Environment? = null
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    private var settingsRepository: SettingsRepository? = null
-
-    @Autowired
-    private var metadataRepository: MetadataRepository? = null
-
-    @Autowired
-    private var buildProperties: BuildProperties? = null
-
+class AttributeController(
+    private val environment: Environment?,
+    private val userRepository: UserRepository,
+    private val settingsRepository: SettingsRepository?,
+    private val metadataRepository: MetadataRepository?,
+    private val buildProperties: BuildProperties?,
     @Value("\${app.sidecar.path}")
-    private lateinit var relativeSidecarDir: String
-
+    private val relativeSidecarDir: String,
     @Value("\${app.api.version}")
-    private lateinit var apiVersion: String
-
+    private val apiVersion: String,
     @Value("\${app.role.super}")
-    private lateinit var superRole: String
-
+    private val superRole: String,
     @Value("\${app.role.admin}")
-    private lateinit var adminRole: String
-
+    private val adminRole: String,
     @Value("\${app.role.user}")
-    private lateinit var userRole: String
-
+    private val userRole: String,
     @Value("\${app.endpoint.url.geocode}")
-    private lateinit var geocodeUrl: String
-
+    private val geocodeUrl: String,
     @Value("\${app.config.default.querylimit}")
-    private var queryLimitProperty: Int = 30
-
+    private val queryLimitProperty: Int = 30,
     @Value("\${app.config.default.matchscanlimit}")
-    private var matchScanLimitProperty: Int = 50
-
+    private val matchScanLimitProperty: Int = 50,
     @Value("\${app.config.default.trainingdatalimit}")
-    private var trainingDataLimitProperty: Int = 100
-
+    private val trainingDataLimitProperty: Int = 100,
     @Value("\${app.config.default.notificationlimit}")
-    private var notificationLimitProperty: Int = 20
-
+    private val notificationLimitProperty: Int = 20,
     @Value("\${app.config.default.searchhistorylimit}")
-    private var searchHistoryLimitProperty: Int = 10
-
+    private val searchHistoryLimitProperty: Int = 10,
     @Value("\${app.config.default.recognitionConfidenceThreshold}")
-    private lateinit var recognitionConfidenceThresholdProperty: String
-
+    private val recognitionConfidenceThresholdProperty: String,
     @Value("\${app.config.default.objectRecognitionConfidenceThreshold}")
-    private lateinit var objectRecognitionConfidenceThresholdProperty: String
-
+    private val objectRecognitionConfidenceThresholdProperty: String,
     @Value("\${server.port}")
-    private lateinit var portProperty: String
-
+    private val portProperty: String,
     @Value("\${app.config.default.scheduledTime}")
-    private lateinit var scheduledTime: String
-
+    private val scheduledTime: String,
     @Value("\${app.rememberme.key}")
-    private var rememberMeKey: String? = null
-
+    private val rememberMeKey: String?,
     @Value("\${app.config.available.languages}")
-    private var availableLang: Array<String>? = null
-
+    private val availableLang: Array<String>?
+): ResponseEntityExceptionHandler() {
     override fun handleHttpRequestMethodNotSupported(
         ex: HttpRequestMethodNotSupportedException,
         headers: HttpHeaders,
