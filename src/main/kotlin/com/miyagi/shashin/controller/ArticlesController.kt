@@ -9,14 +9,11 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.beans.factory.annotation.Autowired
 
 @Controller
-class ArticlesController {
-
-    @Autowired
-    var userRepository: UserRepository? = null
-
+class ArticlesController(
+    var userRepository: UserRepository
+) {
     @RequestMapping(value = ["/articles/quickstart"], method = [RequestMethod.GET])
     fun getQuickstart(model: Model, request: HttpServletRequest): String {
         val module = "articles/quickstart"
