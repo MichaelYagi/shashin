@@ -37,48 +37,26 @@ import kotlin.collections.set
 
 
 @Controller
-class DashboardController {
+class DashboardController(
+    private var favoriteRepository: FavoriteRepository,
+    private var userRepository: UserRepository,
+    private var commentRepository: CommentRepository,
+    private var keywordRepository: KeywordRepository,
+    private var useragentRepository: UseragentRepository,
+    private var albumRepository: AlbumRepository,
+    private var metadataRepository: MetadataRepository,
+    private var fileStats: FileStats,
     @Value("\${app.role.super}")
-    private var superRole: String? = null
-
+    private var superRole: String?,
     @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
+    private var adminRole: String?,
     @Value("\${app.role.user}")
-    private var userRole: String? = null
-
+    private var userRole: String?,
     @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
-    private var shashinServerStartUnixMS: String? = null
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var albumRepository: AlbumRepository
-
-    @Autowired
-    private lateinit var favoriteRepository: FavoriteRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    private lateinit var commentRepository: CommentRepository
-
-    @Autowired
-    private lateinit var keywordRepository: KeywordRepository
-
-    @Autowired
-    private lateinit var useragentRepository: UseragentRepository
-
-    @Autowired
-    private lateinit var fileStats: FileStats
-
+    private var shashinServerStartUnixMS: String?,
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
-
-    //    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-//    val osMXBean: OperatingSystemMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
+) {
     val osMXBean = CpuMetrics()
     val memoryMXBean: MemoryMXBean = ManagementFactory.getMemoryMXBean()
     var invalidProcessCpuLoadCounter = 0
