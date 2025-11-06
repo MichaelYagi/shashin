@@ -37,35 +37,25 @@ import kotlin.collections.set
 
 
 @Controller
-class TestController {
-
-    @Autowired
-    private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var keywordRepository: KeywordRepository
-
-    @Autowired
-    private lateinit var keywordPhotoRepository: KeywordPhotoRepository
-
-    @Autowired
-    private lateinit var testRepository: TestRepository
-
-    @Autowired
-    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
-
+class TestController(
+    // Avoid field injection as much as possible (AutoWiring)
+    private val metadataRepository: MetadataRepository,
+    private val keywordRepository: KeywordRepository,
+    private val keywordPhotoRepository: KeywordPhotoRepository,
+    private val testRepository: TestRepository,
+    private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, // nullable bean
     @Value("\${app.endpoint.url.geocode}")
-    private var geocodeUrl: String? = null
-
+    private val geocodeUrl: String?, // injected config
     @Value("\${app.sidecar.path}")
-    private val relativeSidecarDir: String? = null
+    private val relativeSidecarDir: String? // injected config
+) {
 
     private var currentIndex = 0
     private var totalIndex = 0
     private var startTime = System.currentTimeMillis()
     private var etr: Long = 0
     private var activeLink = ""
-    val mapper = ObjectMapper()
+    private val mapper = ObjectMapper()
 
     @GetMapping("/testgrounds")
     fun testPage(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
