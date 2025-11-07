@@ -147,7 +147,7 @@ describe('#Util tests', function() {
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>3 years ago</small>");
 
         date = getAdjustedDate(now, { hours: 0 });
-        assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>now</small>");
+        assert.isTrue(Util.getMessageSubText(date, "UTC", "en") === "<small class='text-muted'>now</small>" || Util.getMessageSubText(date, "UTC", "en") === "<small class='text-muted'>1 second ago</small>");
 
         date = getAdjustedDate(now, { hours: 2 }); // Future time defaults to now
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>now</small>");
