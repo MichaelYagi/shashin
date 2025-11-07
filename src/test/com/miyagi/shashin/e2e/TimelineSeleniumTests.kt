@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -27,6 +28,7 @@ import java.io.IOException
 import java.net.URL
 import java.time.Duration
 import java.util.*
+import java.util.concurrent.TimeoutException
 import java.util.logging.Level
 import javax.imageio.ImageIO
 
@@ -49,8 +51,21 @@ class TimelineSeleniumTests: BaseSeleniumTests() {
     @Autowired
     private val userRepository: UserRepository? = null
 
-
     private var bcrypt = BCryptPasswordEncoder()
+
+    fun waitForTimelinePage(driver: WebDriver): Boolean {
+        repeat(3) {
+            try {
+                driver.get("http://localhost:$port/timeline")
+                WebDriverWait(driver, Duration.ofSeconds(60))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.id("infinite-scroll-gallery")))
+                return true
+            } catch (e: TimeoutException) {
+                Thread.sleep(2000)
+            }
+        }
+        return false
+    }
 
     @BeforeEach
     fun setup() {
@@ -134,7 +149,8 @@ class TimelineSeleniumTests: BaseSeleniumTests() {
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
 //        println(this.driver?.pageSource)
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+        waitForTimelinePage(driver!!)
+//        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
         // Get the date id
