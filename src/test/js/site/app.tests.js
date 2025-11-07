@@ -111,7 +111,7 @@ describe('#shashin app tests', function() {
         $("body").append($("<div/>", {
             id: 'someelement'
         }));
-console.log($("body"))
+console.log($("#someelement").length)
         shashin.setLightGalleryElement('someelement');
         shashin.setLightGallery();
         let lightGallery = shashin.getLightGallery();
