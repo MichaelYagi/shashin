@@ -8,7 +8,7 @@ const { JSDOM } = require("jsdom");
 let window, document;
 
 beforeEach(() => {
-    const dom = new JSDOM(``, { url: "http://localhost" });
+    const dom = new JSDOM(`<!DOCTYPE html><html><body></body></html>`, { url: "http://localhost" });
     window = dom.window;
     document = window.document;
     global.window = window;
@@ -71,12 +71,12 @@ describe('#shashin app tests', function() {
     });
 
     it('MetadataIdList tests', function() {
-        $("body").append($("<input/>", {
-            type: 'hidden',
-            id: 'multiSelectMetadataIds',
-            name: 'multiSelectMetadataIds',
-            value: '[]'
-        }));
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.id = "multiSelectMetadataIds";
+        input.name = "multiSelectMetadataIds";
+        input.value = "[]";
+        document.body.appendChild(input);
 
         shashin.addToMetadataIdList("first_metadata");
         shashin.addToMetadataIdList("second_metadata");
