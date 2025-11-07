@@ -13,12 +13,21 @@ import org.springframework.core.io.FileSystemResource
 import java.io.File
 import java.util.logging.Logger
 import jakarta.transaction.Transactional
+import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
 import org.openqa.selenium.TakesScreenshot
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.test.context.ActiveProfiles
 import java.nio.file.Paths
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Base64
+import java.util.UUID
+import java.util.concurrent.TimeoutException
 
 @ActiveProfiles("test")
 @Import(ToolsControllerTestConfig::class)
@@ -180,9 +189,42 @@ abstract class BaseSeleniumTests {
         }
     }
 
+    private fun generateShortUUID(): String {
+        val uuid = UUID.randomUUID()
+        val bytes = ByteArray(16)
+        val bb = java.nio.ByteBuffer.wrap(bytes)
+        bb.putLong(uuid.mostSignificantBits)
+        bb.putLong(uuid.leastSignificantBits)
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
+    }
+
+    private fun getRandomString(): String {
+        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+        val now = LocalDateTime.now()
+        val dateString = dtf.format(now)
+        return "${generateShortUUID()}_$dateString"
+    }
+
+    // Debugging
+    // println(this.driver?.pageSource) // print the html
+    // takeScreenshot(driver!!) // take a screenshot
     // debugging take a screenshot
-    fun takeScreenshot(driver: WebDriver) {
+    fun takeScreenshot(driver: WebDriver, path: String = "C:\\Users\\Michael\\Downloads\\shashin_test_screenshot_"+getRandomString()+".png") {
         val screenshot = (driver as TakesScreenshot).getScreenshotAs(OutputType.FILE)
-        screenshot.copyTo(Paths.get("C:\\Users\\Michael\\Downloads\\login_timeout.png").toFile(), overwrite = true)
+        screenshot.copyTo(Paths.get(path).toFile(), overwrite = true)
+    }
+
+    fun waitForPage(driver: WebDriver, port: String, page: String, locator: By): Boolean {
+        repeat(3) {
+            try {
+                driver.get("http://localhost:$port/$page")
+                WebDriverWait(driver, Duration.ofSeconds(60))
+                    .until(ExpectedConditions.visibilityOfElementLocated(locator)) // eg By.id("infinite-scroll-gallery")
+                return true
+            } catch (e: TimeoutException) {
+                Thread.sleep(2000)
+            }
+        }
+        return false
     }
 }

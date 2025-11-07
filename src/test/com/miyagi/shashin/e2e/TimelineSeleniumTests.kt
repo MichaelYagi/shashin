@@ -53,20 +53,6 @@ class TimelineSeleniumTests: BaseSeleniumTests() {
 
     private var bcrypt = BCryptPasswordEncoder()
 
-    fun waitForTimelinePage(driver: WebDriver): Boolean {
-        repeat(3) {
-            try {
-                driver.get("http://localhost:$port/timeline")
-                WebDriverWait(driver, Duration.ofSeconds(60))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.id("infinite-scroll-gallery")))
-                return true
-            } catch (e: TimeoutException) {
-                Thread.sleep(2000)
-            }
-        }
-        return false
-    }
-
     @BeforeEach
     fun setup() {
         val adminObj = User()
@@ -149,7 +135,7 @@ class TimelineSeleniumTests: BaseSeleniumTests() {
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
 //        println(this.driver?.pageSource)
-        waitForTimelinePage(driver!!)
+        waitForPage(driver!!, port.toString(), "timeline", By.id("infinite-scroll-gallery"))
 //        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
