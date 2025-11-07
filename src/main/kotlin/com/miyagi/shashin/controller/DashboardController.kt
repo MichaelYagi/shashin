@@ -30,7 +30,6 @@ import java.time.format.DateTimeFormatter
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpSession
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import java.io.File
 import java.lang.management.MemoryMXBean

@@ -14,7 +14,6 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
