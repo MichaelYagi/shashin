@@ -68,8 +68,10 @@
 
     shashin.setLightGalleryElement = function (name) {
         shashin.infiniteScrollGallery = null;
+console.log("testzzz0");
         if (document.getElementById(name)) {
             shashin.infiniteScrollGallery = document.getElementById(name);
+console.log("testzzz1");
 
             // Event listeners for light gallery
 
