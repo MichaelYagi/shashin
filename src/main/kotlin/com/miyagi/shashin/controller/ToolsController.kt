@@ -8,6 +8,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
 import com.sun.management.OperatingSystemMXBean
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.health.HealthComponent
 import org.springframework.boot.actuate.health.HealthEndpoint
@@ -38,20 +39,32 @@ import kotlin.collections.set
 
 
 @Controller
-class ToolsController(
-    private var metaRepository: MetadataRepository,
-    private var buildProperties: BuildProperties,
-    private var healthEndpoint: HealthEndpoint? = null,
-    @Value("\${app.endpoint.url.geocode}")
-    private var geocodeUrl: String,
-    @Value("\${app.circleci.key}")
-    private var circleCiKey: String? = null,
-    @Value("\${app.github.key}")
-    private var githubKey: String? = null,
+class ToolsController {
+
     @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
-    private var shashinServerStartUnixMS: String,
+    private var shashinServerStartUnixMS: String? = null
+
+    @Autowired
+    private lateinit var metaRepository: MetadataRepository
+
+    @Autowired
+    private var buildProperties: BuildProperties? = null
+
+    @Value("\${app.endpoint.url.geocode}")
+    private lateinit var geocodeUrl: String
+
+    @Value("\${app.circleci.key}")
+    private var circleCiKey: String? = null
+
+    @Value("\${app.github.key}")
+    private var githubKey: String? = null
+
+    @Autowired
+    private var healthEndpoint: HealthEndpoint? = null
+
+    @Autowired
     var messageSource: MessageSource? = null
-) {
+
     private var logger: Logger = Logger.getLogger(ToolsController::class.simpleName)
 
     @Bean

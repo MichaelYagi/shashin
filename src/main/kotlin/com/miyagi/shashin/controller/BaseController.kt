@@ -11,10 +11,10 @@ import org.springframework.ui.set
 
 @Controller
 class BaseController(
-    private var recognitionLabelRepository: RecognitionLabelRepository,
-    private var albumRepository: AlbumRepository,
-    private var keywordRepository: KeywordRepository,
-    private var metadataRepository: MetadataRepository
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null,
+    private var albumRepository: AlbumRepository? = null,
+    private var keywordRepository: KeywordRepository? = null,
+    private var metadataRepository: MetadataRepository? = null
 ) {
     fun getAllAttributeData(model: Model): MutableMap<String, Any> {
         val response = mutableMapOf<String,Any>()

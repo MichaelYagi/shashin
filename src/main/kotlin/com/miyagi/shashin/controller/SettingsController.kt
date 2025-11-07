@@ -23,6 +23,7 @@ import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecogniti
 import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.iakovlev.timeshape.TimeZoneEngine
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.event.EventListener
@@ -37,6 +38,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -81,38 +83,38 @@ import kotlin.math.round
 @Suppress("UNCHECKED_CAST")
 @Controller
 class SettingsController(
-    private val metadataRepository: MetadataRepository,
-    private val mediaDirRepository: MediaDirectoryRepository,
-    private val folderDataRepository: FolderDataRepository,
-    private val slideshowAlbumRepository: SlideshowAlbumRepository,
-    private val userRepository: UserRepository,
-    private val userAlbumRepository: UserAlbumRepository,
-    private val favoriteRepository: FavoriteRepository,
-    private val commentRepository: CommentRepository,
-    private val albumPhotoCommentRepository: AlbumPhotoCommentRepository,
-    private val albumCommentRepository: AlbumCommentRepository,
-    private val albumRepository: AlbumRepository,
-    private val albumPhotoRepository: AlbumPhotoRepository,
-    private val notificationRepository: NotificationRepository,
-    private val recognitionLabelRepository: RecognitionLabelRepository,
-    private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository,
-    private val keywordRepository: KeywordRepository,
-    private val keywordPhotoRepository: KeywordPhotoRepository,
-    private val settingsRepository: SettingsRepository,
-    private val restartService: RestartService,
-    @Value("\${app.api.version}")
-    private var apiVersion: String,
-    @Value("\${app.endpoint.url.geocode}")
-    private var geocodeUrl: String,
-    @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String,
-    @Value("\${app.build.properties.name}")
-    private val appName: String,
+    private val metadataRepository: MetadataRepository? = null,
+    private val mediaDirRepository: MediaDirectoryRepository? = null,
+    private val folderDataRepository: FolderDataRepository? = null,
+    private val slideshowAlbumRepository: SlideshowAlbumRepository? = null,
+    private val userRepository: UserRepository? = null,
+    private val userAlbumRepository: UserAlbumRepository? = null,
+    private val favoriteRepository: FavoriteRepository? = null,
+    private val commentRepository: CommentRepository? = null,
+    private val albumPhotoCommentRepository: AlbumPhotoCommentRepository? = null,
+    private val albumCommentRepository: AlbumCommentRepository? = null,
+    private val albumRepository: AlbumRepository? = null,
+    private val albumPhotoRepository: AlbumPhotoRepository? = null,
+    private val notificationRepository: NotificationRepository? = null,
+    private val recognitionLabelRepository: RecognitionLabelRepository? = null,
+    private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
+    private val keywordRepository: KeywordRepository? = null,
+    private val keywordPhotoRepository: KeywordPhotoRepository? = null,
+    private val settingsRepository: SettingsRepository? = null,
+    private val restartService: RestartService? = null,
     @Value("\${app.role.super}")
-    private var superRole: String,
+    private var superRole: String? = null,
     @Value("\${spring.datasource.url}")
-    private var dataSourceUrl: String,
-    var messageSource: MessageSource
+    private var dataSourceUrl: String? = null,
+    @Value("\${app.api.version}")
+    private var apiVersion: String? = null,
+    @Value("\${app.endpoint.url.geocode}")
+    private var geocodeUrl: String? = null,
+    @Value("\${app.sidecar.path}")
+    private var relativeSidecarDir: String? = null,
+    @Value("\${app.build.properties.name}")
+    private val appName: String? = null,
+    var messageSource: MessageSource? = null
 ) {
     private var shouldStop = AtomicBoolean(false)
 

@@ -37,24 +37,24 @@ import kotlin.collections.set
 
 @Controller
 class DashboardController(
+    private var metadataRepository: MetadataRepository,
+    private var albumRepository: AlbumRepository,
     private var favoriteRepository: FavoriteRepository,
     private var userRepository: UserRepository,
     private var commentRepository: CommentRepository,
     private var keywordRepository: KeywordRepository,
     private var useragentRepository: UseragentRepository,
-    private var albumRepository: AlbumRepository,
-    private var metadataRepository: MetadataRepository,
     private var fileStats: FileStats,
-    @Value("\${app.role.super}")
-    private var superRole: String?,
-    @Value("\${app.role.admin}")
-    private var adminRole: String?,
-    @Value("\${app.role.user}")
-    private var userRole: String?,
-    @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
-    private var shashinServerStartUnixMS: String?,
     @Value("\${app.endpoint.url.geocode}")
-    private var geocodeUrl: String? = null
+    private var geocodeUrl: String? = null,
+    @Value("\${app.role.super}")
+    private var superRole: String? = null,
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null,
+    @Value("\${app.role.user}")
+    private var userRole: String? = null,
+    @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
+    private var shashinServerStartUnixMS: String? = null
 ) {
     val osMXBean = CpuMetrics()
     val memoryMXBean: MemoryMXBean = ManagementFactory.getMemoryMXBean()

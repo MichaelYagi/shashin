@@ -14,6 +14,7 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
@@ -26,10 +27,10 @@ import java.util.concurrent.TimeUnit
 
 @Controller
 class MapController(
-    private val metadataRepository: MetadataRepository,
-    private val albumRepository: AlbumRepository,
+    private val metadataRepository: MetadataRepository? = null,
+    private val albumRepository: AlbumRepository? = null,
     private var keywordRepository: KeywordRepository,
-    recognitionLabelRepository: RecognitionLabelRepository,
+    recognitionLabelRepository: RecognitionLabelRepository? = null,
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String
 ): BaseController(

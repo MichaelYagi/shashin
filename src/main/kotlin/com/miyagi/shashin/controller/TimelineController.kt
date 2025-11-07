@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
@@ -42,10 +43,13 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
+import net.coobird.thumbnailator.Thumbnails
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.context.MessageSource
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -55,6 +59,8 @@ import kotlin.String
 import kotlin.collections.ArrayList
 import kotlin.collections.set
 import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
+import kotlin.io.path.pathString
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -72,15 +78,19 @@ class TimelineController(
     private var keywordRepository: KeywordRepository,
     private var keywordPhotoRepository: KeywordPhotoRepository,
     private var searchRepository: SearchRepository,
-    private var recognitionLabelRepository: RecognitionLabelRepository,
-    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository,
-    var messageSource: MessageSource,
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null,
+    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
+    var messageSource: MessageSource? = null,
     @Value("\${app.endpoint.url.geocode}")
-    private var geocodeUrl: String,
+    private var geocodeUrl: String? = null,
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null,
+    @Value("\${app.role.super}")
+    private var superRole: String? = null,
     @Value("\${app.api.version}")
-    private var apiVersion: String,
+    private var apiVersion: String? = null,
     @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String
+    private var relativeSidecarDir: String? = null
 ): BaseController(
     recognitionLabelRepository = recognitionLabelRepository,
     albumRepository = albumRepository,

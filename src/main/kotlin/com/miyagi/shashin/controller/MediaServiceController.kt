@@ -14,6 +14,7 @@ import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
@@ -47,6 +48,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
 import java.io.IOException
+import java.net.URL
+import java.nio.file.Path
 import javax.imageio.ImageIO
 import kotlin.collections.set
 import kotlin.text.split
@@ -60,8 +63,8 @@ class MediaServiceController(
     private var notificationRepository: NotificationRepository,
     private var slideshowAlbumRepository: SlideshowAlbumRepository,
     @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String,
-    var messageSource: MessageSource
+    private var relativeSidecarDir: String? = null,
+    var messageSource: MessageSource? = null
 ) {
     private var logger: Logger = Logger.getLogger(MediaServiceController::class.simpleName)
 

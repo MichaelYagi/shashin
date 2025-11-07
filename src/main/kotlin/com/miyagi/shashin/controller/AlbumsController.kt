@@ -16,6 +16,7 @@ import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders
@@ -43,16 +44,24 @@ import jakarta.transaction.Transactional
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpHeaders.SET_COOKIE
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
 import java.awt.image.BufferedImage
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 import java.time.Duration
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import javax.imageio.ImageIO
 import kotlin.collections.count
 import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
 import kotlin.math.ceil
+
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -68,9 +77,9 @@ class AlbumsController(
     private var albumCommentRepository: AlbumCommentRepository,
     private var albumPhotoCommentRepository: AlbumPhotoCommentRepository,
     private var slideshowAlbumRepository: SlideshowAlbumRepository,
-    private var recognitionLabelRepository: RecognitionLabelRepository,
-    private val keywordRepository: KeywordRepository,
+    private val keywordRepository: KeywordRepository? = null,
     private var settingsController: SettingsController,
+    private val recognitionLabelRepository: RecognitionLabelRepository? = null,
     @Value("\${app.role.super}")
     private var superRole: String? = null,
     @Value("\${app.role.admin}")
