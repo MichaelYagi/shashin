@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Value
 class IndexController(
     private var userRepository: UserRepository,
     @Value("\${app.rememberme.key}")
-    private var rememberMeKey: String
+    private var rememberMeKey: String? = null
 ) {
     @GetMapping("/")
     fun getIndex(model: Model, request: HttpServletRequest): String {

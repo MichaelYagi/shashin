@@ -14,6 +14,7 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -29,6 +30,8 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
 import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.round
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -38,16 +41,17 @@ class FavoritesController(
     private var metadataRepository: MetadataRepository,
     private var notificationRepository: NotificationRepository,
     private var userRepository: UserRepository,
-    private val keywordRepository: KeywordRepository,
-    recognitionLabelRepository: RecognitionLabelRepository,
-    albumRepository: AlbumRepository,
-    var messageSource: MessageSource
+    private val keywordRepository: KeywordRepository? = null,
+    private val recognitionLabelRepository: RecognitionLabelRepository? = null,
+    private val albumRepository: AlbumRepository? = null,
+    var messageSource: MessageSource? = null
 ): BaseController(
     recognitionLabelRepository = recognitionLabelRepository,
     albumRepository = albumRepository,
     keywordRepository = keywordRepository,
     metadataRepository = metadataRepository
 ) {
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 

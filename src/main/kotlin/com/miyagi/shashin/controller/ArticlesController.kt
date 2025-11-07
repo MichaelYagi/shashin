@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest
 
 @Controller
 class ArticlesController(
-    var userRepository: UserRepository
+    var userRepository: UserRepository? = null
 ) {
     @RequestMapping(value = ["/articles/quickstart"], method = [RequestMethod.GET])
     fun getQuickstart(model: Model, request: HttpServletRequest): String {

@@ -12,6 +12,7 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -25,8 +26,8 @@ import org.springframework.context.MessageSource
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
 class NotificationsController(
     private var notificationRepository: NotificationRepository,
-    private var metadataRepository: MetadataRepository,
-    var messageSource: MessageSource
+    private var metadataRepository: MetadataRepository? = null,
+    var messageSource: MessageSource? = null
 ) {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -35,7 +36,7 @@ class NotificationsController(
     @Transactional
     fun getNotifications(model: Model, locale: Locale): String {
         val module = "notifications"
-        model["message"] = messageSource.getMessage("main.nothing", null, locale)
+        model["message"] = messageSource?.getMessage("main.nothing", null, locale)
         model["notificationList"] = mutableListOf<Notification>()
         model["notificationLimit"] = 0
 

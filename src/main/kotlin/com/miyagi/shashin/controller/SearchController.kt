@@ -35,13 +35,13 @@ import kotlin.math.ceil
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
 class SearchController(
-    private val searchRepository: SearchRepository,
+    private val searchRepository: SearchRepository? = null,
     private var metadataRepository: MetadataRepository,
-    private val searchHistoryRepository: SearchHistoryRepository,
-    private val keywordRepository: KeywordRepository,
-    private val favoriteRepository: FavoriteRepository,
-    recognitionLabelRepository: RecognitionLabelRepository,
-    albumRepository: AlbumRepository
+    private val searchHistoryRepository: SearchHistoryRepository? = null,
+    private val keywordRepository: KeywordRepository? = null,
+    private val favoriteRepository: FavoriteRepository? = null,
+    recognitionLabelRepository: RecognitionLabelRepository? = null,
+    albumRepository: AlbumRepository? = null
 ): BaseController(
     recognitionLabelRepository = recognitionLabelRepository,
     albumRepository = albumRepository,
