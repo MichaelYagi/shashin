@@ -114,6 +114,7 @@ describe('#shashin app tests', function() {
         shashin.setLightGalleryElement('someelement');
         shashin.setLightGallery();
         let lightGallery = shashin.getLightGallery();
+        console.log(lightGallery.settings);
         assert.equal(lightGallery.settings.licenseKey,'A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3');
 
         shashin.setLightGalleryElement('asdf');
