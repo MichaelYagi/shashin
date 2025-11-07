@@ -102,6 +102,21 @@ describe('#shashin app tests', function() {
         expect(source.urls.join('|')).to.include('openstreetmap');
     });
 
+    it('Shashin lightgallery init', function () {
+        const div = document.createElement("div");
+        div.id = "someElement";
+        document.body.appendChild(div);
+
+        const additionalConfig = {
+            selector: ".mediaLink",
+            overrideBaseConfigs: true
+        };
+        shashin.initLightGallery('someElement', additionalConfig, ".mediaLink");
+        const lightGallery = shashin.getLightGallery();
+        assert.equal(lightGallery.settings.licenseKey,'A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3');
+        assert.equal(lightGallery.settings.selector,".mediaLink");
+    });
+
     it('gallery element', function () {
         const div = document.createElement("div");
         div.id = "someElement";
