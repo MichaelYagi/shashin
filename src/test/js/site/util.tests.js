@@ -4,6 +4,18 @@ require('../helper.js');
 
 const Util = require('../../../main/resources/static/js/site/util');
 
+const { JSDOM } = require("jsdom");
+
+let window, document;
+
+beforeEach(() => {
+    const dom = new JSDOM(``, { url: "http://localhost" });
+    window = dom.window;
+    document = window.document;
+    global.window = window;
+    global.document = document;
+});
+
 describe('#Util tests', function() {
     let cleanup;
     before(function () {
@@ -375,61 +387,6 @@ describe('#Util tests', function() {
         assert.equal(dateFormat.getDate(), 1);
     });
 
-    // it('Cookie tests', function() {
-    //     let aCookie = Util.getCookie("somecookiename");
-    //     assert.equal(aCookie, "");
-    //
-    //     Util.setCookie("somecookiename","somecookievalue");
-    //     aCookie = Util.getCookie("somecookiename");
-    //     assert.equal(aCookie, "somecookievalue");
-    //
-    //     Util.deleteCookie("somecookiename");
-    //     aCookie = Util.getCookie("somecookiename");
-    //     assert.equal(aCookie, "");
-    //
-    //     Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "someothercookievalue");
-    //
-    //     Util.deleteCookie("someothercookiename");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "");
-    //
-    //     Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "someothercookievalue");
-    //
-    //     Util.deleteCookie("someothercookiename", "/unknowncookiepath");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "someothercookievalue"); //Not deleted
-    //
-    //     Util.deleteCookie("someothercookiename", "/", "unknowncookiedomain");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "someothercookievalue"); //Not deleted
-    //
-    //     Util.deleteCookie("someothercookiename", "/", "localhost");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "");
-    //
-    //     Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
-    //
-    //     Util.deleteCookie("someothercookiename", "/asdf");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "someothercookievalue");
-    //
-    //     Util.deleteCookie("someothercookiename", "/");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "");
-    //
-    //     Util.setCookie("someothercookiename","someothercookievalue", "/");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "someothercookievalue");
-    //
-    //     Util.deleteCookie("someothercookiename", "/");
-    //     aCookie = Util.getCookie("someothercookiename");
-    //     assert.equal(aCookie, "");
-    // });
-
     it('MS to string tests', function() {
         let msToString = Util.convertMSToRelativeTime(1000);
         assert.equal(msToString, "00:00:01");
@@ -616,5 +573,60 @@ describe('#Util tests', function() {
         url = "http://127.0.0.1:6624/api/v1/thumbnails/225/e9b8b0da-e2a8-39bc-a116-807d0ea7b6e3";
         src = Util.deleteAfterSubstring(url, "?v=");
         assert.equal(src, "http://127.0.0.1:6624/api/v1/thumbnails/225/e9b8b0da-e2a8-39bc-a116-807d0ea7b6e3");
+    });
+
+    it('Cookie tests', function() {
+        let aCookie = Util.getCookie("somecookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("somecookiename","somecookievalue");
+        aCookie = Util.getCookie("somecookiename");
+        assert.equal(aCookie, "somecookievalue");
+
+        Util.deleteCookie("somecookiename");
+        aCookie = Util.getCookie("somecookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue");
+
+        Util.deleteCookie("someothercookiename");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue");
+
+        Util.deleteCookie("someothercookiename", "/unknowncookiepath");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue"); //Not deleted
+
+        Util.deleteCookie("someothercookiename", "/", "unknowncookiedomain");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue"); //Not deleted
+
+        Util.deleteCookie("someothercookiename", "/", "localhost");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
+
+        Util.deleteCookie("someothercookiename", "/asdf");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue");
+
+        Util.deleteCookie("someothercookiename", "/");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("someothercookiename","someothercookievalue", "/");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue");
+
+        Util.deleteCookie("someothercookiename", "/");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "");
     });
 });
