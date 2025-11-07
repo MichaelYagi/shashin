@@ -108,24 +108,23 @@ describe('#shashin app tests', function() {
     });
 
     it('gallery element', function () {
-        $("body").append($("<div/>", {
-            id: 'someelelement'
-        }));
+        const div = document.createElement("div");
+        div.id = "someElement";
+        document.body.appendChild(div);
 
-        shashin.setLightGalleryElement('someelelement');
-        assert.equal(shashin.getLightGalleryElement().id,'someelelement');
+        shashin.setLightGalleryElement('someElement');
+        assert.equal(shashin.getLightGalleryElement().id,'someElement');
 
         shashin.setLightGalleryElement('asdf');
         assert.isNull(shashin.getLightGalleryElement());
     });
 
     it('lightgallery element', function () {
-        $("body").append($("<div/>", {
-            id: 'someelement'
-        }));
-console.log(document)
-console.log(document.getElementById("someelement"))
-        shashin.setLightGalleryElement('someelement');
+        const div = document.createElement("div");
+        div.id = "someElement";
+        document.body.appendChild(div);
+
+        shashin.setLightGalleryElement('someElement');
         shashin.setLightGallery();
         let lightGallery = shashin.getLightGallery();
         assert.equal(lightGallery.settings.licenseKey,'A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3');
@@ -135,7 +134,7 @@ console.log(document.getElementById("someelement"))
         lightGallery = shashin.getLightGallery();
         assert.isFalse(lightGallery.hasOwnProperty("settings"));
 
-        shashin.setLightGalleryElement('someelement');
+        shashin.setLightGalleryElement('someElement');
         shashin.setLightGallery({"selector":".mediaLink"});
         lightGallery = shashin.getLightGallery();
         assert.equal(lightGallery.settings.selector,".mediaLink");
