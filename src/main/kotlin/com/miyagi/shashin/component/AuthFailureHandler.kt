@@ -6,7 +6,6 @@ import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
@@ -26,17 +25,12 @@ import org.springframework.context.i18n.LocaleContextHolder
 
 
 @Component
-class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
-    private val redirectStrategy = DefaultRedirectStrategy()
-
-    @Autowired
-    var userRepository: UserRepository? = null
-
-    @Autowired
-    var notificationRepository: NotificationRepository? = null
-
-    @Autowired
+class AuthFailureHandler(
+    var userRepository: UserRepository? = null,
+    var notificationRepository: NotificationRepository? = null,
     var messageSource: MessageSource? = null
+) : SimpleUrlAuthenticationFailureHandler() {
+    private val redirectStrategy = DefaultRedirectStrategy()
 
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationFailure(

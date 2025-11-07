@@ -3,7 +3,6 @@ package com.miyagi.shashin.component
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.util.TextUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -11,34 +10,27 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Component
 
 @Component
-class DataLoader @Autowired constructor(private val settingsRepository: SettingsRepository) : ApplicationRunner {
-
+class DataLoader(
+    private val settingsRepository: SettingsRepository,
     @Value("\${app.config.default.querylimit}")
-    private var queryLimitProperty: Int = 30
-
+    private var queryLimitProperty: Int = 30,
     @Value("\${app.config.default.matchscanlimit}")
-    private var matchScanLimitProperty: Int = 50
-
+    private var matchScanLimitProperty: Int = 50,
     @Value("\${app.config.default.trainingdatalimit}")
-    private var trainingDataLimitProperty: Int = 100
-
+    private var trainingDataLimitProperty: Int = 100,
     @Value("\${app.config.default.notificationlimit}")
-    private var notificationLimitProperty: Int = 20
-
+    private var notificationLimitProperty: Int = 20,
     @Value("\${app.config.default.searchhistorylimit}")
-    private var searchHistoryLimitProperty: Int = 10
-
+    private var searchHistoryLimitProperty: Int = 10,
     @Value("\${app.config.default.recognitionConfidenceThreshold}")
-    private lateinit var recognitionConfidenceThresholdProperty: String
-
+    private var recognitionConfidenceThresholdProperty: String,
     @Value("\${app.config.default.objectRecognitionConfidenceThreshold}")
-    private lateinit var objectRecognitionConfidenceThresholdProperty: String
-
+    private var objectRecognitionConfidenceThresholdProperty: String,
     @Value("\${server.port}")
-    private lateinit var portProperty: String
-
+    private var portProperty: String,
     @Value("\${app.config.default.scheduledTime}")
-    private lateinit var scheduledTime: String
+    private var scheduledTime: String
+) : ApplicationRunner {
 
     @CacheEvict(value = ["firstSettingQuery"], allEntries = true)
     override fun run(args: ApplicationArguments) {

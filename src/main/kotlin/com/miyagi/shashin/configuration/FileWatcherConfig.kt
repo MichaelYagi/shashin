@@ -4,7 +4,6 @@ import com.miyagi.shashin.component.ShashinFileChangeListener
 import com.miyagi.shashin.controller.SettingsController
 import com.miyagi.shashin.repository.MediaDirectoryRepository
 import com.miyagi.shashin.repository.SettingsRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.devtools.filewatch.FileSystemWatcher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,15 +14,11 @@ import java.nio.file.Paths
 import jakarta.annotation.PreDestroy
 
 @Configuration
-class FileWatcherConfig {
-    @Autowired
-    private lateinit var mediaDirRepository: MediaDirectoryRepository
-
-    @Autowired
-    private lateinit var settingsRepository: SettingsRepository
-
-    @Autowired
-    private lateinit var settingsController: SettingsController
+class FileWatcherConfig(
+    private var mediaDirRepository: MediaDirectoryRepository,
+    private var settingsRepository: SettingsRepository,
+    private var settingsController: SettingsController
+) {
 
     private var allowAutomaticScan = false
 

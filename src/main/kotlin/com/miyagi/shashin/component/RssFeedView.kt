@@ -10,7 +10,6 @@ import com.miyagi.shashin.repository.UserAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import com.rometools.rome.feed.rss.*
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -26,31 +25,17 @@ import kotlin.io.path.Path
 
 
 @Component
-class RssFeedView : AbstractRssFeedView() {
-
+class RssFeedView(
+    var userRepository: UserRepository? = null,
+    var albumRepository: AlbumRepository? = null,
+    var albumPhotoRepository: AlbumPhotoRepository? = null,
+    var metadataRepository: MetadataRepository? = null,
+    var slideshowAlbumRepository: SlideshowAlbumRepository? = null,
+    var userAlbumRepository: UserAlbumRepository? = null,
+    var messageSource: MessageSource? = null,
     @Value("\${app.build.properties.name}")
     private val appName: String? = null
-
-    @Autowired
-    var userRepository: UserRepository? = null
-
-    @Autowired
-    var albumRepository: AlbumRepository? = null
-
-    @Autowired
-    var albumPhotoRepository: AlbumPhotoRepository? = null
-
-    @Autowired
-    var metadataRepository: MetadataRepository? = null
-
-    @Autowired
-    var slideshowAlbumRepository: SlideshowAlbumRepository? = null
-
-    @Autowired
-    var userAlbumRepository: UserAlbumRepository? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
+) : AbstractRssFeedView() {
 
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Channel, request: HttpServletRequest) {
         feed.description = "$appName images - Invalid key"

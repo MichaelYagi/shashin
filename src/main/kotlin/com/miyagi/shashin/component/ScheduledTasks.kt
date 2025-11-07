@@ -10,7 +10,6 @@ import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.MessageSource
 import org.springframework.scheduling.annotation.Scheduled
@@ -23,17 +22,13 @@ import java.util.logging.Logger
 
 
 @Component
-class CronProperties {
-    private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
-
-    @Autowired
-    private var settingsRepository: SettingsRepository? = null
-
+class CronProperties(
+    private var settingsRepository: SettingsRepository? = null,
     @Value("\${app.config.default.scheduledTime}")
-    private var scheduledTime: String? = null
-
-    @Autowired
+    private var scheduledTime: String? = null,
     var messageSource: MessageSource? = null
+) {
+    private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
 
     fun expression(): String {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
@@ -80,42 +75,23 @@ class CronProperties {
 }
 
 @Component
-class ScheduledTasks {
+class ScheduledTasks(
+    private var settingsRepository: SettingsRepository? = null,
+    private var metadataRepository: MetadataRepository? = null,
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null,
+    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
+    private var keywordRepository: KeywordRepository? = null,
+    private var keywordPhotoRepository: KeywordPhotoRepository? = null,
+    private var notificationRepository: NotificationRepository? = null,
+    private var userRepository: UserRepository? = null,
+    @Value("\${app.role.super}")
+    private var superRole: String? = null,
+    @Value("\${app.sidecar.path}")
+    private val relativeSidecarDir: String? = null,
+    var messageSource: MessageSource? = null
+) {
 
     private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
-
-    @Autowired
-    private var settingsRepository: SettingsRepository? = null
-
-    @Autowired
-    private var metadataRepository: MetadataRepository? = null
-
-    @Autowired
-    private var recognitionLabelRepository: RecognitionLabelRepository? = null
-
-    @Autowired
-    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
-
-    @Autowired
-    private var keywordRepository: KeywordRepository? = null
-
-    @Autowired
-    private var keywordPhotoRepository: KeywordPhotoRepository? = null
-
-    @Autowired
-    private var notificationRepository: NotificationRepository? = null
-
-    @Autowired
-    private var userRepository: UserRepository? = null
-
-    @Value("\${app.role.super}")
-    private var superRole: String? = null
-
-    @Value("\${app.sidecar.path}")
-    private val relativeSidecarDir: String? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
 
     // Check Compreface connection every 2 days at midnight
     @Scheduled(cron = "0 0 12 */2 * *", zone="GMT")

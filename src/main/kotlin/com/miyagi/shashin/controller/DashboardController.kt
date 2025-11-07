@@ -11,6 +11,7 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
+import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -29,6 +30,7 @@ import java.time.format.DateTimeFormatter
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpSession
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import java.io.File
 import java.lang.management.MemoryMXBean
@@ -45,6 +47,7 @@ class DashboardController(
     private var keywordRepository: KeywordRepository,
     private var useragentRepository: UseragentRepository,
     private var fileStats: FileStats,
+    meterRegistry: MeterRegistry,
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null,
     @Value("\${app.role.super}")
@@ -56,7 +59,7 @@ class DashboardController(
     @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
     private var shashinServerStartUnixMS: String? = null
 ) {
-    val osMXBean = CpuMetrics()
+    val osMXBean = CpuMetrics(meterRegistry)
     val memoryMXBean: MemoryMXBean = ManagementFactory.getMemoryMXBean()
     var invalidProcessCpuLoadCounter = 0
     var invalidSystemCpuLoadCounter = 0

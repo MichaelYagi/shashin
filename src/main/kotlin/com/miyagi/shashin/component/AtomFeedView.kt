@@ -12,7 +12,6 @@ import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import com.rometools.rome.feed.atom.*
 import com.rometools.rome.feed.synd.SyndPerson
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -24,38 +23,22 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.MessageSource
 import java.io.File
-import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.io.path.Path
 
 
 @Component
-class AtomFeedView : AbstractAtomFeedView() {
-
+class AtomFeedView(
+    var userRepository: UserRepository? = null,
+    var albumRepository: AlbumRepository? = null,
+    var albumPhotoRepository: AlbumPhotoRepository? = null,
+    var metadataRepository: MetadataRepository? = null,
+    var slideshowAlbumRepository: SlideshowAlbumRepository? = null,
+    var userAlbumRepository: UserAlbumRepository? = null,
+    var messageSource: MessageSource? = null,
     @Value("\${app.build.properties.name}")
     private val appName: String? = null
-
-    @Autowired
-    var userRepository: UserRepository? = null
-
-    @Autowired
-    var albumRepository: AlbumRepository? = null
-
-    @Autowired
-    var albumPhotoRepository: AlbumPhotoRepository? = null
-
-    @Autowired
-    var metadataRepository: MetadataRepository? = null
-
-    @Autowired
-    var slideshowAlbumRepository: SlideshowAlbumRepository? = null
-
-    @Autowired
-    var userAlbumRepository: UserAlbumRepository? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
+) : AbstractAtomFeedView() {
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Feed, request: HttpServletRequest) {
         val content = Content()
         content.value = "$appName images - Invalid key"

@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class CustomUserDetailsService : UserDetailsService {
-
-    @Autowired
-    private val userRepository: UserRepository? = null
+class CustomUserDetailsService(private val userRepository: UserRepository? = null) : UserDetailsService {
 
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userRepository!!.findByUsername(username) ?: throw UsernameNotFoundException(username)
