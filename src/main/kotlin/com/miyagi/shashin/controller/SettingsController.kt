@@ -23,7 +23,6 @@ import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecogniti
 import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.iakovlev.timeshape.TimeZoneEngine
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.event.EventListener

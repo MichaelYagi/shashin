@@ -14,7 +14,6 @@ import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*

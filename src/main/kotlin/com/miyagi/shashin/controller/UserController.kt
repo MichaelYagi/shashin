@@ -8,8 +8,6 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.CommentRepository
 import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.NotificationRepository
-import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
-import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserAlbumRepository
@@ -22,7 +20,6 @@ import com.miyagi.shashin.util.TextUtils.Companion.parseRememberMeCookie
 import com.miyagi.shashin.util.TextUtils.Companion.verifyPersistenceToken
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.data.domain.Sort
@@ -56,56 +53,28 @@ import kotlin.text.toLong
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-class UserController {
+class UserController(
+    var userRepository: UserRepository? = null,
+    var slideshowAlbumRepository: SlideshowAlbumRepository? = null,
+    private val userAlbumRepository: UserAlbumRepository? = null,
+    private val settingsRepository: SettingsRepository? = null,
+    private val favoriteRepository: FavoriteRepository? = null,
+    private val commentRepository: CommentRepository? = null,
+    var messageSource: MessageSource? = null,
+    private var notificationRepository: NotificationRepository,
+    @Value("\${app.sidecar.path}")
+    private var relativeSidecarDir: String? = null,
+    @Value("\${app.api.version}")
+    private var apiVersion: String? = null,
+    @Value("\${app.role.super}")
+    private var superRole: String? = null,
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
+) {
     private var logger: Logger = Logger.getLogger(UserController::class.simpleName)
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
     var bcrypt = BCryptPasswordEncoder()
-
-    @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String? = null
-
-    @Value("\${app.api.version}")
-    private var apiVersion: String? = null
-
-    @Value("\${app.role.super}")
-    private var superRole: String? = null
-
-    @Value("\${app.rememberme.key}")
-    private var rememberMeKey: String? = null
-
-    @Value("\${app.rememberme.expiration.seconds}")
-    private var expirationSeconds: Int? = null
-
-    @Autowired
-    var userRepository: UserRepository? = null
-
-    @Autowired
-    var slideshowAlbumRepository: SlideshowAlbumRepository? = null
-
-    @Autowired
-    private val userAlbumRepository: UserAlbumRepository? = null
-
-    @Autowired
-    private val settingsRepository: SettingsRepository? = null
-
-    @Autowired
-    private val favoriteRepository: FavoriteRepository? = null
-
-    @Autowired
-    private val commentRepository: CommentRepository? = null
-
-    @Autowired
-    var persistentLoginsRepository: PersistentLoginsRepository? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
-
-    @Autowired
-    private lateinit var notificationRepository: NotificationRepository
-
-    @Autowired
-    private lateinit var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository
 
     @GetMapping("/users/account")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")

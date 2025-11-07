@@ -1,7 +1,6 @@
 package com.miyagi.shashin.component
 
 import com.google.javascript.jscomp.jarjar.javax.annotation.PostConstruct
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
@@ -14,15 +13,14 @@ import javax.management.MBeanServer
 import javax.management.ObjectName
 
 @Component
-class CpuMetrics {
+class CpuMetrics(
+    private var meterRegistry: MeterRegistry
+) {
 
     companion object {
         private const val PROCESS_METRICS_NAME = "process.cpu.load"
         private const val SYSTEM_METRICS_NAME = "system.cpu.load"
     }
-
-    @Autowired
-    private lateinit var meterRegistry: MeterRegistry
 
     private var logger: Logger = Logger.getLogger(CpuMetrics::class.simpleName)
 

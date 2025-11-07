@@ -16,7 +16,6 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*

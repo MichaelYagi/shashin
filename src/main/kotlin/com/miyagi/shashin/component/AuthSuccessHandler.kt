@@ -11,10 +11,8 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import nl.basjes.parse.useragent.UserAgentAnalyzer
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.MessageSource
-import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.core.io.FileSystemResource
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -25,8 +23,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Component
-import org.springframework.util.StringUtils
-import org.springframework.web.servlet.support.RequestContextUtils
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -37,39 +33,25 @@ import java.util.logging.Logger
 
 
 @Component
-class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
-
-    private val redirectStrategy = DefaultRedirectStrategy()
-
+class AuthSuccessHandler(
+    var userRepository: UserRepository? = null,
+    var notificationRepository: NotificationRepository? = null,
+    var customUserDetailsService: CustomUserDetailsService? = null,
+    var useragentRepository: UseragentRepository? = null,
+    var messageSource: MessageSource? = null,
     @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
+    private var adminRole: String? = null,
     @Value("\${app.role.super}")
-    private var superRole: String? = null
-
+    private var superRole: String? = null,
     @Value("\${app.role.user}")
-    private var userRole: String? = null
-
+    private var userRole: String? = null,
     @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String? = null
-
+    private var relativeSidecarDir: String? = null,
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
+) : SimpleUrlAuthenticationSuccessHandler() {
 
-    @Autowired
-    var userRepository: UserRepository? = null
-
-    @Autowired
-    var notificationRepository: NotificationRepository? = null
-
-    @Autowired
-    var customUserDetailsService: CustomUserDetailsService? = null
-
-    @Autowired
-    var useragentRepository: UseragentRepository? = null
-
-    @Autowired
-    var messageSource: MessageSource? = null
+    private val redirectStrategy = DefaultRedirectStrategy()
 
     private var persistentTokenRepository: PersistentTokenRepository? = null
 

@@ -1,6 +1,5 @@
 package com.miyagi.shashin
 
-import jakarta.activation.URLDataSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -10,15 +9,11 @@ import org.springframework.context.ApplicationListener
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.scheduling.annotation.EnableScheduling
 import java.awt.BorderLayout
-import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.Insets
 import java.awt.Taskbar
 import java.io.IOException
-import java.net.URI
-import java.net.URISyntaxException
-import java.util.concurrent.TimeUnit
 import javax.swing.*
 
 
