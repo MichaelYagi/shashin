@@ -57,20 +57,6 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
 
     private var bcrypt = BCryptPasswordEncoder()
 
-    fun waitForLoginPage(driver: WebDriver): Boolean {
-        repeat(3) {
-            try {
-                driver.get("http://localhost:$port/users/logout")
-                WebDriverWait(driver, Duration.ofSeconds(60))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.id("remember-me")))
-                return true
-            } catch (e: TimeoutException) {
-                Thread.sleep(2000)
-            }
-        }
-        return false
-    }
-
     @BeforeEach
     fun setup() {
         val superObj = User()
@@ -371,12 +357,12 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
     @Throws(Exception::class)
     fun shouldViewInAlbumAndCommentAsUser() {
         //Login as testuser
-        this.driver!!.get("http://localhost:$port/users/logout")
         // Logging out redirects to login page
-        //println(this.driver?.pageSource) // print the html
-        //takeScreenshot(driver!!) // take a screenshot
+        this.driver!!.get("http://localhost:$port/users/logout")
         WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
-        waitForLoginPage(driver!!)
+        waitForPage(driver!!, port.toString(), "users/login", By.id("remember-me"))
+//        println(this.driver?.pageSource) // print the html
+//        takeScreenshot(driver!!)
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
@@ -498,7 +484,7 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
 //        val screenshot = (driver as TakesScreenshot).getScreenshotAs(OutputType.FILE)
 //        screenshot.copyTo(Paths.get("login_timeout.png").toFile(), overwrite = true)
-        waitForLoginPage(driver!!)
+        waitForPage(driver!!, port.toString(), "users/logout", By.id("remember-me"))
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
