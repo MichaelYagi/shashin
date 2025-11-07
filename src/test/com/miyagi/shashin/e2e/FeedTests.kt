@@ -1,5 +1,6 @@
 package com.miyagi.shashin.e2e
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import jakarta.transaction.Transactional
@@ -14,6 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Import
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
@@ -34,6 +36,7 @@ import kotlin.Int
 
 // API tests that require image scans
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(ToolsControllerTestConfig::class)
 @ActiveProfiles("test")
 class FeedTests: BaseSeleniumTests() {
     private var superId: Int? = null

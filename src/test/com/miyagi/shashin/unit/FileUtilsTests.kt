@@ -1,13 +1,16 @@
 package com.miyagi.shashin.unit
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.util.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import java.io.File
 import java.net.URL
 
 @ActiveProfiles("test")
+@Import(ToolsControllerTestConfig::class)
 class FileUtilsTests {
     @Test
     fun parseBase64Test() {

@@ -1,12 +1,15 @@
 package com.miyagi.shashin.unit
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.service.ImageProcessing
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
+@Import(ToolsControllerTestConfig::class)
 @ActiveProfiles("test")
 class ImageProcessingTests {
     @Test

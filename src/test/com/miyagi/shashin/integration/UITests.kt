@@ -1,5 +1,6 @@
 package com.miyagi.shashin.integration
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.e2e.BaseSeleniumTests
 import com.miyagi.shashin.util.TextUtils
 import org.junit.jupiter.api.Assertions
@@ -7,9 +8,11 @@ import org.junit.jupiter.api.Test
 import org.openqa.selenium.JavascriptExecutor
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(ToolsControllerTestConfig::class)
 @ActiveProfiles("test")
 class UITests: BaseSeleniumTests() {
     @LocalServerPort

@@ -1,5 +1,6 @@
 package com.miyagi.shashin.e2e
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.repository.*
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.junit.jupiter.api.AfterEach
@@ -12,10 +13,15 @@ import org.springframework.core.io.FileSystemResource
 import java.io.File
 import java.util.logging.Logger
 import jakarta.transaction.Transactional
+import org.openqa.selenium.OutputType
+import org.openqa.selenium.TakesScreenshot
+import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.test.context.ActiveProfiles
+import java.nio.file.Paths
 
 @ActiveProfiles("test")
+@Import(ToolsControllerTestConfig::class)
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
     protected var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
@@ -172,5 +178,11 @@ abstract class BaseSeleniumTests {
             }
             file.delete()
         }
+    }
+
+    // debugging take a screenshot
+    fun takeScreenshot(driver: WebDriver) {
+        val screenshot = (driver as TakesScreenshot).getScreenshotAs(OutputType.FILE)
+        screenshot.copyTo(Paths.get("C:\\Users\\Michael\\Downloads\\login_timeout.png").toFile(), overwrite = true)
     }
 }
