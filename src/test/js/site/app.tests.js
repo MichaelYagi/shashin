@@ -5,15 +5,10 @@ require('../helper.js');
 
 const { JSDOM } = require("jsdom");
 
-let window, document;
-
-beforeEach(() => {
-    const dom = new JSDOM(`<!DOCTYPE html><html><body></body></html>`, { url: "http://localhost" });
-    window = dom.window;
-    document = window.document;
-    global.window = window;
-    global.document = document;
-});
+const dom = new JSDOM(`<!DOCTYPE html><html><body></body></html>`, { url: "http://localhost" });
+global.window = dom.window;
+global.document = dom.window.document;
+global.navigator = dom.window.navigator;
 
 const constantsjs = require('../../../main/resources/static/js/site/fragments/app/constants.js');
 const toastjs = require('../../../main/resources/static/js/site/fragments/app/toast.js');
