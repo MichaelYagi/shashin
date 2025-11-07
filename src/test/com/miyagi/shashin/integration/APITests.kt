@@ -2,6 +2,7 @@ package com.miyagi.shashin.integration
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -33,6 +35,7 @@ import java.io.File
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(ToolsControllerTestConfig::class)
 @TestInstance(Lifecycle.PER_CLASS)
 class APITests {
 

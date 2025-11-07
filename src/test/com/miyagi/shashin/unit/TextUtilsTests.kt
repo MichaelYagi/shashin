@@ -1,5 +1,6 @@
 package com.miyagi.shashin.unit
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import org.json.JSONObject
@@ -7,9 +8,11 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
+@Import(ToolsControllerTestConfig::class)
 @ActiveProfiles("test")
 class TextUtilsTests {
     @Value("\${app.rememberme.key}")

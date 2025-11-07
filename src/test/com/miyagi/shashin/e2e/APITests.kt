@@ -3,6 +3,7 @@ package com.miyagi.shashin.e2e
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
@@ -26,6 +27,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -49,6 +51,7 @@ import kotlin.random.Random
 
 // API tests that require image scans
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(ToolsControllerTestConfig::class)
 @ActiveProfiles("test")
 class APITests: BaseSeleniumTests() {
 

@@ -1,5 +1,6 @@
 package com.miyagi.shashin.integration
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.e2e.BaseSeleniumTests
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.MessageSource
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import java.io.FileInputStream
 import java.io.IOException
@@ -15,6 +17,7 @@ import java.util.Locale
 import java.util.Properties
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(ToolsControllerTestConfig::class)
 @ActiveProfiles("test")
 class TextTests: BaseSeleniumTests() {
     @LocalServerPort

@@ -1,5 +1,6 @@
 package com.miyagi.shashin.e2e
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import org.junit.jupiter.api.Assertions
@@ -12,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Import
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
@@ -29,6 +31,7 @@ import java.util.logging.Level
 import javax.imageio.ImageIO
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(ToolsControllerTestConfig::class)
 @ActiveProfiles("test")
 class TimelineSeleniumTests: BaseSeleniumTests() {
 

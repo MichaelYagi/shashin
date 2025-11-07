@@ -1,12 +1,15 @@
 package com.miyagi.shashin.unit
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import org.springframework.test.context.ActiveProfiles
 import com.miyagi.shashin.util.MetricsUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.context.annotation.Import
 import java.lang.Thread.sleep
 
 @ActiveProfiles("test")
+@Import(ToolsControllerTestConfig::class)
 class MetricsUtilTests {
     @Test
     fun timingTestsTest() {

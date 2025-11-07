@@ -2,6 +2,7 @@ package com.miyagi.shashin.unit
 
 import ai.djl.modality.cv.ImageFactory
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.service.DjlFaceRecognizer
 import com.miyagi.shashin.e2e.BaseSeleniumTests
 import com.miyagi.shashin.model.Metadata
@@ -10,6 +11,7 @@ import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecogniti
 import com.miyagi.shashin.service.VideoProcessing
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import java.io.File
 import java.util.logging.Level
@@ -17,6 +19,7 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 
 @ActiveProfiles("test")
+@Import(ToolsControllerTestConfig::class)
 class VideoImageTests {
 
     var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)

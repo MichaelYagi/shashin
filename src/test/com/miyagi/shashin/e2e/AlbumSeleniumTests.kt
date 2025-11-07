@@ -1,5 +1,6 @@
 package com.miyagi.shashin.e2e
 
+import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import org.junit.jupiter.api.Assertions
@@ -8,6 +9,9 @@ import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.Keys
+import org.openqa.selenium.OutputType
+import org.openqa.selenium.TakesScreenshot
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -15,6 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Import
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
@@ -24,10 +29,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.net.URL
+import java.nio.file.Paths
 import java.time.Duration
+import java.util.concurrent.TimeoutException
 import java.util.logging.Level
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(ToolsControllerTestConfig::class)
 @ActiveProfiles("test")
 class AlbumSeleniumTests: BaseSeleniumTests() {
 
@@ -48,6 +56,20 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
     private val userRepository: UserRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
+
+    fun waitForLoginPage(driver: WebDriver): Boolean {
+        repeat(3) {
+            try {
+                driver.get("http://localhost:$port/users/logout")
+                WebDriverWait(driver, Duration.ofSeconds(60))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.id("remember-me")))
+                return true
+            } catch (e: TimeoutException) {
+                Thread.sleep(2000)
+            }
+        }
+        return false
+    }
 
     @BeforeEach
     fun setup() {
@@ -87,6 +109,7 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
             .build()
 
         this.driver?.get("http://localhost:$port/users/login")
+        WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
@@ -350,8 +373,10 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         //Login as testuser
         this.driver!!.get("http://localhost:$port/users/logout")
         // Logging out redirects to login page
-        //println(this.driver?.pageSource)
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("remember-me")))
+        //println(this.driver?.pageSource) // print the html
+        //takeScreenshot(driver!!) // take a screenshot
+        WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
+        waitForLoginPage(driver!!)
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
@@ -470,7 +495,10 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         //Login as testadmin
         this.driver!!.get("http://localhost:$port/users/logout")
         // Logging out redirects to login page
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("remember-me")))
+        WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
+//        val screenshot = (driver as TakesScreenshot).getScreenshotAs(OutputType.FILE)
+//        screenshot.copyTo(Paths.get("login_timeout.png").toFile(), overwrite = true)
+        waitForLoginPage(driver!!)
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
