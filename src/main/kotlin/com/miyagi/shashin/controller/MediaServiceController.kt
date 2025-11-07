@@ -47,8 +47,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
 import java.io.IOException
-import java.net.URL
-import java.nio.file.Path
 import javax.imageio.ImageIO
 import kotlin.collections.set
 import kotlin.text.split
