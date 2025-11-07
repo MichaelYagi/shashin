@@ -208,7 +208,6 @@ abstract class BaseSeleniumTests {
     // Debugging
     // println(this.driver?.pageSource) // print the html
     // takeScreenshot(driver!!) // take a screenshot
-    // debugging take a screenshot
     fun takeScreenshot(driver: WebDriver, path: String = "C:\\Users\\Michael\\Downloads\\shashin_test_screenshot_"+getRandomString()+".png") {
         val screenshot = (driver as TakesScreenshot).getScreenshotAs(OutputType.FILE)
         screenshot.copyTo(Paths.get(path).toFile(), overwrite = true)
