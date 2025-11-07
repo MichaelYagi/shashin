@@ -3,6 +3,18 @@ const sinon = require("sinon");
 require("mocha");
 require('../helper.js');
 
+const { JSDOM } = require("jsdom");
+
+let window, document;
+
+beforeEach(() => {
+    const dom = new JSDOM(``, { url: "http://localhost" });
+    window = dom.window;
+    document = window.document;
+    global.window = window;
+    global.document = document;
+});
+
 const constantsjs = require('../../../main/resources/static/js/site/fragments/app/constants.js');
 const toastjs = require('../../../main/resources/static/js/site/fragments/app/toast.js');
 const modaljs = require('../../../main/resources/static/js/site/fragments/app/modal.js');
@@ -111,7 +123,6 @@ describe('#shashin app tests', function() {
         $("body").append($("<div/>", {
             id: 'someelement'
         }));
-console.log($("#someelement").length)
         shashin.setLightGalleryElement('someelement');
         shashin.setLightGallery();
         let lightGallery = shashin.getLightGallery();
