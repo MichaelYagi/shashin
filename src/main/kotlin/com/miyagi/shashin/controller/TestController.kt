@@ -102,6 +102,7 @@ class TestController(
         // C:\Users\Michael\Downloads\PXL_20230721_142144451.MP.jpg
         // C:\Users\Michael\Downloads\PXL_20210930_164602780.jpg
         // C:\Users\Michael\Downloads\PXL_20210930_164602780_resize.jpg
+println("testing duplicates")
         if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo")) {
             var setOneFilename = payloadMap["setone"].toString()
             var setTwoFilename = payloadMap["settwo"].toString()
@@ -109,19 +110,20 @@ class TestController(
             response["setone"] = setOneFilename
             response["settwo"] = setTwoFilename
 
+            val file1 = File(setOneFilename)
+            val file2 = File(setTwoFilename)
+
             val i = DuplicateImageChecker()
-            i.setFirstImage(setOneFilename)
-            i.setSecondImage(setTwoFilename)
-            i.setCrop(true)
-//            i.setGreyScale(true)
-            val isDuplicate = i.isDuplicate()
+            val hash1 = i.computeHash(file1)
+            val hash2 = i.computeHash(file2)
+            val isDuplicate = i.isDuplicate(hash1, hash2)
 
-            response["text"] = "Is duplicate: " + isDuplicate + "<br>" + "Similarity: " + (100.0*i.getSimilarity()!!).toInt() + "%"
-
+            response["text"] = "Is duplicate: " + isDuplicate + "<br>" + "Similarity: " + i.similarityScore(hash1, hash2)
+println("Is duplicate: " + isDuplicate + "<br>" + "Similarity: " + i.similarityScore(hash1, hash2))
             // data:image/png;base64,
             val pre = "data:image/png;base64, "
-            response["base64_1"] = pre + i.getBase64FirstImage()
-            response["base64_2"] = pre + i.getBase64SecondImage()
+            response["base64_1"] = pre + i.getBase64(file1)
+            response["base64_2"] = pre + i.getBase64(file2)
 
             response["status"] = ApiResponse.SUCCESS.status
         }

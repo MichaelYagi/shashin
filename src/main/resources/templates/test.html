@@ -20,28 +20,28 @@
             <span id="sometext"></span><br>
             <img id="base64_1" src="" style="width: 200px;margin-right: 5px"><img id="base64_2" src="" style="width: 200px"><br>
 
-            <h3 class="mt-3">Dexie Test</h3>
+<!--            <h3 class="mt-3">Dexie Test</h3>-->
 
-            <p>current timestamp: <th:block th:text="${currentTimestamp}"></th:block></p>
-            <p>default tz: <th:block th:text="${defaultTZ}"></th:block></p>
+<!--            <p>current timestamp: <th:block th:text="${currentTimestamp}"></th:block></p>-->
+<!--            <p>default tz: <th:block th:text="${defaultTZ}"></th:block></p>-->
 
-            <span id="dbtest" style="display: none;">
-                <input type="text" id="year" placeholder="year"><input type="text" id="month" placeholder="month"><input type="text" id="day" placeholder="day"><br>
-                <input type="text" id="mediaType" placeholder="media type"><button id="dateSubmit">Execute query</button><br>
-                <button id="randomDate" style="display: none">Get random date</button>
-            </span>
+<!--            <span id="dbtest" style="display: none;">-->
+<!--                <input type="text" id="year" placeholder="year"><input type="text" id="month" placeholder="month"><input type="text" id="day" placeholder="day"><br>-->
+<!--                <input type="text" id="mediaType" placeholder="media type"><button id="dateSubmit">Execute query</button><br>-->
+<!--                <button id="randomDate" style="display: none">Get random date</button>-->
+<!--            </span>-->
 
             <span id="photos"></span>
 
-            <pre id="result">Loading...</pre>
+<!--            <pre id="result">Loading...</pre>-->
 
-            <div id="language"></div>
-            <div th:utext="'test1:'+#{test(${mike},${noah})}"></div>
-            <div th:utext="'test2:'+#{test(${mike})}"></div>
-            <div id="test"></div>
-            <div id="test1"></div>
+<!--            <div id="language"></div>-->
+<!--            <div th:utext="'test1:'+#{test(${mike},${noah})}"></div>-->
+<!--            <div th:utext="'test2:'+#{test(${mike})}"></div>-->
+<!--            <div id="test"></div>-->
+<!--            <div id="test1"></div>-->
 
-            <div th:utext="'testjsdynamic:'+#{test(${mike},'&lt;span id=&quot;asdf&quot;&gt;&lt;/span&gt;')}"></div>
+<!--            <div th:utext="'testjsdynamic:'+#{test(${mike},'&lt;span id=&quot;asdf&quot;&gt;&lt;/span&gt;')}"></div>-->
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
@@ -201,21 +201,21 @@
             //     });
             // }, 0);
             //
-            // $("#dupeSubmit").on("click", function (e) {
-            //     e.preventDefault();
-            //
-            //     const http = new Http("dupe detect");
-            //     const json = {
-            //         setone: $("#setone").val(),
-            //         settwo: $("#settwo").val()
-            //     };
-            //     http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
-            //         // console.log(results)
-            //         $("#base64_1").attr("src",results.base64_1);
-            //         $("#base64_2").attr("src",results.base64_2);
-            //         $("#sometext").html(results.text);
-            //     });
-            // });
+            $("#dupeSubmit").on("click", function (e) {
+                e.preventDefault();
+
+                const http = new Http("dupe detect");
+                const json = {
+                    setone: $("#setone").val(),
+                    settwo: $("#settwo").val()
+                };
+                http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
+                    // console.log(results)
+                    $("#base64_1").attr("src",results.base64_1);
+                    $("#base64_2").attr("src",results.base64_2);
+                    $("#sometext").html(results.text);
+                });
+            });
         });
     </script>
 

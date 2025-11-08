@@ -1855,10 +1855,13 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         fun isDuplicate(filename1: String?, filename2: String?): Boolean {
             var isDuplicate = false
             if (filename1 != null && filename2 != null) {
+                val file1 = File(filename1)
+                val file2 = File(filename2)
+
                 val i = DuplicateImageChecker()
-                i.setFirstImage(filename1)
-                i.setSecondImage(filename2)
-                isDuplicate = i.isDuplicate()
+                val hash1 = i.computeHash(file1)
+                val hash2 = i.computeHash(file2)
+                isDuplicate = i.isDuplicate(hash1, hash2)
             }
             return isDuplicate
         }

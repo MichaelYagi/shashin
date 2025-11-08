@@ -227,7 +227,7 @@ class GalleryTemplates {
             `
             :
             `
-            <a class="mediaLink" id="mediaLink${id}" data-src="${"/api/v1/image/"+data.metadata.id}" href="${"/api/v1/image/"+data.metadata.id+"?v="+uuidv4()}"
+            <a class="mediaLink" id="mediaLink${id}" data-src="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+data.metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+data.metadata.id+"?v="+uuid}" href="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+data.metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+data.metadata.id+"?v="+uuid}"
                 data-download-url="${"/api/v1/image/"+data.metadata.id}/download?v=${uuidv4()}"
                 data-metadata-id="${data.metadata.id}"
                 ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>

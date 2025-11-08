@@ -9,7 +9,7 @@
                 th:data-metadata-id="${metadata.id}"
                 th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download?v=' + randomString}"
                 th:data-sub-html="${metadata.description}"
-                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}"
+                th:data-src="'/api/v1/thumbnails/original/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}"
             >
                 <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}+'?v='+${randomString}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
@@ -19,7 +19,7 @@
                 th:data-metadata-id="${metadata.id}"
                 th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download?v=' + randomString}"
                 th:data-sub-html="${metadata.description}"
-                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}"
+                th:data-src="'/api/v1/thumbnails/original/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}"
             >
                 <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}+'?v='+${randomString}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
