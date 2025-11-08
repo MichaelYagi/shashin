@@ -213,10 +213,12 @@ abstract class BaseSeleniumTests {
         screenshot.copyTo(Paths.get(path).toFile(), overwrite = true)
     }
 
-    fun waitForPage(driver: WebDriver, port: String, page: String, locator: By): Boolean {
+    fun waitForPage(driver: WebDriver, locator: By, port: String? = null, page: String? = null): Boolean {
         repeat(3) {
             try {
-                driver.get("http://localhost:$port/$page")
+                if (!(port.isNullOrBlank() || page.isNullOrBlank())) {
+                    driver.get("http://localhost:$port/$page")
+                }
                 WebDriverWait(driver, Duration.ofSeconds(60))
                     .until(ExpectedConditions.visibilityOfElementLocated(locator)) // eg By.id("infinite-scroll-gallery")
                 return true

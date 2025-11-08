@@ -360,7 +360,7 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         // Logging out redirects to login page
         this.driver!!.get("http://localhost:$port/users/logout")
         WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
-        waitForPage(driver!!, port.toString(), "users/login", By.id("remember-me"))
+        waitForPage(driver!!, By.id("remember-me"), port.toString(), "users/login")
 //        println(this.driver?.pageSource) // print the html
 //        takeScreenshot(driver!!)
         val username = this.driver!!.findElement(By.id("username"))
@@ -484,7 +484,7 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
 //        val screenshot = (driver as TakesScreenshot).getScreenshotAs(OutputType.FILE)
 //        screenshot.copyTo(Paths.get("login_timeout.png").toFile(), overwrite = true)
-        waitForPage(driver!!, port.toString(), "users/logout", By.id("remember-me"))
+        waitForPage(driver!!, By.id("remember-me"), port.toString(), "users/logout")
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
