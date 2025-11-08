@@ -15,7 +15,10 @@
         <div id="editorToolContainer" class="col-12 col-md-2 p-3" style="display: none;">
             <!-- TITLE stays outside the carousel track so it is NOT a slide -->
             <div id="editorTitle" class="row" style="display:block;">
-                <span style="font-size: 3rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span>
+                <span class="col-6" style="font-size: 3rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span>
+                <div class="spinner-border col-6" id="editorSpinner" role="status" style="display:none;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
 
             <!-- track holds the tool-group slides (title NOT included) -->
@@ -33,9 +36,6 @@
                         </div>
                         <div class="col-3" type="button" id="editorCloseActionButton" th:title="#{main.modal.cancel}">
                             <span class="bi-x" id="editorCloseAction" style="font-size:3rem; color:#FFFFFF;"></span>
-                        </div>
-                        <div class="spinner-border col-3" id="editorSpinner" role="status" style="display:none;">
-                            <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
 
