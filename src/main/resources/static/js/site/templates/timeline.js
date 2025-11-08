@@ -82,7 +82,7 @@ class TimelineTemplates {
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuid}"
             data-metadata-id="${metadata.id}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
-            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(videoData)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"` : `data-src="${"/api/v1/image/"+metadata.id+"?v="+uuid}"`}
+            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(videoData)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
@@ -184,7 +184,7 @@ class TimelineTemplates {
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuidv4()}"
             data-metadata-id="${metadata.id}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
-            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${"/api/v1/image/"+metadata.id}"`}
+            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
@@ -206,7 +206,7 @@ class TimelineTemplates {
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuidv4()}"
             data-metadata-id="${metadata.id}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
-            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${"/api/v1/image/"+metadata.id}"`}
+            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&

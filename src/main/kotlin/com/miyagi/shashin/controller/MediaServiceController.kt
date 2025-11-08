@@ -951,70 +951,68 @@ class MediaServiceController(
             var tempFile: File? = null
             var path = metadataObj.get().getPath()!!
             var isEdited = false
-            if (!forcePathImage && !metadataObj.get().getThumbnailUrlOriginal()!!.contains(metadataId)) {
+
+            if (!forcePathImage) {
                 if (isDownload) {
                     var extension = path.substringAfterLast('.', "")
 
-                    var imageFile = File(path)
-                    if (imageFile.exists()) {
-                        var bufferedImage: BufferedImage = ImageIO.read(imageFile)
+                    val sharpness =
+                        if (metadata.getSharpness() == null) 1.0 else metadata.getSharpness().toString().toDouble()
+                    val contrast =
+                        if (metadata.getContrast() == null) 1.0 else metadata.getContrast().toString().toDouble()
+                    val saturation =
+                        if (metadata.getSaturation() == null) 1.0 else metadata.getSaturation().toString().toDouble()
+                    val brightness =
+                        if (metadata.getBrightness() == null) 1.0 else metadata.getBrightness().toString().toDouble()
+                    val rotation = if (metadata.getRotation() == null) 0 else metadata.getRotation()?.toInt()
+                    val flipX =
+                        if (metadata.getFlipHorizontally() == null) false else metadata.getFlipHorizontally() as Boolean
+                    val flipY =
+                        if (metadata.getFlipVertically() == null) false else metadata.getFlipVertically() as Boolean
 
-                        val sharpness = if (metadata.getSharpness() == null) 1.0 else metadata.getSharpness().toString().toDouble()
-                        val contrast = if (metadata.getContrast() == null) 1.0 else metadata.getContrast().toString().toDouble()
-                        val saturation = if (metadata.getSaturation() == null) 1.0 else metadata.getSaturation().toString().toDouble()
-                        val brightness = if (metadata.getBrightness() == null) 1.0 else metadata.getBrightness().toString().toDouble()
-                        val rotation = if (metadata.getRotation() == null) 0 else metadata.getRotation()?.toInt()
-                        val flipX = if (metadata.getFlipHorizontally() == null) false else metadata.getFlipHorizontally() as Boolean
-                        val flipY = if (metadata.getFlipVertically() == null) false else metadata.getFlipVertically() as Boolean
+                    var default = true
 
-                        var default = true
+                    // Order important
+                    if (flipX) {
+                        logger.log(Level.INFO, "Adjusting flipX: " + flipX)
+                        default = false
+                    }
 
-                        // Order important
-                        if (flipX) {
-                            logger.log(Level.INFO, "Adjusting flipX: " + flipX)
-//                            bufferedImage = ImageProcessing.flipHorizontally(bufferedImage)
-                            default = false
-                        }
+                    if (flipY) {
+                        logger.log(Level.INFO, "Adjusting flipY: " + flipY)
+                        default = false
+                    }
 
-                        if (flipY) {
-                            logger.log(Level.INFO, "Adjusting flipY: " + flipY)
-//                            bufferedImage = ImageProcessing.flipVertically(bufferedImage)
-                            default = false
-                        }
+                    if (brightness in 0.1..1.9 && brightness != 1.0) {
+                        logger.log(Level.INFO, "Adjusting brightness: " + brightness)
+                        default = false
+                    }
 
-                        if (brightness in 0.1..1.9 && brightness != 1.0) {
-                            logger.log(Level.INFO, "Adjusting brightness: " + brightness)
-//                            bufferedImage = ImageProcessing.adjustBrightness(bufferedImage, brightness)
-                            default = false
-                        }
+                    if (contrast in 0.1..1.9 && contrast != 1.0) {
+                        logger.log(Level.INFO, "Adjusting contrast: " + contrast)
+                        default = false
+                    }
 
-                        if (contrast in 0.1..1.9 && contrast != 1.0) {
-                            logger.log(Level.INFO, "Adjusting contrast: " + contrast)
-//                            bufferedImage = ImageProcessing.adjustContrast(bufferedImage, contrast)
-                            default = false
-                        }
+                    if (saturation in 0.1..1.9 && saturation != 1.0) {
+                        logger.log(Level.INFO, "Adjusting saturation: " + saturation)
+                        default = false
+                    }
 
-                        if (saturation in 0.1..1.9 && saturation != 1.0) {
-                            logger.log(Level.INFO, "Adjusting saturation: " + saturation)
-//                            bufferedImage = ImageProcessing.adjustSaturation(bufferedImage, saturation.toFloat())
-                            default = false
-                        }
+                    if (sharpness in 1.0..10.0 && sharpness != 1.0) {
+                        logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
+                        default = false
+                    }
 
-                        if (sharpness in 1.0..10.0 && sharpness != 1.0) {
-                            logger.log(Level.INFO, "Adjusting sharpness: " + sharpness)
-//                            bufferedImage = ImageProcessing.adjustSharpness(bufferedImage, sharpness)
-                            default = false
-                        }
+                    if (rotation != null && rotation > 0) {
+                        logger.log(Level.INFO, "Adjusting rotation: " + rotation)
+                        default = false
+                    }
 
-                        if (rotation != null && rotation > 0) {
-                            logger.log(Level.INFO, "Adjusting rotation: " + rotation)
-//                            bufferedImage = ImageProcessing.rotateImage(bufferedImage, rotation.toDouble())
-                            default = false
-                        }
+                    if (!default) {
+                        var imageFile = File(path)
+                        if (imageFile.exists()) {
+                            var bufferedImage: BufferedImage = ImageIO.read(imageFile)
 
-                        if (default) {
-                            path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/", ""))
-                        } else {
                             bufferedImage = ImageProcessing.transformAndAdjust(
                                 bufferedImage,
                                 rotation?.toDouble() ?: 0.0,
@@ -1036,15 +1034,13 @@ class MediaServiceController(
                             ImageIO.write(bufferedImage, extension, tempFile)
 
                             path = tempFile.path
+                        } else {
+                            path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/", ""))
                         }
                     } else {
-                        path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/", ""))
+                        isEdited = true
                     }
-                } else {
-                    path = sidecarDir + (metadataObj.get().getThumbnailUrlOriginal()!!.replace("/api/v1/", ""))
                 }
-
-                isEdited = true
             }
 
             var resource = FileSystemResource(path)
