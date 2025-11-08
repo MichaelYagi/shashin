@@ -63,11 +63,12 @@
     line-height: 1;
     color: #FFFFFF;
     text-shadow: #000000 2px 2px 5px;
+    margin-right: auto;
 }
 
 /* Spinner */
 #editorSpinner {
-    margin: 10px 26px 8px 10px;
+    margin: 27px 26px 0 10px;
     padding-bottom: 5px;
     color: #FFFFFF;
     text-shadow: #000000 2px 2px 5px;
@@ -391,6 +392,16 @@
         z-index: 1000003 !important;
         margin: 0 !important;
         display: block !important;
+        pointer-events: auto !important;
+        background: transparent;
+    }
+
+    #editorSpinner {
+        position: fixed !important;
+        top: 34px !important;
+        left: 165px !important;
+        z-index: 1000003 !important;
+        margin: 0 !important;
         pointer-events: auto !important;
         background: transparent;
     }

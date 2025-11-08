@@ -34,7 +34,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
     $("#editorContainer").css("display", "block");
     $("#editorToolContainer").css("display", "block");
     $("#editorSpinner").css("display", "block");
-    $("#editorCloseActionButton").css("display", "none");
+    $("#editorCloseActionButton").prop('disabled', true).css({"pointer-events": "none"});
+    $("#editorCloseAction").css({
+        "color": "#808080",
+        "text-shadow": "#969595 2px 2px 5px"
+    });
     applyDefaultTransformations();
 
     // console.log("initializeEditor after applying transitions");
@@ -386,7 +390,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
     function applyAttributes() {
         disableButtons();
         $("#editorSpinner").css("display", "block");
-        $("#editorCloseActionButton").css("display", "none");
+        $("#editorCloseActionButton").prop('disabled', true).css({"pointer-events": "none"});
+        $("#editorCloseAction").css({
+            "color": "#808080",
+            "text-shadow": "#969595 2px 2px 5px"
+        });
 
         shashin.printMessageToConsole("--------------",{tag:"editor"});
         shashin.printMessageToConsole("Applying attributes for preview",{tag:"editor"});
@@ -420,7 +428,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
                         enableButtons();
                         toggleResetSaveButtons();
                         $("#editorSpinner").css("display", "none");
-                        $("#editorCloseActionButton").css("display", "block");
+                        $("#editorCloseActionButton").prop('disabled', false).css({"pointer-events": "auto"});
+                        $("#editorCloseAction").css({
+                            "color": "#FFFFFF",
+                            "text-shadow": "#EDEBEB 2px 2px 5px"
+                        });
                         $("#editShashinImage").css("display", "block");
                     } else {
                         shashin.printMessageToConsole("Error rendering image", {tag: "editor"});
@@ -455,7 +467,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
                         enableButtons();
                         toggleResetSaveButtons();
                         $("#editorSpinner").css("display", "none");
-                        $("#editorCloseActionButton").css("display", "block");
+                        $("#editorCloseActionButton").prop('disabled', false).css({"pointer-events": "auto"});
+                        $("#editorCloseAction").css({
+                            "color": "#FFFFFF",
+                            "text-shadow": "#EDEBEB 2px 2px 5px"
+                        });
                     });
                     $("#editShashinImage").attr("src", "data:image/jpg;base64," + data.image);
                 }
@@ -628,7 +644,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
             }
             disableButtons();
             $("#editorSpinner").css("display", "block");
-            $("#editorCloseActionButton").css("display", "none");
+            $("#editorCloseActionButton").prop('disabled', true).css({"pointer-events": "none"});
+            $("#editorCloseAction").css({
+                "color": "#808080",
+                "text-shadow": "#969595 2px 2px 5px"
+            });
 
             rotation = 0;
             isFlippedHorizontally = false;
@@ -718,8 +738,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 enableButtons();
                 toggleResetSaveButtons();
                 $("#editorSpinner").css("display", "none");
-                $("#editorCloseActionButton").css("display", "block");
-                // hideModule();
+                $("#editorCloseActionButton").prop('disabled', false).css({"pointer-events": "auto"});
+                $("#editorCloseAction").css({
+                    "color": "#FFFFFF",
+                    "text-shadow": "#EDEBEB 2px 2px 5px"
+                });
             });
         }
     });
@@ -732,7 +755,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
     function saveImage() {
         disableButtons();
         $("#editorSpinner").css("display", "block");
-        $("#editorCloseActionButton").css("display", "none");
+        $("#editorCloseActionButton").prop('disabled', true).css({"pointer-events": "none"});
+        $("#editorCloseAction").css({
+            "color": "#808080",
+            "text-shadow": "#969595 2px 2px 5px"
+        });
 
         const swapFlip = isFlippedVertically;
         isFlippedVertically = isFlippedHorizontally;
@@ -777,7 +804,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
             enableButtons();
             toggleResetSaveButtons();
             $("#editorSpinner").css("display", "none");
-            $("#editorCloseActionButton").css("display", "block");
+            $("#editorCloseActionButton").prop('disabled', true).css({"pointer-events": "none"});
+            $("#editorCloseAction").css({
+                "color": "#808080",
+                "text-shadow": "#969595 2px 2px 5px"
+            });
             hideModule();
         });
     }
