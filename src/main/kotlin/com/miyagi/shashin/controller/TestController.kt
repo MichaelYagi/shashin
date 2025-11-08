@@ -15,6 +15,7 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.MetadataProcessing
+import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
@@ -102,24 +103,46 @@ class TestController(
         // C:\Users\Michael\Downloads\PXL_20230721_142144451.MP.jpg
         // C:\Users\Michael\Downloads\PXL_20210930_164602780.jpg
         // C:\Users\Michael\Downloads\PXL_20210930_164602780_resize.jpg
-println("testing duplicates")
-        if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo")) {
+
+        if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo") && payloadMap.containsKey("algorithm") && payloadMap.containsKey("resolution")) {
             var setOneFilename = payloadMap["setone"].toString()
             var setTwoFilename = payloadMap["settwo"].toString()
+            var algorithm = payloadMap["algorithm"].toString()
+            var resolution = payloadMap["resolution"].toString().toInt()
 
             response["setone"] = setOneFilename
             response["settwo"] = setTwoFilename
+
+            val metricsUtil = MetricsUtil()
+            metricsUtil.start("Start dupe detection")
 
             val file1 = File(setOneFilename)
             val file2 = File(setTwoFilename)
 
             val i = DuplicateImageChecker()
-            val hash1 = i.computeHash(file1)
-            val hash2 = i.computeHash(file2)
-            val isDuplicate = i.isDuplicate(hash1, hash2)
 
-            response["text"] = "Is duplicate: " + isDuplicate + "<br>" + "Similarity: " + i.similarityScore(hash1, hash2)
-println("Is duplicate: " + isDuplicate + "<br>" + "Similarity: " + i.similarityScore(hash1, hash2))
+            i.setAlgorithm(algorithm, resolution) //ahash, dhash, phash
+
+            var hash1 = i.computeHash(file1)
+            var hash2 = i.computeHash(file2)
+            metricsUtil.end()
+            metricsUtil.start("hash from value 1")
+            hash1 = i.computeHashFromValue(hash1.hashValue)
+            metricsUtil.end()
+            metricsUtil.start("hash from value 2")
+            hash2 = i.computeHashFromValue(hash2.hashValue)
+            metricsUtil.end()
+            metricsUtil.start("dupe check")
+            val isDuplicate = i.isDuplicate(hash1, hash2)
+            metricsUtil.end()
+
+            response["text"] = "Algorithm: "+i.getAlgorithmName()+
+                    "<br>Resolution: "+i.getResolution()+
+                    "<br>Is duplicate: " + isDuplicate +
+                    "<br>Similarity: " + i.similarityScore(hash1, hash2) +
+                    "<br>Timings: " + metricsUtil.getMetricsList().toString() +
+                    "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
+
             // data:image/png;base64,
             val pre = "data:image/png;base64, "
             response["base64_1"] = pre + i.getBase64(file1)

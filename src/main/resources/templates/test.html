@@ -13,12 +13,33 @@
             <h2 class="mt-3">Test Page</h2>
 
             <h3 class="mt-3">Dupe Detector</h3>
-            <input type="text" id="setone" name="setone" style="width: 90%"><br>
-            <input type="text" id="settwo" name="settwo" style="width: 90%"><br>
-            <button id="dupeSubmit">Is duplicate?</button>
-            <br>
+
+            <label for="resolution"><strong>Resolution (Default 64)</strong></label><br>
+            <select name="resolution" id="resolution">
+                <option value="16">16 - very coarse, fast, prone to false positives</option>
+                <option value="32">32 - very coarse, fast, prone to false positives</option>
+                <option value="64" selected>64 - balanced</option>
+                <option value="128">128 - more robust</option>
+                <option value="256">256 - maximum fidelity, slower but very precise</option>
+            </select><br><br>
+
+            <label for="algorithm"><strong>Algorithm (Default ahash)</strong></label><br>
+            <select name="algorithm" id="algorithm">
+                <option value="ahash">ahash - Average (fast, less robust)</option>
+                <option value="dhash">dhash- Difference (balanced)</option>
+                <option value="phash">phash - Perceptual (Resilient to compression, scaling, and minor edits)</option>
+            </select><br><br>
+
+            <label for="setone"><strong>Image path 1</strong></label><br>
+            <input type="text" id="setone" name="setone" style="width: 90%"><br><br>
+
+            <label for="settwo"><strong>Image path 2</strong></label><br>
+            <input type="text" id="settwo" name="settwo" style="width: 90%"><br><br>
+
+            <button id="dupeSubmit">Is duplicate?</button><br><br>
+
             <span id="sometext"></span><br>
-            <img id="base64_1" src="" style="width: 200px;margin-right: 5px"><img id="base64_2" src="" style="width: 200px"><br>
+            <img id="base64_1" src="" style="width: 200px;margin-right: 5px"><img id="base64_2" src="" style="width: 200px"><br><br>
 
 <!--            <h3 class="mt-3">Dexie Test</h3>-->
 
@@ -61,8 +82,32 @@
             $('#test').html("test3:"+shashin.getTranslatedValue("test",test,"Noah"));
             $('#test1').html("test4:"+shashin.getTranslatedValue("test",test));
 
-
             $("#asdf").html("<strong>SOME TEXT</strong>");
+
+            $(document).on("keydown", function(event) {
+                if (event.key === "Enter") {
+                    $("#dupeSubmit").click();
+                }
+            });
+
+
+            $("#dupeSubmit").on("click", function (e) {
+                e.preventDefault();
+
+                const http = new Http("dupe detect");
+                const json = {
+                    setone: $("#setone").val(),
+                    settwo: $("#settwo").val(),
+                    algorithm: $("#algorithm").val(),
+                    resolution: $("#resolution").val()
+                };
+                http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
+                    // console.log(results)
+                    $("#base64_1").attr("src",results.base64_1);
+                    $("#base64_2").attr("src",results.base64_2);
+                    $("#sometext").html(results.text);
+                });
+            });
 
             // let db = null;
             //
@@ -201,21 +246,6 @@
             //     });
             // }, 0);
             //
-            $("#dupeSubmit").on("click", function (e) {
-                e.preventDefault();
-
-                const http = new Http("dupe detect");
-                const json = {
-                    setone: $("#setone").val(),
-                    settwo: $("#settwo").val()
-                };
-                http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
-                    // console.log(results)
-                    $("#base64_1").attr("src",results.base64_1);
-                    $("#base64_2").attr("src",results.base64_2);
-                    $("#sometext").html(results.text);
-                });
-            });
         });
     </script>
 
