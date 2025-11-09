@@ -38,14 +38,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let originalSaturation = (editMetadataObj.hasOwnProperty("saturation") && editMetadataObj.saturation !== null) ? editMetadataObj.saturation : saturation;
     let originalSharpness = (editMetadataObj.hasOwnProperty("sharpness") && editMetadataObj.sharpness !== null) ? editMetadataObj.sharpness : sharpness;
 
-    $("#savedRotation").html(highlight(normalizedRotation(originalRotation), 0));
-    $("#savedFlipX").html(highlight(originalIsFlippedHorizontally, false));
-    $("#savedFlipY").html(highlight(originalIsFlippedVertically, false));
-    $("#savedBrightness").html(highlightNumber(originalBrightness));
-    $("#savedContrast").html(highlightNumber(originalContrast));
-    $("#savedSaturation").html(highlightNumber(originalSaturation));
-    $("#savedSharpness").html(highlightNumber(originalSharpness));
-
     // Loading spinner
     // styleTopControl("#editorSpinner", "2em", "35px", "right", "25px");
     $("#editorContainer").css("display", "block");
@@ -404,13 +396,48 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
         toggleResetSaveButtons();
     });
-    $("#editorToolContainerTitle").off("click").on("click", function () {
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editorProperties'));
-        modal.show();
-    });
-    $("#editorPropertiesClose").off("click").on("click", function () {
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editorProperties'));
-        modal.hide();
+
+    $("#editorToolContainerTitleLink").off("click").on("click", function () {
+        console.log("test1zzz")
+        shashin.showToastMessage(
+            shashin.getTranslatedValue("main.pages.lg.plugins.editor.modal.title"),
+            "                <div class=\"container\">\n" +
+            "                    <div class=\"row\">\n" +
+            "                        <div class=\"col-md-6\"><strong>"+shashin.getTranslatedValue("main.pages.lg.plugins.editor.rotate")+"</strong></div>\n" +
+            "                        <div class=\"col-md-3\" id=\"savedRotation\">"+highlight(normalizedRotation(originalRotation), 0)+"</div>\n" +
+            "                    </div>\n" +
+            "                    <div class=\"row\">\n" +
+            "                        <div class=\"col-md-6\"><strong>"+shashin.getTranslatedValue("main.pages.lg.plugins.editor.flipx")+"</strong></div>\n" +
+            "                        <div class=\"col-md-3\" id=\"savedFlipX\">"+highlight(originalIsFlippedHorizontally, false)+"</div>\n" +
+            "                    </div>\n" +
+            "                    <div class=\"row\">\n" +
+            "                        <div class=\"col-md-6\"><strong>"+shashin.getTranslatedValue("main.pages.lg.plugins.editor.flipy")+"</strong></div>\n" +
+            "                        <div class=\"col-md-3\" id=\"savedFlipY\">"+highlight(originalIsFlippedVertically, false)+"</div>\n" +
+            "                    </div>\n" +
+            "                    <div class=\"row\">\n" +
+            "                        <div class=\"col-md-6\"><strong>"+shashin.getTranslatedValue("main.pages.lg.plugins.editor.brightness")+"</strong></div>\n" +
+            "                        <div class=\"col-md-3\" id=\"savedBrightness\">"+highlightNumber(originalBrightness)+"</div>\n" +
+            "                    </div>\n" +
+            "                    <div class=\"row\">\n" +
+            "                        <div class=\"col-md-6\"><strong>"+shashin.getTranslatedValue("main.pages.lg.plugins.editor.contrast")+"</strong></div>\n" +
+            "                        <div class=\"col-md-3\" id=\"savedContrast\">"+highlightNumber(originalContrast)+"</div>\n" +
+            "                    </div>\n" +
+            "                    <div class=\"row\">\n" +
+            "                        <div class=\"col-md-6\"><strong>"+shashin.getTranslatedValue("main.pages.lg.plugins.editor.saturation")+"</strong></div>\n" +
+            "                        <div class=\"col-md-3\" id=\"savedSaturation\">"+highlightNumber(originalSaturation)+"</div>\n" +
+            "                    </div>\n" +
+            "                    <div class=\"row\">\n" +
+            "                        <div class=\"col-md-6\"><strong>"+shashin.getTranslatedValue("main.pages.lg.plugins.editor.sharpness")+"</strong></div>\n" +
+            "                        <div class=\"col-md-3\" id=\"savedSharpness\">"+highlightNumber(originalSharpness)+"</div>\n" +
+            "                    </div>\n" +
+            "                </div>",
+            {
+                icon: "bi-info-circle",
+                autohide: false,
+                iconColor: "#777777",
+                tag: "editorCurrentSettings"
+            }
+        );
     });
 
     function applyAttributes() {
@@ -819,14 +846,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 editMetadataObj.rotation = normalizedRotation(rotation);
                 editMetadataObj.flipHorizontally = isFlippedHorizontally;
                 editMetadataObj.flipVertically = isFlippedVertically;
-
-                $("#savedRotation").html(highlight(normalizedRotation(rotation), 0));
-                $("#savedFlipX").html(highlight(isFlippedHorizontally, false));
-                $("#savedFlipY").html(highlight(isFlippedVertically, false));
-                $("#savedBrightness").html(highlightNumber(brightness));
-                $("#savedContrast").html(highlightNumber(contrast));
-                $("#savedSaturation").html(highlightNumber(saturation));
-                $("#savedSharpness").html(highlightNumber(sharpness));
             } else {
                 shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                     icon: "bi-exclamation-triangle",
@@ -987,13 +1006,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         isFlippedHorizontally = false;
         isFlippedVertically = false;
 
-        $("#savedRotation").text("");
-        $("#savedFlipX").text("");
-        $("#savedFlipY").text("");
-        $("#savedBrightness").text("");
-        $("#savedContrast").text("");
-        $("#savedSaturation").text("");
-        $("#savedSharpness").text("");
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         document.body.style.overflowY = 'auto';
     }
