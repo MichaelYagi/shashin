@@ -59,11 +59,12 @@
 #state .col span { line-height: 1; }
 
 #editorCloseAction {
-    font-size: 3rem;
+    font-size: 3.5rem;
     line-height: 1;
     color: #FFFFFF;
     text-shadow: #000000 2px 2px 5px;
     margin-right: auto;
+    margin-top:-5px;
 }
 
 /* Spinner */
@@ -404,6 +405,15 @@
         margin: 0 !important;
         pointer-events: auto !important;
         background: transparent;
+    }
+
+    #editorCloseAction {
+        font-size: 3.5rem;
+        line-height: 1;
+        color: #FFFFFF;
+        text-shadow: #000000 2px 2px 5px;
+        margin-right: auto;
+        margin-top: 0;
     }
 
     /* If for any reason a title element remains inside the carousel track, hide it there.
