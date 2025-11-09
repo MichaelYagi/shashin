@@ -398,10 +398,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
 
     $("#editorToolContainerTitleLink").off("click").on("click", function () {
-        console.log("test1zzz")
         shashin.showToastMessage(
             shashin.getTranslatedValue("main.pages.lg.plugins.editor.modal.title"),
-            "                <div class=\"container\">\n" +
+            "                <div>\n" +
             "                    <div class=\"row\">\n" +
             "                        <div class=\"col-md-6\"><strong>"+shashin.getTranslatedValue("main.pages.lg.plugins.editor.rotate")+"</strong></div>\n" +
             "                        <div class=\"col-md-3\" id=\"savedRotation\">"+highlight(normalizedRotation(originalRotation), 0)+"</div>\n" +
