@@ -119,76 +119,60 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // Key actions
     $("body").off("keydown").on("keydown", async function (e) {
         if (isSpinnerHidden()) {
-            // Close editor - setTimeout 100 so it doesn't also close LightGallery slide
+            // Close editor
             if (e.key === "Escape" || e.code === "Escape" || e.which === 27 || e.keyCode === 27) {
                 e.preventDefault();
-                setTimeout(hideModule, 100);
+                shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                $("#editorCloseAction").click();
             }
 
             // Rotate left
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) {
                 e.preventDefault();
                 shashin.closeToastMessages({tag:"editorCurrentSettings"});
-
-                setTimeout(function () {
-                    if (isSpinnerHidden()) {
-                        rotation -= 90;
-                        updateTransform();
-                    }
-                    toggleResetSaveButtons();
-                }, 100);
+                $("#editorRotateLeftActionButton").click();
             }
 
             // Flip horizontally
             if (e.key === "ArrowUp" || e.code === "ArrowUp" || e.which === 38 || e.keyCode === 38) {
                 e.preventDefault();
                 shashin.closeToastMessages({tag:"editorCurrentSettings"});
-
-                if (isSpinnerHidden()) {
-                    if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
-                        isFlippedHorizontally = !isFlippedHorizontally;
-                    } else {
-                        isFlippedVertically = !isFlippedVertically;
-                    }
-                    updateTransform();
-                }
-                toggleResetSaveButtons();
+                $("#editorFlipHorizontalActionButton").click();
             }
 
             // Rotate right
             if (e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
                 e.preventDefault();
                 shashin.closeToastMessages({tag:"editorCurrentSettings"});
-
-                setTimeout(function () {
-                    if (isSpinnerHidden()) {
-                        rotation += 90;
-                        updateTransform();
-                    }
-                    toggleResetSaveButtons();
-                }, 100);
+                $("#editorRotateRightActionButton").click();
             }
 
             // Flip vertically
             if (e.key === "ArrowDown" || e.code === "ArrowDown" || e.which === 40 || e.keyCode === 40) {
                 e.preventDefault();
                 shashin.closeToastMessages({tag:"editorCurrentSettings"});
-
-                if (isSpinnerHidden()) {
-                    if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
-                        isFlippedVertically = !isFlippedVertically;
-                    } else {
-                        isFlippedHorizontally = !isFlippedHorizontally;
-                    }
-                    updateTransform();
-                }
-                toggleResetSaveButtons();
+                $("#editorFlipVerticalActionButton").click();
             }
 
+            // Reset
+            if (e.key === "r" || e.code === "KeyR" || e.which === 82 || e.keyCode === 82) {
+                e.preventDefault();
+                shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                $("#editorResetActionButton").click();
+            }
+
+            // Restore
+            if (e.key === "o" || e.code === "KeyO" || e.which === 79 || e.keyCode === 79) {
+                e.preventDefault();
+                shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                $("#editorRestoreActionButton").click();
+            }
+            
             // Save
             if (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83) {
                 e.preventDefault();
-                saveImage();
+                shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                $("#editorSaveActionButton").click();
             }
         }
     });
@@ -463,7 +447,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         );
     });
 
-    function applyAttributes() {
+    function applyAttributes(showTransition = true) {
         disableButtons();
         $("#editorSpinner").css("display", "block");
         $("#editorCloseActionButton").prop('disabled', true).css({"pointer-events": "none"});
@@ -500,7 +484,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 setupImageAdjustments(img, canvas, brightness, contrast, saturation, sharpness)
                 .then((success) => {
                     if (success === true) {
-                        updateTransform(false);
+                        updateTransform(showTransition);
                         enableButtons();
                         toggleResetSaveButtons();
                         $("#editorSpinner").css("display", "none");
@@ -512,24 +496,24 @@ function initializeEditor(editMetadataObj, lgIndex) {
                         $("#editShashinImage").css("display", "block");
                     } else {
                         shashin.printMessageToConsole("Error rendering image", {tag: "editor"});
-                        fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
+                        fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness, showTransition);
                     }
                 }).catch(err => {
                     shashin.printMessageToConsole("Error rendering image: " + err, {tag: "editor"});
-                    fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
+                    fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness, showTransition);
                 });
             };
 
             img.onerror = () => {
                 shashin.printMessageToConsole("Error rendering image", {tag: "editor"});
-                fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
+                fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness, showTransition);
             };
         } else {
             shashin.printMessageToConsole("WebGL not present", {tag: "editor"});
-            fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness);
+            fallbackRender(editMetadataObj.id, editMetadataObj.path, brightness, contrast, saturation, sharpness, showTransition);
         }
 
-        function fallbackRender(id, path, brightness, contrast, saturation, sharpness) {
+        function fallbackRender(id, path, brightness, contrast, saturation, sharpness, showTransition = true) {
             // Make network call to transform: inputs - brightness, contrast, and saturation
             shashin.processEditedPreviewThumbnail(id, path, brightness, contrast, saturation, sharpness, function (data) {
                 if (data !== null) {
@@ -539,7 +523,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
                     const img = $("#editShashinImage");
                     img.off("load").on("load", () => {
-                        updateTransform(false);
+                        updateTransform(showTransition);
                         enableButtons();
                         toggleResetSaveButtons();
                         $("#editorSpinner").css("display", "none");
@@ -555,7 +539,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
     }
 
-    function applyDefaultTransformations() {
+    function applyDefaultTransformations(showTransition = true) {
         rotation = 0;
         isFlippedHorizontally = false;
         isFlippedVertically = false;
@@ -632,7 +616,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
         }
 
         // Apply transformations
-        applyAttributes();
+        applyAttributes(showTransition);
     }
 
     $("#editorRotateRightActionButton").off("click").on("click", function (e) {
@@ -696,11 +680,11 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 $("#glcanvas").remove();
             }
 
-            applyDefaultTransformations();
+            applyDefaultTransformations(true);
 
             updateTransform(false);
 
-            showModule();
+            // showModule();
 
             if (brightness === 1.0) {
                 $("#brightnessTick").css("display", "none");
@@ -745,10 +729,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
             applyAttributes();
 
             updateTransform(false);
-
-            showModule();
-
-            $("#editorContainer").css("display", "block");
 
             // Auto saves
             // if ($("#glcanvas").length > 0) {
