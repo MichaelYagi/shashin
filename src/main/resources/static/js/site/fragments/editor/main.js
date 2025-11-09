@@ -173,7 +173,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             if (e.key === "ArrowDown" || e.code === "ArrowDown" || e.which === 40 || e.keyCode === 40) {
                 e.preventDefault();
                 shashin.closeToastMessages({tag:"editorCurrentSettings"});
-                
+
                 if (isSpinnerHidden()) {
                     if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
                         isFlippedVertically = !isFlippedVertically;
@@ -725,111 +725,137 @@ function initializeEditor(editMetadataObj, lgIndex) {
         shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
-            if ($("#glcanvas").length > 0) {
-                $("#glcanvas").remove();
-            }
-            disableButtons();
-            $("#editorSpinner").css("display", "block");
-            $("#editorCloseActionButton").prop('disabled', true).css({"pointer-events": "none"});
-            $("#editorCloseAction").css({
-                "color": "#808080",
-                "text-shadow": "#969595 2px 2px 5px"
-            });
-
+            // Just preview
             rotation = 0;
             isFlippedHorizontally = false;
             isFlippedVertically = false;
             brightness = 1.0;
             $("#editorBrightnessAction").val(0);
+            $("#brightnessTick").css("display", "none");
             contrast = 1.0;
             $("#editorContrastAction").val(0);
+            $("#contrastTick").css("display", "none");
             saturation = 1.0;
             $("#editorSaturationAction").val(0);
+            $("#saturationTick").css("display", "none");
             sharpness = 1.0;
             $("#editorSharpnessAction").val(0);
-
-            originalRotation = rotation;
-            originalIsFlippedHorizontally = isFlippedHorizontally;
-            originalIsFlippedVertically = isFlippedVertically;
-            originalBrightness = brightness;
-            originalContrast = contrast;
-            originalSaturation = saturation;
-            originalSharpness = sharpness;
-
-            $("#brightnessTick").css("display", "none");
-            $("#contrastTick").css("display", "none");
-            $("#saturationTick").css("display", "none");
             $("#sharpnessTick").css("display", "none");
 
-            shashin.printMessageToConsole("--------------",{tag:"editor"});
-            shashin.printMessageToConsole("Restoring attributes",{tag:"editor"});
-            shashin.printMessageToConsole("Rotation: "+rotation,{tag:"editor"});
-            shashin.printMessageToConsole("isFlippedHorizontally: "+isFlippedHorizontally,{tag:"editor"});
-            shashin.printMessageToConsole("isFlippedVertically: "+isFlippedVertically,{tag:"editor"});
-            shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
-            shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
-            shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
-            shashin.printMessageToConsole("sharpness: "+sharpness,{tag:"editor"});
+            applyAttributes();
 
-            shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, sharpness, true,  function (success) {
-                shashin.printMessageToConsole("Restoring edited metadata:"+success,{tag:"editor"});
+            updateTransform(false);
 
-                if (success === true) {
-                    rotation = 0;
-                    isFlippedHorizontally = false;
-                    isFlippedVertically = false;
-                    brightness = 1.0;
-                    $("#editorBrightnessAction").val(0);
-                    contrast = 1.0;
-                    $("#editorContrastAction").val(0);
-                    saturation = 1.0;
-                    $("#editorSaturationAction").val(0);
-                    sharpness = 1.0;
-                    $("#editorSharpnessAction").val(0);
+            showModule();
 
-                    originalRotation = rotation;
-                    originalIsFlippedHorizontally = isFlippedHorizontally;
-                    originalIsFlippedVertically = isFlippedVertically;
-                    originalBrightness = brightness;
-                    originalContrast = contrast;
-                    originalSaturation = saturation;
-                    originalSharpness = sharpness;
+            $("#editorContainer").css("display", "block");
 
-                    editMetadataObj.brightness = brightness;
-                    editMetadataObj.contrast = contrast;
-                    editMetadataObj.saturation = saturation;
-                    editMetadataObj.sharpness = sharpness;
-                    editMetadataObj.rotation = rotation;
-                    editMetadataObj.flipHorizontally = isFlippedHorizontally;
-                    editMetadataObj.flipVertically = isFlippedVertically;
-
-                    applyDefaultTransformations();
-
-                    updateTransform(false);
-
-                    shashin.showToastMessage(shashin.getTranslatedValue("main.pages.map.modal.restored"), shashin.getTranslatedValue("main.pages.map.modal.restored"), {
-                        icon: "bi-info-circle",
-                        iconColor: "#777777",
-                        delay: 2000,
-                        borderColor: "success"
-                    });
-                } else {
-                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail.body"), shashin.getTranslatedValue("main.toast.account.profile.fail.body"), {
-                        icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000",
-                        borderColor:"danger"
-                    });
-                }
-
-                enableButtons();
-                toggleResetSaveButtons();
-                $("#editorSpinner").css("display", "none");
-                $("#editorCloseActionButton").prop('disabled', false).css({"pointer-events": "auto"});
-                $("#editorCloseAction").css({
-                    "color": "#FFFFFF",
-                    "text-shadow": "#EDEBEB 2px 2px 5px"
-                });
-            });
+            // Auto saves
+            // if ($("#glcanvas").length > 0) {
+            //     $("#glcanvas").remove();
+            // }
+            // disableButtons();
+            // $("#editorSpinner").css("display", "block");
+            // $("#editorCloseActionButton").prop('disabled', true).css({"pointer-events": "none"});
+            // $("#editorCloseAction").css({
+            //     "color": "#808080",
+            //     "text-shadow": "#969595 2px 2px 5px"
+            // });
+            //
+            // rotation = 0;
+            // isFlippedHorizontally = false;
+            // isFlippedVertically = false;
+            // brightness = 1.0;
+            // $("#editorBrightnessAction").val(0);
+            // contrast = 1.0;
+            // $("#editorContrastAction").val(0);
+            // saturation = 1.0;
+            // $("#editorSaturationAction").val(0);
+            // sharpness = 1.0;
+            // $("#editorSharpnessAction").val(0);
+            //
+            // originalRotation = rotation;
+            // originalIsFlippedHorizontally = isFlippedHorizontally;
+            // originalIsFlippedVertically = isFlippedVertically;
+            // originalBrightness = brightness;
+            // originalContrast = contrast;
+            // originalSaturation = saturation;
+            // originalSharpness = sharpness;
+            //
+            // $("#brightnessTick").css("display", "none");
+            // $("#contrastTick").css("display", "none");
+            // $("#saturationTick").css("display", "none");
+            // $("#sharpnessTick").css("display", "none");
+            //
+            // shashin.printMessageToConsole("--------------",{tag:"editor"});
+            // shashin.printMessageToConsole("Restoring attributes",{tag:"editor"});
+            // shashin.printMessageToConsole("Rotation: "+rotation,{tag:"editor"});
+            // shashin.printMessageToConsole("isFlippedHorizontally: "+isFlippedHorizontally,{tag:"editor"});
+            // shashin.printMessageToConsole("isFlippedVertically: "+isFlippedVertically,{tag:"editor"});
+            // shashin.printMessageToConsole("brightness: "+brightness,{tag:"editor"});
+            // shashin.printMessageToConsole("contrast: "+contrast,{tag:"editor"});
+            // shashin.printMessageToConsole("saturation: "+saturation,{tag:"editor"});
+            // shashin.printMessageToConsole("sharpness: "+sharpness,{tag:"editor"});
+            //
+            // shashin.processEditedThumbnail(editMetadataObj.id, lgIndex, rotation, isFlippedHorizontally, isFlippedVertically, brightness, contrast, saturation, sharpness, true,  function (success) {
+            //     shashin.printMessageToConsole("Restoring edited metadata:"+success,{tag:"editor"});
+            //
+            //     if (success === true) {
+            //         rotation = 0;
+            //         isFlippedHorizontally = false;
+            //         isFlippedVertically = false;
+            //         brightness = 1.0;
+            //         $("#editorBrightnessAction").val(0);
+            //         contrast = 1.0;
+            //         $("#editorContrastAction").val(0);
+            //         saturation = 1.0;
+            //         $("#editorSaturationAction").val(0);
+            //         sharpness = 1.0;
+            //         $("#editorSharpnessAction").val(0);
+            //
+            //         originalRotation = rotation;
+            //         originalIsFlippedHorizontally = isFlippedHorizontally;
+            //         originalIsFlippedVertically = isFlippedVertically;
+            //         originalBrightness = brightness;
+            //         originalContrast = contrast;
+            //         originalSaturation = saturation;
+            //         originalSharpness = sharpness;
+            //
+            //         editMetadataObj.brightness = brightness;
+            //         editMetadataObj.contrast = contrast;
+            //         editMetadataObj.saturation = saturation;
+            //         editMetadataObj.sharpness = sharpness;
+            //         editMetadataObj.rotation = rotation;
+            //         editMetadataObj.flipHorizontally = isFlippedHorizontally;
+            //         editMetadataObj.flipVertically = isFlippedVertically;
+            //
+            //         applyDefaultTransformations();
+            //
+            //         updateTransform(false);
+            //
+            //         shashin.showToastMessage(shashin.getTranslatedValue("main.pages.map.modal.restored"), shashin.getTranslatedValue("main.pages.map.modal.restored"), {
+            //             icon: "bi-info-circle",
+            //             iconColor: "#777777",
+            //             delay: 2000,
+            //             borderColor: "success"
+            //         });
+            //     } else {
+            //         shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail.body"), shashin.getTranslatedValue("main.toast.account.profile.fail.body"), {
+            //             icon: "bi-exclamation-triangle",
+            //             iconColor: "#FF0000",
+            //             borderColor:"danger"
+            //         });
+            //     }
+            //
+            //     enableButtons();
+            //     toggleResetSaveButtons();
+            //     $("#editorSpinner").css("display", "none");
+            //     $("#editorCloseActionButton").prop('disabled', false).css({"pointer-events": "auto"});
+            //     $("#editorCloseAction").css({
+            //         "color": "#FFFFFF",
+            //         "text-shadow": "#EDEBEB 2px 2px 5px"
+            //     });
+            // });
         }
     });
 
