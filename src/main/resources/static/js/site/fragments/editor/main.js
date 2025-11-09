@@ -38,13 +38,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let originalSaturation = (editMetadataObj.hasOwnProperty("saturation") && editMetadataObj.saturation !== null) ? editMetadataObj.saturation : saturation;
     let originalSharpness = (editMetadataObj.hasOwnProperty("sharpness") && editMetadataObj.sharpness !== null) ? editMetadataObj.sharpness : sharpness;
 
-    $("#savedRotation").text(originalRotation);
-    $("#savedFlipX").text(originalIsFlippedHorizontally);
-    $("#savedFlipY").text(originalIsFlippedVertically);
-    $("#savedBrightness").text(parseFloat(originalBrightness.toString()).toFixed(1));
-    $("#savedContrast").text(parseFloat(originalContrast).toFixed(1));
-    $("#savedSaturation").text(parseFloat(originalSaturation).toFixed(1));
-    $("#savedSharpness").text(parseFloat(originalSharpness).toFixed(1));
+    $("#savedRotation").html(highlight(normalizedRotation(originalRotation), 0));
+    $("#savedFlipX").html(highlight(originalIsFlippedHorizontally, false));
+    $("#savedFlipY").html(highlight(originalIsFlippedVertically, false));
+    $("#savedBrightness").html(highlightNumber(originalBrightness));
+    $("#savedContrast").html(highlightNumber(originalContrast));
+    $("#savedSaturation").html(highlightNumber(originalSaturation));
+    $("#savedSharpness").html(highlightNumber(originalSharpness));
 
     // Loading spinner
     // styleTopControl("#editorSpinner", "2em", "35px", "right", "25px");
@@ -820,13 +820,13 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 editMetadataObj.flipHorizontally = isFlippedHorizontally;
                 editMetadataObj.flipVertically = isFlippedVertically;
 
-                $("#savedRotation").text(normalizedRotation(rotation));
-                $("#savedFlipX").text(isFlippedHorizontally);
-                $("#savedFlipY").text(isFlippedVertically);
-                $("#savedBrightness").text(parseFloat(brightness.toString()).toFixed(1));
-                $("#savedContrast").text(parseFloat(contrast.toString()).toFixed(1));
-                $("#savedSaturation").text(parseFloat(saturation.toString()).toFixed(1));
-                $("#savedSharpness").text(parseFloat(sharpness.toString()).toFixed(1));
+                $("#savedRotation").html(highlight(normalizedRotation(rotation), 0));
+                $("#savedFlipX").html(highlight(isFlippedHorizontally, false));
+                $("#savedFlipY").html(highlight(isFlippedVertically, false));
+                $("#savedBrightness").html(highlightNumber(brightness));
+                $("#savedContrast").html(highlightNumber(contrast));
+                $("#savedSaturation").html(highlightNumber(saturation));
+                $("#savedSharpness").html(highlightNumber(sharpness));
             } else {
                 shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                     icon: "bi-exclamation-triangle",
@@ -922,6 +922,20 @@ function initializeEditor(editMetadataObj, lgIndex) {
         requestAnimationFrame(() => {
             $("#editShashinImage").css(style);
         });
+    }
+
+    function highlight(value, defaultValue) {
+        const str = value.toString();
+        return (value === defaultValue)
+            ? str
+            : `<span style="color:#0a53be">${str}</span>`;
+    }
+
+    function highlightNumber(num, defaultValue = 1.0) {
+        const fixed = parseFloat(num).toFixed(1);
+        return (parseFloat(fixed) === defaultValue)
+            ? fixed
+            : `<span style="color:#0a53be">${fixed}</span>`;
     }
 
     function showModule() {
