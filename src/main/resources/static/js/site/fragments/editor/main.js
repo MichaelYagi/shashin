@@ -129,50 +129,64 @@ function initializeEditor(editMetadataObj, lgIndex) {
             // Rotate left
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) {
                 e.preventDefault();
-                shashin.closeToastMessages({tag:"editorCurrentSettings"});
-                $("#editorRotateLeftActionButton").click();
+                if ($("#editorRotateLeftActionButton").css("pointer-events") !== "none") {
+                    shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                    $("#editorRotateLeftActionButton").click();
+                }
             }
 
             // Flip horizontally
             if (e.key === "ArrowUp" || e.code === "ArrowUp" || e.which === 38 || e.keyCode === 38) {
                 e.preventDefault();
-                shashin.closeToastMessages({tag:"editorCurrentSettings"});
-                $("#editorFlipHorizontalActionButton").click();
+                if ($("#editorFlipHorizontalActionButton").css("pointer-events") !== "none") {
+                    shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                    $("#editorFlipHorizontalActionButton").click();
+                }
             }
 
             // Rotate right
             if (e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
                 e.preventDefault();
-                shashin.closeToastMessages({tag:"editorCurrentSettings"});
-                $("#editorRotateRightActionButton").click();
+                if ($("#editorRotateRightActionButton").css("pointer-events") !== "none") {
+                    shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                    $("#editorRotateRightActionButton").click();
+                }
             }
 
             // Flip vertically
             if (e.key === "ArrowDown" || e.code === "ArrowDown" || e.which === 40 || e.keyCode === 40) {
                 e.preventDefault();
-                shashin.closeToastMessages({tag:"editorCurrentSettings"});
-                $("#editorFlipVerticalActionButton").click();
+                if ($("#editorFlipVerticalActionButton").css("pointer-events") !== "none") {
+                    shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                    $("#editorFlipVerticalActionButton").click();
+                }
             }
 
             // Reset
             if (e.key === "r" || e.code === "KeyR" || e.which === 82 || e.keyCode === 82) {
                 e.preventDefault();
-                shashin.closeToastMessages({tag:"editorCurrentSettings"});
-                $("#editorResetActionButton").click();
+                if ($("#editorResetActionButton").css("pointer-events") !== "none") {
+                    shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                    $("#editorResetActionButton").click();
+                }
             }
 
             // Restore
             if (e.key === "o" || e.code === "KeyO" || e.which === 79 || e.keyCode === 79) {
                 e.preventDefault();
-                shashin.closeToastMessages({tag:"editorCurrentSettings"});
-                $("#editorRestoreActionButton").click();
+                if ($("#editorRestoreActionButton").css("pointer-events") !== "none") {
+                    shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                    $("#editorRestoreActionButton").click();
+                }
             }
-            
+
             // Save
             if (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83) {
                 e.preventDefault();
-                shashin.closeToastMessages({tag:"editorCurrentSettings"});
-                $("#editorSaveActionButton").click();
+                if ($("#editorSaveActionButton").css("pointer-events") !== "none") {
+                    shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                    $("#editorSaveActionButton").click();
+                }
             }
         }
     });
