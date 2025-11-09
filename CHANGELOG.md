@@ -13,13 +13,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Added
 ### Changed
 - Code refactoring to adhere to architectural coding standards
+- UX tweaks to editor
 
 ### Deprecated
 ### Removed
 ### Fixed
 - Share page paged video thumbnails
 - Video thumbnails in mobile view
-- Tests updated for CircleCI
+- Tests updated
 
 ### Security
 
