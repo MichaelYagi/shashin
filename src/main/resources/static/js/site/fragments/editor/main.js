@@ -128,6 +128,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             // Rotate left
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) {
                 e.preventDefault();
+                shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
                 setTimeout(function () {
                     if (isSpinnerHidden()) {
@@ -141,6 +142,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
             // Flip horizontally
             if (e.key === "ArrowUp" || e.code === "ArrowUp" || e.which === 38 || e.keyCode === 38) {
                 e.preventDefault();
+                shashin.closeToastMessages({tag:"editorCurrentSettings"});
+
                 if (isSpinnerHidden()) {
                     if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
                         isFlippedHorizontally = !isFlippedHorizontally;
@@ -155,6 +158,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             // Rotate right
             if (e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
                 e.preventDefault();
+                shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
                 setTimeout(function () {
                     if (isSpinnerHidden()) {
@@ -168,6 +172,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
             // Flip vertically
             if (e.key === "ArrowDown" || e.code === "ArrowDown" || e.which === 40 || e.keyCode === 40) {
                 e.preventDefault();
+                shashin.closeToastMessages({tag:"editorCurrentSettings"});
+                
                 if (isSpinnerHidden()) {
                     if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
                         isFlippedVertically = !isFlippedVertically;
@@ -189,6 +195,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorCloseAction").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             hideModule();
@@ -198,6 +205,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // Slider icon
     $("#editorBrightnessIcon").off("click").on('click', function(event) {
         event.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         $("#brightnessTick").css("display", "none");
         if (isSpinnerHidden()) {
@@ -210,6 +218,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorContrastIcon").off("click").on('click', function(event) {
         event.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         $("#contrastTick").css("display", "none");
         if (isSpinnerHidden()) {
@@ -222,6 +231,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorSaturationIcon").off("click").on('click', function(event) {
         event.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         $("#saturationTick").css("display", "none");
         if (isSpinnerHidden()) {
@@ -234,6 +244,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorSharpnessIcon").off("click").on('click', function(event) {
         event.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         $("#sharpnessTick").css("display", "none");
         if (isSpinnerHidden()) {
@@ -247,6 +258,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     // Slider adjustment
     $("#editorBrightnessAction").off("input").on("input", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if ($("#editorBrightnessAction").val() === "0") {
             $("#brightnessTick").css("display", "none");
@@ -256,6 +268,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
     $("#brightnessTick").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             let number = "0";
@@ -272,6 +285,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
     $("#editorBrightnessAction").off("change").on("change", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             let number = $("#editorBrightnessAction").val();
@@ -287,6 +301,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorContrastAction").off("input").on("input", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if ($("#editorContrastAction").val() === "0") {
             $("#contrastTick").css("display", "none");
@@ -296,6 +311,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
     $("#contrastTick").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             let number = "0";
@@ -312,6 +328,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
     $("#editorContrastAction").off("change").on("change", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             let number = $("#editorContrastAction").val();
@@ -327,6 +344,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorSaturationAction").off("input").on("input", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if ($("#editorSaturationAction").val() === "0") {
             $("#saturationTick").css("display", "none");
@@ -336,6 +354,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
     $("#saturationTick").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             let number = "0";
@@ -352,6 +371,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
     $("#editorSaturationAction").off("change").on("change", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             let number = $("#editorSaturationAction").val();
@@ -367,6 +387,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorSharpnessAction").off("input").on("input", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if ($("#editorSharpnessAction").val() === "1") {
             $("#sharpnessTick").css("display", "none");
@@ -376,6 +397,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
     $("#sharpnessTick").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             let number = "0";
@@ -388,6 +410,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
     });
     $("#editorSharpnessAction").off("change").on("change", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             let number = $("#editorSharpnessAction").val();
@@ -614,6 +637,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorRotateRightActionButton").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
+
         if (isSpinnerHidden()) {
             rotation += 90;
             updateTransform();
@@ -623,6 +648,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorRotateLeftActionButton").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
+
         if (isSpinnerHidden()) {
             rotation -= 90;
             updateTransform();
@@ -632,6 +659,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorFlipVerticalActionButton").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
+
         if (isSpinnerHidden()) {
             if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
                 isFlippedVertically = !isFlippedVertically;
@@ -645,6 +674,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorFlipHorizontalActionButton").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
+
         if (isSpinnerHidden()) {
             if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
                 isFlippedHorizontally = !isFlippedHorizontally;
@@ -658,6 +689,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorResetActionButton").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             if ($("#glcanvas").length > 0) {
@@ -690,6 +722,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
     $("#editorRestoreActionButton").off("click").on("click", function (e) {
         e.preventDefault();
+        shashin.closeToastMessages({tag:"editorCurrentSettings"});
 
         if (isSpinnerHidden()) {
             if ($("#glcanvas").length > 0) {
