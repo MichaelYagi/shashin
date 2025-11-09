@@ -59,11 +59,26 @@
                         metadataObj = JSON.parse($("#metadata").val());
                     }
 
-                    if (metadataObj !== null && metadataObj.type.indexOf("image") >= 0 && metadataObj.type.indexOf("gif") < 0) {
-                        if ((lgIndex === undefined || lgIndex === null || lgIndex < 0) && $("#lgIndex").val().length > 0) {
-                            lgIndex = parseInt($("#lgIndex").val());
-                        }
-                        editMedia(metadataObj, lgIndex);
+                    // In case it was refreshed and no slide number change, getMetadata
+                    if (metadataObj !== undefined && metadataObj !== null && metadataObj.id !== "") {
+                        const metadataId = metadataObj.id;
+                        shashin.getMetadata(metadataId).then(function (metadata) {
+                            if (Util.sessionStorageAvailable() === true) {
+                                sessionStorage.setItem("metadata", JSON.stringify(metadata));
+                            } else if (Util.localStorageAvailable() === true) {
+                                localStorage.setItem("metadata", JSON.stringify(metadata));
+                            } else {
+                                $("#metadata").val(JSON.stringify(metadata));
+                            }
+
+                            if (metadata !== null && metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
+                                if ((lgIndex === undefined || lgIndex === null || lgIndex < 0) && $("#lgIndex").val().length > 0) {
+                                    lgIndex = parseInt($("#lgIndex").val());
+                                }
+
+                                editMedia(metadata, lgIndex);
+                            }
+                        });
                     }
                 });
         },

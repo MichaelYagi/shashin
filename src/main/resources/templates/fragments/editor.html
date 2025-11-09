@@ -15,7 +15,7 @@
         <div id="editorToolContainer" class="col-12 col-md-2 p-3" style="display: none;">
             <!-- TITLE stays outside the carousel track so it is NOT a slide -->
             <div id="editorTitle" class="row" style="display:block;">
-                <span class="col-6" style="font-size: 3rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span>
+                <a href="#"><span class="col-6" id="editorToolContainerTitle" style="font-size: 3rem; color:#FFFFFF; text-shadow:#000000 2px 2px 5px;" th:text="#{main.pages.lg.plugins.editor.title}"></span></a>
                 <div class="spinner-border col-6" id="editorSpinner" role="status" style="display:none;">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -101,6 +101,51 @@
             <button type="button" class="mobile-carousel-prev btn btn-link" aria-label="Previous" style="display:none;"><span class="carousel-control-prev-icon" aria-hidden="true"></span></button>
             <button type="button" class="mobile-carousel-next btn btn-link" aria-label="Next" style="display:none;"><span class="carousel-control-next-icon" aria-hidden="true"></span></button>
         </div>
+    </div>
+</div>
 
+<div class="modal fade" id="editorProperties" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="editorProperties">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editorPropertiesTitle" th:text="#{main.pages.lg.plugins.editor.modal.title}"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6" th:utext="'&lt;strong&gt;'+#{main.pages.lg.plugins.editor.rotate}+'&lt;/strong&gt;'"></div>
+                        <div class="col-md-3" id="savedRotation"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" th:utext="'&lt;strong&gt;'+#{main.pages.lg.plugins.editor.flipx}+'&lt;/strong&gt;'"></div>
+                        <div class="col-md-3" id="savedFlipX"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" th:utext="'&lt;strong&gt;'+#{main.pages.lg.plugins.editor.flipy}+'&lt;/strong&gt;'"></div>
+                        <div class="col-md-3" id="savedFlipY"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" th:utext="'&lt;strong&gt;'+#{main.pages.lg.plugins.editor.brightness}+'&lt;/strong&gt;'"></div>
+                        <div class="col-md-3" id="savedBrightness"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" th:utext="'&lt;strong&gt;'+#{main.pages.lg.plugins.editor.contrast}+'&lt;/strong&gt;'"></div>
+                        <div class="col-md-3" id="savedContrast"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" th:utext="'&lt;strong&gt;'+#{main.pages.lg.plugins.editor.saturation}+'&lt;/strong&gt;'"></div>
+                        <div class="col-md-3" id="savedSaturation"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" th:utext="'&lt;strong&gt;'+#{main.pages.lg.plugins.editor.sharpness}+'&lt;/strong&gt;'"></div>
+                        <div class="col-md-3" id="savedSharpness"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="editorPropertiesClose"><th:block th:text="#{main.modal.close}"></th:block></button>
+            </div>
+        </div>
     </div>
 </div>
