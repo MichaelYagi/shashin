@@ -12,17 +12,20 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [2.16.0] - 2025-11-09
+### Changed
 - Code refactoring to adhere to architectural coding standards
 - UX tweaks to editor
 
-### Deprecated
-### Removed
 ### Fixed
 - Share page paged video thumbnails
 - Video thumbnails in mobile view
 - Tests updated
-
-### Security
 
 ## [2.15.3] - 2025-11-01
 ### Added
