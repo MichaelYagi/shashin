@@ -434,6 +434,7 @@ function initializeEditor(editMetadataObj, lgIndex) {
             {
                 icon: "bi-info-circle",
                 autohide: false,
+                placement: shashin.toast.placement.top.center,
                 iconColor: "#777777",
                 tag: "editorCurrentSettings"
             }
