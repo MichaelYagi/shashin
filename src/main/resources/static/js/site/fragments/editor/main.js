@@ -21,6 +21,15 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let saturation = 1.0;
     let sharpness = 1.0;
 
+    // console.log("editMetadataObj");
+    // console.log(editMetadataObj.rotation);
+    // console.log(editMetadataObj.flipHorizontally);
+    // console.log(editMetadataObj.flipVertically);
+    // console.log(editMetadataObj.brightness);
+    // console.log(editMetadataObj.contrast);
+    // console.log(editMetadataObj.saturation);
+    // console.log(editMetadataObj.sharpness);
+
     let originalRotation = (editMetadataObj.hasOwnProperty("rotation") && editMetadataObj.rotation !== null) ? editMetadataObj.rotation : rotation;
     let originalIsFlippedHorizontally = (editMetadataObj.hasOwnProperty("flipHorizontally") && editMetadataObj.flipHorizontally !== null) ? editMetadataObj.flipHorizontally : isFlippedHorizontally;
     let originalIsFlippedVertically = (editMetadataObj.hasOwnProperty("flipVertically") && editMetadataObj.flipVertically !== null) ? editMetadataObj.flipVertically : isFlippedVertically;
@@ -28,6 +37,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
     let originalContrast = (editMetadataObj.hasOwnProperty("contrast") && editMetadataObj.contrast !== null) ? editMetadataObj.contrast : contrast;
     let originalSaturation = (editMetadataObj.hasOwnProperty("saturation") && editMetadataObj.saturation !== null) ? editMetadataObj.saturation : saturation;
     let originalSharpness = (editMetadataObj.hasOwnProperty("sharpness") && editMetadataObj.sharpness !== null) ? editMetadataObj.sharpness : sharpness;
+
+    $("#savedRotation").text(originalRotation);
+    $("#savedFlipX").text(originalIsFlippedHorizontally);
+    $("#savedFlipY").text(originalIsFlippedVertically);
+    $("#savedBrightness").text(parseFloat(originalBrightness.toString()).toFixed(1));
+    $("#savedContrast").text(parseFloat(originalContrast).toFixed(1));
+    $("#savedSaturation").text(parseFloat(originalSaturation).toFixed(1));
+    $("#savedSharpness").text(parseFloat(originalSharpness).toFixed(1));
 
     // Loading spinner
     // styleTopControl("#editorSpinner", "2em", "35px", "right", "25px");
@@ -98,7 +115,8 @@ function initializeEditor(editMetadataObj, lgIndex) {
             '#editorSaturationAction, ' +
             '#editorSharpnessActionButton, ' +
             '#editorSharpnessAction, ' +
-            '#editorToolContainer'
+            '#editorToolContainer, ' +
+            '#editorTitle'
         ).length) {
             if (isSpinnerHidden()) {
                 hideModule();
@@ -385,6 +403,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
             applyAttributes();
         }
         toggleResetSaveButtons();
+    });
+    $("#editorToolContainerTitle").off("click").on("click", function () {
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editorProperties'));
+        modal.show();
+    });
+    $("#editorPropertiesClose").off("click").on("click", function () {
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editorProperties'));
+        modal.hide();
     });
 
     function applyAttributes() {
@@ -793,6 +819,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
                 editMetadataObj.rotation = normalizedRotation(rotation);
                 editMetadataObj.flipHorizontally = isFlippedHorizontally;
                 editMetadataObj.flipVertically = isFlippedVertically;
+
+                $("#savedRotation").text(normalizedRotation(rotation));
+                $("#savedFlipX").text(isFlippedHorizontally);
+                $("#savedFlipY").text(isFlippedVertically);
+                $("#savedBrightness").text(parseFloat(brightness.toString()).toFixed(1));
+                $("#savedContrast").text(parseFloat(contrast.toString()).toFixed(1));
+                $("#savedSaturation").text(parseFloat(saturation.toString()).toFixed(1));
+                $("#savedSharpness").text(parseFloat(sharpness.toString()).toFixed(1));
             } else {
                 shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                     icon: "bi-exclamation-triangle",
@@ -938,6 +972,14 @@ function initializeEditor(editMetadataObj, lgIndex) {
         sharpness = 1.0;
         isFlippedHorizontally = false;
         isFlippedVertically = false;
+
+        $("#savedRotation").text("");
+        $("#savedFlipX").text("");
+        $("#savedFlipY").text("");
+        $("#savedBrightness").text("");
+        $("#savedContrast").text("");
+        $("#savedSaturation").text("");
+        $("#savedSharpness").text("");
 
         document.body.style.overflowY = 'auto';
     }

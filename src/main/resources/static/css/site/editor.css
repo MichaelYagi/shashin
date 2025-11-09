@@ -94,6 +94,16 @@
     object-fit: contain;
 }
 
+/* Raise only the editorProperties modal above #editorContainer */
+#editorProperties {
+    z-index: 1000001 !important;
+}
+
+/* Target only the backdrop created for editorProperties */
+#editorProperties ~ .modal-backdrop {
+    z-index: 1000000 !important;
+}
+
 /* ---------------------------
    Desktop / landscape (consolidated)
    --------------------------- */
