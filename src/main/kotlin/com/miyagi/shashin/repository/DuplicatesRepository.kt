@@ -25,7 +25,7 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "AND NOT EXISTS (\n" +
             "    SELECT 1\n" +
             "    FROM duplicates d\n" +
-            "    WHERE d.image_id1 = m.id OR d.image_id2 = m.id\n" +
+            "    WHERE d.distance = 0 AND (d.image_id1 = m.id OR d.image_id2 = m.id)\n" +
             ") LIMIT :offset, :limit", nativeQuery = true)
     fun findDuplicateImageHash(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
@@ -33,13 +33,13 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "FROM (\n" +
             "         SELECT m.*, m.duplicate_hash\n" +
             "         FROM duplicates d\n" +
-            "                  JOIN metadata m ON m.id = d.image_id1\n" +
-            "         WHERE m.hidden = 0\n" +
+            "         JOIN metadata m ON m.id = d.image_id1\n" +
+            "         WHERE m.hidden = 0 AND d.distance = 0\n" +
             "         UNION ALL\n" +
             "         SELECT m.*, m.duplicate_hash\n" +
             "         FROM duplicates d\n" +
-            "                  JOIN metadata m ON m.id = d.image_id2\n" +
-            "         WHERE m.hidden = 0\n" +
+            "         JOIN metadata m ON m.id = d.image_id2\n" +
+            "         WHERE m.hidden = 0 AND d.distance = 0\n" +
             "     ) AS sub\n" +
             "WHERE sub.duplicate_hash IN (\n" +
             "    SELECT duplicate_hash\n" +
