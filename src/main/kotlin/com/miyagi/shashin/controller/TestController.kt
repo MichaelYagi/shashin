@@ -196,6 +196,7 @@ class TestController(
             // Search hashes
             for (metadata in metadataList) {
                 if (metadata.getDuplicateHash() != null) {
+                    println("Searching hash ${metadata.getDuplicateHash()} for ${metadata.getId()}")
                     val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2)
                     val duplicates = tree.search(query, threshold = 5)
                     for (dupe in duplicates) {
