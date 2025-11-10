@@ -63,6 +63,7 @@ class Metadata {
     private var flipHorizontally: Boolean? = null
     private var flipVertically: Boolean? = null
     private var rotation: Int? = null
+    private var duplicateHash: String? = null
 
     // Without a default constructor, Jackson will throw an exception
     fun Metadata() {}
@@ -160,6 +161,9 @@ class Metadata {
     fun setFileName(fileName: String?) {
         this.fileName = fileName
     }
+    fun setDuplicateHash(duplicateHash: String?) {
+        this.duplicateHash = duplicateHash
+    }
     fun setExpectedExtension(expectedExtension: String?) {
         this.expectedExtension = expectedExtension
     }
@@ -230,6 +234,9 @@ class Metadata {
         this.lastAccessedAt = lastAccessedAt
     }
 
+    fun getDuplicateHash(): String? {
+        return this.duplicateHash
+    }
     fun getFlipHorizontally(): Boolean? {
         return this.flipHorizontally
     }
@@ -458,6 +465,7 @@ class Metadata {
         map["flipVertically"] = this.flipVertically
         map["flipHorizontally"] = this.flipHorizontally
         map["rotation"] = this.rotation
+        map["duplicateHash"] = this.duplicateHash
 
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

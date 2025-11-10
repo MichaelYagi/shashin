@@ -26,7 +26,7 @@ class DuplicateImageChecker {
      * Setter to change algorithm dynamically.
      * Supported: "ahash", "dhash", "phash"
      */
-    fun setAlgorithm(nameParam: String, resolution: Int = 64) {
+    fun setAlgorithm(nameParam: String = "ahash", resolution: Int = 64) {
         var name = nameParam
         this.resolution = resolution
 
@@ -57,6 +57,16 @@ class DuplicateImageChecker {
     fun computeHash(file: File): Hash {
         val image: BufferedImage = ImageIO.read(file)
         return algorithm.hash(image) // use currently selected algorithm
+    }
+
+    fun computeHashValue(file: File): String {
+        val image: BufferedImage = ImageIO.read(file)
+        return algorithm.hash(image).hashValue.toString() // use currently selected algorithm
+    }
+
+    fun computeHashFromString(value: String, resolution: Int = 64, algorithmId: Int = 1): Hash {
+        val bigInt = BigInteger(value)
+        return Hash(bigInt, resolution, algorithmId)
     }
 
     fun computeHashFromValue(value: BigInteger, resolution: Int = 64, algorithmId: Int = 1): Hash {

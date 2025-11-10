@@ -52,6 +52,7 @@ CREATE TABLE `metadata` (
                             `flipHorizontally` BOOLEAN NOT NULL DEFAULT FALSE,
                             `flipVertically` BOOLEAN NOT NULL DEFAULT FALSE,
                             `rotation` INTEGER DEFAULT 0,
+                            `duplicateHash` VARCHAR(256) DEFAULT NULL,
                             `hidden` BOOLEAN NOT NULL DEFAULT FALSE,
                             `addedAt` DATETIME DEFAULT NULL,
                             `takenAt` DATETIME DEFAULT NULL,
