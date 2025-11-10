@@ -64,6 +64,15 @@
 <div id="infinite-scroll" style="overflow-x: hidden;">
     <div class="container-fluid px-2">
         <section class="dateSection" id="2025-10-15">
+
+            <div class="d-flex flex-column flex-sm-row align-items-start gap-2 mt-3">
+                <button id="openGallery" class="btn btn-primary">Open Gallery</button>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="useShashin">
+                    <label class="form-check-label" for="useShashin" style="color: white;">Use Shashin</label>
+                </div>
+            </div>
+
             <div id="dateBody2025-10-15" class="row gx-2 gy-2" style="margin-top: 6px;">
                 <th:block th:each="metadata, iterStat: ${metadataList}">
                     <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'margin: 4px;width: '+metadata.thumbnailSmallWidth+'px; height: '+metadata.thumbnailSmallHeight+'px;'}">
@@ -74,8 +83,7 @@
                            th:data-lg-id="${metadata.id}"
                            style="opacity: 1;"
                         >
-                            <img loading="lazy"
-                                 draggable="false"
+                            <img draggable="false"
                                  th:data-smallthumb="${'/api/v1/thumbnails/225/'+metadata.id}"
                                  th:src="${'/api/v1/thumbnails/original/'+metadata.id}"
                                  class="photo-thumbnail-image img-fluid"
@@ -85,281 +93,6 @@
                         </a>
                     </div>
                 </th:block>
-
-<!--                <div id="photoThumbnailContainer9d2cc401-ae66-338f-aeaf-ae0c053f2dca" class="photo-thumbnail-container photo-thumbnail" style="margin: 4px;width: 128px; height: 225px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink9d2cc401-ae66-338f-aeaf-ae0c053f2dca"-->
-<!--                       data-src="https://michaelyagi.github.io/images/dragonball/Android16.png"-->
-<!--                       data-msg="Android 16"-->
-<!--                       data-lg-id="5538313a-22e4-4a76-9a22-c47737331596"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             data-smallthumb="https://michaelyagi.github.io/images/dragonball/Android16.png"-->
-<!--                             src="https://michaelyagi.github.io/images/dragonball/Android16.png"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image9d2cc401-ae66-338f-aeaf-ae0c053f2dca"-->
-<!--                             style="background-color: transparent;width: 128px; height: 225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainerd955dfea-4db4-3e39-a350-0fcaa3363b2d" class="photo-thumbnail-container photo-thumbnail" style="width: 234px; height: 225px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLinkd955dfea-4db4-3e39-a350-0fcaa3363b2d"-->
-<!--                       data-sub-html="I'm a description!"-->
-<!--                       data-src="https://michaelyagi.github.io/images/earthfeed2.png"-->
-<!--                       data-msg="Shashin Earth"-->
-<!--                       data-lg-id="9cdf0aa4-eac4-46b5-ac87-fec625d45278"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             data-smallthumb="https://michaelyagi.github.io/images/earthfeed2.png"-->
-<!--                             src="https://michaelyagi.github.io/images/earthfeed2.png"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="imaged955dfea-4db4-3e39-a350-0fcaa3363b2d"-->
-<!--                             style="width: 234px; height: 225px; background-color: transparent;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer5a6d004d-c841-3a4b-ad29-71277372a47b" class="photo-thumbnail-container photo-thumbnail" style="width:277px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink5a6d004d-c841-3a4b-ad29-71277372a47b"-->
-<!--                       data-src="https://michaelyagi.github.io/images/dragonball/db_macrocosm.png"-->
-<!--                       data-msg="Macrocosm"-->
-<!--                       data-lg-id="07d01718-040b-4410-8ab8-bfead3a059e1"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image5a6d004d-c841-3a4b-ad29-71277372a47b"-->
-<!--                             src="https://michaelyagi.github.io/images/dragonball/db_macrocosm.png"-->
-<!--                             style="background-color: transparent;width:277px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer17731417-72df-3a0f-b336-dddf77f6eb2d" class="photo-thumbnail-container photo-thumbnail" style="width:118px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink17731417-72df-3a0f-b336-dddf77f6eb2d"-->
-<!--                       data-src="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"-->
-<!--                       data-msg="Goku SSJ4"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image17731417-72df-3a0f-b336-dddf77f6eb2d"-->
-<!--                             src="https://michaelyagi.github.io/images/dragonball/goku_ssj4.png"-->
-<!--                             style="background-color: transparent;width:118px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer1" class="photo-thumbnail-container photo-thumbnail" style="width:337px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink1"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/tom-chen-6DH6BojClJg-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/tom-chen-6DH6BojClJg-unsplash.jpg"-->
-<!--                       data-msg="Tom Chen"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image1"-->
-<!--                             src="https://michaelyagi.github.io/images/other/tom-chen-6DH6BojClJg-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:337px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer2" class="photo-thumbnail-container photo-thumbnail" style="width:337px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink2"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/davisuko-5E5N49RWtbA-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/davisuko-5E5N49RWtbA-unsplash.jpg"-->
-<!--                       data-msg="Davisuko"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image2"-->
-<!--                             src="https://michaelyagi.github.io/images/other/davisuko-5E5N49RWtbA-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:337px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer3" class="photo-thumbnail-container photo-thumbnail" style="width:150px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink3"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/philipp-pilz-iQRKBNKyRpo-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/philipp-pilz-iQRKBNKyRpo-unsplash.jpg"-->
-<!--                       data-msg="Philip Pilz"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image3"-->
-<!--                             src="https://michaelyagi.github.io/images/other/philipp-pilz-iQRKBNKyRpo-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:150px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer4" class="photo-thumbnail-container photo-thumbnail" style="width:180px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink4"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/jet-dela-cruz-QssEm20Q0nc-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/jet-dela-cruz-QssEm20Q0nc-unsplash.jpg"-->
-<!--                       data-msg="Jet Dela Cruz"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image4"-->
-<!--                             src="https://michaelyagi.github.io/images/other/jet-dela-cruz-QssEm20Q0nc-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:180px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer5" class="photo-thumbnail-container photo-thumbnail" style="width:337px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink5"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/nick-karvounis-FmD8tIkf8bo-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/nick-karvounis-FmD8tIkf8bo-unsplash.jpg"-->
-<!--                       data-msg="Nick Karvounis"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image5"-->
-<!--                             src="https://michaelyagi.github.io/images/other/nick-karvounis-FmD8tIkf8bo-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:337px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer6" class="photo-thumbnail-container photo-thumbnail" style="width:150px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink6"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/roberto-nickson-ULsP-AxYh1E-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/roberto-nickson-ULsP-AxYh1E-unsplash.jpg"-->
-<!--                       data-msg="Roberto Nickson"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image6"-->
-<!--                             src="https://michaelyagi.github.io/images/other/roberto-nickson-ULsP-AxYh1E-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:150px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer7" class="photo-thumbnail-container photo-thumbnail" style="width:400px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink7"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/dan-meyers-9FrtwO5i3Gc-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/dan-meyers-9FrtwO5i3Gc-unsplash.jpg"-->
-<!--                       data-msg="Dan Meyers"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image7"-->
-<!--                             src="https://michaelyagi.github.io/images/other/dan-meyers-9FrtwO5i3Gc-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:400px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer8" class="photo-thumbnail-container photo-thumbnail" style="width:169px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink8"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/brandon-nelson-2smDZopBMso-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/brandon-nelson-2smDZopBMso-unsplash.jpg"-->
-<!--                       data-msg="Brandon Nelson"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image8"-->
-<!--                             src="https://michaelyagi.github.io/images/other/brandon-nelson-2smDZopBMso-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:169px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer9" class="photo-thumbnail-container photo-thumbnail" style="width:337px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink9"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/irving-trejo-A7OusasgEsc-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/irving-trejo-A7OusasgEsc-unsplash.jpg"-->
-<!--                       data-msg="Irving Trejo"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image9"-->
-<!--                             src="https://michaelyagi.github.io/images/other/irving-trejo-A7OusasgEsc-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:337px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-<!--                <div id="photoThumbnailContainer10" class="photo-thumbnail-container photo-thumbnail" style="width:337px;height:225px;margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">-->
-<!--                    <a class="mediaLink"-->
-<!--                       id="mediaLink10"-->
-<!--                       data-src="https://michaelyagi.github.io/images/other/thiago-natanael-pinto-marracini-U9DduaeQLvs-unsplash.jpg"-->
-<!--                       data-thumb="https://michaelyagi.github.io/images/other/thiago-natanael-pinto-marracini-U9DduaeQLvs-unsplash.jpg"-->
-<!--                       data-msg="Thiago Natanael"-->
-<!--                       data-lg-id="d20f2e96-466d-49a1-b34a-e68e8944f3c9"-->
-<!--                       style="opacity: 1;"-->
-<!--                    >-->
-<!--                        <img loading="lazy"-->
-<!--                             draggable="false"-->
-<!--                             class="photo-thumbnail-image img-fluid"-->
-<!--                             id="image10"-->
-<!--                             src="https://michaelyagi.github.io/images/other/thiago-natanael-pinto-marracini-U9DduaeQLvs-unsplash.jpg"-->
-<!--                             style="background-color: transparent;width:337px;height:225px;"-->
-<!--                        >-->
-<!--                    </a>-->
-<!--                </div>-->
-
-            </div>
-
-            <div class="d-flex flex-column flex-sm-row align-items-start gap-2 mt-3">
-                <button id="openGallery" class="btn btn-primary">Open Gallery</button>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="useShashin">
-                    <label class="form-check-label" for="useShashin" style="color: white;">Use Shashin</label>
-                </div>
             </div>
         </section>
     </div>
@@ -367,6 +100,7 @@
 
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
+        
         /*********************************/
         // Base configs
         let lgElName = "infinite-scroll";
@@ -379,7 +113,7 @@
 
                 // Plugin name and argument, or can be defined in settings
                 mediaContent.pluginFunctionName = pluginFunction;
-                mediaContent.args = $(this).attr("data-msg");
+                mediaContent.args = $(this).attr("data-lg-id");
 
                 let thumbnail = $(this).attr("data-thumb");
                 if (typeof thumbnail !== 'undefined' && thumbnail !== false) {
