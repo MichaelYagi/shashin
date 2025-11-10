@@ -293,6 +293,43 @@ class TestController(
     }
 
     @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/insertdupehash"], method = [RequestMethod.GET])
+    @ResponseBody
+    fun getDupeHash(response: HttpServletResponse?): String {
+        Thread {
+            val allMetadataList = testRepository.findImagePaths()
+            val count = testRepository.countImagePaths()
+            val metadataList = mutableListOf<Metadata>()
+            val x = 100
+
+            for ((index, metadata) in allMetadataList?.withIndex()!!) {
+                val file = File(metadata.getPath().toString())
+
+                if (metadata.getDuplicateHash() == null && file.exists() && file.length() > 0) {
+                    val dupeImageChecker = DuplicateImageChecker()
+                    dupeImageChecker.setAlgorithm()
+                    var hash = dupeImageChecker.computeHashValue(file)
+                    metadata.setDuplicateHash(hash)
+                    metadataList.add(metadata)
+                    println("Saving metadata ${metadata.getPath()} at ${index+1}/$count")
+
+                    if (metadataList.size % x == 0) {
+                        println("Batch saving $x records")
+                        metadataRepository.saveAll(metadataList)
+                        metadataList.clear()
+                    }
+                }
+            }
+
+            if (metadataList.size > 0) {
+                metadataRepository.saveAll(metadataList)
+            }
+        }.start()
+
+        return "sandbox"
+    }
+
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/fixexif"], method = [RequestMethod.GET])
     @ResponseBody
     fun fixExif(response: HttpServletResponse?): String? {
@@ -317,8 +354,6 @@ class TestController(
                 for ((index, metadata) in metadataList.withIndex()) {
                     val elapsedStartTime = System.currentTimeMillis()
                     println("iteration ${index + 1} out of $totalIndex")
-
-
 
                     if (metadata?.getThumbnailPathSmall() !== null) {
                         val thumbnailPathSmall = metadata.getThumbnailPathSmall()
@@ -371,8 +406,6 @@ class TestController(
 
                         println("-------------")
                     }
-
-
 
                     val endTime = System.currentTimeMillis()
                     timesArray.add((endTime-elapsedStartTime))

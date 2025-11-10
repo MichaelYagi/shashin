@@ -43,11 +43,6 @@ class MetadataProcessing() {
         this.metadataObj.setFileName(file.name)
         this.metadataObj.setTitle(file.name)
 
-        val dupeImageChecker = DuplicateImageChecker()
-        dupeImageChecker.setAlgorithm()
-        var hash = dupeImageChecker.computeHashValue(this.file)
-        this.metadataObj.setDuplicateHash(hash)
-
         // Get file data
         val attr: BasicFileAttributes = Files.readAttributes(
             file.toPath(),
@@ -522,6 +517,13 @@ class MetadataProcessing() {
         saveExifdata(exifMap, sidecarDir, file.path)
 
         this.metadataObj.setAddedAt(getCurrentTimestamp())
+
+        if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!! && !this.metadataObj.getType()?.contains("gif")!!) {
+            val dupeImageChecker = DuplicateImageChecker()
+            dupeImageChecker.setAlgorithm()
+            var hash = dupeImageChecker.computeHashValue(this.file)
+            this.metadataObj.setDuplicateHash(hash)
+        }
 
         this.metadataObj.setId(
             TextUtils.Companion.generateUUID(
