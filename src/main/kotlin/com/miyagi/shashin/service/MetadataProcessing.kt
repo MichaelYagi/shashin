@@ -519,7 +519,7 @@ class MetadataProcessing() {
         // Generate a hash for comparing potential duplicates
         if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!! && !this.metadataObj.getType()?.contains("gif")!!) {
             val dupeImageChecker = DuplicateImageChecker()
-            dupeImageChecker.setAlgorithm()
+            dupeImageChecker.setAlgorithm("dhash")
             var hash = dupeImageChecker.computeHashValue(this.file)
             this.metadataObj.setDuplicateHash(hash)
         }
