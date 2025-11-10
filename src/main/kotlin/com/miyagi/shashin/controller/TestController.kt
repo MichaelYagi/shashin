@@ -151,6 +151,8 @@ class TestController(
 
             response["text"] = "Algorithm: "+i.getAlgorithmName()+
                     "<br>Resolution: "+i.getResolution()+
+                    "<br>hash 1: " + hash1 +
+                    "<br>hash 2: " + hash2 +
                     "<br>Is duplicate: " + isDuplicate +
                     "<br>Similarity: " + i.similarityScore(computedHash1, computedHash2) +
                     "<br>Timings: " + metricsUtil.getMetricsList().toString() +
