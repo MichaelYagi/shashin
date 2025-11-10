@@ -104,6 +104,14 @@ class TestController(
         // C:\Users\Michael\Downloads\PXL_20210930_164602780.jpg
         // C:\Users\Michael\Downloads\PXL_20210930_164602780_resize.jpg
 
+//        val test = DuplicateImageChecker()
+//        var cHash1 = test.computeHashFromString("14404428052212531424")
+//        var cHash2 = test.computeHashFromString("14408931651839910112")
+//        val isDupe = test.isDuplicate(cHash1, cHash2)
+//        val similarityScore = test.similarityScore(cHash1, cHash2)
+//        println(isDupe)
+//        println(similarityScore)
+
         if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo") && payloadMap.containsKey("algorithm") && payloadMap.containsKey("resolution")) {
             var setOneFilename = payloadMap["setone"].toString()
             var setTwoFilename = payloadMap["settwo"].toString()
@@ -123,23 +131,22 @@ class TestController(
 
             i.setAlgorithm(algorithm, resolution) //ahash, dhash, phash
 
-            var hash1 = i.computeHash(file1)
-            var hash2 = i.computeHash(file2)
+            var hash1 = i.computeHashValue(file1)
+            var hash2 = i.computeHashValue(file2)
+
+            var computedHash1 = i.computeHashFromString(hash1.toString())
+            var computedHash2 = i.computeHashFromString(hash2.toString())
+
             metricsUtil.end()
-            metricsUtil.start("hash from value 1")
-            hash1 = i.computeHashFromValue(hash1.hashValue)
-            metricsUtil.end()
-            metricsUtil.start("hash from value 2")
-            hash2 = i.computeHashFromValue(hash2.hashValue)
-            metricsUtil.end()
+
             metricsUtil.start("dupe check")
-            val isDuplicate = i.isDuplicate(hash1, hash2)
+            val isDuplicate = i.isDuplicate(computedHash1, computedHash2)
             metricsUtil.end()
 
             response["text"] = "Algorithm: "+i.getAlgorithmName()+
                     "<br>Resolution: "+i.getResolution()+
                     "<br>Is duplicate: " + isDuplicate +
-                    "<br>Similarity: " + i.similarityScore(hash1, hash2) +
+                    "<br>Similarity: " + i.similarityScore(computedHash1, computedHash2) +
                     "<br>Timings: " + metricsUtil.getMetricsList().toString() +
                     "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
 

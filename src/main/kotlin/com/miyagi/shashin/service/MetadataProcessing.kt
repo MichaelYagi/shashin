@@ -43,6 +43,11 @@ class MetadataProcessing() {
         this.metadataObj.setFileName(file.name)
         this.metadataObj.setTitle(file.name)
 
+        val dupeImageChecker = DuplicateImageChecker()
+        dupeImageChecker.setAlgorithm()
+        var hash = dupeImageChecker.computeHashValue(this.file)
+        this.metadataObj.setDuplicateHash(hash)
+
         // Get file data
         val attr: BasicFileAttributes = Files.readAttributes(
             file.toPath(),
