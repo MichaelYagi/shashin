@@ -12,6 +12,20 @@ import java.math.BigInteger
 import java.util.Base64
 import javax.imageio.ImageIO
 
+//val file1 = File(setOneFilename)
+//val file2 = File(setTwoFilename)
+//
+//val i = DuplicateImageChecker()
+//
+//i.setAlgorithm(algorithm, resolution) //ahash, dhash, phash
+//
+//var hash1 = i.computeHashValue(file1)
+//var hash2 = i.computeHashValue(file2)
+//
+//var computedHash1 = i.computeHashFromString(hash1.toString())
+//var computedHash2 = i.computeHashFromString(hash2.toString())
+//
+//val isDuplicate = i.isDuplicate(computedHash1, computedHash2)
 class DuplicateImageChecker {
 
     // Default resolution
@@ -21,6 +35,8 @@ class DuplicateImageChecker {
     private var algorithm: HashingAlgorithm = AverageHash(resolution)
 
     private var algorithmName = "ahash"
+
+    private var distance = 0
 
     /**
      * Setter to change algorithm dynamically.
@@ -82,9 +98,13 @@ class DuplicateImageChecker {
         return null
     }
 
+    fun getDistance(): Int {
+        return distance
+    }
+
     fun isDuplicate(hash1: Hash, hash2: Hash, threshold: Int = 5): Boolean {
-        val distance = hash1.hammingDistance(hash2)
-        return distance <= threshold
+        this.distance = hash1.hammingDistance(hash2)
+        return this.distance <= threshold
     }
 
     fun similarityScore(hash1: Hash, hash2: Hash): Double {
