@@ -26,8 +26,8 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "    SELECT 1\n" +
             "    FROM duplicates d\n" +
             "    WHERE d.image_id1 = m.id OR d.image_id2 = m.id\n" +
-            ") LIMIT 500", nativeQuery = true)
-    fun findDuplicateImageHash(): MutableList<Metadata>?
+            ") LIMIT :offset, :limit", nativeQuery = true)
+    fun findDuplicateImageHash(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
     @Query("SELECT DISTINCT sub.*\n" +
             "FROM (\n" +
@@ -40,6 +40,6 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "                  JOIN metadata m ON m.id = d.image_id2\n" +
             "     ) AS sub\n" +
             "ORDER BY sub.duplicate_hash " +
-            "LIMIT 500", nativeQuery = true)
-    fun findAllMetadataIds(): MutableList<Metadata>?
+            "LIMIT :offset, :limit", nativeQuery = true)
+    fun findAllMetadataIds(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 }
