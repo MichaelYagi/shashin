@@ -202,16 +202,17 @@ class TestController(
                     for (dupe in duplicates) {
 
                         if (dupe.id != metadata.getId()) { // ignore self
-//                            val dupeQuery = duplicatesRepository.findDuplicateMetadataId(dupe.id, metadata.getId())
-//                            if (dupeQuery == 0) {
+                            val dupCount = duplicatesRepository.findDuplicateMetadataId(metadata.getId(), dupe.id)
+                            if (dupCount == 0) {
                                 println("Duplicate ${metadata.getId()} found: id=${dupe.id}, distance=${query.hammingDistance(dupe.hash)}")
+
                                 val duplicate = Duplicates()
                                 duplicate.setImageId1(metadata.getId())
                                 duplicate.setImageId2(dupe.id)
                                 duplicate.setDistance(query.hammingDistance(dupe.hash))
                                 duplicate.setCreatedAt(getCurrentTimestamp())
                                 duplicateList.add(duplicate)
-//                            }
+                            }
                         }
                     }
                 }
