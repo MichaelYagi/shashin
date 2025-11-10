@@ -516,8 +516,7 @@ class MetadataProcessing() {
 
         saveExifdata(exifMap, sidecarDir, file.path)
 
-        this.metadataObj.setAddedAt(getCurrentTimestamp())
-
+        // Generate a hash for comparing potential duplicates
         if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!! && !this.metadataObj.getType()?.contains("gif")!!) {
             val dupeImageChecker = DuplicateImageChecker()
             dupeImageChecker.setAlgorithm()
@@ -545,6 +544,8 @@ class MetadataProcessing() {
         } else if (supportedVideoFormats.contains(mediaExtension)) {
             this.metadataObj.setVideoUrl("/api/$apiVersion/video/${this.metadataObj.getId()}")
         }
+
+        this.metadataObj.setAddedAt(getCurrentTimestamp())
 
         return metadataObj
     }
