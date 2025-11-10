@@ -19,4 +19,10 @@ interface TestRepository : CrudRepository<Metadata?, String?> {
 
     @Query("SELECT * FROM metadata WHERE focal_length IS NOT NULL", nativeQuery = true)
     fun findAllFocalLengths(): MutableList<Metadata>?
+
+    @Query("SELECT * FROM metadata WHERE type LIKE \"%image%\" AND type NOT LIKE \"%gif%\"", nativeQuery = true)
+    fun findImagePaths(): MutableList<Metadata>?
+
+    @Query("SELECT COUNT(*) FROM metadata WHERE type LIKE \"%image%\" AND type NOT LIKE \"%gif%\"", nativeQuery = true)
+    fun countImagePaths(): Int
 }
