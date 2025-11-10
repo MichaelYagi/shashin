@@ -168,15 +168,16 @@ class TestController(
     }
 
     @Secured("ROLE_SUPER")
-    @GetMapping("/dupetest")
-    fun dupetest(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+    @GetMapping("/dupetest/{page}/{size}")
+    fun dupetest(model: Model, @PathVariable page: Int, @PathVariable size: Int, request: HttpServletRequest, response: HttpServletResponse): String {
         model["metadataList"] = mutableListOf<Metadata>()
 
         // Implement as part of dupe module
         // Distance function using Hamming distance
         val tree = BKTree { h1, h2 -> h1.hammingDistance(h2) }
+        val pageValue = page*size
 
-        val metadataList = duplicatesRepository.findDuplicateImageHash()
+        val metadataList = duplicatesRepository.findDuplicateImageHash(pageValue, size)
         if (metadataList != null) {
             val duplicateList = mutableListOf<Duplicates>()
             val metadataHashList = mutableListOf<Metadata>()
@@ -219,7 +220,7 @@ class TestController(
         }
 
         // Display and group by duplicate images
-        model["metadataList"] = duplicatesRepository.findAllMetadataIds()
+        model["metadataList"] = duplicatesRepository.findAllMetadataIds(pageValue, size)
 
         return "sandbox"
     }
