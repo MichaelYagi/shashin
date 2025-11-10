@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
+import com.miyagi.shashin.model.Duplicates
 import com.miyagi.shashin.service.DuplicateImageChecker
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.MetadataDate
@@ -15,8 +16,11 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.MetadataProcessing
+import com.miyagi.shashin.util.BKTree
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import dev.brachtendorf.jimagehash.hash.Hash
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
@@ -30,6 +34,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.math.BigInteger
 import java.time.ZoneId
 import kotlin.String
 import kotlin.collections.mutableMapOf
@@ -42,6 +47,7 @@ class TestController(
     private val metadataRepository: MetadataRepository,
     private val keywordRepository: KeywordRepository,
     private val keywordPhotoRepository: KeywordPhotoRepository,
+    private val duplicatesRepository: DuplicatesRepository,
     private val testRepository: TestRepository,
     private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, // nullable bean
     @Value("\${app.endpoint.url.geocode}")
@@ -159,6 +165,63 @@ class TestController(
         }
 
         return mapper.writeValueAsString(response)
+    }
+
+    @Secured("ROLE_SUPER")
+    @GetMapping("/dupetest")
+    fun dupetest(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["metadataList"] = mutableListOf<Metadata>()
+
+        // Implement as part of dupe module
+        // Distance function using Hamming distance
+        val tree = BKTree { h1, h2 -> h1.hammingDistance(h2) }
+
+        val metadataList = duplicatesRepository.findDuplicateImageHash()
+        if (metadataList != null) {
+            val duplicateList = mutableListOf<Duplicates>()
+            val metadataHashList = mutableListOf<Metadata>()
+
+            // Insert hashes
+            for (metadata in metadataList) {
+                if (metadata.getDuplicateHash() != null) {
+                    val entry = BKTree.HashEntry(metadata.getId(), Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 1))
+                    println("Adding entry ${metadata.getId()}")
+                    tree.insert(entry)
+                }
+            }
+
+            // Search hashes
+            for (metadata in metadataList) {
+                if (metadata.getDuplicateHash() != null) {
+                    val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 1)
+                    val duplicates = tree.search(query, threshold = 5)
+                    for (dupe in duplicates) {
+
+                        if (dupe.id != metadata.getId()) { // ignore self
+//                            val dupeQuery = duplicatesRepository.findDuplicateMetadataId(dupe.id, metadata.getId())
+//                            if (dupeQuery == 0) {
+                                println("Duplicate ${metadata.getId()} found: id=${dupe.id}, distance=${query.hammingDistance(dupe.hash)}")
+                                val duplicate = Duplicates()
+                                duplicate.setImageId1(metadata.getId())
+                                duplicate.setImageId2(dupe.id)
+                                duplicate.setDistance(query.hammingDistance(dupe.hash))
+                                duplicate.setCreatedAt(getCurrentTimestamp())
+                                duplicateList.add(duplicate)
+//                            }
+                        }
+                    }
+                }
+            }
+
+            if (duplicateList.isNotEmpty()) {
+                duplicatesRepository.saveAll(duplicateList)
+            }
+        }
+
+        // Display and group by duplicate images
+        model["metadataList"] = duplicatesRepository.findAllMetadataIds()
+
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
