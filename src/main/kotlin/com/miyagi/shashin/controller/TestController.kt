@@ -185,7 +185,7 @@ class TestController(
             // Insert hashes
             for (metadata in metadataList) {
                 if (metadata.getDuplicateHash() != null) {
-                    val entry = BKTree.HashEntry(metadata.getId(), Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 1))
+                    val entry = BKTree.HashEntry(metadata.getId(), Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2))
                     println("Adding entry ${metadata.getId()}")
                     tree.insert(entry)
                 }
@@ -194,7 +194,7 @@ class TestController(
             // Search hashes
             for (metadata in metadataList) {
                 if (metadata.getDuplicateHash() != null) {
-                    val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 1)
+                    val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2)
                     val duplicates = tree.search(query, threshold = 5)
                     for (dupe in duplicates) {
 
@@ -371,7 +371,7 @@ class TestController(
 
                 if (metadata.getDuplicateHash() == null && file.exists() && file.length() > 0) {
                     val dupeImageChecker = DuplicateImageChecker()
-                    dupeImageChecker.setAlgorithm()
+                    dupeImageChecker.setAlgorithm("dhash")
                     var hash = dupeImageChecker.computeHashValue(file)
                     metadata.setDuplicateHash(hash)
                     metadataList.add(metadata)
