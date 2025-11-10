@@ -33,11 +33,11 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "FROM (\n" +
             "         SELECT m.*\n" +
             "         FROM duplicates d\n" +
-            "                  JOIN metadata m ON m.id = d.image_id1\n" +
+            "                  JOIN metadata m ON m.id = d.image_id1 WHERE m.hidden = 0\n" +
             "         UNION ALL\n" +
             "         SELECT m.*\n" +
             "         FROM duplicates d\n" +
-            "                  JOIN metadata m ON m.id = d.image_id2\n" +
+            "                  JOIN metadata m ON m.id = d.image_id2 WHERE m.hidden = 0\n" +
             "     ) AS sub\n" +
             "ORDER BY sub.duplicate_hash " +
             "LIMIT :offset, :limit", nativeQuery = true)
