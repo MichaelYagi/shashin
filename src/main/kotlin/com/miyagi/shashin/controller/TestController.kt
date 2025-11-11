@@ -182,7 +182,6 @@ class TestController(
         val metadataList = duplicatesRepository.findDuplicateImageHash(pageValue, size)
         if (metadataList != null) {
             val duplicateList = mutableListOf<Duplicates>()
-            val metadataHashList = mutableListOf<Metadata>()
 
             // Insert hashes
             for (metadata in metadataList) {
