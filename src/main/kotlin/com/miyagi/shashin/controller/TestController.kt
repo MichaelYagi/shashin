@@ -170,7 +170,7 @@ class TestController(
     }
 
     @Secured("ROLE_SUPER")
-    @GetMapping("/duplicates")
+    @GetMapping("/duplicatestest")
     fun dupetest(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["metadataList"] = mutableListOf<Metadata>()
 
@@ -189,7 +189,7 @@ class TestController(
     }
 
     @Secured("ROLE_SUPER")
-    @GetMapping("/duplicates/{page}/{size}")
+    @GetMapping("/duplicatestest/{page}/{size}")
     fun dupetest(model: Model, @PathVariable page: Int, @PathVariable size: Int, request: HttpServletRequest, response: HttpServletResponse): String {
         model["metadataList"] = mutableListOf<Metadata>()
         model["page"] = page+1
