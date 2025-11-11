@@ -79,7 +79,7 @@
                         <a class="mediaLink"
                            th:id="${'mediaLink'+metadata.id}"
                            th:data-src="${'/api/v1/thumbnails/original/'+metadata.id}"
-                           th:data-msg="${metadata.description}"
+                           th:data-msg="${'&lt;a href=&quot;/timeline#'+metadata.year+'-'+metadata.month+'-'+metadata.day+'&quot; target=&quot;_blank&quot;&gt;Timeline link&lt;/a&gt;'}"
                            th:data-lg-id="${metadata.id}"
                            style="opacity: 1;"
                         >
@@ -113,7 +113,7 @@
 
                 // Plugin name and argument, or can be defined in settings
                 mediaContent.pluginFunctionName = pluginFunction;
-                mediaContent.args = $(this).attr("data-lg-id");
+                mediaContent.args = $(this).attr("data-msg");
 
                 let thumbnail = $(this).attr("data-thumb");
                 if (typeof thumbnail !== 'undefined' && thumbnail !== false) {
