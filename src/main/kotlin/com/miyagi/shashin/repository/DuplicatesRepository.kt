@@ -18,8 +18,10 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
     @Query("SELECT COUNT(*) FROM duplicates WHERE (image_id1 = :metadataId1 AND image_id2 = :metadataId2) OR (image_id1 = :metadataId2 AND image_id2 = :metadataId1)", nativeQuery = true)
     fun findDuplicateMetadataId(@Param("metadataId1") metadataId1: String, @Param("metadataId2") metadataId2: String): Int
 
-//    @Query("DELETE FROM duplicates WHERE image_id1 = :metadataId OR image_id2 = :metadataId", nativeQuery = true)
     fun deleteByImageId1OrImageId2(@Param("metadataId1") metadataId1: String, @Param("metadataId2") metadataId2: String): Long
+
+//    @Query("SELECT * FROM metadata WHERE hidden = 0 AND duplicate_hash IS NOT NULL AND type LIKE \"%image%\" AND duplicate_hash BETWEEN :hashStart AND :hashEnd ORDER BY duplicate_hash, taken_at", nativeQuery = true)
+//    fun findMetadataIdBetweenDuplicationHash(@Param("hashStart") hashStart: String, @Param("hashEnd") hashEnd: String): MutableList<Metadata>?
 
     @Query("SELECT *\n" +
             "FROM metadata m\n" +
@@ -52,7 +54,7 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "    GROUP BY duplicate_hash\n" +
             "    HAVING COUNT(*) > 1\n" +
             ")\n" +
-            "ORDER BY sub.duplicate_hash " +
+            "ORDER BY sub.duplicate_hash, sub.taken_at " +
             "LIMIT :offset, :limit", nativeQuery = true)
     fun findAllMetadataIds(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 }

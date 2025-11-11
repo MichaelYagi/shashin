@@ -60,6 +60,7 @@ import kotlin.io.path.Path
 @Controller
 class TimelineController(
     private var metadataRepository: MetadataRepository,
+    private var duplicatesRepository: DuplicatesRepository,
     private var albumRepository: AlbumRepository,
     private var userRepository: UserRepository,
     private var notificationRepository: NotificationRepository,
@@ -139,6 +140,7 @@ class TimelineController(
                 "modified" -> anchorMetadata?.getModifiedAt().orEmpty()
                 "recent" -> anchorMetadata?.getAddedAt().orEmpty()
                 "archived" -> anchorMetadata?.getModifiedAt().orEmpty()
+//                "duplicates" -> anchorMetadata?.getDuplicateHash().orEmpty()
                 else -> {
                     // Taken, albums, person, matches or timeline view
                     anchorMetadata?.getTakenAt().orEmpty()
@@ -150,6 +152,7 @@ class TimelineController(
                 "modified" -> selectMetadata?.getModifiedAt().orEmpty()
                 "recent" -> selectMetadata?.getAddedAt().orEmpty()
                 "archived" -> selectMetadata?.getModifiedAt().orEmpty()
+//                "duplicates" -> selectMetadata?.getDuplicateHash().orEmpty()
                 else -> {
                     // Taken, albums, person, matches or timeline view
                     selectMetadata?.getTakenAt().orEmpty()
@@ -162,18 +165,40 @@ class TimelineController(
             if (anchorMetadataDateString != null && anchorMetadataDateString != "" && selectMetadataDateString != null && selectMetadataDateString != ""
                 && ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || view == "share")
             ) {
-                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                val anchorMetadataDateObj = sdf.parse(anchorMetadataDateString)
-                val selectMetadataDateObj = sdf.parse(selectMetadataDateString)
-
                 var startDate = selectMetadataDateString
                 var endDate = anchorMetadataDateString
-                direction = "down"
-                if (anchorMetadataDateObj < selectMetadataDateObj) {
-                    direction = "up"
-                    startDate = anchorMetadataDateString
-                    endDate = selectMetadataDateString
+                var startTaken = ""
+                var endTaken = ""
+
+                if (view != "duplicates") {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    val anchorMetadataDateObj = sdf.parse(anchorMetadataDateString)
+                    val selectMetadataDateObj = sdf.parse(selectMetadataDateString)
+
+                    direction = "down"
+                    if (anchorMetadataDateObj < selectMetadataDateObj) {
+                        direction = "up"
+                        startDate = anchorMetadataDateString
+                        endDate = selectMetadataDateString
+                    }
                 }
+
+//                else {
+//                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+//                    var anchorMetadataDateObj = sdf.parse(anchorMetadata?.getTakenAt())
+//                    var selectMetadataDateObj = sdf.parse(selectMetadata?.getTakenAt())
+//                    startTaken = selectMetadata?.getTakenAt().toString()
+//                    endTaken = anchorMetadata?.getTakenAt().toString()
+//
+//                    direction = "down"
+//                    if (anchorMetadataDateObj > selectMetadataDateObj && endTaken > startTaken) {
+//                        direction = "up"
+//                        startDate = anchorMetadataDateString
+//                        endDate = selectMetadataDateString
+//                        startTaken = anchorMetadata?.getTakenAt().toString()
+//                        endTaken = selectMetadata?.getTakenAt().toString()
+//                    }
+//                }
 
                 // If timeline view
                 metadatas =
@@ -191,6 +216,11 @@ class TimelineController(
                                 mediaType.toString()
                             )
                         }
+//                    } else if (view == "duplicates") {
+//                        duplicatesRepository.findMetadataIdBetweenDuplicationHash(
+//                            startDate,
+//                            endDate
+//                        )
                     } else if (view == "accessed") {
                         if (mediaType == "all") {
                             metadataRepository.findMetadataIdBetweenAccessedAt(startDate, endDate)

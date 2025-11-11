@@ -393,16 +393,6 @@
 
     shashin.setDateSection = function(metadataId, view) {
         setTimeout(function () {
-            let date = "";
-            if (view === "matches" || view === "person") {
-                date = $("#dateTaken"+metadataId).val();
-            } else {
-                const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
-                date = rowId.replace("row", "").replace("dateBody", "");
-            }
-
-            const selectedMetadata = shashin.getMetadataIdList();
-
             // Multi-select a day when clicking day header
             if (view === "timeline" ||
                 view === "taken" ||
@@ -412,6 +402,16 @@
                 view === "favorites" ||
                 view === "recent"
             ) {
+                let date = "";
+                if (view === "matches" || view === "person") {
+                    date = $("#dateTaken"+metadataId).val();
+                } else {
+                    const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
+                    date = rowId.replace("row", "").replace("dateBody", "");
+                }
+
+                const selectedMetadata = shashin.getMetadataIdList();
+
                 let url = "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata";
                 if (view === "album") {
                     const albumId = $("#albumId").val();

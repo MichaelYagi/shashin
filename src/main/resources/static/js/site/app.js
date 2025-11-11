@@ -707,7 +707,7 @@
                 truncate: true,
                 href: function (index) { //index starts from 0
                     let link = '/' + activePage + '/' + index + '/' + mediaTypeFilter;
-                    if (activePage === "folders") {
+                    if (activePage === "folders" || activePage === "duplicates") {
                         link = '/' + activePage + '/' + index;
                     } else if (activePage === "search") {
                         link = '/' + activePage + '/' + index + '/term/' + mediaTypeFilter;

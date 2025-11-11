@@ -160,6 +160,7 @@
         activePageLower == 'taken' or
         activePageLower == 'modified' or
         activePageLower == 'accessed' or
+        activePageLower == 'duplicates' or
         activePageLower == 'folder'}">
             <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
@@ -193,11 +194,11 @@
 
 <!--            TODO: Adapt multi date row justification with smooth scrolling on timeline-->
 <!--            activePageLower == 'timeline' ||-->
-            <th:block th:if="${activePageLower == 'person' || activePageLower == 'matches' || activePageLower == 'folder'}">
+            <th:block th:if="${activePageLower == 'person' || activePageLower == 'matches' || activePageLower == 'folder' || activePageLower == 'duplicates'}">
                 <script src="/js/justifiedGallery.person.min.js" th:nonce="${cspNonce}"></script>
                 <link rel="stylesheet" href="/css/justifiedGallery.person.min.css">
             </th:block>
-            <th:block th:if="${activePageLower != 'timeline' && activePageLower != 'person' && activePageLower != 'matches' && activePageLower != 'folder'}">
+            <th:block th:if="${activePageLower != 'timeline' && activePageLower != 'person' && activePageLower != 'matches' && activePageLower != 'folder' && activePageLower != 'duplicates'}">
                 <script src="/js/justifiedGallery.explore.min.js" th:nonce="${cspNonce}"></script>
                 <link rel="stylesheet" href="/css/justifiedGallery.explore.min.css">
             </th:block>
@@ -255,6 +256,9 @@
             </th:block>
             <th:block th:if="${activePageLower == 'accessed'}">
                 <script src="/js/site/accessed.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${activePageLower == 'duplicates'}">
+                <script src="/js/site/duplicates.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${activePageLower == 'folder'}">
                 <script src="/js/site/folder.js" th:nonce="${cspNonce}"></script>
@@ -318,6 +322,9 @@
             </th:block>
             <th:block th:if="${activePageLower == 'accessed'}">
                 <script src="/js/site/min/accessed.min.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${activePageLower == 'duplicates'}">
+                <script src="/js/site/min/duplicates.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${activePageLower == 'folder'}">
                 <script src="/js/site/min/folder.min.js" th:nonce="${cspNonce}"></script>
