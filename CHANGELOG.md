@@ -11,6 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
+- Duplicate image module
+
 ### Changed
 ### Deprecated
 ### Removed
