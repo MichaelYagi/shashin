@@ -99,6 +99,7 @@ class SettingsController(
     private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
     private val keywordRepository: KeywordRepository? = null,
     private val keywordPhotoRepository: KeywordPhotoRepository? = null,
+    private val duplicatesRepository: DuplicatesRepository? = null,
     private val settingsRepository: SettingsRepository? = null,
     private val restartService: RestartService? = null,
     @Value("\${app.role.super}")
@@ -667,6 +668,7 @@ class SettingsController(
                 keywordRepository?.deleteAll()
                 folderDataRepository?.deleteAll()
                 slideshowAlbumRepository?.deleteAll()
+                duplicatesRepository?.deleteAll()
 
                 // Cleanup CompreFace subjects
                 val settings = model.getAttribute("settings") as Settings
@@ -1774,6 +1776,13 @@ class SettingsController(
                                     logger.log(
                                         Level.INFO,
                                         "Removed keywords records for: " + metadata.getId()
+                                    )
+
+                                    // Delete from duplicates
+                                    duplicatesRepository?.deleteByImageId1OrImageId2(metadata.getId(), metadata.getId())
+                                    logger.log(
+                                        Level.INFO,
+                                        "Removed duplicates records for: " + metadata.getId()
                                     )
 
                                     // Delete from album

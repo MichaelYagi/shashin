@@ -170,16 +170,46 @@ class TestController(
     }
 
     @Secured("ROLE_SUPER")
-    @GetMapping("/dupetest/{page}/{size}")
-    fun dupetest(model: Model, @PathVariable page: Int, @PathVariable size: Int, request: HttpServletRequest, response: HttpServletResponse): String {
+    @GetMapping("/duplicates")
+    fun dupetest(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["metadataList"] = mutableListOf<Metadata>()
 
+        val size = 1000
+
+        duplicationTree(0, size)
+
+        // Display and group by duplicate images
+        model["metadataList"] = duplicatesRepository.findAllMetadataIds(0, size)
+
+        model["page"] = 1
+        model["size"] = 1000
+
+        return "sandbox"
+    }
+
+    @Secured("ROLE_SUPER")
+    @GetMapping("/duplicates/{page}/{size}")
+    fun dupetest(model: Model, @PathVariable page: Int, @PathVariable size: Int, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["metadataList"] = mutableListOf<Metadata>()
+        model["page"] = page+1
+        model["size"] = size
+
+        val pageValue = page*size
+        duplicationTree(pageValue, size)
+
+        // Display and group by duplicate images
+        model["metadataList"] = duplicatesRepository.findAllMetadataIds(pageValue, size)
+
+        return "sandbox"
+    }
+
+    fun duplicationTree(page: Int = 1, size: Int = 1000) {
         // Implement as part of dupe module
         // Distance function using Hamming distance
         val tree = BKTree { h1, h2 -> h1.hammingDistance(h2) }
-        val pageValue = page*size
 
-        val metadataList = duplicatesRepository.findDuplicateImageHash(pageValue, size)
+        val metadataList = duplicatesRepository.findDuplicateImageHash(page, size)
+        println("query 1 size: "+metadataList?.size)
         if (metadataList != null) {
             val duplicateList = mutableListOf<Duplicates>()
 
@@ -198,6 +228,12 @@ class TestController(
                     println("Searching hash ${metadata.getDuplicateHash()} for ${metadata.getId()}")
                     val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2)
                     val duplicates = tree.search(query, threshold = 5)
+
+                    if (metadata.getId() == "e0771578-4a13-3883-9174-ed0156093df5") {
+                        println("Found metadata ID")
+                        println(duplicates.size)
+                    }
+
                     for (dupe in duplicates) {
 
                         if (dupe.id != metadata.getId()) { // ignore self
@@ -221,11 +257,6 @@ class TestController(
                 duplicatesRepository.saveAll(duplicateList)
             }
         }
-
-        // Display and group by duplicate images
-        model["metadataList"] = duplicatesRepository.findAllMetadataIds(pageValue, size)
-
-        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
