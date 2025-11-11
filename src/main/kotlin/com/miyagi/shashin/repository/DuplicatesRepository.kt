@@ -18,15 +18,19 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
     @Query("SELECT COUNT(*) FROM duplicates WHERE (image_id1 = :metadataId1 AND image_id2 = :metadataId2) OR (image_id1 = :metadataId2 AND image_id2 = :metadataId1)", nativeQuery = true)
     fun findDuplicateMetadataId(@Param("metadataId1") metadataId1: String, @Param("metadataId2") metadataId2: String): Int
 
+//    @Query("DELETE FROM duplicates WHERE image_id1 = :metadataId OR image_id2 = :metadataId", nativeQuery = true)
+    fun deleteByImageId1OrImageId2(@Param("metadataId1") metadataId1: String, @Param("metadataId2") metadataId2: String): Long
+
     @Query("SELECT *\n" +
             "FROM metadata m\n" +
             "WHERE hidden = 0 AND duplicate_hash IS NOT NULL AND type LIKE \"%image%\" " +
 //            "AND type NOT LIKE \"%gif%\" " +
-            "AND NOT EXISTS (\n" +
-            "    SELECT 1\n" +
-            "    FROM duplicates d\n" +
-            "    WHERE d.distance = 0 AND (d.image_id1 = m.id OR d.image_id2 = m.id)\n" +
-            ") LIMIT :offset, :limit", nativeQuery = true)
+//            "AND NOT EXISTS (\n" +
+//            "    SELECT 1\n" +
+//            "    FROM duplicates d\n" +
+//            "    WHERE d.distance = 0 AND (d.image_id1 = m.id OR d.image_id2 = m.id)\n" +
+//            ") " +
+            "LIMIT :offset, :limit", nativeQuery = true)
     fun findDuplicateImageHash(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
     @Query("SELECT DISTINCT sub.*\n" +
