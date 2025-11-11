@@ -184,7 +184,8 @@ async function saveMetadata(e) {
             tagpeople: people,
             albumnames: albums,
             hidden: $("#hidden").prop("checked"),
-            isObject: $("#isobject").prop("checked")
+            isObject: $("#isobject").prop("checked"),
+            removeDuplicateHash: $("#ignoreduplicates").prop("checked")
         };
 
         let compreFaceImageId = "";

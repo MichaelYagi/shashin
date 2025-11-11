@@ -139,6 +139,11 @@ class SearchController(
             ) {
                 metadataList = if (updatedTerm.lowercase() == "shashinedit" || updatedTerm.lowercase() == "shashinedited") {
                     searchRepository?.findMetadataEditedPhotos(pageValue, queryLimit)
+                } else if (updatedTerm.lowercase() == "nodupehash") {
+                    metadataRepository.findAllNoDupeHashOffsetAndLimit(
+                        pageValue,
+                        queryLimit
+                    )
                 } else if (updatedTerm.lowercase() == "nolatlng") {
                     metadataRepository.findAllMissingCoordOffsetAndLimit(
                         pageValue,
