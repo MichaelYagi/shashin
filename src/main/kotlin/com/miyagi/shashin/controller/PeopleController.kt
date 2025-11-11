@@ -56,6 +56,7 @@ class PeopleController(
     private val keywordPhotoRepository: KeywordPhotoRepository? = null,
     private val notificationRepository: NotificationRepository? = null,
     private var userRepository: UserRepository? = null,
+    private var duplicatesRepository: DuplicatesRepository? = null,
     var messageSource: MessageSource? = null,
     @Value("\${app.role.super}")
     private var superRole: String,
@@ -157,6 +158,7 @@ private val relativeSidecarDir: String? = null
 
             val superAdmins = userRepository?.findAllByAuthorityEquals(superRole)
 
+            // Find face, object and duplicate image matches
             doPrediction(settings, superAdmins, locale)
         }
 
@@ -203,6 +205,10 @@ private val relativeSidecarDir: String? = null
 
             // Object and person recognition
             if (threadFile != null) {
+                // Find duplicate images
+                ImageProcessing.findAndStoreDuplicates(duplicatesRepository!!)
+
+                // Find faces
                 var recognitionCount = 0
                 if (settings.getFacialDetection() == true) {
                     recognitionCount = ImageProcessing.Companion.subjectRecognizer(

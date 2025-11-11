@@ -18,10 +18,13 @@ import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.BKTree
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
+import dev.brachtendorf.jimagehash.hash.Hash
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -48,6 +51,7 @@ import java.awt.image.DataBufferInt
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
+import java.math.BigInteger
 import java.util.Locale
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -1864,6 +1868,69 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 isDuplicate = i.isDuplicate(hash1, hash2)
             }
             return isDuplicate
+        }
+
+        fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, page: Int = 1, size: Int = 1000) {
+            // Implement as part of dupe module
+            // Distance function using Hamming distance
+            val tree = BKTree { h1, h2 -> h1.hammingDistance(h2) }
+
+            val metadataList = duplicatesRepository.findDuplicateImageHash(page, size)
+            logger.log(
+                Level.INFO,
+                "metadataList query size: "+metadataList?.size
+            )
+            if (metadataList != null) {
+                val duplicateList = mutableListOf<Duplicates>()
+
+                // Insert hashes
+                for (metadata in metadataList) {
+                    if (metadata.getDuplicateHash() != null) {
+                        val entry = BKTree.HashEntry(metadata.getId(), Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2))
+                        logger.log(
+                            Level.INFO,
+                            "Adding entry into BKTree ${metadata.getId()}"
+                        )
+                        tree.insert(entry)
+                    }
+                }
+
+                // Search hashes
+                for (metadata in metadataList) {
+                    if (metadata.getDuplicateHash() != null) {
+                        logger.log(
+                            Level.INFO,
+                            "Searching duplicate hash ${metadata.getDuplicateHash()} for ${metadata.getId()}"
+                        )
+                        val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2)
+                        val duplicates = tree.search(query, threshold = 5)
+
+                        for (dupe in duplicates) {
+
+                            if (dupe.id != metadata.getId()) { // ignore self
+                                val dupCount = duplicatesRepository.findDuplicateMetadataId(metadata.getId(), dupe.id)
+                                if (dupCount == 0) {
+                                    logger.log(
+                                        Level.INFO,
+                                        "Duplicate ${metadata.getId()} found: id=${dupe.id}, distance=${query.hammingDistance(dupe.hash)}"
+                                    )
+
+                                    val duplicate = Duplicates()
+                                    duplicate.setImageId1(metadata.getId())
+                                    duplicate.setImageId2(dupe.id)
+                                    duplicate.setDistance(query.hammingDistance(dupe.hash))
+                                    duplicate.setCreatedAt(getCurrentTimestamp())
+                                    duplicateList.add(duplicate)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (duplicateList.isNotEmpty()) {
+                    duplicatesRepository.saveAll(duplicateList)
+                }
+            }
         }
     }
 }
