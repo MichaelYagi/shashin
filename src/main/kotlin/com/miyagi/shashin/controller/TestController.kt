@@ -176,6 +176,7 @@ class TestController(
 
         val size = 1000
 
+        // Find all duplicates - put entries in duplicates table
         duplicationTree(0, size)
 
         // Display and group by duplicate images
@@ -195,6 +196,7 @@ class TestController(
         model["size"] = size
 
         val pageValue = page*size
+        // Find all duplicates
         duplicationTree(pageValue, size)
 
         // Display and group by duplicate images
@@ -228,11 +230,6 @@ class TestController(
                     println("Searching hash ${metadata.getDuplicateHash()} for ${metadata.getId()}")
                     val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2)
                     val duplicates = tree.search(query, threshold = 5)
-
-                    if (metadata.getId() == "e0771578-4a13-3883-9174-ed0156093df5") {
-                        println("Found metadata ID")
-                        println(duplicates.size)
-                    }
 
                     for (dupe in duplicates) {
 
