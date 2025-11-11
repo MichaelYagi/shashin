@@ -177,7 +177,7 @@ class TestController(
         val size = 1000
 
         // Find all duplicates - put entries in duplicates table
-        duplicationTree(0, size)
+        ImageProcessing.findAndStoreDuplicates(duplicatesRepository, 0, size)
 
         // Display and group by duplicate images
         model["metadataList"] = duplicatesRepository.findAllMetadataIds(0, size)
@@ -197,63 +197,12 @@ class TestController(
 
         val pageValue = page*size
         // Find all duplicates
-        duplicationTree(pageValue, size)
+        ImageProcessing.findAndStoreDuplicates(duplicatesRepository, pageValue, size)
 
         // Display and group by duplicate images
         model["metadataList"] = duplicatesRepository.findAllMetadataIds(pageValue, size)
 
         return "sandbox"
-    }
-
-    fun duplicationTree(page: Int = 1, size: Int = 1000) {
-        // Implement as part of dupe module
-        // Distance function using Hamming distance
-        val tree = BKTree { h1, h2 -> h1.hammingDistance(h2) }
-
-        val metadataList = duplicatesRepository.findDuplicateImageHash(page, size)
-        println("query 1 size: "+metadataList?.size)
-        if (metadataList != null) {
-            val duplicateList = mutableListOf<Duplicates>()
-
-            // Insert hashes
-            for (metadata in metadataList) {
-                if (metadata.getDuplicateHash() != null) {
-                    val entry = BKTree.HashEntry(metadata.getId(), Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2))
-                    println("Adding entry ${metadata.getId()}")
-                    tree.insert(entry)
-                }
-            }
-
-            // Search hashes
-            for (metadata in metadataList) {
-                if (metadata.getDuplicateHash() != null) {
-                    println("Searching hash ${metadata.getDuplicateHash()} for ${metadata.getId()}")
-                    val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2)
-                    val duplicates = tree.search(query, threshold = 5)
-
-                    for (dupe in duplicates) {
-
-                        if (dupe.id != metadata.getId()) { // ignore self
-                            val dupCount = duplicatesRepository.findDuplicateMetadataId(metadata.getId(), dupe.id)
-                            if (dupCount == 0) {
-                                println("Duplicate ${metadata.getId()} found: id=${dupe.id}, distance=${query.hammingDistance(dupe.hash)}")
-
-                                val duplicate = Duplicates()
-                                duplicate.setImageId1(metadata.getId())
-                                duplicate.setImageId2(dupe.id)
-                                duplicate.setDistance(query.hammingDistance(dupe.hash))
-                                duplicate.setCreatedAt(getCurrentTimestamp())
-                                duplicateList.add(duplicate)
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (duplicateList.isNotEmpty()) {
-                duplicatesRepository.saveAll(duplicateList)
-            }
-        }
     }
 
     @Secured("ROLE_SUPER")
