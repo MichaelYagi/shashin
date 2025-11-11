@@ -1742,6 +1742,7 @@ class TimelineController(
             metadataMap.containsKey("camera") &&
             metadataMap.containsKey("lens") &&
             metadataMap.containsKey("duration") &&
+            metadataMap.containsKey("removeDuplicateHash") &&
             metadataMap["id"].toString() == metadataId
         ) {
             resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
@@ -1882,6 +1883,12 @@ class TimelineController(
                 metricsUtil.end()
 
                 metricsUtil.start("Metadata Update - attributes")
+
+                val removeDuplicateHash = metadataMap["removeDuplicateHash"].toString().toBoolean()
+                if (removeDuplicateHash) {
+                    metadataObj.get().setDuplicateHash(null)
+                }
+
                 if (metadataMap["title"].toString().trim() == "") {
                     metadataObj.get().setTitle(metadataObj.get().getFileName())
                 } else if (metadataObj.get().getTitle() != metadataMap["title"].toString().trim()) {
@@ -2501,7 +2508,7 @@ class TimelineController(
     @ResponseBody
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
-//         println(requestBody)
+//println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
 
         val idArray: Array<String>? = batchMetadataMap.batchMetadataIds
@@ -2515,13 +2522,13 @@ class TimelineController(
         var keywords: String? = batchMetadataMap.keywordsBatchData
         val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
         val albumNames: String? = batchMetadataMap.albumNameInput
-//        println(albumNames)
         val addToAlbums = batchMetadataMap.addtoexistingalbums == "on"
         val addToPeople = batchMetadataMap.addtoexistingpeople == "on"
         val addToKeywords = batchMetadataMap.addtoexistingkeywords == "on"
 
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
+        val removeDuplicateHash = batchMetadataMap.batchignoreduplicates == "on"
 
         if (TextUtils.metadataInputValidation(
                 dayTaken,
@@ -2558,26 +2565,6 @@ class TimelineController(
                 }
             }
 
-//            if (camera != null && camera.trim().isNotBlank()) {
-//                val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
-//                for (cameraType in cameraTypes) {
-//                    if (camera!!.trim().lowercase() == cameraType.trim().lowercase()) {
-//                        camera = cameraType.trim()
-//                        break
-//                    }
-//                }
-//            }
-//
-//            if (lens != null && lens.trim().isNotBlank()) {
-//                val lensTypes = metadataRepository.findByLensTypeAlphabetical()
-//                for (lensType in lensTypes) {
-//                    if (lens!!.trim().lowercase() == lensType.trim().lowercase()) {
-//                        lens = lensType.trim()
-//                        break
-//                    }
-//                }
-//            }
-
             val metadataList: ArrayList<Metadata> = ArrayList()
             val albumPhotoList: ArrayList<AlbumPhoto> = ArrayList()
 
@@ -2602,6 +2589,10 @@ class TimelineController(
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
                 if (metadataObj.isPresent) {
                     val metadata = metadataObj.get()
+
+                    if (removeDuplicateHash) {
+                        metadata.setDuplicateHash(null)
+                    }
 
                     if (isHidden) {
                         metadata.setHidden(true)

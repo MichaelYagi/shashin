@@ -114,6 +114,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllWithCoordOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND (duplicate_hash IS NULL OR duplicate_hash = \"\") AND type LIKE '%image%' ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findAllNoDupeHashOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllWithCoordByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 

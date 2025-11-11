@@ -107,7 +107,7 @@ async function saveBatchMetadata(e) {
     if ($("#cameraBatchData").val() === "" && $("#lensBatchData").val() === "" &&
         $("#yearTakenBatchData").val() === "" && $("#monthTakenBatchData").val() === "" && $("#dayTakenBatchData").val() === "" && $("#offsetTakenBatchData").val() === "" &&
         $("#latlngBatchData").val() === "" && $("#keywordsBatchData").val() === "" && $("#albumNameInput").val() === "" && $("#tagBatchDataInput").val() === "" &&
-        $("#batchhidden").is(':checked') === false && $("#batchisobject").is(':checked') === false && $("#batchrescan").is(':checked') === false
+        $("#batchhidden").is(':checked') === false && $("#batchisobject").is(':checked') === false && $("#batchrescan").is(':checked') === false && $("#batchignoreduplicates").is(':checked') === false
     ) {
         shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.title"), shashin.getTranslatedValue("main.toast.batch.metadata.body"), {
             icon: "bi-info-circle",
@@ -167,6 +167,9 @@ async function saveBatchMetadata(e) {
     ) === true) {
         if ($("#batchisobject").is(':checked')) {
             $("#batchisobject").val("on");
+        }
+        if ($("#batchignoreduplicates").is(':checked')) {
+            $("#batchignoreduplicates").val("on");
         }
         if ($("#batchhidden").is(':checked')) {
             $("#batchhidden").val("on");
