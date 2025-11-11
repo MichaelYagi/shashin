@@ -115,7 +115,7 @@
                     <span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
                 </a>
             </th:block>
-            <th:block th:if="${activePage == 'recent' || activePage == 'modified' || activePage == 'taken' || activePage == 'accessed'}">
+            <th:block th:if="${activePage == 'recent' || activePage == 'modified' || activePage == 'taken' || activePage == 'accessed' || activePage == 'duplicates'}">
                 <th:block th:if="${hasMediaUploadDirectory == true}">
                     &nbsp;
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToMedia" aria-controls="back" th:title="#{main.pages.tooltip.topnav.msg.uploadmedia}">
@@ -134,7 +134,7 @@
                 <input id="appSearchInput" name="appSearchInput" class="form-control rounded-pill border border-secondary-subtle" type="search" th:placeholder="#{main.pages.map.modal.search}" aria-label="Search" th:value="${term}">
                 <input type="submit" id="appSearchSubmit" style="position: absolute; left: -9999px"/>
             </form>
-            <th:block th:if="${activePage == 'timeline' || activePage == 'archived' || activePage == 'favorites' || activePage == 'recent' || activePage == 'modified' || activePage == 'taken' || activePage == 'accessed' || activePage == 'folder' || activePage == 'search' || activePage == 'album' || activePage == 'person' || activePage == 'matches'}">
+            <th:block th:if="${activePage == 'timeline' || activePage == 'archived' || activePage == 'favorites' || activePage == 'recent' || activePage == 'modified' || activePage == 'taken' || activePage == 'accessed' || activePage == 'folder' || activePage == 'search' || activePage == 'album' || activePage == 'person' || activePage == 'matches' || activePage == 'duplicates'}">
                 <div id="albumAppTools">
                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
                         <th:block th:unless="${activePage == 'archived'}">

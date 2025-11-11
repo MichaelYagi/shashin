@@ -115,7 +115,7 @@
         });
 
         // Multiselect doubletap logic
-        if (Util.isMobile() === true) {
+        if (view !== "duplicates" && Util.isMobile() === true) {
             $("#photoThumbnailContainer" + metadata.id).on("pointerup", shashin.detectDoubleTap(200));
             $("#photoThumbnailContainer" + metadata.id).on("doubletap", function(e) {
                 e.preventDefault();
@@ -130,22 +130,24 @@
             e.preventDefault();
 
             // Multi select
-            $(document).bind("keydown", function (e) {
-                e.preventDefault();
+            if (view !== "duplicates") {
+                $(document).bind("keydown", function (e) {
+                    e.preventDefault();
 
-                // Shift key may not be available for Mac
-                if (Util.getOS() === "MacOS" && (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83)) {
-                    shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
+                    // Shift key may not be available for Mac
+                    if (Util.getOS() === "MacOS" && (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83)) {
+                        shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
 
-                    metadataIdArray = shashin.batchSelect(metadata.id, view);
-                }
+                        metadataIdArray = shashin.batchSelect(metadata.id, view);
+                    }
 
-                if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.which === 16 || e.keyCode === 16) {
-                    shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
+                    if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.which === 16 || e.keyCode === 16) {
+                        shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
 
-                    metadataIdArray = shashin.batchSelect(metadata.id, view);
-                }
-            });
+                        metadataIdArray = shashin.batchSelect(metadata.id, view);
+                    }
+                });
+            }
 
             if (metadata.type.includes("video") && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
