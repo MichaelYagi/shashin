@@ -40,7 +40,7 @@ import kotlin.String
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
-
+// Used for prototyping
 @Controller
 class TestController(
     // Avoid field injection as much as possible (AutoWiring)
