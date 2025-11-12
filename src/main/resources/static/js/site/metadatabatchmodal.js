@@ -104,22 +104,22 @@ async function saveBatchMetadata(e) {
 
     shashin.stopRendering = true;
 
-    if ($("#cameraBatchData").val() === "" && $("#lensBatchData").val() === "" &&
-        $("#yearTakenBatchData").val() === "" && $("#monthTakenBatchData").val() === "" && $("#dayTakenBatchData").val() === "" && $("#offsetTakenBatchData").val() === "" &&
-        $("#latlngBatchData").val() === "" && $("#keywordsBatchData").val() === "" && $("#albumNameInput").val() === "" && $("#tagBatchDataInput").val() === "" &&
-        $("#batchhidden").is(':checked') === false && $("#batchisobject").is(':checked') === false && $("#batchrescan").is(':checked') === false && $("#batchignoreduplicates").is(':checked') === false
-    ) {
-        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.title"), shashin.getTranslatedValue("main.toast.batch.metadata.body"), {
-            icon: "bi-info-circle",
-            iconColor: "#777777",
-            tag: "metadatabatchmodal",
-            borderColor:"warning"
-        });
-
-        $("#propBatchMetadata").modal('hide');
-
-        return true;
-    }
+    // if ($("#cameraBatchData").val() === "" && $("#lensBatchData").val() === "" &&
+    //     $("#yearTakenBatchData").val() === "" && $("#monthTakenBatchData").val() === "" && $("#dayTakenBatchData").val() === "" && $("#offsetTakenBatchData").val() === "" &&
+    //     $("#latlngBatchData").val() === "" && $("#keywordsBatchData").val() === "" && $("#albumNameInput").val() === "" && $("#tagBatchDataInput").val() === "" &&
+    //     $("#batchhidden").is(':checked') === false && $("#batchisobject").is(':checked') === false && $("#batchrescan").is(':checked') === false &&
+    // ) {
+    //     shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.title"), shashin.getTranslatedValue("main.toast.batch.metadata.body"), {
+    //         icon: "bi-info-circle",
+    //         iconColor: "#777777",
+    //         tag: "metadatabatchmodal",
+    //         borderColor:"warning"
+    //     });
+    //
+    //     $("#propBatchMetadata").modal('hide');
+    //
+    //     return true;
+    // }
 
     $("#metadataBatchModalCancel").prop("disabled", true);
     $("#saveBatchMetadata").prop("disabled", true);
@@ -336,6 +336,10 @@ async function saveBatchMetadata(e) {
                     }
 
                     if (activePage === "matches" || (activePage === "album" && albumInputVal !== "")) {
+                        window.location.reload();
+                    }
+
+                    if (activePage === "duplicates") {
                         window.location.reload();
                     }
                 }

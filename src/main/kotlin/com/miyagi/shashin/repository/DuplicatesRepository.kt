@@ -57,4 +57,28 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "ORDER BY sub.duplicate_hash, sub.taken_at " +
             "LIMIT :offset, :limit", nativeQuery = true)
     fun findAllMetadataIds(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
+
+    @Query("SELECT COUNT(*)\n" +
+            "FROM (\n" +
+            "    SELECT DISTINCT sub.*\n" +
+            "    FROM (\n" +
+            "             SELECT m.*, m.duplicate_hash\n" +
+            "             FROM duplicates d\n" +
+            "             JOIN metadata m ON m.id = d.image_id1\n" +
+            "             WHERE m.hidden = 0 AND d.distance = 0\n" +
+            "             UNION ALL\n" +
+            "             SELECT m.*, m.duplicate_hash\n" +
+            "             FROM duplicates d\n" +
+            "             JOIN metadata m ON m.id = d.image_id2\n" +
+            "             WHERE m.hidden = 0 AND d.distance = 0\n" +
+            "         ) AS sub\n" +
+            "    WHERE sub.duplicate_hash IN (\n" +
+            "        SELECT duplicate_hash\n" +
+            "        FROM metadata\n" +
+            "        WHERE hidden = 0\n" +
+            "        GROUP BY duplicate_hash\n" +
+            "        HAVING COUNT(*) > 1\n" +
+            "    )\n" +
+            ") AS counted;", nativeQuery = true)
+    fun countAllMetadataIds(): Int?
 }
