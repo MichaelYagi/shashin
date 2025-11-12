@@ -72,6 +72,7 @@
     <a th:href="'/api/v1/thumbnails/original/'+${metadataObj.id}+'?v='+${uuid}"
        th:data-lg-size="${(metadataObj.originalImageWidth == null || metadataObj.originalImageWidth == '') ? (metadataObj.thumbnailSmallWidth + '-' + metadataObj.thumbnailSmallHeight) : (metadataObj.originalImageWidth) + '-' + (metadataObj.originalImageHeight)}"
        th:data-metadata-id="${metadataObj.id}"
+       th:data-src="'/api/v1/thumbnails/original/'+${metadataObj.id}+'?v='+${uuid}"
        th:data-download-url="${'/api/v1/image/'+ metadataObj.id + '/download?v=' + randomString}">
         <img id="photoImage" th:src="'/api/v1/thumbnails/225/'+${metadataObj.id}+'?v='+${uuid}" />
     </a>

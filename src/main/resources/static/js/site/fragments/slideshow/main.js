@@ -312,7 +312,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             http.ajax("get", "/media/metadata/" + nextId).then(function (data) {
                 if (data && data.metadata && data.baseUrl) {
                     const img = new Image();
-                    img.src = data.baseUrl + "/api/v1/image/" + data.metadata.id;
+                    img.src = data.baseUrl + "/api/v1/thumbnails/original/" + data.metadata.id;
 
                     slideshow.preloadedImage = {
                         index: nextIndex,
@@ -333,7 +333,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             data.baseUrl !== ""
         ) {
             $("#mediaSrc").css("display", "block");
-            const photoUrl = data.baseUrl + "/api/v1/image/"+data.metadata.id;
+            const photoUrl = data.baseUrl + "/api/v1/thumbnails/original/"+data.metadata.id;
 
             slideshow.currentPhotoUrl = photoUrl;
             slideshow.currentMetadata = data.metadata;

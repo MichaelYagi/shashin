@@ -195,12 +195,12 @@
                                 }
                             } else if (metadata.thumbnailUrlOriginal !== null) {
                                 try {
-                                    cjs.src = baseUrl + "/api/v1/image/"+metadata.id+".jpg";
+                                    cjs.src = baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg";
 
-                                    cjs.cast(baseUrl + "/api/v1/image/"+metadata.id+".jpg", cjsMetadata);
+                                    cjs.cast(baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg", cjsMetadata);
 
                                     if (shashin) {
-                                        shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/image/"+metadata.id+".jpg", {
+                                        shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg", {
                                             tag: "cast"
                                         });
                                     }

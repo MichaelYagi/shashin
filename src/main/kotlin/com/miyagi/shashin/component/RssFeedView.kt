@@ -177,13 +177,13 @@ class RssFeedView(
 
                     description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}' title='${descVal}'><br>${descVal}"
                     entry.description = description
-                    entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
-                    entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    entry.link = "$baseUrl/api/v1/thumbnails/original/${metadata.getId()}"
+                    entry.uri = "$baseUrl/api/v1/thumbnails/original/${metadata.getId()}"
                     val guid = Guid()
-                    guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    guid.value = "$baseUrl/api/v1/thumbnails/original/${metadata.getId()}"
                     entry.guid = guid
                     val enc = Enclosure()
-                    enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    enc.url = "$baseUrl/api/v1/thumbnails/original/${metadata.getId()}"
                     enc.type = metadata.getType()
                     if (File(metadata.getPath()!!).exists()) {
                         enc.length = Files.size(Path(metadata.getPath()!!))
