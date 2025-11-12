@@ -1865,7 +1865,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val i = DuplicateImageChecker()
                 val hash1 = i.computeHash(file1)
                 val hash2 = i.computeHash(file2)
-                isDuplicate = i.isDuplicate(hash1, hash2)
+                if (hash1 != null && hash2 != null) {
+                    isDuplicate = i.isDuplicate(hash1, hash2)
+                } else {
+                    isDuplicate = false
+                }
             }
             return isDuplicate
         }

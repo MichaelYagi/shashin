@@ -520,8 +520,10 @@ class MetadataProcessing() {
         if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!! && file.exists()) {
             val dupeImageChecker = DuplicateImageChecker()
             dupeImageChecker.setAlgorithm("dhash")
-            var hash = dupeImageChecker.computeHashValue(file)
-            this.metadataObj.setDuplicateHash(hash)
+            val hash = dupeImageChecker.computeHashValue(file)
+            if (hash != null) {
+                this.metadataObj.setDuplicateHash(hash)
+            }
         }
 
         this.metadataObj.setId(

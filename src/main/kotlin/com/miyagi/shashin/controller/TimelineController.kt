@@ -1894,7 +1894,9 @@ class TimelineController(
                         val dupeImageChecker = DuplicateImageChecker()
                         dupeImageChecker.setAlgorithm("dhash")
                         var hash = dupeImageChecker.computeHashValue(File(metadataObj.get().getPath()!!))
-                        metadataObj.get().setDuplicateHash(hash)
+                        if (hash != null) {
+                            metadataObj.get().setDuplicateHash(hash)
+                        }
                     }
                 }
 
@@ -2583,7 +2585,9 @@ class TimelineController(
                             val dupeImageChecker = DuplicateImageChecker()
                             dupeImageChecker.setAlgorithm("dhash")
                             var hash = dupeImageChecker.computeHashValue(File(metadata.getPath()!!))
-                            metadata.setDuplicateHash(hash)
+                            if (hash != null) {
+                                metadata.setDuplicateHash(hash)
+                            }
                         }
                     }
 
