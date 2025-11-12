@@ -360,7 +360,7 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         // Logging out redirects to login page
         this.driver!!.get("http://localhost:$port/users/logout")
         WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
-        waitForPage(driver!!, By.id("remember-me"), port.toString(), "users/login")
+        waitForPage(driver!!, By.id("remember-me"), port.toString(), "users/logout")
 //        println(this.driver?.pageSource) // print the html
 //        takeScreenshot(driver!!)
         val username = this.driver!!.findElement(By.id("username"))
