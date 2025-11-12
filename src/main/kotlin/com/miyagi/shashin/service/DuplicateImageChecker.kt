@@ -79,7 +79,7 @@ class DuplicateImageChecker {
             val image: BufferedImage = ImageIO.read(file)
             return algorithm.hash(image) // use currently selected algorithm
         } catch (e: Exception) {
-            logger.log(Level.INFO, "Error computeHash: ${e.message}")
+            logger.log(Level.WARNING, "Error computeHash: ${e.message}")
             return null
         }
     }
@@ -89,7 +89,7 @@ class DuplicateImageChecker {
             val image: BufferedImage = ImageIO.read(file)
             return algorithm.hash(image).hashValue.toString() // use currently selected algorithm
         } catch (e: Exception) {
-            logger.log(Level.INFO, "Error computeHashValue: ${e.message}")
+            logger.log(Level.WARNING, "Error computeHashValue: ${e.message}")
             return null
         }
     }
@@ -104,11 +104,16 @@ class DuplicateImageChecker {
     }
 
     fun getBase64(file: File?): String? {
-        if (file != null) {
-            val os = ByteArrayOutputStream()
-            ImageIO.write(ImageIO.read(file), "jpg", os)
-            return Base64.getEncoder().encodeToString(os.toByteArray())
+        try {
+            if (file != null) {
+                val os = ByteArrayOutputStream()
+                ImageIO.write(ImageIO.read(file), "jpg", os)
+                return Base64.getEncoder().encodeToString(os.toByteArray())
+            }
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error getBase64: ${e.message}")
         }
+
         return null
     }
 
