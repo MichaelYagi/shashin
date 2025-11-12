@@ -778,7 +778,7 @@ async function showMap(mapdata, keywordMap, locale) {
                 };
 
                 if (featureProperties.type.includes("image")) {
-                    mediaContent.src = "/api/v1/image/"+featureProperties.metadataId;
+                    mediaContent.src = "/api/v1/thumbnails/original/"+featureProperties.metadataId;
                     mediaContent.downloadUrl = "/api/v1/image/"+featureProperties.metadataId + "/download?v=" + uuidv4();
                 } else if (featureProperties.type.includes("video")) {
                     mediaContent.video = {

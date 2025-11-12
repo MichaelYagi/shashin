@@ -1,6 +1,5 @@
 package com.miyagi.shashin.component
 
-import com.miyagi.shashin.model.AlbumPhoto
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.SlideshowAlbum
 import com.miyagi.shashin.repository.AlbumPhotoRepository
@@ -164,7 +163,7 @@ class AtomFeedView(
 
                 for (metadata in randomMetadata) {
                     val entry = Entry()
-                    entry.id = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    entry.id = "$baseUrl/api/v1/thumbnails/original/${metadata.getId()}"
                     entry.title = metadata.getTitle()
 
                     var place = ""
@@ -196,7 +195,7 @@ class AtomFeedView(
                     entry.summary = summaryContent
 
                     val link = Link()
-                    link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    link.href = "$baseUrl/api/v1/thumbnails/original/${metadata.getId()}"
                     link.rel = "enclosure"
                     link.type = metadata.getType()
                     if (File(metadata.getPath()!!).exists()) {
