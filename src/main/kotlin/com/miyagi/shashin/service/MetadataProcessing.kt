@@ -517,10 +517,10 @@ class MetadataProcessing() {
         saveExifdata(exifMap, sidecarDir, file.path)
 
         // Generate a hash for comparing potential duplicates
-        if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!!) {
+        if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!! && file.exists()) {
             val dupeImageChecker = DuplicateImageChecker()
             dupeImageChecker.setAlgorithm("dhash")
-            var hash = dupeImageChecker.computeHashValue(this.file)
+            var hash = dupeImageChecker.computeHashValue(file)
             this.metadataObj.setDuplicateHash(hash)
         }
 
