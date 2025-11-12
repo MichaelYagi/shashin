@@ -123,8 +123,14 @@
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="facialDetection" name="facialDetection" th:checked="${settings.facialDetection}">
-                                <label class="form-check-label" for="objectDetection">
+                                <label class="form-check-label" for="facialDetection">
                                     <strong><th:block th:text="#{main.pages.settings.enableface}"></th:block></strong>&nbsp;<span id="objectFacialInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableface.tooltip}"></span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="duplicateDetection" name="duplicateDetection" th:checked="${settings.duplicateDetection}">
+                                <label class="form-check-label" for="duplicateDetection">
+                                    <strong><th:block th:text="#{main.pages.settings.enableduplicate}"></th:block></strong>
                                 </label>
                             </div>
                             <div class="form-check">

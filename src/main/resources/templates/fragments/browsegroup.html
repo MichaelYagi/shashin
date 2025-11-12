@@ -17,9 +17,11 @@
     <li class="nav-item">
         <a th:attr="class='nav-link' + ${activePage=='archived' ? ' active' : ''}" href="/archived"><th:block th:text="#{main.pages.browse.tabs.archived}"></th:block></a>
     </li>
+    <th:block th:if="${settings.duplicateDetection==true}">
     <li class="nav-item">
         <a th:attr="class='nav-link' + ${activePage=='duplicates' ? ' active' : ''}" href="/duplicates"><th:block th:text="#{main.pages.browse.tabs.duplicates}"></th:block></a>
     </li>
+    </th:block>
     <li class="nav-item">
         <a th:attr="class='nav-link' + ${activePage=='folders' ? ' active' : ''}" href="/folders"><th:block th:text="#{main.pages.browse.tabs.folders}"></th:block> <span class="badge bg-secondary" th:text="${foldersCount}"></span></a>
     </li>

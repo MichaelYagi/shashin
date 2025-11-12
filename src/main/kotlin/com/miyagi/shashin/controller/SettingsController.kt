@@ -341,6 +341,7 @@ class SettingsController(
         @RequestParam("scanAutomatically") scanAutomatically: String?,
         @RequestParam("objectDetection") objectDetection: String?,
         @RequestParam("facialDetection") facialDetection: String?,
+        @RequestParam("duplicateDetection") duplicateDetection: String?,
         @RequestParam("scheduledMatching") scheduledMatching: String?,
         @RequestParam("scheduledTime") scheduledTime: String?,
         @RequestParam("uploadMediaDirectory") uploadMediaDirectory: String?
@@ -524,6 +525,11 @@ class SettingsController(
         } else {
             settings?.setFacialDetection(false)
         }
+        if (duplicateDetection == "on") {
+            settings?.setDuplicateDetection(true)
+        } else {
+            settings?.setDuplicateDetection(false)
+        }
         if (scheduledMatching == "on") {
             settings?.setScheduledMatching(true)
         } else {
@@ -566,6 +572,7 @@ class SettingsController(
 
             model["objectRecogEnabled"] = settings.getObjectDetection()!!
             model["facialRecogEnabled"] = settings.getFacialDetection()!!
+            model["duplicateDetectionEnabled"] = settings.getDuplicateDetection()!!
         }
 
         if (statusMessage.isBlank() && model.getAttribute("status") == ApiResponse.SUCCESS.status) {

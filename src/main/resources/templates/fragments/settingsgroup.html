@@ -8,7 +8,7 @@
   <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan"><th:block th:text="#{main.pages.settings.tabs.media}"></th:block></a>
   </li>
-  <th:block th:if="${objectRecogEnabled==true || facialRecogEnabled==true}">
+  <th:block th:if="${objectRecogEnabled==true || facialRecogEnabled==true || settings.duplicateDetection==true}">
     <li class="nav-item">
       <a th:attr="class='nav-link' + ${activePage=='match' ? ' active' : ''}" href="/settings/match"><th:block th:text="#{main.pages.settings.tabs.match}"></th:block></a>
     </li>

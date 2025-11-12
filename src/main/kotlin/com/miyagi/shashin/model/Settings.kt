@@ -38,6 +38,8 @@ class Settings {
     @NotBlank
     private var facialDetection: Boolean? = null
     @NotBlank
+    private var duplicateDetection: Boolean? = null
+    @NotBlank
     private var scheduledMatching: Boolean? = null
     @NotBlank
     private var scheduledTime: String? = null
@@ -173,6 +175,14 @@ class Settings {
         this.facialDetection = facialDetection
     }
 
+    fun getDuplicateDetection(): Boolean? {
+        return this.duplicateDetection
+    }
+
+    fun setDuplicateDetection(duplicateDetection: Boolean?) {
+        this.duplicateDetection = duplicateDetection
+    }
+
     fun getScheduledMatching(): Boolean? {
         return this.scheduledMatching
     }
@@ -225,6 +235,7 @@ class Settings {
         map["scheduledTime"] = this.scheduledTime
         map["uploadMediaDirectory"] = this.uploadMediaDirectory
         map["sidecarSizeK"] = this.sidecarSizeK
+        map["duplicateDetection"] = this.duplicateDetection
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

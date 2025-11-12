@@ -205,8 +205,11 @@ private val relativeSidecarDir: String? = null
 
             // Object and person recognition
             if (threadFile != null) {
+
                 // Find duplicate images
-                ImageProcessing.findAndStoreDuplicates(duplicatesRepository!!)
+                if (settings.getDuplicateDetection() == true) {
+                    ImageProcessing.findAndStoreDuplicates(duplicatesRepository!!)
+                }
 
                 // Find faces
                 var recognitionCount = 0

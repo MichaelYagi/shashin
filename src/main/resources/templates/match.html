@@ -13,7 +13,7 @@
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
-            <th:block th:if="${objectRecogEnabled==true || facialRecogEnabled==true}">
+            <th:block th:if="${objectRecogEnabled==true || facialRecogEnabled==true || settings.duplicateDetection==true}">
                 <button class="btn btn-primary" id="matchAction"><th:block th:text="#{main.pages.scan.control.button.scan}"></th:block></button>
                 <button class="btn btn-danger" id="stopScan"><th:block th:text="#{main.pages.scan.control.button.stop}"></th:block></button>
                 <br>
@@ -36,9 +36,10 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const objectRecogEnabled = /*[[${objectRecogEnabled}]]*/ false;
         const facialRecogEnabled = /*[[${facialRecogEnabled}]]*/ false;
+        const duplicateDetectionEnabled = /*[[${settings.duplicateDetection}]]*/ false;
         /*]]>*/
 
-        if (objectRecogEnabled || facialRecogEnabled) {
+        if (objectRecogEnabled || facialRecogEnabled || duplicateDetectionEnabled) {
             $("#matchAction").on("click", function (e) {
                 e.preventDefault();
 
