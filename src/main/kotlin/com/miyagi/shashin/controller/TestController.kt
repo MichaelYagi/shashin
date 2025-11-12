@@ -88,8 +88,6 @@ class TestController(
         model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
         model["defaultTZ"] = ZoneId.systemDefault()
 
-        DuplicateImageChecker.getAlgoId()
-
         return "test"
     }
 
@@ -157,7 +155,6 @@ class TestController(
             metricsUtil.end()
 
             response["text"] = "Algorithm: "+i.getAlgorithmName()+
-                    "<br>Algorithm ID: "+i.getAlgorithmId()+
                     "<br>Resolution: "+i.getResolution()+
                     "<br>hash 1: " + hash1 +
                     "<br>hash 2: " + hash2 +
