@@ -69,13 +69,13 @@ class ArchiveController(
         response["status"] = ApiResponse.FAIL.status
         response["metadataList"] = ArrayList<Metadata>()
 
-        if (metadataRepository.count() > 0) {
-            val size: Int = model.getAttribute("queryLimit") as Int
-            val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
+        val size: Int = model.getAttribute("queryLimit") as Int
+        val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
 
-            if (trashList.count() > 0) {
-                model["metadataList"] = trashList
-            }
+        if (trashList.count() > 0) {
+            response["msg"] = "success"
+            response["status"] = ApiResponse.SUCCESS.status
+            response["metadataList"] = trashList
         }
 
         return mapper.writeValueAsString(response)
@@ -88,23 +88,21 @@ class ArchiveController(
         response["metadataList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
 
-        if (page > 0) {
-            if (metadataRepository.count() > 0) {
-                val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
+        if (page > 0 && metadataRepository.count() > 0) {
+            val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
 
-                if (trashList.count() > 0) {
-                    model["metadataList"] = trashList
-                    response["metadataList"] = trashList
-                    val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
-                    val keywordMap = mutableMapOf<String, String>()
-                    for (keywordGroup in keywordList) {
-                        keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
-                    }
-                    response["keywordMap"] = keywordMap
-                    response["msg"] = ""
-                    response["status"] = ApiResponse.SUCCESS.status
-                    return mapper.writeValueAsString(response)
+            if (trashList.count() > 0) {
+                model["metadataList"] = trashList
+                response["metadataList"] = trashList
+                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                val keywordMap = mutableMapOf<String, String>()
+                for (keywordGroup in keywordList) {
+                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
                 }
+                response["keywordMap"] = keywordMap
+                response["msg"] = ""
+                response["status"] = ApiResponse.SUCCESS.status
+                return mapper.writeValueAsString(response)
             }
         }
 
