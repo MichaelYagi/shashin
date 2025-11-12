@@ -11,13 +11,15 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Duplicate image module
-
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [2.17.0] - 2025-11-11
+### Added
+- Duplicate image module
 
 ## [2.16.0] - 2025-11-09
 ### Changed
