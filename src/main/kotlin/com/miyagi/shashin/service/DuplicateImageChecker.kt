@@ -10,6 +10,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.math.BigInteger
 import java.util.Base64
+import java.util.logging.Level
+import java.util.logging.Logger
 import javax.imageio.ImageIO
 
 //val file1 = File(setOneFilename)
@@ -27,6 +29,8 @@ import javax.imageio.ImageIO
 //
 //val isDuplicate = i.isDuplicate(computedHash1, computedHash2)
 class DuplicateImageChecker {
+
+    private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
 
     // Default resolution
     private var resolution: Int = 64
@@ -70,14 +74,24 @@ class DuplicateImageChecker {
     /**
      * Compute perceptual hash for an image file.
      */
-    fun computeHash(file: File): Hash {
-        val image: BufferedImage = ImageIO.read(file)
-        return algorithm.hash(image) // use currently selected algorithm
+    fun computeHash(file: File): Hash? {
+        try {
+            val image: BufferedImage = ImageIO.read(file)
+            return algorithm.hash(image) // use currently selected algorithm
+        } catch (e: Exception) {
+            logger.log(Level.INFO, "Error computeHashValue: ${e.message}")
+            return null
+        }
     }
 
-    fun computeHashValue(file: File): String {
-        val image: BufferedImage = ImageIO.read(file)
-        return algorithm.hash(image).hashValue.toString() // use currently selected algorithm
+    fun computeHashValue(file: File): String? {
+        try {
+            val image: BufferedImage = ImageIO.read(file)
+            return algorithm.hash(image).hashValue.toString() // use currently selected algorithm
+        } catch (e: Exception) {
+            logger.log(Level.INFO, "Error computeHashValue: ${e.message}")
+            return null
+        }
     }
 
     fun computeHashFromString(value: String, resolution: Int = 64, algorithmId: Int = 1): Hash {
