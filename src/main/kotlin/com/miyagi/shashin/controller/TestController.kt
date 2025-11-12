@@ -88,6 +88,8 @@ class TestController(
         model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
         model["defaultTZ"] = ZoneId.systemDefault()
 
+        DuplicateImageChecker.getAlgoId()
+
         return "test"
     }
 
@@ -141,6 +143,11 @@ class TestController(
             var hash2 = i.computeHashValue(file2)
 
             var computedHash1 = i.computeHashFromString(hash1.toString())
+            println(i.computeHashFromString(hash1.toString()))
+            println(i.computeHashFromString(hash1.toString(), 64, 1))
+            println(i.computeHashFromString(hash1.toString(), 64, 2))
+            println(i.computeHashFromString(hash1.toString(), 64, 3))
+            println(i.computeHashFromString(hash1.toString(), 64, 4))
             var computedHash2 = i.computeHashFromString(hash2.toString())
 
             metricsUtil.end()
@@ -150,6 +157,7 @@ class TestController(
             metricsUtil.end()
 
             response["text"] = "Algorithm: "+i.getAlgorithmName()+
+                    "<br>Algorithm ID: "+i.getAlgorithmId()+
                     "<br>Resolution: "+i.getResolution()+
                     "<br>hash 1: " + hash1 +
                     "<br>hash 2: " + hash2 +
