@@ -117,6 +117,12 @@
                     $("#timeTaken").val(metadata.time);
                 }
 
+                if (metadata.duplicateHash !== null) {
+                    $("#ignoreduplicates")[0].checked = false;
+                } else {
+                    $("#ignoreduplicates")[0].checked = true;
+                }
+
                 if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null) {
                     $("#keywords").val(metadata.keywords);
                 } else {

@@ -122,6 +122,7 @@ async function saveMetadata(e) {
     let prevAlbumsArray = [];
     let takenDateUpdated = false;
     let captionUpdated = false;
+    let ignoreDuplicateUpdated = false;
     let prevLat = "";
     let prevLng = "";
     let prevPlaceName = "";
@@ -132,6 +133,12 @@ async function saveMetadata(e) {
             parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
             parseInt(metadataObj.day) !== parseInt($("#dayTaken").val())) {
             takenDateUpdated = true;
+        }
+
+        if (($("#ignoreduplicates").prop("checked") && metadataObj.duplicateHash !== null) ||
+            ($("#ignoreduplicates").prop("checked") === false && metadataObj.duplicateHash === null)
+        ) {
+            ignoreDuplicateUpdated = true;
         }
 
         if ($("#description").val() !== metadataObj.description) {
@@ -432,6 +439,10 @@ async function saveMetadata(e) {
                     (Util.arraysEqual(prevPeopleArray, peopleArray) === false && activePage === "person") ||
                     ((activePage === "map" || activePage === "album") && Util.arraysEqual(prevAlbumsArray, albumsArray) === false)
                 ) {
+                    window.location.reload();
+                }
+
+                if (activePage === "duplicates" && ignoreDuplicateUpdated === true) {
                     window.location.reload();
                 }
 

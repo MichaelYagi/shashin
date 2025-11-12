@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.DuplicateImageChecker
 import com.miyagi.shashin.service.FileStats
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.MetadataProcessing
@@ -1885,8 +1886,16 @@ class TimelineController(
                 metricsUtil.start("Metadata Update - attributes")
 
                 val removeDuplicateHash = metadataMap["removeDuplicateHash"].toString().toBoolean()
-                if (removeDuplicateHash) {
+                if (removeDuplicateHash && metadataObj.get().getDuplicateHash() != null) {
                     metadataObj.get().setDuplicateHash(null)
+                } else {
+                    // Generate a hash for comparing potential duplicates
+                    if (metadataObj.get().getDuplicateHash() == null && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
+                        val dupeImageChecker = DuplicateImageChecker()
+                        dupeImageChecker.setAlgorithm("dhash")
+                        var hash = dupeImageChecker.computeHashValue(File(metadataObj.get().getPath()!!))
+                        metadataObj.get().setDuplicateHash(hash)
+                    }
                 }
 
                 if (metadataMap["title"].toString().trim() == "") {
@@ -1907,18 +1916,6 @@ class TimelineController(
                 if (metadataMap["camera"].toString().trim() != "") {
                     val camera = metadataMap["camera"].toString().trim()
                     metadataObj.get().setCamera(camera)
-
-//                    val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
-//                    for (cameraType in cameraTypes) {
-//                        if (camera.trim().lowercase() == cameraType.trim().lowercase()) {
-//                            camera = cameraType
-//                            break
-//                        }
-//                    }
-//
-//                    if (metadataObj.get().getCamera() != camera) {
-//                        metadataObj.get().setCamera(camera)
-//                    }
                 } else {
                     metadataObj.get().setCamera(null)
                 }
@@ -1927,18 +1924,6 @@ class TimelineController(
                 if (metadataMap["lens"].toString().trim() != "") {
                     val lens = metadataMap["lens"].toString().trim()
                     metadataObj.get().setLens(lens)
-
-//                    val lensTypes = metadataRepository.findByLensTypeAlphabetical()
-//                    for (lensType in lensTypes) {
-//                        if (lens.trim().lowercase() == lensType.trim().lowercase()) {
-//                            lens = lensType
-//                            break
-//                        }
-//                    }
-//
-//                    if (metadataObj.get().getLens() != lens) {
-//                        metadataObj.get().setLens(lens)
-//                    }
                 } else {
                     metadataObj.get().setLens(null)
                 }
@@ -2590,8 +2575,16 @@ class TimelineController(
                 if (metadataObj.isPresent) {
                     val metadata = metadataObj.get()
 
-                    if (removeDuplicateHash) {
+                    if (removeDuplicateHash && metadata.getDuplicateHash() != null) {
                         metadata.setDuplicateHash(null)
+                    } else {
+                        // Generate a hash for comparing potential duplicates
+                        if (metadata.getDuplicateHash() == null && !metadata.getType().isNullOrBlank() && metadata.getType()?.contains("image")!!) {
+                            val dupeImageChecker = DuplicateImageChecker()
+                            dupeImageChecker.setAlgorithm("dhash")
+                            var hash = dupeImageChecker.computeHashValue(File(metadata.getPath()!!))
+                            metadata.setDuplicateHash(hash)
+                        }
                     }
 
                     if (isHidden) {

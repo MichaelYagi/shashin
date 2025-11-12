@@ -138,8 +138,25 @@ class BrowseController(
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/duplicates/page/{page}","/api/v1/duplicates/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getDuplicatesPage(model: Model,@PathVariable(required = true) page: Int, locale: Locale): String {
+    fun getDuplicatesJson(model: Model,@PathVariable(required = true) page: Int, locale: Locale): String {
         return mapper.writeValueAsString(buildBrowseRecord("duplicates",model,page,model.getAttribute("queryLimit").toString().toInt(),null, locale))
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/duplicates/{page}"], method = [RequestMethod.GET])
+    fun getDuplicatesPage(model: Model,@PathVariable(required = true) page: Int, locale: Locale): String {
+        val module = "duplicates"
+
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),null, locale)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        model["currentPage"] = (page+1)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @RouterOperation(
@@ -647,6 +664,8 @@ class BrowseController(
                         ).toMutableList()
                     }
                     "duplicates" -> {
+                        response["totalPages"] = ceil((duplicatesRepository?.countAllMetadataIds()!!.toDouble()) / size.toDouble()).toInt()
+
                         metadataList = duplicatesRepository?.findAllMetadataIds(
                             pageValue,
                             size
