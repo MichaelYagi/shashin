@@ -222,7 +222,7 @@ class GalleryTemplates {
                 data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : "/api/v1/thumbnails/original/"+data.metadata.id}?v=${uuid}"
                 data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                 data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
-                <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && data.metadata.thumbnailUrlExtraSmall===null?'':"/api/v1/thumbnails/112/"+data.metadata.id}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?120:data.metadata.thumbnailSmallWidth}" height="${isMobile?120:data.metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+                <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?120:data.metadata.thumbnailSmallWidth}" height="${isMobile?120:data.metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
             `
             :
@@ -231,7 +231,7 @@ class GalleryTemplates {
                 data-download-url="${"/api/v1/image/"+data.metadata.id}/download?v=${uuidv4()}"
                 data-metadata-id="${data.metadata.id}"
                 ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
-                <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && data.metadata.thumbnailUrlExtraSmall===null?'':"/api/v1/thumbnails/112/"+data.metadata.id}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?120:data.metadata.thumbnailSmallWidth}" height="${isMobile?120:data.metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+                <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?120:data.metadata.thumbnailSmallWidth}" height="${isMobile?120:data.metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
             `
         }
