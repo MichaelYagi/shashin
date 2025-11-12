@@ -79,7 +79,7 @@ class DuplicateImageChecker {
             val image: BufferedImage = ImageIO.read(file)
             return algorithm.hash(image) // use currently selected algorithm
         } catch (e: Exception) {
-            logger.log(Level.INFO, "Error computeHashValue: ${e.message}")
+            logger.log(Level.INFO, "Error computeHash: ${e.message}")
             return null
         }
     }
