@@ -332,7 +332,7 @@ class APITests: BaseSeleniumTests() {
         Assertions.assertTrue(metadataId != "")
         Assertions.assertTrue(metadata != null)
 
-        var map = mutableMapOf<String, Any>()
+        var map = mutableMapOf<String, Any?>()
         // Capture original dates
         val originalYear = metadata!!.getYear()
         val originalMonth = metadata.getMonth()
@@ -356,6 +356,7 @@ class APITests: BaseSeleniumTests() {
         map["camera"] = if (metadata.getCamera() == null) "" else metadata.getCamera().toString()
         map["lens"] = if (metadata.getLens() == null) "" else metadata.getLens().toString()
         map["duration"] = if (metadata.getDuration() == null) "" else metadata.getDuration().toString()
+        map["removeDuplicateHash"] = metadata.getDuplicateHash().toString()
 
         response = webClient.put()
             .uri("/api/v1/update/metadata/${metadataId}")
@@ -387,7 +388,7 @@ class APITests: BaseSeleniumTests() {
         Assertions.assertTrue(jsonNode.get("metadata").get("day").toString().toInt() != originalDay)
 
         // Rescan
-        map = mutableMapOf<String, Any>()
+        map = mutableMapOf<String, Any?>()
         map["metadataIdList"] = arrayOf(metadataId)
 
         response = webClient.post()
