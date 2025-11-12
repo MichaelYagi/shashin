@@ -1886,6 +1886,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 // Insert hashes
                 for (metadata in metadataList) {
                     if (metadata.getDuplicateHash() != null) {
+                        // The last parameter 2 is called the algorithmId,
+                        // It's meant for metadata, not the actual hashing algorithm
+                        // It can be an arbitrary int
                         val entry = BKTree.HashEntry(metadata.getId(), Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2))
                         logger.log(
                             Level.INFO,
@@ -1902,6 +1905,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             Level.INFO,
                             "Searching duplicate hash ${metadata.getDuplicateHash()} for ${metadata.getId()}"
                         )
+                        // The last parameter 2 is called the algorithmId,
+                        // It's meant for metadata, not the actual hashing algorithm
+                        // It can be an arbitrary int
                         val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2)
                         val duplicates = tree.search(query, threshold = 5)
 
