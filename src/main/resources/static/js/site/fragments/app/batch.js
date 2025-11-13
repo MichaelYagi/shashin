@@ -1,5 +1,8 @@
 (function( shashin, $, undefined ) {
     shashin.batchSelect = function(metadataId, view, addBorder = true, opaque = 0.3, transparent = 1.0) {
+        if (view === "undefined") {
+            view = $("#activePage").val();
+        }
         let metadataIdArrayCopy = [];
 
         function enableToolbar() {
@@ -145,7 +148,7 @@
                         let chunkComplete = false;
 
                         setTimeout(function () {
-                            // Duplicates not ordered by dates, fill arrays via DOM
+                            // Duplicates not ordered by dates
                             if (view === "duplicates") {
                                 let loopElement = $(".thumbnail-tl");
 
@@ -155,14 +158,14 @@
 
                                 let push = false;
                                 loopElement.each(function(index, element) {
-                                    const currentElementId = $(this).attr("id");
-                                    const currentMetadataId = currentElementId.replace("tntl", "");
+                                    const currentTntlId = $(this).attr("id");
+                                    const currentMetadataId = currentTntlId.replace("tntl", "");
 
-                                    if (currentMetadataId === shashin.lastSelectedMetadataId) {
+                                    if (currentMetadataId === metadataId) {
                                         push = true;
                                     }
 
-                                    if (currentMetadataId === metadataId) {
+                                    if (currentMetadataId === shashin.lastSelectedMetadataId) {
                                         metadataIdArray.push(currentMetadataId);
                                         metadataThumbnailArray.push("/api/v1/thumbnails/centered/"+currentMetadataId);
                                         push = false;
@@ -172,8 +175,10 @@
                                         metadataIdArray.push(currentMetadataId);
                                         metadataThumbnailArray.push("/api/v1/thumbnails/centered/"+currentMetadataId);
                                     } else {
-                                        return false;
+                                        return;
                                     }
+
+
                                 });
                             }
 
