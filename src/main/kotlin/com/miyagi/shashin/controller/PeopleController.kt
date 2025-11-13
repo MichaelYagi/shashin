@@ -208,8 +208,9 @@ private val relativeSidecarDir: String? = null
             if (threadFile != null) {
 
                 // Find duplicate images
+                var duplicateCount = 0
                 if (settings.getDuplicateDetection() == true) {
-                    DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository!!)
+                    duplicateCount = DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository!!)
                 }
 
                 // Find faces
@@ -230,7 +231,7 @@ private val relativeSidecarDir: String? = null
 
                 val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
 
-                if (adminSupers != null && recognitionCount > 0) {
+                if (adminSupers != null && (recognitionCount > 0 || duplicateCount > 0)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -246,7 +247,17 @@ private val relativeSidecarDir: String? = null
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage(messageSource?.getMessage("main.notification.people.matchcount", arrayOf(recognitionCount), locale) +"- ${sdtf.format(Date())}.")
+                        var msg = ""
+                        if (recognitionCount > 0) {
+                            msg += messageSource?.getMessage("main.notification.people.matchcount", arrayOf(recognitionCount), locale) + "."
+                        }
+                        if (duplicateCount > 0) {
+                            msg += messageSource?.getMessage("main.notification.duplicate.matchcount", arrayOf("<a href='/duplicates' target='_blank'>$duplicateCount</a>"), locale) +"- ${sdtf.format(Date())}."
+                        }
+                        if (msg.length > 0) {
+                            msg += " - ${sdtf.format(Date())}."
+                        }
+                        notificationObj.setMessage(msg)
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {

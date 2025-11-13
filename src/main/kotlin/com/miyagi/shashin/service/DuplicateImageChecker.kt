@@ -1,8 +1,10 @@
 package com.miyagi.shashin.service
 
 import com.miyagi.shashin.model.Duplicates
+import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.DuplicatesRepository
 import com.miyagi.shashin.util.BKTree
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import dev.brachtendorf.jimagehash.hash.Hash
 import dev.brachtendorf.jimagehash.hashAlgorithms.AverageHash
@@ -13,7 +15,10 @@ import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.math.BigInteger
+import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.util.Base64
+import java.util.TimeZone
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -155,7 +160,7 @@ class DuplicateImageChecker {
             return isDuplicate
         }
 
-        fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, page: Int = 1, size: Int = 1000) {
+        fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, page: Int = 1, size: Int = 2500): Int {
             // Implement as part of dupe module
             // Distance function using Hamming distance
             val tree = BKTree { h1, h2 -> h1.hammingDistance(h2) }
@@ -165,9 +170,10 @@ class DuplicateImageChecker {
                 Level.INFO,
                 "metadataList query size: "+metadataList?.size
             )
-            if (metadataList != null) {
-                val duplicateList = mutableListOf<Duplicates>()
 
+            val duplicateList = mutableListOf<Duplicates>()
+
+            if (metadataList != null) {
                 // Insert hashes
                 for (metadata in metadataList) {
                     if (metadata.getDuplicateHash() != null) {
@@ -222,6 +228,8 @@ class DuplicateImageChecker {
                     duplicatesRepository.saveAll(duplicateList)
                 }
             }
+
+            return duplicateList.size
         }
     }
 }

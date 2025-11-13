@@ -1956,12 +1956,13 @@ class SettingsController(
                     logger.log(Level.INFO, "Scan Complete")
                 }
 
+                var duplicateCount = 0
                 if (settings?.getDuplicateDetection() == true) {
-                    DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository!!)
+                    duplicateCount = DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository!!)
                 }
 
                 val metadataArrayCount = metadataIdArray.count()
-                if (superAdmins != null && metadataArrayCount > 0) {
+                if (superAdmins != null && (metadataArrayCount > 0 || duplicateCount > 0 || recognitionCount > 0)) {
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
 
                     val notificationObjList = mutableListOf<Notification>()
@@ -1973,12 +1974,23 @@ class SettingsController(
 
                         var locale = Locale(language)
                         // Set notification for scanCount and date and link to /recent
-                        var msg =
-                            messageSource?.getMessage("main.notification.setting.scan", arrayOf("<a href='/recent' target='_blank'>$metadataArrayCount</a>"), locale)
-                        if (recognitionCount > 0) {
-                            msg += messageSource?.getMessage("main.notification.setting.scan.add", arrayOf("<a href='/people' target='_blank'>$recognitionCount</a>"), locale)
+                        var msg = ""
+                        if (metadataArrayCount > 0) {
+                            msg += messageSource?.getMessage(
+                                "main.notification.setting.scan",
+                                arrayOf("<a href='/recent' target='_blank'>$metadataArrayCount</a>"),
+                                locale
+                            ) + "."
                         }
-                        msg += " - ${sdtf.format(Date())}."
+                        if (recognitionCount > 0) {
+                            msg += messageSource?.getMessage("main.notification.setting.scan.add", arrayOf("<a href='/people' target='_blank'>$recognitionCount</a>"), locale) + "."
+                        }
+                        if (duplicateCount > 0) {
+                            msg += messageSource?.getMessage("main.notification.duplicate.matchcount", arrayOf("<a href='/duplicates' target='_blank'>$duplicateCount</a>"), locale) +"- ${sdtf.format(Date())}."
+                        }
+                        if (msg.length > 0) {
+                            msg += " - ${sdtf.format(Date())}."
+                        }
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
