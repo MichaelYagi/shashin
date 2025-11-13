@@ -148,7 +148,7 @@
                         let chunkComplete = false;
 
                         setTimeout(function () {
-                            // Duplicates not ordered by dates
+                            // Duplicates not ordered by dates, fill arrays via DOM
                             if (view === "duplicates") {
                                 let loopElement = $(".thumbnail-tl");
 
@@ -157,28 +157,28 @@
                                 }
 
                                 let push = false;
-                                loopElement.each(function(index, element) {
-                                    const currentTntlId = $(this).attr("id");
-                                    const currentMetadataId = currentTntlId.replace("tntl", "");
+                                let completedLoop = false;
+                                loopElement.each(function() {
+                                    const currentElementId = $(this).attr("id");
+                                    const currentMetadataId = currentElementId.replace("tntl", "");
 
-                                    if (currentMetadataId === metadataId) {
+                                    if (currentMetadataId === shashin.lastSelectedMetadataId) {
                                         push = true;
                                     }
 
-                                    if (currentMetadataId === shashin.lastSelectedMetadataId) {
+                                    if (currentMetadataId === metadataId) {
                                         metadataIdArray.push(currentMetadataId);
                                         metadataThumbnailArray.push("/api/v1/thumbnails/centered/"+currentMetadataId);
+                                        completedLoop = true;
                                         push = false;
                                     }
 
                                     if (push) {
                                         metadataIdArray.push(currentMetadataId);
                                         metadataThumbnailArray.push("/api/v1/thumbnails/centered/"+currentMetadataId);
-                                    } else {
-                                        return;
+                                    } else if (completedLoop === true) {
+                                        return false;
                                     }
-
-
                                 });
                             }
 
