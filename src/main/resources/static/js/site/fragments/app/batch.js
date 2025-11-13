@@ -145,6 +145,38 @@
                         let chunkComplete = false;
 
                         setTimeout(function () {
+                            // Duplicates not ordered by dates, fill arrays via DOM
+                            if (view === "duplicates") {
+                                let loopElement = $(".thumbnail-tl");
+
+                                if (shashin.batchSelectDirection === "up") {
+                                    loopElement = $($(".thumbnail-tl").get().reverse());
+                                }
+
+                                let push = false;
+                                loopElement.each(function(index, element) {
+                                    const currentElementId = $(this).attr("id");
+                                    const currentMetadataId = currentElementId.replace("tntl", "");
+
+                                    if (currentMetadataId === shashin.lastSelectedMetadataId) {
+                                        push = true;
+                                    }
+
+                                    if (currentMetadataId === metadataId) {
+                                        metadataIdArray.push(currentMetadataId);
+                                        metadataThumbnailArray.push("/api/v1/thumbnails/centered/"+currentMetadataId);
+                                        push = false;
+                                    }
+
+                                    if (push) {
+                                        metadataIdArray.push(currentMetadataId);
+                                        metadataThumbnailArray.push("/api/v1/thumbnails/centered/"+currentMetadataId);
+                                    } else {
+                                        return false;
+                                    }
+                                });
+                            }
+
                             if (isSelected) {
                                 shashin.addAllToMetadataIdList(metadataIdArray, true);
                                 // shashin.addAllToFilenameList(metadataFilenameArray, true);

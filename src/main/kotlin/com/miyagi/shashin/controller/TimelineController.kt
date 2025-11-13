@@ -141,7 +141,7 @@ class TimelineController(
                 "modified" -> anchorMetadata?.getModifiedAt().orEmpty()
                 "recent" -> anchorMetadata?.getAddedAt().orEmpty()
                 "archived" -> anchorMetadata?.getModifiedAt().orEmpty()
-//                "duplicates" -> anchorMetadata?.getDuplicateHash().orEmpty()
+                "duplicates" -> anchorMetadata?.getDuplicateHash().orEmpty()
                 else -> {
                     // Taken, albums, person, matches or timeline view
                     anchorMetadata?.getTakenAt().orEmpty()
@@ -153,7 +153,7 @@ class TimelineController(
                 "modified" -> selectMetadata?.getModifiedAt().orEmpty()
                 "recent" -> selectMetadata?.getAddedAt().orEmpty()
                 "archived" -> selectMetadata?.getModifiedAt().orEmpty()
-//                "duplicates" -> selectMetadata?.getDuplicateHash().orEmpty()
+                "duplicates" -> selectMetadata?.getDuplicateHash().orEmpty()
                 else -> {
                     // Taken, albums, person, matches or timeline view
                     selectMetadata?.getTakenAt().orEmpty()
@@ -182,24 +182,18 @@ class TimelineController(
                         startDate = anchorMetadataDateString
                         endDate = selectMetadataDateString
                     }
-                }
+                } else {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    var anchorMetadataDateObj = sdf.parse(anchorMetadata?.getTakenAt())
+                    var selectMetadataDateObj = sdf.parse(selectMetadata?.getTakenAt())
+                    startTaken = selectMetadata?.getTakenAt().toString()
+                    endTaken = anchorMetadata?.getTakenAt().toString()
 
-//                else {
-//                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-//                    var anchorMetadataDateObj = sdf.parse(anchorMetadata?.getTakenAt())
-//                    var selectMetadataDateObj = sdf.parse(selectMetadata?.getTakenAt())
-//                    startTaken = selectMetadata?.getTakenAt().toString()
-//                    endTaken = anchorMetadata?.getTakenAt().toString()
-//
-//                    direction = "down"
-//                    if (anchorMetadataDateObj > selectMetadataDateObj && endTaken > startTaken) {
-//                        direction = "up"
-//                        startDate = anchorMetadataDateString
-//                        endDate = selectMetadataDateString
-//                        startTaken = anchorMetadata?.getTakenAt().toString()
-//                        endTaken = selectMetadata?.getTakenAt().toString()
-//                    }
-//                }
+                    direction = "down"
+                    if (anchorMetadataDateObj > selectMetadataDateObj && endTaken > startTaken) {
+                        direction = "up"
+                    }
+                }
 
                 // If timeline view
                 metadatas =
@@ -425,37 +419,39 @@ class TimelineController(
                     }
             }
 
-            if (metadatas != null && metadatas.isNotEmpty()) {
+            if ((metadatas != null && metadatas.isNotEmpty()) || view == "duplicates") {
                 var startCaptured = false
 
-                for (metadata in metadatas) {
-                    if (direction == "down" && metadata.getId() == anchorId) {
-                        startCaptured = true
-                    } else if (direction == "up" && metadata.getId() == selectId) {
-                        startCaptured = true
-                    }
-
-                    if (startCaptured) {
-                        retMetadataIdArray.add(metadata.getId())
-                        retMetadataFilenameArray.add(metadata.getFileName()!!)
-                        retMetadataThumbnailArray.add("/api/v1/thumbnails/centered/"+metadata.getId())
-
-                        if (albumIdCopy > 0 || view == "timeline" || view == "taken") {
-                            retMetadataDatesArray.add(metadata.getTakenAt()!!)
-                        } else if (view == "accessed") {
-                            retMetadataDatesArray.add(metadata.getLastAccessedAt()!!)
-                        } else if (view == "modified") {
-                            retMetadataDatesArray.add(metadata.getModifiedAt()!!)
-                        } else if (view == "recent") {
-                            retMetadataDatesArray.add(metadata.getAddedAt()!!)
-                        } else {
-                            retMetadataDatesArray.add(metadata.getTakenAt()!!)
+                if (metadatas != null) {
+                    for (metadata in metadatas) {
+                        if (direction == "down" && metadata.getId() == anchorId) {
+                            startCaptured = true
+                        } else if (direction == "up" && metadata.getId() == selectId) {
+                            startCaptured = true
                         }
 
-                        if (direction == "down" && metadata.getId() == selectId) {
-                            break
-                        } else if (direction == "up" && metadata.getId() == anchorId) {
-                            break
+                        if (startCaptured) {
+                            retMetadataIdArray.add(metadata.getId())
+                            retMetadataFilenameArray.add(metadata.getFileName()!!)
+                            retMetadataThumbnailArray.add("/api/v1/thumbnails/centered/"+metadata.getId())
+
+                            if (albumIdCopy > 0 || view == "timeline" || view == "taken") {
+                                retMetadataDatesArray.add(metadata.getTakenAt()!!)
+                            } else if (view == "accessed") {
+                                retMetadataDatesArray.add(metadata.getLastAccessedAt()!!)
+                            } else if (view == "modified") {
+                                retMetadataDatesArray.add(metadata.getModifiedAt()!!)
+                            } else if (view == "recent") {
+                                retMetadataDatesArray.add(metadata.getAddedAt()!!)
+                            } else {
+                                retMetadataDatesArray.add(metadata.getTakenAt()!!)
+                            }
+
+                            if (direction == "down" && metadata.getId() == selectId) {
+                                break
+                            } else if (direction == "up" && metadata.getId() == anchorId) {
+                                break
+                            }
                         }
                     }
                 }
