@@ -182,7 +182,7 @@ class TestController(
         val size = 1000
 
         // Find all duplicates - put entries in duplicates table
-        ImageProcessing.findAndStoreDuplicates(duplicatesRepository, 0, size)
+        DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository, 0, size)
 
         // Display and group by duplicate images
         model["metadataList"] = duplicatesRepository.findAllMetadataIds(0, size)
@@ -202,7 +202,7 @@ class TestController(
 
         val pageValue = page*size
         // Find all duplicates
-        ImageProcessing.findAndStoreDuplicates(duplicatesRepository, pageValue, size)
+        DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository, pageValue, size)
 
         // Display and group by duplicate images
         model["metadataList"] = duplicatesRepository.findAllMetadataIds(pageValue, size)

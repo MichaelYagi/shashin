@@ -16,6 +16,7 @@ import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.DuplicateImageChecker
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
@@ -1953,6 +1954,10 @@ class SettingsController(
                     logger.log(Level.INFO, "Scan Stopped")
                 } else {
                     logger.log(Level.INFO, "Scan Complete")
+                }
+
+                if (settings?.getDuplicateDetection() == true) {
+                    DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository!!)
                 }
 
                 val metadataArrayCount = metadataIdArray.count()
