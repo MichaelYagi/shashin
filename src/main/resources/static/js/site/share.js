@@ -1,6 +1,6 @@
 class ShareAlbum {
 
-    constructor(shareLink, activePage, albumId, albumMetadataList, lastDate, locale, clearMultiSelectListener) {
+    constructor(shareLink, activePage, albumId, albumMetadataList, lastDate, locale, lastLgIndex, clearMultiSelectListener) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -12,6 +12,7 @@ class ShareAlbum {
         this.lastDate = lastDate;
         this.locale = locale;
         this.clearMultiSelectListener = clearMultiSelectListener;
+        this.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -33,7 +34,8 @@ class ShareAlbum {
 
     async loadNextPage() {
         if (this.albumId > 0 && this.rendering === false) {
-            this.updateAlbum(this.albumId, this.page, this.activePage).then(function (additionalMediaContentList) {
+            this.lastLgIndex += 1;
+            this.updateAlbum(this.albumId, this.page, this.activePage, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
                     this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, "share");
@@ -48,7 +50,7 @@ class ShareAlbum {
         return this.shareLink;
     }
 
-    async updateAlbum(albumId, nextPage, activePage) {
+    async updateAlbum(albumId, nextPage, activePage, lastLgIndex) {
         const self = this;
         self.rendering = true;
 
@@ -114,6 +116,7 @@ class ShareAlbum {
                             }
 
                             const html = $(GalleryTemplates.PhotoGalleryItem({
+                                lastLgIndex,
                                 activePage,
                                 metadata,
                                 overlayData,
@@ -128,9 +131,12 @@ class ShareAlbum {
                             if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                                 $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                             }
+
+                            lastLgIndex += 1;
                         }
                     }
 
+                    this.lastLgIndex = lastLgIndex;
                     this.rendering = false;
                     $("#spinner").css("display", "none");
                 } else {
