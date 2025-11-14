@@ -1,6 +1,6 @@
 class Favorites {
 
-    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale) {
+    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale, lastLgIndex) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -10,6 +10,7 @@ class Favorites {
         this.lastDate = lastDate;
         this.eol = false;
         this.locale = locale;
+        this.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -39,7 +40,8 @@ class Favorites {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.updateFavorites(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
+            this.lastLgIndex += 1;
+            this.updateFavorites(this.page, this.activePage, this.mediaTypeFilter, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
                     this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
@@ -60,7 +62,7 @@ class Favorites {
         return this.eol;
     }
 
-    async updateFavorites(nextPage,activePage,mediaTypeFilter) {
+    async updateFavorites(nextPage,activePage,mediaTypeFilter,lastLgIndex) {
         this.rendering = true;
 
         let data = null;
@@ -122,6 +124,7 @@ class Favorites {
                                 }
 
                                 const html = $(GalleryTemplates.PhotoGalleryItem({
+                                    lastLgIndex,
                                     activePage,
                                     metadata,
                                     overlayData,
@@ -136,9 +139,12 @@ class Favorites {
                                 if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                                     $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                                 }
+
+                                lastLgIndex += 1;
                             }
                         }
 
+                        this.lastLgIndex = lastLgIndex;
                         this.rendering = false;
                         $("#spinner").css("display", "none");
                     } else {

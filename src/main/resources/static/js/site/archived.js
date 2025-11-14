@@ -1,5 +1,5 @@
 class Archived {
-    constructor(activePage, metadataList, lastDate, locale) {
+    constructor(activePage, metadataList, lastDate, lastLgIndex, locale) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -8,6 +8,7 @@ class Archived {
         this.lastDate = lastDate;
         this.eol = false;
         this.locale = locale;
+        this.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -37,7 +38,8 @@ class Archived {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.updateArchive(this.page, this.activePage).then(function (additionalMediaContentList) {
+            this.lastLgIndex += 1;
+            this.updateArchive(this.page, this.activePage, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
                     this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, "archived");
@@ -58,7 +60,7 @@ class Archived {
         return this.eol;
     }
 
-    async updateArchive(nextPage, activePage) {
+    async updateArchive(nextPage, activePage, lastLgIndex) {
         this.rendering = true;
 
         let data = null;
@@ -125,6 +127,7 @@ class Archived {
                                 }
 
                                 const html = $(GalleryTemplates.PhotoGalleryItem({
+                                    lastLgIndex,
                                     activePage,
                                     metadata,
                                     overlayData,
@@ -139,9 +142,12 @@ class Archived {
                                 if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                                     $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                                 }
+
+                                lastLgIndex += 1;
                             }
                         }
 
+                        this.lastLgIndex = lastLgIndex;
                         this.rendering = false;
                         $("#spinner").css("display", "none");
                     } else {

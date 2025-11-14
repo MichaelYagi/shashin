@@ -28,7 +28,7 @@
                                 <section class="dateSection" th:id="${#dates.format(#dates.create(#strings.arraySplit(metadata.modifiedAt, '-')[0],#strings.arraySplit(metadata.modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.modifiedAt, '-')[2],' ')[0]),'yyyy-MM-dd')}"><p><span class="text-muted"><th:block th:text="#{main.pages.browse.header.archived}"></th:block> </span><strong th:text="${#strings.replace(#dates.format(#dates.create(#strings.arraySplit(metadata.modifiedAt, '-')[0],#strings.arraySplit(metadata.modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.modifiedAt, '-')[2],' ')[0]), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${#dates.format(#dates.create(#strings.arraySplit(metadata.modifiedAt, '-')[0],#strings.arraySplit(metadata.modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.modifiedAt, '-')[2],' ')[0]),'yyyy-M-d')}" class="row" style="margin-left: -2px;">
                             </th:block>
 
-                            <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
+                            <div th:id="${'photoThumbnailContainer'+metadata.id}" th:data-lg-index="${iterStat.index}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
                                 <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},'shashin.openGallery',${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
@@ -93,6 +93,7 @@
         const activePage = /*[[${activePage}]]*/ 'trash';
         const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
+        const lastLgIndex = $(".photo-thumbnail-container").length-1;
 
         const section = $("section");
         let lastDate = "";
@@ -106,7 +107,7 @@
         http.ajax("get", "/archived/metadata/list/0").then(function (data) {
             if (data.hasOwnProperty("metadataList") === true) {
                 const metadataList = data["metadataList"];
-                const trashInstance = new Archived(activePage, metadataList, lastDate, locale);
+                const trashInstance = new Archived(activePage, metadataList, lastDate, lastLgIndex, locale);
                 trashInstance.init();
                 // Util.checkErrorImage();
             }

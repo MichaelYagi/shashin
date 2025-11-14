@@ -1,6 +1,6 @@
 class Taken {
 
-    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale) {
+    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale, lastLgIndex) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -10,6 +10,7 @@ class Taken {
         this.lastDate = lastDate;
         this.eol = false;
         this.locale = locale;
+        this.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -39,7 +40,8 @@ class Taken {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.updateTaken(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
+            this.lastLgIndex += 1;
+            this.updateTaken(this.page, this.activePage, this.mediaTypeFilter, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
                     this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
@@ -60,7 +62,7 @@ class Taken {
         return this.eol;
     }
 
-    async updateTaken(nextPage,activePage,mediaTypeFilter) {
+    async updateTaken(nextPage,activePage,mediaTypeFilter,lastLgIndex) {
         this.rendering = true;
 
         let data = null;
@@ -153,6 +155,7 @@ class Taken {
                     }
 
                     const html = $(GalleryTemplates.PhotoGalleryItem({
+                        lastLgIndex,
                         activePage,
                         metadata,
                         overlayData,
@@ -170,8 +173,11 @@ class Taken {
                     }
 
                     shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
+
+                    lastLgIndex += 1;
                 }
 
+                this.lastLgIndex = lastLgIndex;
                 $('a').attr('draggable', 'false');
                 $('img').attr('draggable', 'false');
                 this.rendering = false;

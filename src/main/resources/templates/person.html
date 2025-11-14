@@ -31,7 +31,7 @@
 
                     <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
-                            <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
+                            <div th:id="${'photoThumbnailContainer'+metadata.id}" th:data-lg-index="${iterStat.index}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
                                 <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},'shashin.openGallery',${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
@@ -132,13 +132,14 @@
         const activePage = /*[[${activePage}]]*/ 'person';
         const canEdit = /*[[${canEdit == "true" || canEdit == true}]]*/ false;
         /*]]>*/
+        const lastLgIndex = $(".photo-thumbnail-container").length-1;
 
         shashin.updateSearchInput(personName);
 
         const http = new Http("check notifications");
 
         http.ajax("get", "/person/metadata/"+personId+"/0").then(function (metadataList) {
-            const personInstance = new Person(metadataList, activePage, personId, canEdit);
+            const personInstance = new Person(metadataList, activePage, personId, canEdit, lastLgIndex);
             personInstance.init();
             // Util.checkErrorImage();
         });

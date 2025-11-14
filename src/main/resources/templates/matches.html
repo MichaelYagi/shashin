@@ -26,7 +26,7 @@
             <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">
                 <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                     <th:block th:each="metadata, iterStat: ${lowMatchResults}">
-                        <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
+                        <div th:id="${'photoThumbnailContainer'+metadata.id}" th:data-lg-index="${iterStat.index}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
                             <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
                             <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},null,${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>

@@ -1,6 +1,6 @@
 class Accessed {
 
-    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale) {
+    constructor(metadataList, mediaTypeFilter, activePage, lastDate, lastLgIndex, locale) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -10,6 +10,7 @@ class Accessed {
         this.eol = false;
         this.lastDate = lastDate;
         this.locale = locale;
+        this.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -39,7 +40,8 @@ class Accessed {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.updateAccessed(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
+            this.lastLgIndex += 1;
+            this.updateAccessed(this.page, this.activePage, this.lastLgIndex, this.mediaTypeFilter).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
                     this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
@@ -60,10 +62,10 @@ class Accessed {
         return this.eol;
     }
 
-    async updateAccessed(nextPage,activePage,mediaTypeFilter) {
+    async updateAccessed(nextPage,activePage,lastLgIndex,mediaTypeFilter) {
         this.rendering = true;
 
-        let data = null
+        let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
@@ -130,6 +132,7 @@ class Accessed {
                         }
 
                         const html = $(GalleryTemplates.PhotoGalleryItem({
+                            lastLgIndex,
                             activePage,
                             metadata,
                             overlayData,
@@ -147,9 +150,12 @@ class Accessed {
                         }
 
                         shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
+
+                        lastLgIndex += 1;
                     }
                 }
 
+                this.lastLgIndex = lastLgIndex;
                 $('a').attr('draggable', 'false');
                 $('img').attr('draggable', 'false');
                 this.rendering = false;

@@ -197,7 +197,7 @@
                     </script>
                     <div class="col-12">
                         <th:block th:each="faceObj, iterStat: ${resultList}">
-                            <div th:id="${'photoThumbnailContainer'+faceObj.image_id}" class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
+                            <div th:id="${'photoThumbnailContainer'+faceObj.image_id}" th:data-lg-index="${iterStat.index}" class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
                                 <img loading="lazy" draggable="false" th:src="'data:image/png;base64,'+${faceObj.image_base64}" style="height:225px;" class="photo-thumbnail-image" th:id="'image'+${faceObj.image_id}">

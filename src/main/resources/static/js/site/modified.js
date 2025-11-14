@@ -1,6 +1,6 @@
 class Modified {
 
-    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale) {
+    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale, lastLgIndex) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -10,6 +10,7 @@ class Modified {
         this.eol = false;
         this.lastDate = lastDate;
         this.locale = locale;
+        this.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -39,7 +40,8 @@ class Modified {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.updateModified(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
+            this.lastLgIndex += 1;
+            this.updateModified(this.page, this.activePage, this.mediaTypeFilter, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
                     this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
@@ -60,7 +62,7 @@ class Modified {
         return this.eol;
     }
 
-    async updateModified(nextPage,activePage,mediaTypeFilter) {
+    async updateModified(nextPage,activePage,mediaTypeFilter,lastLgIndex) {
         this.rendering = true;
 
         let data = null;
@@ -130,6 +132,7 @@ class Modified {
                         }
 
                         const html = $(GalleryTemplates.PhotoGalleryItem({
+                            lastLgIndex,
                             activePage,
                             metadata,
                             overlayData,
@@ -147,9 +150,12 @@ class Modified {
                         }
 
                         shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
+
+                        lastLgIndex += 1;
                     }
                 }
 
+                this.lastLgIndex = lastLgIndex;
                 $('a').attr('draggable', 'false');
                 $('img').attr('draggable', 'false');
                 this.rendering = false;
