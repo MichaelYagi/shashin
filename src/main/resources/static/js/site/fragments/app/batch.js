@@ -101,28 +101,11 @@
                 const http = new Http("get ranged metadata");
                 let version = Util.getMetadataLocalStorage();
 
-                let url = `/metadata/range/${shashin.lastSelectedMetadataId}/${metadataId}/${view}/${shashin.mediaTypeFilter}`;
-
                 if (version === null || version === undefined) {
                     version = uuidv4();
                 }
 
-                // Multi-select between metadata in a range
-                if (view === "album" || view === "share") {
-                    const albumId = $("#albumId").val();
-                    url += `?albumId=${albumId}&v=${version}`;
-                } else if (view === "person" || view === "matches" || view === "favorites") {
-                    const personId = $("#personId").val();
-                    url += `?personId=${personId}&v=${version}`;
-                } else if (view === "folder") {
-                    const folderName = $("#folderName").val();
-                    url += `?folderName=${folderName}&v=${version}`;
-                } else if (view === "search") {
-                    const searchTerm = $("#searchTerm").val();
-                    url += `?searchTerm=${searchTerm}&v=${version}`;
-                } else {
-                    url += `?v=${version}`;
-                }
+                let url = `/metadata/range/${shashin.lastSelectedMetadataId}/${metadataId}/${view}/${shashin.mediaTypeFilter}?v=${version}`;
 
                 http.ajax("get", url, null, function () {
                     // Fail
@@ -149,7 +132,7 @@
 
                         setTimeout(function () {
                             // Duplicates not ordered by dates, fill arrays via DOM
-                            if (view === "duplicates") {
+                            if (view !== "timeline") {
                                 let loopElement = $(".thumbnail-tl");
 
                                 if (shashin.batchSelectDirection === "up") {
