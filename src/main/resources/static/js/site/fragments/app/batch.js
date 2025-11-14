@@ -156,9 +156,12 @@
                                     loopElement = $($(".thumbnail-tl").get().reverse());
                                 }
 
+                                // Filter to start from shashin.lastSelectedMetadataId
+                                const startIndex = loopElement.index($("#tntl"+shashin.lastSelectedMetadataId));
+
                                 let push = false;
                                 let completedLoop = false;
-                                loopElement.each(function() {
+                                loopElement.slice(startIndex).each(function() {
                                     const currentElementId = $(this).attr("id");
                                     const currentMetadataId = currentElementId.replace("tntl", "");
 
