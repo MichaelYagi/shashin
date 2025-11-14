@@ -132,19 +132,24 @@
 
                         setTimeout(function () {
                             // Duplicates not ordered by dates, fill arrays via DOM
-                            if (view !== "timeline") {
+                            if (view !== "timeline" &&
+                                $("#photoThumbnailContainer"+shashin.lastSelectedMetadataId).attr("data-lg-index") !== undefined
+                            ) {
                                 let loopElement = $(".thumbnail-tl");
 
                                 if (shashin.batchSelectDirection === "up") {
                                     loopElement = $($(".thumbnail-tl").get().reverse());
                                 }
 
+                                const startIndex = parseInt($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).attr("data-lg-index"));
+
                                 // Filter to start from shashin.lastSelectedMetadataId
-                                const startIndex = loopElement.index($("#tntl"+shashin.lastSelectedMetadataId));
+                                loopElement = loopElement.slice(startIndex);
 
                                 let push = false;
                                 let completedLoop = false;
-                                loopElement.slice(startIndex).each(function() {
+
+                                loopElement.each(function () {
                                     const currentElementId = $(this).attr("id");
                                     const currentMetadataId = currentElementId.replace("tntl", "");
 
@@ -154,14 +159,14 @@
 
                                     if (currentMetadataId === metadataId) {
                                         metadataIdArray.push(currentMetadataId);
-                                        metadataThumbnailArray.push("/api/v1/thumbnails/centered/"+currentMetadataId);
+                                        metadataThumbnailArray.push("/api/v1/thumbnails/centered/" + currentMetadataId);
                                         completedLoop = true;
                                         push = false;
                                     }
 
                                     if (push) {
                                         metadataIdArray.push(currentMetadataId);
-                                        metadataThumbnailArray.push("/api/v1/thumbnails/centered/"+currentMetadataId);
+                                        metadataThumbnailArray.push("/api/v1/thumbnails/centered/" + currentMetadataId);
                                     } else if (completedLoop === true) {
                                         return false;
                                     }
