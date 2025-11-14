@@ -70,4 +70,4 @@ Tech Stack
 * [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin
 * [Chart.js](https://www.chartjs.org/) - Javascript charting library
 * [Dexie.js](https://dexie.org/) - Wrapper for Javascript native IndexedDB
-* [JImageHash](https://github.com/KilianB/JImageHash) Library for perceptual hashing for duplication detection
+* [JImageHash](https://github.com/KilianB/JImageHash) - Library for perceptual hashing for duplication detection
