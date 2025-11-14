@@ -1,6 +1,6 @@
 class Folder {
 
-    constructor(metadataList, activePage, folderName) {
+    constructor(metadataList, activePage, folderName, lastLgIndex) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -8,6 +8,7 @@ class Folder {
         this.activePage = activePage;
         this.folderName = folderName;
         this.eol = false;
+        this.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -37,7 +38,8 @@ class Folder {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.updateRecent(this.page, this.folderName, this.activePage).then(function (additionalMediaContentList) {
+            this.lastLgIndex += 1;
+            this.updateRecent(this.page, this.folderName, this.activePage, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
                     this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
@@ -58,7 +60,7 @@ class Folder {
         return this.eol;
     }
 
-    async updateRecent(nextPage,folderName,activePage) {
+    async updateRecent(nextPage,folderName,activePage,lastLgIndex) {
         this.rendering = true;
 
         let data = null;
@@ -108,6 +110,7 @@ class Folder {
 
                         const uuid = uuidv4();
                         $(GalleryTemplates.PhotoGalleryItem({
+                            lastLgIndex,
                             activePage,
                             metadata,
                             overlayData,
@@ -115,9 +118,12 @@ class Folder {
                             isMobile: Util.isMobile()
                         })).insertBefore($("." + appendClass).last());
                         shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
+
+                        lastLgIndex += 1;
                     }
                 }
 
+                this.lastLgIndex = lastLgIndex;
                 this.rendering = false;
                 $("#spinner").css("display", "none");
             } else {

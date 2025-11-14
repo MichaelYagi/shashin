@@ -153,7 +153,7 @@
                 </th:block>
 
                 <th:block th:each="metadata, iterStat: ${metadataList}">
-                    <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
+                    <div th:id="${'photoThumbnailContainer'+metadata.id}" th:data-lg-index="${iterStat.index}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
                         <a class="lightGalleryIndexAnchor" th:id="${'lightGalleryIndex'+metadata.id}"></a>
                         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                             <input type="hidden" name="thumbnailUrl-undated[]" th:id="'thumbnailUrl_'+${metadata.id}" th:value="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}">

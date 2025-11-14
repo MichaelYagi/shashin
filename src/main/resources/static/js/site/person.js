@@ -1,5 +1,5 @@
 class Person {
-    constructor(metadataList, activePage, personId, canEdit) {
+    constructor(metadataList, activePage, personId, canEdit, lastLgIndex) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -8,6 +8,7 @@ class Person {
         this.personId = personId;
         this.canEdit = canEdit;
         this.eol = false;
+        this.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -91,7 +92,8 @@ class Person {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.updatePerson(this.personId, this.page, this.activePage).then(function (additionalMediaContentList) {
+            this.lastLgIndex += 1;
+            this.updatePerson(this.personId, this.page, this.activePage, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
                     this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList, this.activePage);
@@ -112,7 +114,7 @@ class Person {
         return this.eol;
     }
 
-    async updatePerson(personId,nextPage,activePage) {
+    async updatePerson(personId,nextPage,activePage,lastLgIndex) {
         this.rendering = true;
 
         let data = null;
@@ -181,6 +183,7 @@ class Person {
 
                                 const uuid = uuidv4();
                                 $(GalleryTemplates.PhotoGalleryItem({
+                                    lastLgIndex,
                                     activePage,
                                     metadata,
                                     overlayData,
@@ -191,9 +194,12 @@ class Person {
                                     // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id].labels);
                                     shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
                                 });
+
+                                lastLgIndex += 1;
                             }
                         }
 
+                        this.lastLgIndex = lastLgIndex;
                         $("#spinner").css("display","none");
                         this.rendering = false;
                     } else {

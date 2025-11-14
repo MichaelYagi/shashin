@@ -1,6 +1,6 @@
 class GalleryTemplates {
-    static PhotoGalleryItem({activePage, metadata, overlayData, uuid, isMobile}) { return `
-        <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${isMobile?120:metadata.thumbnailSmallWidth}px;height:${isMobile?120:metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
+    static PhotoGalleryItem({lastLgIndex, activePage, metadata, overlayData, uuid, isMobile}) { return `
+        <div id="photoThumbnailContainer${metadata.id}" data-lg-index="${lastLgIndex}" class="photo-thumbnail-container photo-thumbnail" style="width:${isMobile?120:metadata.thumbnailSmallWidth}px;height:${isMobile?120:metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <span class="lightGalleryIndexAnchor"></span>
             
             ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderCenter") && overlayData.data.overlayFlags.renderCenter === true) ? GalleryTemplates.getCenteredOverlay({

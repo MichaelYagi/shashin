@@ -7,15 +7,17 @@
     albumSettings.thumbnailType = "225";
     albumSettings.thumbnailHeight = "225";
     albumSettings.locale = "en";
+    albumSettings.lastLgIndex = 0;
     if (Util.isMobile()) {
         albumSettings.thumbnailType = "centered";
         albumSettings.thumbnailHeight = "120";
     }
 
-    albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate, locale) {
+    albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate, lastLgIndex, locale) {
         albumSettings.http = new Http(activePage);
         albumSettings.lastDate = lastDate;
         albumSettings.locale = locale;
+        albumSettings.lastLgIndex = lastLgIndex;
 
         const mediaElement = '.mediaLink';
 
@@ -40,7 +42,8 @@
 
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
-                albumSettings.getPagedAlbum(albumId, mediaTypeFilter, albumSettings.page, activePage).then(function (additionalMediaContentList) {
+                albumSettings.lastLgIndex += 1;
+                albumSettings.getPagedAlbum(albumId, mediaTypeFilter, albumSettings.page, albumSettings.lastLgIndex, activePage).then(function (additionalMediaContentList) {
                     if (additionalMediaContentList.length > 0) {
                         albumSettings.page++;
                         mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList, "album");
@@ -99,7 +102,7 @@
         });
     };
 
-    albumSettings.getPagedAlbum = async function(albumId,mediaTypeFilter, nextPage,activePage) {
+    albumSettings.getPagedAlbum = async function(albumId,mediaTypeFilter, nextPage,lastLgIndex,activePage) {
         albumSettings.rendering = true;
 
         let data = null;
@@ -206,6 +209,7 @@
                                 }
 
                                 const html = $(GalleryTemplates.PhotoGalleryItem({
+                                    lastLgIndex,
                                     activePage,
                                     metadata,
                                     overlayData,
@@ -224,11 +228,14 @@
                                 if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                                     $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                                 }
+
+                                lastLgIndex += 1;
                             }
 
                             shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
                         }
 
+                        albumSettings.lastLgIndex = lastLgIndex;
                         $('a').attr('draggable', 'false');
                         $('img').attr('draggable', 'false');
                         $("#spinner").css("display","none");
