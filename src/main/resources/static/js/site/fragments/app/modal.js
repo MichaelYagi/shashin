@@ -76,10 +76,14 @@
                 $("#keywordsString").val(keywordsAvailable);
                 $("#camerasString").val(camerasList);
                 $("#lensesString").val(lensList);
-                $("#videoduration").css("display","none");
+                $("#videoduration").css("display", "none");
 
                 if (metadata.thumbnailUrlCentered !== null) {
-                    $("#propMetadataModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata, version: Util.getMetadataLocalStorage(), showMap: false}));
+                    $("#propMetadataModalThumbnail").html(TimelineTemplates.HeaderThumbnail({
+                        metadata: metadata,
+                        version: Util.getMetadataLocalStorage(),
+                        showMap: false
+                    }));
                 }
 
                 // put place name beside lat lng
@@ -98,7 +102,7 @@
 
                 if (metadata.description !== null) {
                     $("#description").val(metadata.description);
-                    $("#descriptionCharacterCount").text(500-metadata.description.length);
+                    $("#descriptionCharacterCount").text(500 - metadata.description.length);
                 }
 
                 if (metadata.camera !== null) {
@@ -117,10 +121,10 @@
                     $("#timeTaken").val(metadata.time);
                 }
 
-                if (metadata.duplicateHash !== null) {
-                    $("#ignoreduplicates")[0].checked = false;
-                } else {
-                    $("#ignoreduplicates")[0].checked = true;
+                if ($("#ignoreduplicates").length > 0) {
+                    if (metadata.duplicateHash !== null) {
+                        $("#ignoreduplicates")[0].checked = metadata.duplicateHash;
+                    }
                 }
 
                 if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null) {
