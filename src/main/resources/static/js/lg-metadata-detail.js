@@ -41,7 +41,6 @@
                         funObject.fn(funObject.args);
                         if ($('#propMetadata').length > 0) {
                             shashin.openedInfoFromLG = true;
-                            $('#propMetadata').modal({keyboard: false});
                         }
                     } else if (shashin) {
                         shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgmetadata.title"), shashin.getTranslatedValue("main.toast.lgmetadata.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
