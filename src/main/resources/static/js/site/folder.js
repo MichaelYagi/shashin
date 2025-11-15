@@ -38,7 +38,6 @@ class Folder {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.lastLgIndex += 1;
             this.updateRecent(this.page, this.folderName, this.activePage, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;

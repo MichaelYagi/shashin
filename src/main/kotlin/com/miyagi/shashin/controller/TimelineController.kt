@@ -131,88 +131,49 @@ class TimelineController(
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
-            val anchorMetadataDateString: String? = when (view) {
-                "accessed" -> anchorMetadata?.getLastAccessedAt().orEmpty()
-                "modified" -> anchorMetadata?.getModifiedAt().orEmpty()
-                "recent" -> anchorMetadata?.getAddedAt().orEmpty()
-                "archived" -> anchorMetadata?.getModifiedAt().orEmpty()
-                "duplicates" -> anchorMetadata?.getDuplicateHash().orEmpty()
-                else -> {
-                    // Taken, albums, person, matches or timeline view
-                    anchorMetadata?.getTakenAt().orEmpty()
-                }
-            }
-
-            val selectMetadataDateString: String? = when (view) {
-                "accessed" -> selectMetadata?.getLastAccessedAt().orEmpty()
-                "modified" -> selectMetadata?.getModifiedAt().orEmpty()
-                "recent" -> selectMetadata?.getAddedAt().orEmpty()
-                "archived" -> selectMetadata?.getModifiedAt().orEmpty()
-                "duplicates" -> selectMetadata?.getDuplicateHash().orEmpty()
-                else -> {
-                    // Taken, albums, person, matches or timeline view
-                    selectMetadata?.getTakenAt().orEmpty()
-                }
-            }
+            val anchorMetadataDateString: String? = anchorMetadata?.getTakenAt().orEmpty()
+            val selectMetadataDateString: String? = selectMetadata?.getTakenAt().orEmpty()
 
             var metadatas: MutableList<Metadata>? = null
-            var direction = ""
+            var direction = "down"
 
-            if (anchorMetadataDateString != null && anchorMetadataDateString != "" && selectMetadataDateString != null && selectMetadataDateString != ""
-                && ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || view == "share")
+            if (anchorMetadataDateString != null &&
+                anchorMetadataDateString != "" &&
+                selectMetadataDateString != null &&
+                selectMetadataDateString != ""
+                && currentUserObj != null && currentUserObj.getIsAuthorized() == true
             ) {
                 metadatas = mutableListOf<Metadata>()
                 var startDate = selectMetadataDateString
                 var endDate = anchorMetadataDateString
-                var startTaken = ""
-                var endTaken = ""
 
-                if (view == "duplicates") {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    var anchorMetadataDateObj = sdf.parse(anchorMetadata?.getTakenAt())
-                    var selectMetadataDateObj = sdf.parse(selectMetadata?.getTakenAt())
-                    startTaken = selectMetadata?.getTakenAt().toString()
-                    endTaken = anchorMetadata?.getTakenAt().toString()
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                val anchorMetadataDateObj = sdf.parse(anchorMetadataDateString)
+                val selectMetadataDateObj = sdf.parse(selectMetadataDateString)
 
-                    direction = "down"
-                    if (anchorMetadataDateObj > selectMetadataDateObj && endTaken > startTaken) {
-                        direction = "up"
-                    }
+                if (anchorMetadataDateObj < selectMetadataDateObj) {
+                    direction = "up"
+                    startDate = anchorMetadataDateString
+                    endDate = selectMetadataDateString
+                }
+
+                metadatas = if (mediaType == "all") {
+                    metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                } else if (mediaType == "nolatlng") {
+                    metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
+                } else if (mediaType == "description") {
+                    metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
                 } else {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    val anchorMetadataDateObj = sdf.parse(anchorMetadataDateString)
-                    val selectMetadataDateObj = sdf.parse(selectMetadataDateString)
-
-                    direction = "down"
-                    if (anchorMetadataDateObj < selectMetadataDateObj) {
-                        direction = "up"
-                        startDate = anchorMetadataDateString
-                        endDate = selectMetadataDateString
-                    }
+                    metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(
+                        startDate,
+                        endDate,
+                        mediaType.toString()
+                    )
                 }
 
-                // If timeline view
-                if (view == "timeline") {
-                    metadatas = if (mediaType == "all") {
-                        metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
-                    } else if (mediaType == "nolatlng") {
-                        metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
-                    } else if (mediaType == "description") {
-                        metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
-                    } else {
-                        metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(
-                            startDate,
-                            endDate,
-                            mediaType.toString()
-                        )
-                    }
-                }
-            }
-
-            if (metadatas != null) {
                 var startCaptured = false
 
-                if (view == "timeline") {
+                if (metadatas != null) {
                     for (metadata in metadatas) {
                         if (direction == "down" && metadata.getId() == anchorId) {
                             startCaptured = true
@@ -223,7 +184,7 @@ class TimelineController(
                         if (startCaptured) {
                             retMetadataIdArray.add(metadata.getId())
                             retMetadataFilenameArray.add(metadata.getFileName()!!)
-                            retMetadataThumbnailArray.add("/api/v1/thumbnails/centered/"+metadata.getId())
+                            retMetadataThumbnailArray.add("/api/v1/thumbnails/centered/" + metadata.getId())
 
                             retMetadataDatesArray.add(metadata.getTakenAt()!!)
 
@@ -238,7 +199,6 @@ class TimelineController(
 
                 response["msg"] = messageSource?.getMessage("main.success", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
-                response["direction"] = direction
                 response["metadataIdArray"] = retMetadataIdArray
                 response["metadataFilenameArray"] = retMetadataFilenameArray
                 response["metadataThumbnailArray"] = retMetadataThumbnailArray
@@ -250,7 +210,6 @@ class TimelineController(
                 response["msg"] = messageSource?.getMessage("main.fail", null, locale)
                 response["msg"] = messageSource?.getMessage("main.fail", null, locale)
                 response["status"] = ApiResponse.FAIL.status
-                response["direction"] = direction
                 response["metadataIdArray"] = retMetadataIdArray
                 response["metadataFilenameArray"] = retMetadataFilenameArray
                 response["metadataThumbnailArray"] = retMetadataThumbnailArray

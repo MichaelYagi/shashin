@@ -40,7 +40,6 @@ class Accessed {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.lastLgIndex += 1;
             this.updateAccessed(this.page, this.activePage, this.lastLgIndex, this.mediaTypeFilter).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;

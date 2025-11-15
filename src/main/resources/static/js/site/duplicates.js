@@ -34,7 +34,6 @@ class Duplicates {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.lastLgIndex += 1;
             this.updateDuplicates(this.page, this.activePage, this.mediaTypeFilter, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;
