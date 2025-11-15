@@ -662,6 +662,11 @@ document.querySelectorAll('.nav-link').forEach(linkItem => {
     });
 });
 
+// Prevent key events from propagating to the background
+$('#propMetadata').on('keydown', function (e) {
+    e.stopPropagation(); // prevent bubbling to background
+});
+
 $('body').off("click").on("click", function(event) {
     const metadataId = $("#metadataId").val();
 
