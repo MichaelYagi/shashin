@@ -12,6 +12,8 @@
             tag:"metadatamodal"
         });
 
+        $("#ignoreduplicatesContainer").css("display", "none");
+
         shashin.getCompleteMetadata(metadataId).then(async function (data) {
             if (data.hasOwnProperty("metadata") &&
                 data.hasOwnProperty("taggedPeopleList") &&
@@ -21,6 +23,10 @@
                 data.hasOwnProperty("albumMap")
             ) {
                 const metadata = data.metadata;
+
+                if (metadata.type.indexOf("image") >= 0) {
+                    $("#ignoreduplicatesContainer").css("display", "block");
+                }
 
                 const taggedPeopleArray = data.taggedPeopleList;
 
