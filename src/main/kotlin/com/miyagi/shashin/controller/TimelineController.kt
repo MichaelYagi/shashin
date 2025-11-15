@@ -2250,6 +2250,7 @@ class TimelineController(
 
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
+        val enableDuplicateScan = batchMetadataMap.batchduplicatescan == "on"
         val removeDuplicateHash = batchMetadataMap.batchignoreduplicates == "on"
 
         if (TextUtils.metadataInputValidation(
@@ -2312,16 +2313,20 @@ class TimelineController(
                 if (metadataObj.isPresent) {
                     val metadata = metadataObj.get()
 
-                    if (removeDuplicateHash && metadata.getDuplicateHash() != null) {
-                        metadata.setDuplicateHash(null)
-                    } else {
-                        // Generate a hash for comparing potential duplicates
-                        if (metadata.getDuplicateHash() == null && !metadata.getType().isNullOrBlank() && metadata.getType()?.contains("image")!!) {
-                            val dupeImageChecker = DuplicateImageChecker()
-                            dupeImageChecker.setAlgorithm("dhash")
-                            var hash = dupeImageChecker.computeHashValue(File(metadata.getPath()!!))
-                            if (hash != null) {
-                                metadata.setDuplicateHash(hash)
+                    if (enableDuplicateScan) {
+                        if (removeDuplicateHash && metadata.getDuplicateHash() != null) {
+                            metadata.setDuplicateHash(null)
+                        } else {
+                            // Generate a hash for comparing potential duplicates
+                            if (metadata.getDuplicateHash() == null && !metadata.getType()
+                                    .isNullOrBlank() && metadata.getType()?.contains("image")!!
+                            ) {
+                                val dupeImageChecker = DuplicateImageChecker()
+                                dupeImageChecker.setAlgorithm("dhash")
+                                var hash = dupeImageChecker.computeHashValue(File(metadata.getPath()!!))
+                                if (hash != null) {
+                                    metadata.setDuplicateHash(hash)
+                                }
                             }
                         }
                     }

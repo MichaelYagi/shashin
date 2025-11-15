@@ -15,6 +15,7 @@ class BatchMetadataInput {
     var albumNameInput: String? = null
     var batchisobject: String? = null
     var batchhidden: String? = null
+    var batchduplicatescan: String? = null
     var batchignoreduplicates: String? = null
     var addtoexistingalbums: String? = null
     var addtoexistingpeople: String? = null
