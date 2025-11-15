@@ -34,7 +34,6 @@ class ShareAlbum {
 
     async loadNextPage() {
         if (this.albumId > 0 && this.rendering === false) {
-            this.lastLgIndex += 1;
             this.updateAlbum(this.albumId, this.page, this.activePage, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;

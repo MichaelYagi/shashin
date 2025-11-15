@@ -92,7 +92,6 @@ class Person {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            this.lastLgIndex += 1;
             this.updatePerson(this.personId, this.page, this.activePage, this.lastLgIndex).then(function (additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     this.page++;

@@ -42,7 +42,6 @@
 
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
-                albumSettings.lastLgIndex += 1;
                 albumSettings.getPagedAlbum(albumId, mediaTypeFilter, albumSettings.page, albumSettings.lastLgIndex, activePage).then(function (additionalMediaContentList) {
                     if (additionalMediaContentList.length > 0) {
                         albumSettings.page++;
