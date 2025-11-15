@@ -168,6 +168,9 @@ async function saveBatchMetadata(e) {
         if ($("#batchisobject").is(':checked')) {
             $("#batchisobject").val("on");
         }
+        if ($("#batchduplicatescan").is(':checked')) {
+            $("#batchduplicatescan").val("on");
+        }
         if ($("#batchignoreduplicates").is(':checked')) {
             $("#batchignoreduplicates").val("on");
         }
@@ -399,6 +402,14 @@ $("#batchisobject").off("click").on("click", function (e) {
     metadataBatchModal.closeBatchTagPeopleDropdown();
     if($(this).prop("checked") === true) {
         $("#tagBatchDataInput").val("");
+    }
+});
+
+$("#batchduplicatescan").off("click").on("click", function (e) {
+    if($(this).prop("checked") === true) {
+        $("#batchignoreduplicates").prop("disabled", false);
+    } else {
+        $("#batchignoreduplicates").prop("disabled", true);
     }
 });
 

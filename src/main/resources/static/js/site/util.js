@@ -1805,6 +1805,7 @@ class Util {
         jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? batchObj.albumNameInput : null;
         jsonData.batchisobject = batchObj.hasOwnProperty("batchisobject") ? batchObj.batchisobject : null;
         jsonData.batchhidden = batchObj.hasOwnProperty("batchhidden") ? batchObj.batchhidden : null;
+        jsonData.batchduplicatescan = batchObj.hasOwnProperty("batchduplicatescan") ? batchObj.batchduplicatescan : null;
         jsonData.batchignoreduplicates = batchObj.hasOwnProperty("batchignoreduplicates") ? batchObj.batchignoreduplicates : null;
         jsonData.addtoexistingalbums = batchObj.hasOwnProperty("addtoexistingalbums") ? batchObj.addtoexistingalbums : null;
         jsonData.addtoexistingpeople = batchObj.hasOwnProperty("addtoexistingpeople") ? batchObj.addtoexistingpeople : null;
