@@ -71,7 +71,11 @@
                     if (shouldSelect) {
                         shashin.selectClick(id, view, opaque, transparent, metadataArray, false);
 
-                        if (!isSelected && (shashin.lastSelectedMetadataId.trim().length === 0 || (id !== metadataId && shashin.lastSelectedMetadataId !== id))) {
+                        if (!isSelected && (
+                            shashin.lastSelectedMetadataId.trim().length === 0 ||
+                            (id !== metadataId && id !== shashin.lastSelectedMetadataId) ||
+                            (id === metadataId && id !== shashin.lastSelectedMetadataId))
+                        ) {
                             $("#tntl" + id).css("display", "none");
                             $image.attr("src", imageUrl).css("opacity", transparent);
                         } else {
