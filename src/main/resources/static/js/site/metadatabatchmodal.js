@@ -450,6 +450,13 @@ $("#collapseBatchMetadata").on("shown.bs.collapse", function (e) {
     }, 1000);
 });
 
+// Scroll to top when clicking nav link
+document.querySelectorAll('.nav-link').forEach(linkItem => {
+    linkItem.addEventListener('click', _ => {
+        document.getElementById("propBatchMetadataBody").scrollTo(0, 0);
+    });
+});
+
 $('body').off("click").on("click", function(event) {
     if (!$(event.target).closest("#tagalbumdropdown").length && !$(event.target).closest("#albumNameList").length && $("#tagalbumdropdown").hasClass("show")) {
         metadataBatchModal.toggleBatchTagAlbumDropdown();
