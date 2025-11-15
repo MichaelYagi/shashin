@@ -90,16 +90,16 @@
                     if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
                         e.preventDefault();
 
-                        resetPassword();
+                        await resetPassword();
                     }
                 });
                 $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
-                    resetPassword();
+                    await resetPassword();
                 });
 
-                function resetPassword() {
+                async function resetPassword() {
                     const passwordLength = $("#password[[${user.id}]]").val().length;
 
                     if (passwordLength > 5) {
@@ -130,7 +130,7 @@
                                 if (data.hasOwnProperty("password")) {
                                     userGenerated = false;
                                 }
-                                shashin.closeToastMessages({tag:"resetpass"});
+                                shashin.closeToastMessages({tag: "resetpass"});
                                 shashin.showToastMessage(shashin.getTranslatedValue("main.user.reset.title"), shashin.getTranslatedValue("main.user.reset.body", username) + ". " + ((userGenerated === false) ? shashin.getTranslatedValue("main.user.reset.generated.body", data.password) : ""), {
                                     icon: "bi-info-circle",
                                     iconColor: "#777777",
@@ -151,7 +151,7 @@
                         $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
                         $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
                         $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
-                        shashin.closeToastMessages({tag:"resetpass"});
+                        shashin.closeToastMessages({tag: "resetpass"});
                         shashin.showToastMessage(shashin.getTranslatedValue("main.user.reset.title"), shashin.getTranslatedValue("main.user.reset.min"), {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
