@@ -215,9 +215,17 @@
                         const opacityLevel = isSelected ? opaque : transparent;
 
                         const startIndex = parseInt(container.attr("data-lg-index"));
-                        const endIndex = parseInt($("#photoThumbnailContainer" + metadataId).attr("data-lg-index"));
+                        let endIndex = parseInt($("#photoThumbnailContainer" + metadataId).attr("data-lg-index"));
+
+                        // Date heading selectors are selected from the db.
+                        // It's possible that not all query results are completely rendered, since the endIndex element may not exist yet.
+                        // This could result in endIndex NaN. In those cases, go to last rendered image
+                        if (isNaN(endIndex)) {
+                            endIndex = parseInt($(".photo-thumbnail-container").last().attr("data-lg-index"));
+                        }
 
                         fillArrays(startIndex, endIndex, metadataIdArray, metadataThumbnailArray);
+
                         applySelection(isSelected, metadataIdArray, metadataThumbnailArray);
                         runUpdates(metadataIdArray, view, isSelected, opacityLevel);
                         finalizeSelection(view);
