@@ -122,9 +122,7 @@
                 }
 
                 if ($("#ignoreduplicates").length > 0) {
-                    if (metadata.duplicateHash !== null) {
-                        $("#ignoreduplicates")[0].checked = metadata.duplicateHash;
-                    }
+                    $("#ignoreduplicates")[0].checked = metadata.duplicateHash === null;
                 }
 
                 if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null) {
