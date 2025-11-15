@@ -655,6 +655,13 @@ $("#collapseMetadata").on("shown.bs.collapse", function (e) {
     }, 1000);
 });
 
+// Scroll to top when clicking nav link
+document.querySelectorAll('.nav-link').forEach(linkItem => {
+    linkItem.addEventListener('click', _ => {
+        document.getElementById("propMetadataBody").scrollTo(0, 0);
+    });
+});
+
 $('body').off("click").on("click", function(event) {
     const metadataId = $("#metadataId").val();
 
