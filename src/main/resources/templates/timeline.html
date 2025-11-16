@@ -261,11 +261,18 @@
 
         const http = new Http("timeline");
         http.ajax("get", "/timeline/yearmonthcounts/"+shashin.mediaTypeFilter).then(function (data) {
-            if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount") && data.hasOwnProperty("metadataDatesHash")) {
+            if (data.hasOwnProperty("metadataDates") &&
+                data.hasOwnProperty("metadataYearMonthCount") &&
+                data.hasOwnProperty("metadataDatesHash") &&
+                data.hasOwnProperty("metadataDateCount") &&
+                data.hasOwnProperty("metadataDateAccumulatedCount")
+            ) {
                 const timelineYearMonthCountsData = data["metadataYearMonthCount"];
                 const timelineDatesData = data["metadataDates"];
                 const timelineDatesHash = data["metadataDatesHash"];
-                timelineSettings.init(shashin.mediaTypeFilter, timelineDatesData, timelineYearMonthCountsData, timelineDatesHash, locale);
+                const timelineDateCount = data["metadataDateCount"];
+                const timelineDateAccumulatedCount = data["metadataDateAccumulatedCount"];
+                timelineSettings.init(shashin.mediaTypeFilter, timelineDatesData, timelineYearMonthCountsData, timelineDatesHash, timelineDateCount, timelineDateAccumulatedCount, locale);
             }
         });
     });

@@ -12,6 +12,8 @@
     timelineSettings.initialized = false;
     timelineSettings.timelineDates = [];
     timelineSettings.timelineDatesHash = {};
+    timelineSettings.timelineDatesCount = {};
+    timelineSettings.timelineDateAccumulatedCount = {};
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
