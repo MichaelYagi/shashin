@@ -22,7 +22,7 @@ class Util {
             const $body = $section.find('.row');
             const $photos = $body.find('.photo-thumbnail-container');
 
-            const dateHeadingWidth = $section.find('.dateHeader').width();
+            const dateHeadingWidth = $section.find('.dateHeader').innerWidth();
             // let dateHeadingWidth = 0;
             // $muted.each(function() {
             //     dateHeadingWidth += $(this).width();
