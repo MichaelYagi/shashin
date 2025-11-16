@@ -65,8 +65,8 @@ class TimelineTemplates {
         `}
     `}
 
-    static TimelinePreLoadGalleryBody({metadata,videoData,uuid,isMobile,thumbnailType,thumbnailHeight}) { return `
-        <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail ${(metadata.type.includes('video') ? `is-video` : `is-not-video`)}" style="width:${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}px;height:${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
+    static TimelinePreLoadGalleryBody({metadata,videoData,uuid,isMobile,thumbnailType,thumbnailHeight,index}) { return `
+        <div id="photoThumbnailContainer${metadata.id}" data-lg-index="${index}" class="photo-thumbnail-container photo-thumbnail ${(metadata.type.includes('video') ? `is-video` : `is-not-video`)}" style="width:${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}px;height:${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" id="lightGalleryIndex${metadata.id}"></a>
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${"/api/v1/thumbnails/centered/"+metadata.id}">

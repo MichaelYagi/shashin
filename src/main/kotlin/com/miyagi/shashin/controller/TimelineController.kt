@@ -360,6 +360,12 @@ class TimelineController(
         val metadataDateHash = mutableMapOf<String, Int>()
         response["metadataDatesHash"] = metadataDateHash
 
+        val metadataDateCount = mutableMapOf<String, Int>()
+        response["metadataDateCount"] = metadataDateCount
+
+        val metadataDateAccumulatedCount = mutableMapOf<String, Int>()
+        response["metadataDateAccumulatedCount"] = metadataDateAccumulatedCount
+
         response["metadataDates"] = mutableListOf<MetadataDate>()
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
@@ -374,11 +380,21 @@ class TimelineController(
             response["metadataDates"] = metadataDates
 
             val dates = metadataDates.toMutableList()
+            var accumalatedCount = 0
             for ((index, metadataDate) in dates.withIndex()) {
                 metadataDateHash[metadataDate.getYear().toString() + "-" + metadataDate.getMonth()
                     .toString() + "-" + metadataDate.getDay().toString()] = index
+
+                metadataDateCount[metadataDate.getYear().toString() + "-" + metadataDate.getMonth()
+                    .toString() + "-" + metadataDate.getDay().toString()] = metadataDate.getCount() as Int
+
+                accumalatedCount += metadataDate.getCount() as Int
+                metadataDateAccumulatedCount[metadataDate.getYear().toString() + "-" + metadataDate.getMonth()
+                    .toString() + "-" + metadataDate.getDay().toString()] = accumalatedCount
             }
             response["metadataDatesHash"] = metadataDateHash
+            response["metadataDateCount"] = metadataDateCount
+            response["metadataDateAccumulatedCount"] = metadataDateAccumulatedCount
         }
 
         val countByYearAndMonthMap = mutableMapOf<String, Int>()

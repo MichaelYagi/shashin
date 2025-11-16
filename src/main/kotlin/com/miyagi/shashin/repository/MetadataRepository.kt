@@ -155,7 +155,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
    fun findDistinctFirstByHiddenIsFalseByDescriptionOrderByYearDescMonthDescDayDesc(): Metadata?
 
-   @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC", nativeQuery = true)
+   @Query("SELECT year,month,day, COUNT(*) AS count FROM metadata WHERE hidden = 0 GROUP BY year, month, day ORDER BY year DESC, month DESC, day DESC", nativeQuery = true)
    fun findAllYearMonthDay(): MutableIterable<MetadataDate>?
 
    @Query("WITH date_counts AS (\n" +
@@ -163,7 +163,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
            "    year,\n" +
            "    month,\n" +
            "    day,\n" +
-           "    COUNT(*) AS result_count\n" +
+           "    COUNT(*) AS count\n" +
            "  FROM metadata\n" +
            "  WHERE hidden = 0\n" +
            "  GROUP BY year, month, day\n" +
@@ -171,21 +171,21 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
            "),\n" +
            "running_total AS (\n" +
            "  SELECT *,\n" +
-           "         SUM(result_count) OVER (ORDER BY year DESC, month DESC, day DESC) AS cumulative_total\n" +
+           "         SUM(count) OVER (ORDER BY year DESC, month DESC, day DESC) AS cumulative_total\n" +
            "  FROM date_counts\n" +
            ")\n" +
-           "SELECT year, month, day\n" +
+           "SELECT year, month, day, count\n" +
            "FROM running_total\n" +
            "WHERE cumulative_total <= :limit", nativeQuery = true)
    fun findAllYearMonthDayByOffsetAndLimit(@Param("limit") limit: Int): MutableIterable<MetadataDate>?
 
-   @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT year,month,day,COUNT(*) AS count FROM metadata WHERE hidden = 0 AND type LIKE %:type% GROUP BY year,month,day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByMediaType(@Param("type") type: String): MutableIterable<MetadataDate>?
 
-   @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT year,month,day,COUNT(*) AS count FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) GROUP BY year,month,day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByNoCoord(): MutableIterable<MetadataDate>?
 
-   @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT year,month,day,COUNT(*) AS count FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" GROUP BY year,month,day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByDescription(): MutableIterable<MetadataDate>?
 
    fun countMetadataById(metadataId: String): Int

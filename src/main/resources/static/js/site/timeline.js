@@ -1530,6 +1530,14 @@
             '<span style="display: none;" class="dayTaken">'+metadataList[0].day+'</span>';
 
         if ($("#"+idCheck).length === 0) {
+            const currentIndex = timelineSettings.timelineDatesHash[metadataList[0].year+"-"+metadataList[0].month+"-"+metadataList[0].day];
+            let prevDate = timelineSettings.timelineDates[currentIndex];
+            if (currentIndex > 0) {
+                const prevIndex = currentIndex - 1;
+                prevDate = timelineSettings.timelineDates[prevIndex];
+            }
+
+            let countSoFar = parseInt(timelineSettings.timelineDateAccumulatedCount[prevDate.year+"-"+prevDate.month+"-"+prevDate.day])+1;
             for (let index in metadataList) {
                 index = parseInt(index);
                 const metadata = metadataList[index];
@@ -1546,11 +1554,14 @@
 
                 const autoplayVideo = $("#autoplayVideo").val();
                 const videoData = '{"source": [{"src":"' + encodeURI(metadata.videoUrl).replace(";", "%3B") + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": '+autoplayVideo+'}}';
-                let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata, videoData:videoData, uuid:Util.getMetadataLocalStorage(), isMobile:Util.isMobile(), thumbnailType:timelineSettings.thumbnailType, thumbnailHeight:timelineSettings.thumbnailHeight});
+
+                let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata, videoData:videoData, uuid:Util.getMetadataLocalStorage(), isMobile:Util.isMobile(), thumbnailType:timelineSettings.thumbnailType, thumbnailHeight:timelineSettings.thumbnailHeight, index: countSoFar});
                 html += loopedHtml;
                 internalHtml += loopedHtml;
 
                 $("#metadataModalEdit" + metadata.id).attr("tag", metadata.id);
+
+                countSoFar++;
             }
 
             const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
