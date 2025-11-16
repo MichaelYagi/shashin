@@ -14,21 +14,22 @@ class Util {
     static truncateHeading() {
         $('.dateSection').each(function () {
             const $section = $(this);
-            // const $muted = $section.find('.dateHeader > .text-muted');
             const $date = $section.find('.dateHeader > strong:first');
             const $heading = $section.find('.dateHeader').first();
             const originalAttr = $date.attr("style");
             $date.removeAttr("style");
             const $body = $section.find('.row');
             const $photos = $body.find('.photo-thumbnail-container');
+            const $textMuted = $section.find('.dateHeader > .text-muted');
 
-            const dateHeadingWidth = $section.find('.dateHeader').innerWidth();
-            // let dateHeadingWidth = 0;
-            // $muted.each(function() {
-            //     dateHeadingWidth += $(this).width();
-            // });
-            // dateHeadingWidth += $date.width();
+            // Get the heading width
+            let dateHeadingWidth = 0;
+            $textMuted.each(function() {
+                dateHeadingWidth += $(this).innerWidth();
+            });
+            dateHeadingWidth += $date.innerWidth();
 
+            // Get the photo container width
             let bodyWidth = 0;
             $photos.each(function() {
                 bodyWidth += $(this).innerWidth();
@@ -45,10 +46,21 @@ class Util {
 
             if (dateHeadingWidth === 0 || bodyWidth === 0) return;
 
+            // Truncate if heading width longer than body width
             if (dateHeadingWidth > bodyWidth) {
-                shashin.printMessageToConsole("hiding muted text",{tag:"truncateHeading"});
-                // $($section.find('.dateHeader > .text-muted:nth-child(4)')).hide();
+                shashin.printMessageToConsole("hiding placename muted text", {tag: "truncateHeading"});
+
+                // First truncate the placename link
                 $($section.find('.dateHeader > .text-muted a')).hide();
+
+                // Capture the prefix width
+                dateHeadingWidth = $section.find('.dateHeader > .text-muted:not(:has(> a))').innerWidth();
+                dateHeadingWidth += $date.innerWidth();
+                if (dateHeadingWidth > bodyWidth) {
+                    shashin.printMessageToConsole("hiding prefix muted text", {tag: "truncateHeading"});
+                    // Chopping the placename link wasn't enough, truncate the prefix
+                    $($section.find('.dateHeader > .text-muted:not(:has(> a))')).hide();
+                }
             } else {
                 shashin.printMessageToConsole("showing muted text",{tag:"truncateHeading"});
             }
