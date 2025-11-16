@@ -662,6 +662,8 @@
     };
 
     shashin.createPagination = function(currentPage,totalPages,activePage,mediaTypeFilter,identifier=0,shareId="") {
+        Util.truncateHeading();
+
         const mediaElement = '.mediaLink';
 
         const lgConfig = {
