@@ -14,7 +14,7 @@ class Util {
     static truncateHeading() {
         $('.dateSection').each(function () {
             const $section = $(this);
-            const $muted = $section.find('.dateHeader > .text-muted');
+            // const $muted = $section.find('.dateHeader > .text-muted');
             const $date = $section.find('.dateHeader > strong:first');
             const $heading = $section.find('.dateHeader').first();
             const originalAttr = $date.attr("style");
@@ -22,11 +22,12 @@ class Util {
             const $body = $section.find('.row');
             const $photos = $body.find('.photo-thumbnail-container');
 
-            let dateHeadingWidth = 0;
-            $muted.each(function() {
-                dateHeadingWidth += $(this).width();
-            });
-            dateHeadingWidth += $date.width();
+            const dateHeadingWidth = $section.find('.dateHeader').width();
+            // let dateHeadingWidth = 0;
+            // $muted.each(function() {
+            //     dateHeadingWidth += $(this).width();
+            // });
+            // dateHeadingWidth += $date.width();
 
             let bodyWidth = 0;
             $photos.each(function() {
@@ -35,15 +36,21 @@ class Util {
 
             $date.attr("style", originalAttr);
 
-            shashin.printMessageToConsole($heading,{tag:"truncateHeading"});
+            shashin.printMessageToConsole('--------------\n'+$date[0].outerHTML,{tag:"truncateHeading"});
+            shashin.printMessageToConsole($heading[0].outerHTML,{tag:"truncateHeading"});
             shashin.printMessageToConsole("dateHeadingWidth: "+dateHeadingWidth,{tag:"truncateHeading"});
             shashin.printMessageToConsole("bodyWidth: "+bodyWidth,{tag:"truncateHeading"});
-            shashin.printMessageToConsole("muted text: "+$($section.find('.dateHeader > .text-muted:nth-child(4)')),{tag:"truncateHeading"});
+            shashin.printMessageToConsole("link: "+$section.find('.dateHeader > .text-muted a')[0],{tag:"truncateHeading"});
+            shashin.printMessageToConsole("muted text: "+$section.find('.dateHeader > .text-muted a').text(),{tag:"truncateHeading"});
 
             if (dateHeadingWidth === 0 || bodyWidth === 0) return;
 
             if (dateHeadingWidth > bodyWidth) {
-                $($section.find('.dateHeader > .text-muted:nth-child(4)')).hide();
+                shashin.printMessageToConsole("hiding muted text",{tag:"truncateHeading"});
+                // $($section.find('.dateHeader > .text-muted:nth-child(4)')).hide();
+                $($section.find('.dateHeader > .text-muted a')).hide();
+            } else {
+                shashin.printMessageToConsole("showing muted text",{tag:"truncateHeading"});
             }
         });
     }
