@@ -2195,7 +2195,9 @@ class Util {
             $(".resolutionLabel").show();
             $(".resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
         }
+
         let timeLinkHtml = "";
+        let takenLinkHtml = "";
         if (metadata.year !== undefined && metadata.month !== undefined && metadata.day !== undefined &&
             metadata.year !== null && metadata.month !== null && metadata.day !== null) {
             let month = (metadata.month.toString().length === 1 && metadata.month < 10) ? "0"+metadata.month : metadata.month;
@@ -2209,6 +2211,12 @@ class Util {
             $(".manualTakenAtDetails").text(takenDetails);
 
             timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-calendar4' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' title='"+(activePage === "archived" ? shashin.getTranslatedValue("main.pages.utils.tooltip.searchdate") : shashin.getTranslatedValue("main.pages.utils.tooltip.viewdate"))+"' target='_blank'></a>";
+
+            const attr = $("#photoThumbnailContainer"+metadata.id).attr("data-lg-index");
+            if (activePage === "timeline" && $("#photoThumbnailContainer"+metadata.id).length > 0 && typeof attr !== 'undefined' && attr !== false) {
+                const page = Math.floor(parseInt(attr)/Util.queryLimit());
+                takenLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-three-dots' style='font-size: 1rem;' href='/taken/"+page+"/"+$("#mediaTypeFilter").val()+"' target='_blank'></a>";
+            }
         }
 
         if (metadata.timeZone != null) {
@@ -2260,6 +2268,7 @@ class Util {
                 shareDetailsHtml += timeLinkHtml;
                 $(".shareUrlDetailsA").html(shareDetailsHtml);
             } else {
+                shareDetailsHtml += takenLinkHtml;
                 $(".shareUrlDetails").html(shareDetailsHtml);
             }
 
