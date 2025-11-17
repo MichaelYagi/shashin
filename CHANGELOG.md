@@ -11,15 +11,18 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Multi-select in duplicates page
-
 ### Changed
-- Optimized multi-select
-
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [2.17.1] - 2025-11-16
+### Added
+- Multi-select in duplicates page
+
+### Changed
+- Optimized multi-select
 
 ## [2.17.0] - 2025-11-11
 ### Added
