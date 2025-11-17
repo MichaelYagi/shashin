@@ -75,6 +75,7 @@
             const agentName = /*[[${agentName}]]*/ '';
             const agentOS = /*[[${agentOS}]]*/ '';
             const activePage = /*[[${activePage}]]*/ "";
+            const queryLimit = /*[[${settings.queryLimit}]]*/ 30;
             /*]]>*/
 
             // Use value already implemented in Kotlin
@@ -88,6 +89,10 @@
 
             Util.agentOS = function () {
                 return agentOS;
+            };
+
+            Util.queryLimit = function() {
+                return queryLimit;
             };
 
             Util.konamiCodeListener(function(sequenceComplete) {
