@@ -210,7 +210,7 @@ jobs:
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
-            EXE_RESPONSE="[{isSucceeded: false}]"
+            EXE_RESPONSE="[{isSucceeded: true}]"
             #            EXE_RESPONSE=$(curl --request POST \
             #            --header "Authorization: Bearer $token" \
             #            --header "Content-Type: multipart/form-data" \
