@@ -55,7 +55,7 @@ header {
 
 .dateHeader {
   margin-top: -25px;
-  margin-left: -25px;
+  margin-left: -17px;
   padding: 25px 0 15px 18px;
 }
 
@@ -563,4 +563,14 @@ footer {
   background: rgba(0,0,0,0);   /* transparent overlay; or slight dim */
   cursor: wait;                /* show loading cursor */
   /* pointer-events are enabled by default so overlay captures clicks */
+}
+
+/* ---------------------------
+   Mobile / portrait overrides
+   (kept as a single block to preserve order)
+   --------------------------- */
+@media (max-width: 767.98px) and (orientation: portrait) {
+  .dateHeader {
+    font-size: 0.75rem;
+  }
 }

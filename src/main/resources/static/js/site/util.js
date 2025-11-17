@@ -23,11 +23,12 @@ class Util {
             const $textMuted = $section.find('.dateHeader > .text-muted');
 
             // Get the heading width
+            const headingWidthOffset = 10;
             let dateHeadingWidth = 0;
             $textMuted.each(function() {
                 dateHeadingWidth += $(this).innerWidth();
             });
-            dateHeadingWidth += $date.innerWidth();
+            dateHeadingWidth += $date.innerWidth() + headingWidthOffset;
 
             // Get the photo container width
             let bodyWidth = 0;
@@ -55,7 +56,7 @@ class Util {
 
                 // Capture the prefix width
                 dateHeadingWidth = $section.find('.dateHeader > .text-muted:not(:has(> a))').innerWidth();
-                dateHeadingWidth += $date.innerWidth();
+                dateHeadingWidth += $date.innerWidth() + headingWidthOffset;
                 if (dateHeadingWidth > bodyWidth) {
                     shashin.printMessageToConsole("hiding prefix muted text", {tag: "truncateHeading"});
                     // Chopping the placename link wasn't enough, truncate the prefix
