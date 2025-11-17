@@ -202,10 +202,49 @@ jobs:
           command: |
             echo $VERSION
       - run:
+          name: Manage RepoFlow packages
+          command: |
+            token=$REPOFLOW_TOKEN
+
+            # 1. Get the package ID
+            PACKAGE_ID_JSON=$(curl -s --request GET \
+              --header "Authorization: Bearer $token" \
+              --url "https://api.repoflow.io/package/myagidevel-8191/shashin/shashin")
+
+            PACKAGE_ID=$(echo "$PACKAGE_ID_JSON" | jq -r '.id')
+
+            echo "Package ID response: $PACKAGE_ID_JSON"
+            echo "Package ID: $PACKAGE_ID"
+
+            # 2. Get all packages
+            PACKAGES=$(curl -s --request GET \
+              --header "Authorization: Bearer $token" \
+              --url "https://api.repoflow.io/package/myagidevel-8191/shashin/shashin/versions")
+
+            echo "Packages response: $PACKAGES"
+
+            # 3. Count number of packages
+            COUNT=$(echo "$PACKAGES" | jq 'length')
+            echo "Number of packages: $COUNT"
+
+            # 3. If more than 10, delete the oldest - the array starts with the oldest and ends with the newest
+            if [ "$COUNT" -gt 10 ]; then
+              LAST_VERSION_ID=$(echo "$PACKAGES" | jq -r '.[0].versionId')
+              echo "Deleting package with version ID: $LAST_VERSION_ID"
+
+              curl -s --request DELETE \
+                --header "Authorization: Bearer $token" \
+                --url "https://api.repoflow.io/package/myagidevel-8191/shashin/$PACKAGE_ID/version/$LAST_VERSION_ID"
+            else
+              echo "Package count is within limit."
+            fi
+      - run:
           name: Upload windows artifact # $BASH_ENV to persist environment variables across steps.
           command: |
             token=$REPOFLOW_TOKEN
+            
             version=$VERSION
+            
             EXE_RESPONSE=$(curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
@@ -230,7 +269,9 @@ jobs:
           name: Upload jar artifact # Upload to RepoFlow
           command: |
             token=$REPOFLOW_TOKEN
+            
             version=$VERSION
+            
             JAR_RESPONSE=$(curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
