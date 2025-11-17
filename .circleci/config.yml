@@ -1,5 +1,9 @@
 version: 2.1
 
+# TODO:
+# Get response from upload to RepoFlow, if it fails, fail the build
+# If artifact in RepoFlow count > 10, delete the last artifact
+
 executors:
   java17:
     docker:
@@ -176,6 +180,11 @@ jobs:
   upload_to_repoflow:
     executor: java17
     steps:
+      - run:
+          name: Install jq
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y jq
       - attach_workspace: # attach artifacts directory from previous job
           at: .
       - store_artifacts: # Store artifacts temporarily in this job
@@ -193,29 +202,55 @@ jobs:
           command: |
             echo $VERSION
       - run:
-          name: Upload jar artifact # Upload to RepoFlow
+          name: Upload windows artifact # $BASH_ENV to persist environment variables across steps.
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
-            curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-      - run:
-          name: Upload windows artifact
-          command: |
-            token=$REPOFLOW_TOKEN
-            version=$VERSION
-            curl --request POST \
+            EXE_RESPONSE=$(curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
             --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
             --form "packageName=\"shashin\"" \
             --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single")
+            
+            echo "Raw response: $EXE_RESPONSE"
+            
+            # Parse with jq, defaulting to false if invalid JSON
+            IS_SUCCEEDED=$(echo "$EXE_RESPONSE" | jq -R 'try (fromjson | .[0].isSucceeded // false) catch false')
+
+            echo "Parsed isSucceeded: $IS_SUCCEEDED"
+
+            # Fail the build if false
+            if [ "$IS_SUCCEEDED" != "true" ]; then
+              echo "Upload failed, exiting..."
+              exit 1
+            fi
+      - run:
+          name: Upload jar artifact # Upload to RepoFlow
+          command: |
+            token=$REPOFLOW_TOKEN
+            version=$VERSION
+            JAR_RESPONSE=$(curl --request POST \
+            --header "Authorization: Bearer $token" \
+            --header "Content-Type: multipart/form-data" \
+            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
+            --form "packageName=\"shashin\"" \
+            --form "packageVersion=\"$version\"" \
+            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single")
+
+            echo "Raw response: $JAR_RESPONSE"
+
+            # Parse with jq, defaulting to false if invalid JSON
+            IS_SUCCEEDED=$(echo "$JAR_RESPONSE" | jq -R 'try (fromjson | .[0].isSucceeded // false) catch false')
+
+            echo "Parsed isSucceeded: $IS_SUCCEEDED"
+
+            # Fail the build if false
+            if [ "$IS_SUCCEEDED" != "true" ]; then
+              echo "Upload JAR failed, exiting..."
+              exit 1
+            fi
       - run:
           name: Create Github release # Create GH release
           command: |
