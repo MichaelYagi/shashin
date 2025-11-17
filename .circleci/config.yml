@@ -1,8 +1,10 @@
 version: 2.1
 
-# TODO:
-# Get response from upload to RepoFlow, if it fails, fail the build
-# If artifact in RepoFlow count > 10, delete the last artifact
+# 1. Run node tests
+# 2. Run maven tests
+# 3. If tag is pushed, delete the oldest package if more than 10 packages
+# 4. Upload artifacts to RepoFlow
+# 5. Create GitHub release with notes from changelog
 
 executors:
   java17:
