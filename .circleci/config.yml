@@ -34,146 +34,150 @@ workflows:
                 root: .
                 paths:
                   - test-results/mocha
-      - maven/test: # checkout, build, test, and upload test results
-          executor: java17
-          name: Run junit tests # and package to tar
-          filters: # job runs for all branches and all tags
-            tags:
-              only: /^v.*/
-          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
-          #          #command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
+#      - maven/test: # checkout, build, test, and upload test results
+#          executor: java17
+#          name: Run junit tests # and package to tar
+#          filters: # job runs for all branches and all tags
+#            tags:
+#              only: /^v.*/
+#          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
+#          #          #command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
+#          requires:
+#            - Run node tests
+#          pre-steps:
+#            - run:
+#                name: Installing Linux libraries and Chromedriver dependencies
+#                command: |
+#                  sudo apt-get update
+#                  sudo apt-get install -y libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release \
+#                    libappindicator3-1 libasound2 fonts-liberation xdg-utils unzip wget ca-certificates
+#            ## Install specific Chrome + Chromedriver (Chrome-for-Testing linux64 archive)
+#            - run:
+#                name: Install Chrome 128.0.6613.137 and matching Chromedriver
+#                command: |
+#                  set -eux
+#                  CHROME_VER="128.0.6613.137"
+#                  TMPDIR=$(mktemp -d)
+#                  cd "$TMPDIR"
+#
+#                  # Compose download URLs for Chrome-for-Testing linux64 artifacts.
+#                  CHROME_ZIP="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chrome-linux64.zip"
+#                  DRIVER_ZIP="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chromedriver-linux64.zip"
+#
+#                  echo "Downloading chrome: $CHROME_ZIP"
+#                  curl -fSL -O "$CHROME_ZIP"
+#                  echo "Downloading chromedriver: $DRIVER_ZIP"
+#                  curl -fSL -O "$DRIVER_ZIP"
+#
+#                  # Unpack into temp dirs
+#                  unzip -q chrome-linux64.zip -d chrome_tmp
+#                  unzip -q chromedriver-linux64.zip -d driver_tmp
+#
+#                  # Find executables (robust to inner folder names)
+#                  CHROME_BIN_SRC=$(find chrome_tmp -type f -perm /111 -name chrome -o -name google-chrome | head -n 1 || true)
+#                  CHROMEDRIVER_SRC=$(find driver_tmp -type f -name chromedriver | head -n 1 || true)
+#
+#                  if [ -z "$CHROME_BIN_SRC" ]; then
+#                    echo "ERROR: could not find chrome executable in archive"
+#                    ls -R chrome_tmp
+#                    exit 1
+#                  fi
+#                  if [ -z "$CHROMEDRIVER_SRC" ]; then
+#                    echo "ERROR: could not find chromedriver in archive"
+#                    ls -R driver_tmp
+#                    exit 1
+#                  fi
+#
+#                  # Install to /opt and /usr/local/bin
+#                  sudo mkdir -p /opt/google/chrome-${CHROME_VER}
+#                  sudo cp -r "$(dirname "$CHROME_BIN_SRC")"/* /opt/google/chrome-${CHROME_VER}/ || true
+#                  sudo cp "$CHROMEDRIVER_SRC" /usr/local/bin/chromedriver-${CHROME_VER}
+#                  sudo chmod +x /usr/local/bin/chromedriver-${CHROME_VER}
+#
+#                  # Create symlinks so test runners can find standard names
+#                  # The chrome binary inside the archive might be named 'chrome'; create a stable symlink:
+#                  sudo ln -sf "$(readlink -f /opt/google/chrome-${CHROME_VER}/* | head -n1)" /usr/local/bin/google-chrome-${CHROME_VER} || true
+#                  # Prefer symlink to actual chrome binary if present:
+#                  if [ -f "/opt/google/chrome-${CHROME_VER}/chrome" ]; then
+#                    sudo ln -sf /opt/google/chrome-${CHROME_VER}/chrome /usr/local/bin/google-chrome-${CHROME_VER}
+#                  fi
+#                  sudo ln -sf /usr/local/bin/google-chrome-${CHROME_VER} /usr/local/bin/google-chrome
+#                  sudo ln -sf /usr/local/bin/chromedriver-${CHROME_VER} /usr/local/bin/chromedriver
+#
+#                  # Expose env vars for later steps
+#                  echo "export CHROME_BIN=/usr/local/bin/google-chrome" >> $BASH_ENV
+#                  echo "export CHROMEDRIVER=/usr/local/bin/chromedriver" >> $BASH_ENV
+#                  echo "export PATH=/usr/local/bin:$PATH" >> $BASH_ENV
+#
+#                  # cleanup
+#                  cd /
+#                  rm -rf "$TMPDIR"
+#
+#            - run:
+#                name: Check Chromedriver install
+#                command: |
+#                  google-chrome --version || true
+#                  chromedriver --version || true
+#                  whereis chromedriver || true
+#          post-steps: # steps to run after steps
+#            - run:
+#                name: Save test results
+#                command: |
+#                  mkdir -p test-results/junit/
+#                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
+#                when: always
+#            - attach_workspace: # attach from another job
+#                at: .
+#            - run:
+#                name: Set Version # get version from pom.xml
+#                command: |
+#                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+#            - run:
+#                command: |
+#                  cp $BASH_ENV bash.env
+#            - run:
+#                name: Persist version to file
+#                command: |
+#                  touch shashin-version.txt
+#                  echo $VERSION > shashin-version.txt
+#                  echo $(cat /home/circleci/project/shashin-version.txt)
+#            - run: # move from target to root for tar package
+#                name: Move jar artifact
+#                command: |
+#                  mv target/**.jar shashin-$VERSION.jar
+#            - run:
+#                name: Move exe artifact
+#                command: |
+#                  mv target/**.exe Shashin-$VERSION.exe
+#            - run:
+#                name: Compress Artifacts
+#                command: |
+#                  touch shashin-$VERSION.tar
+#            - run: # Move artifacts to artifacts directory in preparation to persist
+#                name: Create Artifacts Directory
+#                command: |
+#                  mkdir -p artifacts
+#                  mv shashin-version.txt artifacts/shashin-version.txt
+#                  mv CHANGELOG.md artifacts/CHANGELOG.md
+#                  mv shashin_create_release_notes.sh artifacts/shashin_create_release_notes.sh
+#                  mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
+#                  mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
+#                  mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
+#            - persist_to_workspace: # persist the artifacts directory across jobs
+#                root: .
+#                paths: artifacts
+      - upload_to_repoflow:
+#          requires:
+#            - Run junit tests
+#          filters: # job runs for no branches and only for tags starting with 'v'
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
+#          name: Upload artifacts to repo
+
           requires:
             - Run node tests
-          pre-steps:
-            - run:
-                name: Installing Linux libraries and Chromedriver dependencies
-                command: |
-                  sudo apt-get update
-                  sudo apt-get install -y libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release \
-                    libappindicator3-1 libasound2 fonts-liberation xdg-utils unzip wget ca-certificates
-            ## Install specific Chrome + Chromedriver (Chrome-for-Testing linux64 archive)
-            - run:
-                name: Install Chrome 128.0.6613.137 and matching Chromedriver
-                command: |
-                  set -eux
-                  CHROME_VER="128.0.6613.137"
-                  TMPDIR=$(mktemp -d)
-                  cd "$TMPDIR"
-
-                  # Compose download URLs for Chrome-for-Testing linux64 artifacts.
-                  CHROME_ZIP="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chrome-linux64.zip"
-                  DRIVER_ZIP="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chromedriver-linux64.zip"
-
-                  echo "Downloading chrome: $CHROME_ZIP"
-                  curl -fSL -O "$CHROME_ZIP"
-                  echo "Downloading chromedriver: $DRIVER_ZIP"
-                  curl -fSL -O "$DRIVER_ZIP"
-
-                  # Unpack into temp dirs
-                  unzip -q chrome-linux64.zip -d chrome_tmp
-                  unzip -q chromedriver-linux64.zip -d driver_tmp
-
-                  # Find executables (robust to inner folder names)
-                  CHROME_BIN_SRC=$(find chrome_tmp -type f -perm /111 -name chrome -o -name google-chrome | head -n 1 || true)
-                  CHROMEDRIVER_SRC=$(find driver_tmp -type f -name chromedriver | head -n 1 || true)
-
-                  if [ -z "$CHROME_BIN_SRC" ]; then
-                    echo "ERROR: could not find chrome executable in archive"
-                    ls -R chrome_tmp
-                    exit 1
-                  fi
-                  if [ -z "$CHROMEDRIVER_SRC" ]; then
-                    echo "ERROR: could not find chromedriver in archive"
-                    ls -R driver_tmp
-                    exit 1
-                  fi
-
-                  # Install to /opt and /usr/local/bin
-                  sudo mkdir -p /opt/google/chrome-${CHROME_VER}
-                  sudo cp -r "$(dirname "$CHROME_BIN_SRC")"/* /opt/google/chrome-${CHROME_VER}/ || true
-                  sudo cp "$CHROMEDRIVER_SRC" /usr/local/bin/chromedriver-${CHROME_VER}
-                  sudo chmod +x /usr/local/bin/chromedriver-${CHROME_VER}
-
-                  # Create symlinks so test runners can find standard names
-                  # The chrome binary inside the archive might be named 'chrome'; create a stable symlink:
-                  sudo ln -sf "$(readlink -f /opt/google/chrome-${CHROME_VER}/* | head -n1)" /usr/local/bin/google-chrome-${CHROME_VER} || true
-                  # Prefer symlink to actual chrome binary if present:
-                  if [ -f "/opt/google/chrome-${CHROME_VER}/chrome" ]; then
-                    sudo ln -sf /opt/google/chrome-${CHROME_VER}/chrome /usr/local/bin/google-chrome-${CHROME_VER}
-                  fi
-                  sudo ln -sf /usr/local/bin/google-chrome-${CHROME_VER} /usr/local/bin/google-chrome
-                  sudo ln -sf /usr/local/bin/chromedriver-${CHROME_VER} /usr/local/bin/chromedriver
-
-                  # Expose env vars for later steps
-                  echo "export CHROME_BIN=/usr/local/bin/google-chrome" >> $BASH_ENV
-                  echo "export CHROMEDRIVER=/usr/local/bin/chromedriver" >> $BASH_ENV
-                  echo "export PATH=/usr/local/bin:$PATH" >> $BASH_ENV
-
-                  # cleanup
-                  cd /
-                  rm -rf "$TMPDIR"
-
-            - run:
-                name: Check Chromedriver install
-                command: |
-                  google-chrome --version || true
-                  chromedriver --version || true
-                  whereis chromedriver || true
-          post-steps: # steps to run after steps
-            - run:
-                name: Save test results
-                command: |
-                  mkdir -p test-results/junit/
-                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
-                when: always
-            - attach_workspace: # attach from another job
-                at: .
-            - run:
-                name: Set Version # get version from pom.xml
-                command: |
-                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
-            - run:
-                command: |
-                  cp $BASH_ENV bash.env
-            - run:
-                name: Persist version to file
-                command: |
-                  touch shashin-version.txt
-                  echo $VERSION > shashin-version.txt
-                  echo $(cat /home/circleci/project/shashin-version.txt)
-            - run: # move from target to root for tar package
-                name: Move jar artifact
-                command: |
-                  mv target/**.jar shashin-$VERSION.jar
-            - run:
-                name: Move exe artifact
-                command: |
-                  mv target/**.exe Shashin-$VERSION.exe
-            - run:
-                name: Compress Artifacts
-                command: |
-                  touch shashin-$VERSION.tar
-            - run: # Move artifacts to artifacts directory in preparation to persist
-                name: Create Artifacts Directory
-                command: |
-                  mkdir -p artifacts
-                  mv shashin-version.txt artifacts/shashin-version.txt
-                  mv CHANGELOG.md artifacts/CHANGELOG.md
-                  mv shashin_create_release_notes.sh artifacts/shashin_create_release_notes.sh
-                  mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
-                  mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
-                  mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
-            - persist_to_workspace: # persist the artifacts directory across jobs
-                root: .
-                paths: artifacts
-      - upload_to_repoflow:
-          requires:
-            - Run junit tests
-          filters: # job runs for no branches and only for tags starting with 'v'
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
           name: Upload artifacts to repo
 
 jobs:
@@ -206,13 +210,14 @@ jobs:
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
-            EXE_RESPONSE=$(curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single")
+            EXE_RESPONSE="Teingzzz"
+            #            EXE_RESPONSE=$(curl --request POST \
+            #            --header "Authorization: Bearer $token" \
+            #            --header "Content-Type: multipart/form-data" \
+            #            --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
+            #            --form "packageName=\"shashin\"" \
+            #            --form "packageVersion=\"$version\"" \
+            #            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single")
             
             echo "Raw response: $EXE_RESPONSE"
             
@@ -226,34 +231,34 @@ jobs:
               echo "Upload failed, exiting..."
               exit 1
             fi
-      - run:
-          name: Upload jar artifact # Upload to RepoFlow
-          command: |
-            token=$REPOFLOW_TOKEN
-            version=$VERSION
-            JAR_RESPONSE=$(curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single")
-
-            echo "Raw response: $JAR_RESPONSE"
-
-            # Parse with jq, defaulting to false if invalid JSON
-            IS_SUCCEEDED=$(echo "$JAR_RESPONSE" | jq -R 'try (fromjson | .[0].isSucceeded // false) catch false')
-
-            echo "Parsed isSucceeded: $IS_SUCCEEDED"
-
-            # Fail the build if false
-            if [ "$IS_SUCCEEDED" != "true" ]; then
-              echo "Upload JAR failed, exiting..."
-              exit 1
-            fi
-      - run:
-          name: Create Github release # Create GH release
-          command: |
-            key=$GITHUB_CONTENTWRITE_KEY
-            version=$VERSION
-            bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version $key /home/circleci/project/artifacts/CHANGELOG.md
+#      - run:
+#          name: Upload jar artifact # Upload to RepoFlow
+#          command: |
+#            token=$REPOFLOW_TOKEN
+#            version=$VERSION
+#            JAR_RESPONSE=$(curl --request POST \
+#            --header "Authorization: Bearer $token" \
+#            --header "Content-Type: multipart/form-data" \
+#            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
+#            --form "packageName=\"shashin\"" \
+#            --form "packageVersion=\"$version\"" \
+#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single")
+#
+#            echo "Raw response: $JAR_RESPONSE"
+#
+#            # Parse with jq, defaulting to false if invalid JSON
+#            IS_SUCCEEDED=$(echo "$JAR_RESPONSE" | jq -R 'try (fromjson | .[0].isSucceeded // false) catch false')
+#
+#            echo "Parsed isSucceeded: $IS_SUCCEEDED"
+#
+#            # Fail the build if false
+#            if [ "$IS_SUCCEEDED" != "true" ]; then
+#              echo "Upload JAR failed, exiting..."
+#              exit 1
+#            fi
+#      - run:
+#          name: Create Github release # Create GH release
+#          command: |
+#            key=$GITHUB_CONTENTWRITE_KEY
+#            version=$VERSION
+#            bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version $key /home/circleci/project/artifacts/CHANGELOG.md
