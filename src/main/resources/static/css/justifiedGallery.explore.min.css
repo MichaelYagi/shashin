@@ -19,12 +19,13 @@
 
 /* --- Multiple sections in a row --- */
 /* --- Gallery Containers --- */
+/*padding: 24px 24px 24px 0;*/
 /* Use :is() so rules apply to either gallery container ID */
 :is(#scroll-gallery, #infinite-scroll-gallery) {
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
-    padding: 24px 24px 24px 0;
+    padding: 24px 0 24px 0;
     align-items: flex-start;
 }
 
