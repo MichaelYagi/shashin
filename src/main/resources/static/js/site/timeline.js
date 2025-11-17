@@ -1531,13 +1531,18 @@
 
         if ($("#"+idCheck).length === 0) {
             const currentIndex = timelineSettings.timelineDatesHash[metadataList[0].year+"-"+metadataList[0].month+"-"+metadataList[0].day];
+
             let prevDate = timelineSettings.timelineDates[currentIndex];
             if (currentIndex > 0) {
                 const prevIndex = currentIndex - 1;
                 prevDate = timelineSettings.timelineDates[prevIndex];
             }
 
-            let countSoFar = parseInt(timelineSettings.timelineDateAccumulatedCount[prevDate.year+"-"+prevDate.month+"-"+prevDate.day])+1;
+            let countSoFar = parseInt(timelineSettings.timelineDateAccumulatedCount[prevDate.year+"-"+prevDate.month+"-"+prevDate.day]);
+            if (currentIndex <= 0) {
+                countSoFar = 0;
+            }
+            
             for (let index in metadataList) {
                 index = parseInt(index);
                 const metadata = metadataList[index];
