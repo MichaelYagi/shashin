@@ -257,7 +257,7 @@ class AttributeController(
         var thumbnailHeight = "225"
         if (isMobile) {
             thumbnailType = "centered"
-            thumbnailHeight = "120"
+            thumbnailHeight = "115"
         }
         model["thumbnailType"] = thumbnailType
         model["thumbnailHeight"] = thumbnailHeight

@@ -10,7 +10,7 @@
     albumSettings.lastLgIndex = 0;
     if (Util.isMobile()) {
         albumSettings.thumbnailType = "centered";
-        albumSettings.thumbnailHeight = "120";
+        albumSettings.thumbnailHeight = "115";
     }
 
     albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate, lastLgIndex, locale) {
@@ -92,7 +92,7 @@
                 $("#metadataId").val(metadata.id);
                 if (metadata.thumbnailUrlCentered !== null) {
                     const version = Util.getMetadataLocalStorage();
-                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + (version === "" ? "" : "?v=" + version) + '" height="120" width="120" draggable="false">');
+                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + (version === "" ? "" : "?v=" + version) + '" height="115" width="115" draggable="false">');
                 }
 
                 // Open modal window
