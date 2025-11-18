@@ -2,7 +2,7 @@ version: 2.1
 
 # 1. Run node tests
 # 2. Run maven tests
-# 3. If tag is pushed, delete the oldest package if more than 10 packages
+# 3. If tag is pushed, delete the oldest package from RepoFlow if more than 10 packages
 # 4. Upload artifacts to RepoFlow
 # 5. Create GitHub release with notes from changelog
 
