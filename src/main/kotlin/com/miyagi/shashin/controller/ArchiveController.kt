@@ -30,9 +30,9 @@ class ArchiveController(
     val resp = mutableMapOf<String, String?>()
 
     @GetMapping("/archived")
-    fun getFavorites(model: Model, locale: Locale): String {
+    fun getArchived(model: Model, locale: Locale): String {
         val module = "archived"
-        model["message"] = messageSource?.getMessage("main.nothing", null, locale)
+        model["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
         model["foldersCount"] = metadataRepository.countByFolder()
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
@@ -63,7 +63,7 @@ class ArchiveController(
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/archived/metadata/list/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getTrashMetadataList(model: Model,@PathVariable page: Int, locale: Locale): String? {
+    fun getArchiveMetadataList(model: Model,@PathVariable page: Int, locale: Locale): String? {
         val response = mutableMapOf<String, Any?>()
         response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
@@ -83,7 +83,7 @@ class ArchiveController(
 
     @RequestMapping(value = ["/archived/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedFavorites(model: Model, @PathVariable page: Int, locale: Locale): String {
+    fun getPagedArchive(model: Model, @PathVariable page: Int, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
         response["metadataList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
@@ -115,7 +115,7 @@ class ArchiveController(
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun postUnhideMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
+    fun postUnarchiveMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val trashMp = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (trashMp.containsKey("metadataIdList")) {
             val metadataIdList = trashMp["metadataIdList"] as MutableList<*>
