@@ -264,7 +264,7 @@ jobs:
 
             # Fail the build if false
             if [ "$IS_SUCCEEDED" != "true" ]; then
-              echo "Upload failed, exiting..."
+              echo "Upload EXE failed, exiting..."
               exit 1
             fi
       - run:

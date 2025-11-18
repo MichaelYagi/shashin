@@ -1,6 +1,6 @@
 class GalleryTemplates {
     static PhotoGalleryItem({lastLgIndex, activePage, metadata, overlayData, uuid, isMobile}) { return `
-        <div id="photoThumbnailContainer${metadata.id}" data-lg-index="${lastLgIndex}" class="photo-thumbnail-container photo-thumbnail" style="width:${isMobile?115:metadata.thumbnailSmallWidth}px;height:${isMobile?115:metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
+        <div id="photoThumbnailContainer${metadata.id}" data-lg-index="${lastLgIndex}" class="photo-thumbnail-container photo-thumbnail" style="width:${isMobile?Util.thumbnailHeight():metadata.thumbnailSmallWidth}px;height:${isMobile?Util.thumbnailHeight():metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <span class="lightGalleryIndexAnchor"></span>
             
             ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderCenter") && overlayData.data.overlayFlags.renderCenter === true) ? GalleryTemplates.getCenteredOverlay({
@@ -222,7 +222,7 @@ class GalleryTemplates {
                 data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : "/api/v1/thumbnails/original/"+data.metadata.id}?v=${uuid}"
                 data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                 data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
-                <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?115:data.metadata.thumbnailSmallWidth}" height="${isMobile?115:data.metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+                <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?Util.thumbnailHeight():data.metadata.thumbnailSmallWidth}" height="${isMobile?Util.thumbnailHeight():data.metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
             `
             :
@@ -231,7 +231,7 @@ class GalleryTemplates {
                 data-download-url="${"/api/v1/image/"+data.metadata.id}/download?v=${uuidv4()}"
                 data-metadata-id="${data.metadata.id}"
                 ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
-                <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?115:data.metadata.thumbnailSmallWidth}" height="${isMobile?115:data.metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+                <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?Util.thumbnailHeight():data.metadata.thumbnailSmallWidth}" height="${isMobile?Util.thumbnailHeight():data.metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             </a>
             `
         }
