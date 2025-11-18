@@ -475,14 +475,14 @@ class TimelineController(
         if (mediaTypeFilter == "video") {
             mediaType = mediaTypeFilter
         }
-        response["message"] = messageSource?.getMessage("main.noresults", null, locale)
+        response["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.noresults", null, locale)+"</a>"
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
         response["page"] = page
         response["size"] = size
 
-        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
+        response["msg"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.noresults", null, locale)+"</a>"
         response["status"] = ApiResponse.FAIL.status
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
@@ -808,13 +808,13 @@ class TimelineController(
         if (mediaTypeFilter == "video") {
             mediaType = mediaTypeFilter
         }
-        response["message"] = messageSource?.getMessage("main.noresults", null, locale)
+        response["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.noresults", null, locale)+"</a>"
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
         response["placeNameHeaders"] = mutableListOf<String>()
 
-        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
+        response["msg"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.noresults", null, locale)+"</a>"
         response["status"] = ApiResponse.FAIL.status
 
         if (!date.isNullOrBlank()) {

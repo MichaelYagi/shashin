@@ -602,7 +602,7 @@ class BrowseController(
 
     private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?, locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
+        response["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()
@@ -1135,7 +1135,7 @@ class BrowseController(
 
         val module = "folders"
         response["msg"] = messageSource?.getMessage("main.nothing", null, locale)
-        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
+        response["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
         response["foldersList"] = mutableListOf<Folder>()
         response["page"] = page
         response["size"] = size
@@ -1496,7 +1496,7 @@ class BrowseController(
 
     private fun buildFolder(model: Model, folder: String, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
+        response["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()
