@@ -357,7 +357,7 @@
 
                 // Refresh image
                 if (Util.isMobile()) {
-                    const centeredHeightWidth = 120;
+                    const centeredHeightWidth = 115;
                     $("#photoThumbnailContainer" + metadataId).css({
                         "width": centeredHeightWidth + "px",
                         "height": centeredHeightWidth + "px"

@@ -359,7 +359,8 @@ footer {
 }
 
 .dateSection {
-  margin: 20px 0 0 -10px;
+  margin: 20px 0 0 0;
+  padding-left: 0;
 }
 
 .image-group-padding {
@@ -571,9 +572,6 @@ footer {
 @media (max-width: 767.98px) and (orientation: portrait) {
   .dateHeader {
     font-size: 0.75rem;
-  }
-
-  .dateSection {
-    margin: 20px 0 0 -17px;
+    padding: 25px 0 15px 1px;
   }
 }
