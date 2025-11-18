@@ -76,12 +76,17 @@
             const agentOS = /*[[${agentOS}]]*/ '';
             const activePage = /*[[${activePage}]]*/ "";
             const queryLimit = /*[[${settings.queryLimit}]]*/ 30;
+            const thumbnailHeight = /*[[${thumbnailHeight}]]*/ 0;
             /*]]>*/
 
             // Use value already implemented in Kotlin
             Util.isMobile = function () {
                 return isMobile;
             };
+
+            Util.thumbnailHeight = function() {
+                return thumbnailHeight;
+            }
 
             Util.agentName = function () {
                 return agentName;

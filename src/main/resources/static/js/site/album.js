@@ -5,12 +5,11 @@
     albumSettings.eol = false;
     albumSettings.lastDate = "";
     albumSettings.thumbnailType = "225";
-    albumSettings.thumbnailHeight = "225";
+    albumSettings.thumbnailHeight = Util.thumbnailHeight();;
     albumSettings.locale = "en";
     albumSettings.lastLgIndex = 0;
     if (Util.isMobile()) {
         albumSettings.thumbnailType = "centered";
-        albumSettings.thumbnailHeight = "115";
     }
 
     albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate, lastLgIndex, locale) {
@@ -92,7 +91,7 @@
                 $("#metadataId").val(metadata.id);
                 if (metadata.thumbnailUrlCentered !== null) {
                     const version = Util.getMetadataLocalStorage();
-                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + (version === "" ? "" : "?v=" + version) + '" height="115" width="115" draggable="false">');
+                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + (version === "" ? "" : "?v=" + version) + '" height="'+Util.thumbnailHeight()+'" width="'+Util.thumbnailHeight()+'" draggable="false">');
                 }
 
                 // Open modal window

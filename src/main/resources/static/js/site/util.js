@@ -631,12 +631,6 @@ class Util {
         return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
     }
 
-    static thumbnailHeight() {
-        return 225;
-    }
-
-
-
     static setMetadataLocalStorage(date) {
         let storageType = null;
         if (Util.sessionStorageAvailable() === true) {
