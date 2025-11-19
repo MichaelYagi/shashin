@@ -367,6 +367,7 @@ class TextUtils {
             return input.toIntOrNull() != null
         }
 
+        // example input and output: 2023-4-12 or 2023-04-12 -> Wed, Apr 12, 2023
         fun formatToLongDate(rawDate: String, locale: String = "en"): String? {
             var rawDateArray = rawDate.split("-")
 
@@ -430,6 +431,7 @@ class TextUtils {
             return formattedDate.replace(".", "")
         }
 
+        // example input and output: 2023-4-12 or 2023-04-12 -> Apr 12, 2023
         fun formatToAbbrDate(oldDate: String, locale: String = "en"): String {
             var formattedDate = ""
             try {
@@ -447,6 +449,7 @@ class TextUtils {
             return formattedDate.replace(".", "")
         }
 
+        // example input and output: 2023-04-12 12:30:30 -> Wed, Apr 12, 2023 at 12:30 PM
         fun formatToLongDateWithTime(oldDate: String, locale: String = "en"): String {
             var formattedDate = ""
             try {
@@ -1004,6 +1007,7 @@ class TextUtils {
             return true
         }
 
+        // Example: 2023-04-12 12:30:30 or 23/4/12 -> 2023-04-12
         fun convertDateToYMD(inDate: String): String? {
             var isShort = false
             var date: Date?
