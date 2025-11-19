@@ -602,7 +602,11 @@ class BrowseController(
 
     private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?, locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
+        var message = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
+        if (module == "duplicates") {
+            message = messageSource?.getMessage("main.nothing", null, locale).toString()
+        }
+        response["message"] = message
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()
