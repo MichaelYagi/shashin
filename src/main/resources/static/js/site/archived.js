@@ -117,7 +117,7 @@ class Archived {
                                 const uuid = uuidv4();
 
                                 if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">'+shashin.getTranslatedValue('main.pages.browse.header.archived')+' </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                                    const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="dateHeader" id="dateHeader' + currentDate + '"><span class="text-muted">'+shashin.getTranslatedValue('main.pages.browse.header.archived')+' </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
                                 }
 

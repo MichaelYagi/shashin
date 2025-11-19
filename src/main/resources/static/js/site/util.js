@@ -14,27 +14,13 @@ class Util {
     static truncateHeading() {
         $('.dateSection').each(function () {
             const $section = $(this);
-            const $dateHeaderLength = $(".dateHeader").length;
-            let $date = $section.find('.dateHeader > strong:first');
-            if ($dateHeaderLength === 0) {
-                $date = $section.find('p > strong:first');
-            }
-            let $heading = $section.find('.dateHeader').first();
-            if ($dateHeaderLength === 0) {
-                $heading = $section.find('p').first();;
-            }
-            let $link = $section.find('.dateHeader > .text-muted a');
-            if ($dateHeaderLength === 0) {
-                $link = $section.find('p > .text-muted a');
-            }
+            const $date = $section.find('.dateHeader > strong:first');
+            const $heading = $section.find('.dateHeader').first();
             const originalAttr = $date.attr("style");
             $date.removeAttr("style");
             const $body = $section.find('.row');
             const $photos = $body.find('.photo-thumbnail-container');
-            let $textMuted = $section.find('.dateHeader > .text-muted');
-            if ($dateHeaderLength === 0) {
-                $textMuted = $section.find('p > .text-muted');
-            }
+            const $textMuted = $section.find('.dateHeader > .text-muted');
 
             // Get the heading width
             const headingWidthOffset = 10;
@@ -52,39 +38,32 @@ class Util {
 
             $date.attr("style", originalAttr);
 
-            if ($date[0] === undefined || dateHeadingWidth === 0 || bodyWidth === 0) return;
+            shashin.printMessageToConsole('--------------\n'+$date[0].outerHTML,{tag:"truncateHeading"});
+            shashin.printMessageToConsole($heading[0].outerHTML,{tag:"truncateHeading"});
+            shashin.printMessageToConsole("dateHeadingWidth: "+dateHeadingWidth,{tag:"truncateHeading"});
+            shashin.printMessageToConsole("bodyWidth: "+bodyWidth,{tag:"truncateHeading"});
+            shashin.printMessageToConsole("link: "+$section.find('.dateHeader > .text-muted a')[0],{tag:"truncateHeading"});
+            shashin.printMessageToConsole("muted text: "+$section.find('.dateHeader > .text-muted a').text(),{tag:"truncateHeading"});
 
-            shashin.printMessageToConsole('--------------\n'+$date[0].outerHTML, {tag: "truncateHeading"});
-            shashin.printMessageToConsole($heading[0].outerHTML, {tag: "truncateHeading"});
-            shashin.printMessageToConsole("dateHeadingWidth: "+dateHeadingWidth, {tag: "truncateHeading"});
-            shashin.printMessageToConsole("bodyWidth: "+bodyWidth, {tag: "truncateHeading"});
-            shashin.printMessageToConsole("link: "+$link.text(), {tag: "truncateHeading"});
-            shashin.printMessageToConsole("muted text: "+$textMuted.text(), {tag: "truncateHeading"});
+            if (dateHeadingWidth === 0 || bodyWidth === 0) return;
 
             // Truncate if heading width longer than body width
             if (dateHeadingWidth > bodyWidth) {
                 shashin.printMessageToConsole("hiding placename muted text", {tag: "truncateHeading"});
 
                 // First truncate the placename link
-                $($link).hide();
+                $($section.find('.dateHeader > .text-muted a')).hide();
 
                 // Capture the prefix width
                 dateHeadingWidth = $section.find('.dateHeader > .text-muted:not(:has(> a))').innerWidth();
-                if (isNaN(dateHeadingWidth)) {
-                    dateHeadingWidth = $section.find('p > .text-muted').innerWidth();
-                }
                 dateHeadingWidth += $date.innerWidth() + headingWidthOffset;
                 if (dateHeadingWidth > bodyWidth) {
                     shashin.printMessageToConsole("hiding prefix muted text", {tag: "truncateHeading"});
                     // Chopping the placename link wasn't enough, truncate the prefix
-                    if ($dateHeaderLength === 0) {
-                        $($section.find('p > .text-muted')).hide();
-                    } else {
-                        $($section.find('.dateHeader > .text-muted:not(:has(> a))')).hide();
-                    }
+                    $($section.find('.dateHeader > .text-muted:not(:has(> a))')).hide();
                 }
             } else {
-                shashin.printMessageToConsole("showing muted text");
+                shashin.printMessageToConsole("showing muted text",{tag:"truncateHeading"});
             }
         });
     }
