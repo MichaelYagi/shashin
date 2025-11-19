@@ -77,16 +77,6 @@ class TestController(
         model["mike"] = "Mike"
         model["noah"] = "Noah"
 
-        println("formatted dates")
-
-        println(TextUtils.formatToLongDate("2023-4-12"))
-        println(TextUtils.formatToLongDate("2023-04-12 12:30:30"))
-        println(TextUtils.formatToAbbrDate("2023-4-12"))
-        println(TextUtils.formatToAbbrDate("2023-04-12"))
-        println(TextUtils.formatToLongDateWithTime("2023-04-12 12:30:30"))
-        println(TextUtils.convertDateToYMD("2023-04-12"))
-        println(TextUtils.convertDateToYMD("2023-04-12 12:30:30"))
-
         println("recognitionLabelPhotoCount:")
         val recognitionLabelPhotoCount =
             recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
