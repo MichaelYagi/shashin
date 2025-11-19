@@ -15,9 +15,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [2.17.2] - 2025-11-19
+### Fixed
 - Date display bug in explore module
 
 ### Security
+- Bump js-yaml from 4.1.0 to 4.1.1
 
 ## [2.17.1] - 2025-11-16
 ### Added
