@@ -89,9 +89,9 @@ class MediaServiceController(
             } else if (type == "centered") {
                 metadata.getThumbnailPathCentered().toString()
             } else if (type == "original") {
-                val currentUser = request.session?.getAttribute("CurrentUser") as User?
-                if (currentUser != null) {
-                    updateLastAccessed(model, request, metadata, currentUser.getId())
+                val currentUserObj = model.getAttribute("currentUser") as User?
+                if (currentUserObj != null) {
+                    updateLastAccessed(model, request, metadata, currentUserObj.getId())
                 } else {
                     updateLastAccessed(model, request, metadata)
                 }
@@ -389,7 +389,7 @@ class MediaServiceController(
     private fun getVideoFactory(model: Model, request: HttpServletRequest, response: HttpServletResponse, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
         metadataObj.setLastAccessedAt(getCurrentTimestamp())
 
-        val currentUserObj = request.session?.getAttribute("CurrentUser") as User?
+        val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && currentUserObj.getId() > 0) {
             metadataObj.setLastAccessedBy(currentUserObj.getId())
         } else {
@@ -456,7 +456,7 @@ class MediaServiceController(
             model["metadataObj"] = metadata
             metadata.setLastAccessedAt(getCurrentTimestamp())
 
-            val currentUserObj = request.session?.getAttribute("CurrentUser") as User?
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null && currentUserObj.getId() > 0) {
                 metadata.setLastAccessedBy(currentUserObj.getId())
             } else {
@@ -946,7 +946,7 @@ class MediaServiceController(
             val metadata = metadataObj.get()
             metadata.setLastAccessedAt(getCurrentTimestamp())
 
-            val currentUserObj = request.session?.getAttribute("CurrentUser") as User?
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null && currentUserObj.getId() > 0) {
                 metadata.setLastAccessedBy(currentUserObj.getId())
             } else {
