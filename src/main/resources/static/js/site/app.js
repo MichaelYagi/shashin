@@ -671,19 +671,25 @@
             dynamicEl:shashin.getInitMediaContent(mediaElement),
             plugins: []
         };
+
+        if (activePage === "archived") {
+            lgConfig.shashinEditor = false;
+        } else {
+            if (typeof lgVideoThumbnail !== "undefined") {
+                lgConfig.plugins.push(lgVideoThumbnail);
+                lgConfig.videoThumbnail = true;
+                lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
+            }
+        }
+
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
             lgConfig.metadataDetail = true;
             lgConfig.metadataDetailFun = shashin.openEditMetadataModal;
         }
-        if (typeof lgVideoThumbnail !== "undefined") {
-            lgConfig.plugins.push(lgVideoThumbnail);
-            lgConfig.videoThumbnail = true;
-            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
-        }
 
         let lgElement = 'scroll-gallery';
-        if (activePage === "album" || activePage === "share" || activePage === "favorites") {
+        if (activePage === "album" || activePage === "share" || activePage === "favorites" || activePage === "archived") {
             lgElement = 'infinite-scroll-gallery';
         }
 
