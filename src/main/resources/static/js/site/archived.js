@@ -15,17 +15,13 @@ class Archived {
         const lgConfig = {
             dynamic:true,
             dynamicEl:shashin.getInitMediaContent(mediaElement),
+            shashinEditor: false, // No editing on archive page
             plugins:[]
         };
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
             lgConfig.metadataDetail = true;
             lgConfig.metadataDetailFun = shashin.openEditMetadataModal;
-        }
-        if (typeof lgVideoThumbnail !== "undefined") {
-            lgConfig.plugins.push(lgVideoThumbnail);
-            lgConfig.videoThumbnail = true;
-            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',lgConfig,mediaElement);
     }
