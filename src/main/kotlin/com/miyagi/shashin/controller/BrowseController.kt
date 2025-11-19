@@ -787,7 +787,19 @@ class BrowseController(
                 val formattedDateMap = HashMap<String, String>()
 
                 for (metadata in metadataList) {
-                    val date = metadata.getYear().toString() + "-" + metadata.getMonth().toString() + "-" + metadata.getDay().toString()
+                    var date = metadata.getTakenAt().toString()
+                    when (module) {
+                        "recent" -> {
+                            date = metadata.getAddedAt().toString()
+                        }
+                        "modified" -> {
+                            date = metadata.getModifiedAt().toString()
+                        }
+                        "accessed" -> {
+                            date = metadata.getLastAccessedAt().toString()
+                        }
+                    }
+
                     formattedDateMap[metadata.getId().toString()] = TextUtils.formatToLongDate(date, model.getAttribute("locale").toString()).toString()
 
                     val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
