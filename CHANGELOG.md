@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Date display bug in explore module
+
 ### Security
 
 ## [2.17.1] - 2025-11-16
