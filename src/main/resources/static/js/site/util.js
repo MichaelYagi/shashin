@@ -38,14 +38,14 @@ class Util {
 
             $date.attr("style", originalAttr);
 
+            if ($date[0] === undefined || dateHeadingWidth === 0 || bodyWidth === 0) return;
+
             shashin.printMessageToConsole('--------------\n'+$date[0].outerHTML,{tag:"truncateHeading"});
             shashin.printMessageToConsole($heading[0].outerHTML,{tag:"truncateHeading"});
             shashin.printMessageToConsole("dateHeadingWidth: "+dateHeadingWidth,{tag:"truncateHeading"});
             shashin.printMessageToConsole("bodyWidth: "+bodyWidth,{tag:"truncateHeading"});
             shashin.printMessageToConsole("link: "+$section.find('.dateHeader > .text-muted a')[0],{tag:"truncateHeading"});
             shashin.printMessageToConsole("muted text: "+$section.find('.dateHeader > .text-muted a').text(),{tag:"truncateHeading"});
-
-            if (dateHeadingWidth === 0 || bodyWidth === 0) return;
 
             // Truncate if heading width longer than body width
             if (dateHeadingWidth > bodyWidth) {
