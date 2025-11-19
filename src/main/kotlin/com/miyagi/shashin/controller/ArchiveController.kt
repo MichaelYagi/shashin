@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*
 import jakarta.transaction.Transactional
 import org.springframework.context.MessageSource
 import java.util.*
+import kotlin.collections.set
+import kotlin.math.ceil
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN")
@@ -36,12 +38,50 @@ class ArchiveController(
         model["foldersCount"] = metadataRepository.countByFolder()
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
+        model["pageParam"] = 0
+        model["totalPages"] = 0
+        model["currentPage"] = 0
 
         if (metadataRepository.count() > 0) {
-            val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())
+            val archivedList = metadataRepository.findAllByHiddenAndOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())
 
-            if (trashList.count() > 0) {
-                model["metadataList"] = trashList
+            if (archivedList.count() > 0) {
+                model["metadataList"] = archivedList
+                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                val keywordMap = mutableMapOf<String, String>()
+                for (keywordGroup in keywordList) {
+                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                }
+                model["keywordMap"] = keywordMap
+                model["message"] = ""
+            }
+        }
+
+        model["msg"] = ""
+        model["status"] = ApiResponse.SUCCESS.status
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @GetMapping("/archived/{page}")
+    fun getArchivedPaged(model: Model, @PathVariable page: Int, locale: Locale): String {
+        val module = "archived"
+        model["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
+        model["foldersCount"] = metadataRepository.countByFolder()
+        model["metadataList"] = mutableListOf<Metadata>()
+        model["keywordMap"] = mutableMapOf<String, String>()
+        model["totalPages"] = 0
+        model["currentPage"] = (page+1)
+        val size = model.getAttribute("queryLimit").toString().toInt()
+
+        if (metadataRepository.count() > 0) {
+            model["totalPages"] = ceil((metadataRepository.countAllByHiddenIsTrue().toDouble()) / size.toDouble()).toInt()
+            val archivedList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size)
+
+            if (archivedList.count() > 0) {
+                model["metadataList"] = archivedList
                 val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
                 val keywordMap = mutableMapOf<String, String>()
                 for (keywordGroup in keywordList) {
@@ -68,6 +108,9 @@ class ArchiveController(
         response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["metadataList"] = ArrayList<Metadata>()
+        response["pageParam"] = 0
+        response["totalPages"] = 0
+        response["currentPage"] = 0
 
         val size: Int = model.getAttribute("queryLimit") as Int
         val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
@@ -81,12 +124,15 @@ class ArchiveController(
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/archived/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/archived/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedArchive(model: Model, @PathVariable page: Int, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
         response["metadataList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
+        response["pageParam"] = 0
+        response["totalPages"] = 0
+        response["currentPage"] = 0
 
         if (page > 0 && metadataRepository.count() > 0) {
             val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())

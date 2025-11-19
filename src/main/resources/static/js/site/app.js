@@ -661,7 +661,7 @@
         }
     };
 
-    shashin.createPagination = function(currentPage,totalPages,activePage,mediaTypeFilter,identifier=0,shareId="") {
+    shashin.createPagination = function(currentPage,totalPages,activePage,mediaTypeFilter='all',identifier=0,shareId="") {
         Util.truncateHeading();
 
         const mediaElement = '.mediaLink';
@@ -709,7 +709,7 @@
                 truncate: true,
                 href: function (index) { //index starts from 0
                     let link = '/' + activePage + '/' + index + '/' + mediaTypeFilter;
-                    if (activePage === "folders" || activePage === "duplicates") {
+                    if (activePage === "folders" || activePage === "duplicates" || activePage === "archived") {
                         link = '/' + activePage + '/' + index;
                     } else if (activePage === "search") {
                         link = '/' + activePage + '/' + index + '/term/' + mediaTypeFilter;

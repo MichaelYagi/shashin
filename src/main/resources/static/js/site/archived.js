@@ -66,7 +66,7 @@ class Archived {
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/archived/" + nextPage);
+            data = await this.http.ajax("get", "/archived/page/" + nextPage);
         }
 
         const mediaContentList = [];
