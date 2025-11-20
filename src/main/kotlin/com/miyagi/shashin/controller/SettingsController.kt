@@ -2484,6 +2484,7 @@ class SettingsController(
                         var metadataObj: Metadata? = Metadata()
 
                         if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(mediaExtension)) {
+                            val startTimeMillis = System.currentTimeMillis()
                             // Process metadata
                             val metadataProcessing =
                                 MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
@@ -2502,6 +2503,12 @@ class SettingsController(
 
                                         // SAVE METADATA
                                         metadataRepository.save(metadataObj)
+
+                                        val endTimeMillis = System.currentTimeMillis()
+                                        logger.log(
+                                            Level.INFO,
+                                            "Processing metadata ${metadataObj.getId()}: ${endTimeMillis-startTimeMillis}ms"
+                                        )
 
                                         // Create folder cover URL
                                         if (metadataObj.getFolder() != null && metadataObj.getFolder()!!.isNotEmpty()) {
