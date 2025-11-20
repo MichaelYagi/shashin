@@ -42,6 +42,13 @@ class MetadataProcessing() {
         this.metadataObj.setPath(file.path)
         this.metadataObj.setFileName(file.name)
         this.metadataObj.setTitle(file.name)
+        this.metadataObj.setBrightness("1.0")
+        this.metadataObj.setContrast("1.0")
+        this.metadataObj.setSaturation("1.0")
+        this.metadataObj.setSharpness("1.0")
+        this.metadataObj.setFlipVertically(false)
+        this.metadataObj.setFlipHorizontally(false)
+        this.metadataObj.setRotation(0)
 
         // Get file data
         val attr: BasicFileAttributes = Files.readAttributes(
