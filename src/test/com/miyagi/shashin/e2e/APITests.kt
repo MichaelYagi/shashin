@@ -530,17 +530,18 @@ class APITests: BaseSeleniumTests() {
 
             for (elementNode in metadataListNode) {
                 val dateString = elementNode[field].asText()
-                val dateObject = TextUtils.convertDateStringToDateObject(dateString)
+                val currentDate = TextUtils.convertDateStringToDateObject(dateString)
 
-                if (lastDate != null && dateObject != null && lastDate >= dateObject) {
-                    lastDate = dateObject
+                if (lastDate != null && currentDate != null && lastDate >= currentDate) {
+                    lastDate = currentDate
                     currentCount++
                 }
 
-                lastDate = dateObject
+                lastDate = currentDate
             }
         }
 
+        // currentCount is expected to be 1 less than total
         Assertions.assertTrue(currentCount == totalCount-1)
     }
 }
