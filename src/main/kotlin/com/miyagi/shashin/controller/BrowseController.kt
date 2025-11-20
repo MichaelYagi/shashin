@@ -251,6 +251,13 @@ class BrowseController(
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/api/v1/recent","/api/v1/recent/mediaType/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedSizeRecent(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildBrowseRecord("recent", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType, locale))
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/taken","/taken/{mediaType}"], method = [RequestMethod.GET])
     fun getTaken(model: Model,@PathVariable(required = false) mediaType: String?,locale: Locale): String {
         val module = "taken"
@@ -269,6 +276,13 @@ class BrowseController(
     @ResponseBody
     fun getPagedTaken(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable(required = false) mediaType: String?, locale: Locale): String {
         return mapper.writeValueAsString(buildBrowseRecord("taken",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale))
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/api/v1/taken","/api/v1/taken/mediaType/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedSizeTaken(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildBrowseRecord("taken", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType, locale))
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
@@ -448,6 +462,13 @@ class BrowseController(
         return mapper.writeValueAsString(buildBrowseRecord("accessed",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale))
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/api/v1/accessed","/api/v1/accessed/mediaType/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedSizeAccessed(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildBrowseRecord("accessed", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType, locale))
+    }
+
     @RouterOperation(
         operation =
         Operation(
@@ -533,7 +554,7 @@ class BrowseController(
         )
     )
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/api/v1/modified","/api/v1/modified/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/modified","/api/v1/modified/mediaType/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeModified(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?, locale: Locale): String {
         return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType, locale))

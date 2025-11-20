@@ -5,23 +5,17 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import jakarta.transaction.Transactional
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,9 +39,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import java.net.URL
 import java.time.Duration
+import java.util.Date
 import java.util.logging.Level
 import kotlin.Int
-import kotlin.random.Random
 
 // API tests that require image scans
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -57,6 +51,8 @@ class APITests: BaseSeleniumTests() {
 
     private var superId: Int? = null
     private var userId: Int? = null
+    private var superKey: String? = null
+    private var userKey: String? = null
     private var mockMvc: MockMvc? = null
 
     @LocalServerPort
@@ -77,22 +73,24 @@ class APITests: BaseSeleniumTests() {
     @Transactional
     fun setup() {
         val adminObj = User()
+        superKey = "00000000-00000000-00000000-00000000"
         adminObj.setUsername("testsuper")
         var encodedPassword: String = bcrypt.encode("testsuper")
         adminObj.setPassword(encodedPassword)
         adminObj.setAuthority("ROLE_SUPER")
         adminObj.setIsAuthorized(true)
-        adminObj.setApikey("00000000-00000000-00000000-00000000")
+        adminObj.setApikey(superKey)
         userRepository?.save(adminObj)
         superId = adminObj.getId()
 
         val userObj = User()
+        userKey = "00000000-00000000-00000000-00000001"
         userObj.setUsername("testuser")
         encodedPassword = bcrypt.encode("testuser")
         userObj.setPassword(encodedPassword)
         userObj.setAuthority("ROLE_USER")
         userObj.setIsAuthorized(true)
-        userObj.setApikey("00000000-00000000-00000000-00000001")
+        userObj.setApikey(userKey)
         userRepository?.save(userObj)
         userId = userObj.getId()
 
@@ -178,7 +176,7 @@ class APITests: BaseSeleniumTests() {
 
         val response = webClient.get()
             .uri("/api/v1/recent/0")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
             .bodyToMono(String::class.java)
@@ -206,7 +204,7 @@ class APITests: BaseSeleniumTests() {
         // Get metadata
         val response = webClient.get()
             .uri("/api/v1/recent/0")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
             .bodyToMono(String::class.java)
@@ -248,7 +246,7 @@ class APITests: BaseSeleniumTests() {
 
         var response = webClient.get()
             .uri("/api/v1/recent/0")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
             .bodyToMono(String::class.java)
@@ -275,7 +273,7 @@ class APITests: BaseSeleniumTests() {
         // Get metadata
         response = webClient.get()
             .uri("/api/v1/mapdata/keywords")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
             .bodyToMono(String::class.java)
@@ -301,7 +299,7 @@ class APITests: BaseSeleniumTests() {
 
         var response = webClient.get()
             .uri("/api/v1/recent/0")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
             .bodyToMono(String::class.java)
@@ -360,7 +358,7 @@ class APITests: BaseSeleniumTests() {
 
         response = webClient.put()
             .uri("/api/v1/update/metadata/${metadataId}")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .bodyValue(gson.toJson(map).toString())
             .retrieve()
@@ -370,7 +368,7 @@ class APITests: BaseSeleniumTests() {
         // Check if dates differ from original
         response = webClient.get()
             .uri("/api/v1/metadata/${metadataId}")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
             .bodyToMono(String::class.java)
@@ -393,7 +391,7 @@ class APITests: BaseSeleniumTests() {
 
         response = webClient.post()
             .uri("/api/v1/rescan/metadata")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .bodyValue(gson.toJson(map).toString())
             .retrieve()
@@ -403,7 +401,7 @@ class APITests: BaseSeleniumTests() {
         // Check if dates are the same as original
         response = webClient.get()
             .uri("/api/v1/metadata/${metadataId}")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
             .bodyToMono(String::class.java)
@@ -433,7 +431,7 @@ class APITests: BaseSeleniumTests() {
         // Get metadata
         val response = webClient.get()
             .uri("/api/v1/recent/0")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header("x-api-key", superKey)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
             .bodyToMono(String::class.java)
@@ -461,7 +459,7 @@ class APITests: BaseSeleniumTests() {
         mockMvc!!.perform(
             options("/api/v1/user/self")
             .header("Content-Type", "application/json")
-            .header("X-Api-Key", "00000000-00000000-00000000-00000001")
+            .header("X-Api-Key", userKey)
             .header("Origin", "http://111.111.0.111:9999")
             .header("Access-Control-Request-Method", "GET")
         )
@@ -472,7 +470,7 @@ class APITests: BaseSeleniumTests() {
         val selfObjJson = mockMvc!!.perform(
             get("/api/v1/user/self")
             .header("Content-Type", "application/json")
-            .header("X-Api-Key", "00000000-00000000-00000000-00000001")
+            .header("X-Api-Key", userKey)
             .header("Origin", "http://111.111.0.111:9999")
             .header("Access-Control-Request-Method", "GET")
         )
@@ -485,12 +483,64 @@ class APITests: BaseSeleniumTests() {
         mockMvc!!.perform(
             options("/api/v1/image/$metadataId")
             .header("Content-Type", "application/json")
-            .header("X-Api-Key", "00000000-00000000-00000000-00000001")
+            .header("X-Api-Key", userKey)
             .header("Origin", "http://111.111.0.111:9999")
             .header("Access-Control-Request-Method", "GET")
         )
         .andExpect(status().isOk)
         .andExpect(MockMvcResultMatchers.header().stringValues("Access-Control-Allow-Origin", "*"))
         .andExpect(MockMvcResultMatchers.header().stringValues("Access-Control-Allow-Methods", "GET"))
+    }
+
+    @Test
+    fun shouldGetOrderedByDateByModule() {
+        testOrderedByDateCount("modified", "modifiedAt")
+        testOrderedByDateCount("recent", "addedAt")
+        testOrderedByDateCount("taken", "takenAt")
+        testOrderedByDateCount("accessed", "lastAccessedAt")
+    }
+
+    fun testOrderedByDateCount(browsePage: String, field: String) {
+        // Test if dates are in order
+        val webClient = WebClient.create("http://localhost:$port/")
+
+        var jsonString: String? = null
+        var jsonNode: JsonNode? = null
+        val mapper = ObjectMapper()
+
+        // Get metadata
+        val response = webClient.get()
+            .uri("/api/v1/$browsePage/0")
+            .header("x-api-key", superKey)
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        var totalCount = 0
+        var currentCount = 0
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+            val metadataListNode = jsonNode.get("metadataList")
+            var lastDate: Date? = null
+            totalCount = metadataListNode.size()
+
+            for (elementNode in metadataListNode) {
+                val dateString = elementNode[field].asText()
+                val dateObject = TextUtils.convertDateStringToDateObject(dateString)
+
+                if (lastDate != null && dateObject != null && lastDate >= dateObject) {
+                    lastDate = dateObject
+                    currentCount++
+                }
+
+                lastDate = dateObject
+            }
+        }
+
+        Assertions.assertTrue(currentCount == totalCount-1)
     }
 }

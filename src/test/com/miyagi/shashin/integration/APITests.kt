@@ -463,6 +463,64 @@ class APITests {
 
     @Test
     @Throws(Exception::class)
+    fun shouldReadStatus() {
+        browserForbiddenEndpointTests("modified")
+        browserForbiddenEndpointTests("recent")
+        browserForbiddenEndpointTests("taken")
+        browserForbiddenEndpointTests("accessed")
+
+        browserAllowEndpointTests("modified")
+        browserAllowEndpointTests("recent")
+        browserAllowEndpointTests("taken")
+        browserAllowEndpointTests("accessed")
+    }
+
+    fun browserAllowEndpointTests(endpoint: String) {
+        var response = mockMvc!!.perform(
+            get("/api/v1/$endpoint")
+                .header("Content-Type", "application/json")
+                .header("X-API-KEY", superKey)
+        )
+
+//        println(response.andReturn().response.contentAsString)
+
+        var jsonString = response.andReturn().response.contentAsString
+        var jsonNode: JsonNode?
+        val mapper = ObjectMapper()
+
+        var status = ""
+        if (jsonString.isNotBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+            status = jsonNode.get("status").textValue()
+        }
+
+        Assertions.assertTrue(status == "success")
+    }
+
+    fun browserForbiddenEndpointTests(endpoint: String) {
+        var response = mockMvc!!.perform(
+            get("/api/v1/$endpoint")
+                .header("Content-Type", "application/json")
+                .header("X-API-KEY", userKey)
+        )
+
+//        println(response.andReturn().response.contentAsString)
+
+        var jsonString = response.andReturn().response.contentAsString
+        var jsonNode: JsonNode?
+        val mapper = ObjectMapper()
+
+        var status = ""
+        if (jsonString.isNotBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+            status = jsonNode.get("status").textValue()
+        }
+
+        Assertions.assertTrue(status == "FORBIDDEN")
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun shouldDisplayHeathStatus() {
         var response = mockMvc!!.perform(
             get("/api/v1/health")

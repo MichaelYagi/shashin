@@ -19,6 +19,24 @@ class TextUtilsTests {
     private var rememberMeKey: String? = null
 
     @Test
+    fun convertDateStringToDateObjectTest() {
+        var stringToDate = TextUtils.convertDateStringToDateObject("2025-11-20 12:34:56")
+        Assertions.assertTrue(stringToDate.toString() == "Thu Nov 20 12:34:56 PST 2025")
+
+        val stringToDate2 = TextUtils.convertDateStringToDateObject("2025-11-21 12:34:56")
+        Assertions.assertTrue(stringToDate2.toString() == "Fri Nov 21 12:34:56 PST 2025")
+
+        if (stringToDate2 != null) {
+            Assertions.assertTrue(stringToDate2 > stringToDate)
+        } else {
+            Assertions.assertTrue(false)
+        }
+
+        stringToDate = TextUtils.convertDateStringToDateObject("2025-11-20")
+        Assertions.assertTrue(stringToDate == null)
+    }
+
+    @Test
     fun isLocalIpTest() {
         var isLocal = TextUtils.isLocalIp("127.0.0.1")
         Assertions.assertTrue(isLocal)
@@ -44,7 +62,6 @@ class TextUtilsTests {
         isLocal = TextUtils.isLocalIp(null)
         Assertions.assertFalse(isLocal)
     }
-
 
     @Test
     fun parseRememberMeCookieTest() {
