@@ -161,8 +161,24 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/timeline")
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Redirected to timeline.")
-        val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
-        val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
+
+        val scrollContainerLocator = By.id("infinite-scroll-gallery")
+        val spanLocator = By.xpath(".//span[1]")
+
+        // Now safely fetch the element
+        var spanContainerEl: WebElement? = null
+
+        // Instead of WebDriverWait, use the refresh-based helper
+        val found = waitForNestedElement(this.driver!!, scrollContainerLocator, spanLocator, port.toString(), "timeline")
+
+        Assertions.assertTrue(found)
+
+        // If found, safely fetch the element
+        if (found) {
+            spanContainerEl = this.driver!!.findElement(scrollContainerLocator).findElement(By.xpath(".//span[1]"))
+            this.logger.log(Level.INFO, "AlbumSeleniumTest - Found first span in infinite-scroll-gallery.")
+        }
+
         // Get the date id
         var dateId = ""
         if (spanContainerEl !== null && spanContainerEl.getDomAttribute("id") !== null) {
@@ -360,9 +376,12 @@ class AlbumSeleniumTests: BaseSeleniumTests() {
         // Logging out redirects to login page
         this.driver!!.get("http://localhost:$port/users/logout")
         WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")))
-        waitForPage(driver!!, By.id("remember-me"), port.toString(), "users/logout")
+        val found = waitForPage(driver!!, By.id("remember-me"), port.toString(), "users/login") // "users/logout"
 //        println(this.driver?.pageSource) // print the html
 //        takeScreenshot(driver!!)
+
+        Assertions.assertTrue(found)
+
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
