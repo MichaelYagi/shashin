@@ -1125,6 +1125,21 @@ class TextUtils {
 
         }
 
+        // Must be in format yyyy-mm-dd hh:mm:ss
+        fun convertDateStringToDateObject(dateString: String): Date? {
+            var date: Date?
+
+            try {
+                val sourceDateFormat = SimpleDateFormat(getCommonDateFormat(), Locale.ENGLISH)
+                date = sourceDateFormat.parse(dateString)
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Date must be in format ${getCommonDateFormat()}. $dateString given: ${e.message}")
+                return null
+            }
+
+            return date
+        }
+
         fun returnForbiddenError(response: HttpServletResponse): String {
             val jsonResponseMap = mutableMapOf<String, Any>()
             jsonResponseMap["msg"] = "Access is denied"
