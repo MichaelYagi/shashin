@@ -2038,6 +2038,8 @@ class SettingsController(
             for ((index, metadataId) in metadataIdArray.withIndex()) {
                 val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
+                val startTimeMillis = System.currentTimeMillis()
+
                 if (metadataObj != null) {
                     // Set place name
                     val lat = metadataObj.getLat()
@@ -2384,6 +2386,13 @@ class SettingsController(
 
                 val completedPercent: Double = ((index+1).toDouble() / metadataArrayCount.toDouble()) * 100
 
+                val endTimeMillis = System.currentTimeMillis()
+
+                logger.log(
+                    Level.INFO,
+                    "Processing ${index+1} of $metadataArrayCount objects and location for metadataId $metadataId: ${endTimeMillis-startTimeMillis}ms"
+                )
+
                 logger.log(
                     Level.INFO,
                     "${round(completedPercent).toInt()}% completed scanning location and facial data"
@@ -2507,7 +2516,7 @@ class SettingsController(
                                         val endTimeMillis = System.currentTimeMillis()
                                         logger.log(
                                             Level.INFO,
-                                            "Processing metadata ${metadataObj.getId()}: ${endTimeMillis-startTimeMillis}ms"
+                                            "Processing $currentMediaCount of $totalMediaCount metadata ${metadataObj.getId()}: ${endTimeMillis-startTimeMillis}ms"
                                         )
 
                                         // Create folder cover URL
