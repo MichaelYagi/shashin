@@ -15,7 +15,9 @@ import java.util.logging.Logger
 import jakarta.transaction.Transactional
 import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
+import org.openqa.selenium.StaleElementReferenceException
 import org.openqa.selenium.TakesScreenshot
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.context.annotation.Import
@@ -28,6 +30,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Base64
 import java.util.UUID
 import java.util.concurrent.TimeoutException
+import java.util.logging.Level
 
 @ActiveProfiles("test")
 @Import(ToolsControllerTestConfig::class)
@@ -209,20 +212,82 @@ abstract class BaseSeleniumTests {
     // println(this.driver?.pageSource) // print the html
     // takeScreenshot(driver!!) // take a screenshot
     fun takeScreenshot(driver: WebDriver, path: String = "C:\\Users\\Michael\\Downloads\\shashin_test_screenshot_"+getRandomString()+".png") {
-        val screenshot = (driver as TakesScreenshot).getScreenshotAs(OutputType.FILE)
-        screenshot.copyTo(Paths.get(path).toFile(), overwrite = true)
+        val file = Paths.get(path).toFile()
+        val parentDirectory = file.parentFile
+        val directoryExists = parentDirectory != null && parentDirectory.exists() && parentDirectory.isDirectory()
+
+        if (directoryExists) {
+            val screenshot = (driver as TakesScreenshot).getScreenshotAs(OutputType.FILE)
+            screenshot.copyTo(Paths.get(path).toFile(), overwrite = true)
+        } else {
+            this.logger.log(Level.WARNING, "Directory for path $path not found")
+        }
     }
 
-    fun waitForPage(driver: WebDriver, locator: By, port: String? = null, page: String? = null): Boolean {
+    fun waitForPage(
+        driver: WebDriver,
+        locator: By,
+        port: String? = null,
+        page: String? = null
+    ): Boolean {
+        var index = 0
+
         repeat(3) {
+            index++
             try {
                 if (!(port.isNullOrBlank() || page.isNullOrBlank())) {
                     driver.get("http://localhost:$port/$page")
+                } else {
+                    driver.navigate().refresh()
                 }
-                WebDriverWait(driver, Duration.ofSeconds(60))
-                    .until(ExpectedConditions.visibilityOfElementLocated(locator)) // eg By.id("infinite-scroll-gallery")
+
+                this.logger.log(Level.INFO, "Iteration $index looking for locator $locator on port $port page $page")
+
+//                takeScreenshot(driver)
+
+                WebDriverWait(driver, Duration.ofSeconds(10))
+                    .until(ExpectedConditions.visibilityOfElementLocated(locator))
+
                 return true
-            } catch (e: TimeoutException) {
+            } catch (e: org.openqa.selenium.TimeoutException) {
+                this.logger.log(Level.WARNING, "Iteration $index timed out, retrying...")
+                Thread.sleep(2000)
+            }
+        }
+        return false
+    }
+
+    fun waitForNestedElement(
+        driver: WebDriver,
+        parentLocator: By,
+        childLocator: By,
+        port: String? = null,
+        page: String? = null
+    ): Boolean {
+        var index = 0
+        repeat(3) {
+            index++
+            try {
+                if (!(port.isNullOrBlank() || page.isNullOrBlank())) {
+                    driver.get("http://localhost:$port/$page")
+                } else {
+                    driver.navigate().refresh()
+                }
+
+                this.logger.log(Level.INFO, "Iteration $index looking for $childLocator inside $parentLocator on page $page")
+
+                // Re-find the parent each time after refresh
+                val parent = driver.findElement(parentLocator)
+
+                WebDriverWait(driver, Duration.ofSeconds(10))
+                    .until(ExpectedConditions.presenceOfNestedElementLocatedBy(parent, childLocator))
+
+                return true
+            } catch (e: org.openqa.selenium.TimeoutException) {
+                this.logger.log(Level.WARNING, "Iteration $index timed out, retrying...")
+                Thread.sleep(2000)
+            } catch (e: StaleElementReferenceException) {
+                this.logger.log(Level.WARNING, "Iteration $index stale element, retrying...")
                 Thread.sleep(2000)
             }
         }
