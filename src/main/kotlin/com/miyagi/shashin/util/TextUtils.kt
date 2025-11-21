@@ -1126,6 +1126,7 @@ class TextUtils {
         }
 
         // Must be in format yyyy-mm-dd hh:mm:ss
+        // Used only in tests
         fun convertDateStringToDateObject(dateString: String): Date? {
             try {
                 val sourceDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)

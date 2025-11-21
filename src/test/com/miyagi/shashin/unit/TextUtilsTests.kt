@@ -33,7 +33,6 @@ class TextUtilsTests {
         formatter.timeZone = TimeZone.getTimeZone("PST")
         Assertions.assertEquals("Fri Nov 21 12:34:56 PST 2025", formatter.format(stringToDate2))
 
-
         if (stringToDate2 != null) {
             Assertions.assertTrue(stringToDate2 > stringToDate)
         } else {
