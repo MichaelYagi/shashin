@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository
 @Transactional
 @Repository
 interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
-    @Query("SELECT * FROM duplicates ORDER BY image_id1", nativeQuery = true)
+    @Query("SELECT * FROM duplicates ORDER BY image_id_1", nativeQuery = true)
     fun findDuplicates(): MutableIterable<Duplicates>
 
-    @Query("SELECT COUNT(*) FROM duplicates WHERE (image_id1 = :metadataId1 AND image_id2 = :metadataId2) OR (image_id1 = :metadataId2 AND image_id2 = :metadataId1)", nativeQuery = true)
+    @Query("SELECT COUNT(*) FROM duplicates WHERE (image_id_1 = :metadataId1 AND image_id_2 = :metadataId2) OR (image_id_1 = :metadataId2 AND image_id_2 = :metadataId1)", nativeQuery = true)
     fun findDuplicateMetadataId(@Param("metadataId1") metadataId1: String, @Param("metadataId2") metadataId2: String): Int
 
     fun deleteByImageId1OrImageId2(@Param("metadataId1") metadataId1: String, @Param("metadataId2") metadataId2: String): Long
@@ -35,50 +35,76 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "LIMIT :offset, :limit", nativeQuery = true)
     fun findDuplicateImageHash(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
-    @Query("SELECT DISTINCT sub.*\n" +
-            "FROM (\n" +
-            "         SELECT m.*, m.duplicate_hash\n" +
-            "         FROM duplicates d\n" +
-            "         JOIN metadata m ON m.id = d.image_id1\n" +
-            "         WHERE m.hidden = 0 AND d.distance = 0\n" +
-            "         UNION ALL\n" +
-            "         SELECT m.*, m.duplicate_hash\n" +
-            "         FROM duplicates d\n" +
-            "         JOIN metadata m ON m.id = d.image_id2\n" +
-            "         WHERE m.hidden = 0 AND d.distance = 0\n" +
-            "     ) AS sub\n" +
-            "WHERE sub.duplicate_hash IN (\n" +
+//    @Query("SELECT DISTINCT sub.*\n" +
+//            "FROM (\n" +
+//            "         SELECT m.*, m.duplicate_hash\n" +
+//            "         FROM duplicates d\n" +
+//            "         JOIN metadata m ON m.id = d.image_id_1\n" +
+//            "         WHERE m.hidden = 0 AND d.distance = 0\n" +
+//            "         UNION ALL\n" +
+//            "         SELECT m.*, m.duplicate_hash\n" +
+//            "         FROM duplicates d\n" +
+//            "         JOIN metadata m ON m.id = d.image_id_2\n" +
+//            "         WHERE m.hidden = 0 AND d.distance = 0\n" +
+//            "     ) AS sub\n" +
+//            "WHERE sub.duplicate_hash IN (\n" +
+//            "    SELECT duplicate_hash\n" +
+//            "    FROM metadata\n" +
+//            "    WHERE hidden = 0\n" +
+//            "    GROUP BY duplicate_hash\n" +
+//            "    HAVING COUNT(*) > 1\n" +
+//            ")\n" +
+//            "ORDER BY sub.duplicate_hash, sub.taken_at " +
+//            "LIMIT :offset, :limit", nativeQuery = true)
+    @Query("SELECT DISTINCT m.*\n" +
+            "FROM metadata m\n" +
+            "JOIN duplicates d \n" +
+            "  ON m.id = d.image_id_1 OR m.id = d.image_id_2\n" +
+            "JOIN (\n" +
             "    SELECT duplicate_hash\n" +
             "    FROM metadata\n" +
             "    WHERE hidden = 0\n" +
             "    GROUP BY duplicate_hash\n" +
             "    HAVING COUNT(*) > 1\n" +
-            ")\n" +
-            "ORDER BY sub.duplicate_hash, sub.taken_at " +
-            "LIMIT :offset, :limit", nativeQuery = true)
+            ") dup ON dup.duplicate_hash = m.duplicate_hash\n" +
+            "WHERE m.hidden = 0 AND d.distance = 0\n" +
+            "ORDER BY m.duplicate_hash, m.taken_at\n" +
+            "LIMIT :offset, :limit;", nativeQuery = true)
     fun findAllMetadataIds(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
-    @Query("SELECT COUNT(*)\n" +
-            "FROM (\n" +
-            "    SELECT DISTINCT sub.*\n" +
-            "    FROM (\n" +
-            "             SELECT m.*, m.duplicate_hash\n" +
-            "             FROM duplicates d\n" +
-            "             JOIN metadata m ON m.id = d.image_id1\n" +
-            "             WHERE m.hidden = 0 AND d.distance = 0\n" +
-            "             UNION ALL\n" +
-            "             SELECT m.*, m.duplicate_hash\n" +
-            "             FROM duplicates d\n" +
-            "             JOIN metadata m ON m.id = d.image_id2\n" +
-            "             WHERE m.hidden = 0 AND d.distance = 0\n" +
-            "         ) AS sub\n" +
-            "    WHERE sub.duplicate_hash IN (\n" +
-            "        SELECT duplicate_hash\n" +
-            "        FROM metadata\n" +
-            "        WHERE hidden = 0\n" +
-            "        GROUP BY duplicate_hash\n" +
-            "        HAVING COUNT(*) > 1\n" +
-            "    )\n" +
-            ") AS counted;", nativeQuery = true)
+//    @Query("SELECT COUNT(*)\n" +
+//            "FROM (\n" +
+//            "    SELECT DISTINCT sub.*\n" +
+//            "    FROM (\n" +
+//            "             SELECT m.*, m.duplicate_hash\n" +
+//            "             FROM duplicates d\n" +
+//            "             JOIN metadata m ON m.id = d.image_id_1\n" +
+//            "             WHERE m.hidden = 0 AND d.distance = 0\n" +
+//            "             UNION ALL\n" +
+//            "             SELECT m.*, m.duplicate_hash\n" +
+//            "             FROM duplicates d\n" +
+//            "             JOIN metadata m ON m.id = d.image_id_2\n" +
+//            "             WHERE m.hidden = 0 AND d.distance = 0\n" +
+//            "         ) AS sub\n" +
+//            "    WHERE sub.duplicate_hash IN (\n" +
+//            "        SELECT duplicate_hash\n" +
+//            "        FROM metadata\n" +
+//            "        WHERE hidden = 0\n" +
+//            "        GROUP BY duplicate_hash\n" +
+//            "        HAVING COUNT(*) > 1\n" +
+//            "    )\n" +
+//            ") AS counted;", nativeQuery = true)
+    @Query("SELECT COUNT(DISTINCT m.id) AS counted\n" +
+            "FROM duplicates d\n" +
+            "         JOIN metadata m\n" +
+            "              ON m.id IN (d.image_id_1, d.image_id_2)\n" +
+            "WHERE m.hidden = 0 AND d.distance = 0\n" +
+            "  AND m.duplicate_hash IN (\n" +
+            "    SELECT duplicate_hash\n" +
+            "    FROM metadata\n" +
+            "    WHERE hidden = 0\n" +
+            "    GROUP BY duplicate_hash\n" +
+            "    HAVING COUNT(*) > 1\n" +
+            ");", nativeQuery = true)
     fun countAllMetadataIds(): Int?
 }
