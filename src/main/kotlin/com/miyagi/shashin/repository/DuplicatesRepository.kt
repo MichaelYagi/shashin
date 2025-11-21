@@ -1,6 +1,5 @@
 package com.miyagi.shashin.repository
 
-import com.miyagi.shashin.model.AlbumComments
 import com.miyagi.shashin.model.Duplicates
 import com.miyagi.shashin.model.Metadata
 import jakarta.transaction.Transactional
@@ -20,42 +19,12 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
 
     fun deleteByImageId1OrImageId2(@Param("metadataId1") metadataId1: String, @Param("metadataId2") metadataId2: String): Long
 
-//    @Query("SELECT * FROM metadata WHERE hidden = 0 AND duplicate_hash IS NOT NULL AND type LIKE \"%image%\" AND duplicate_hash BETWEEN :hashStart AND :hashEnd ORDER BY duplicate_hash, taken_at", nativeQuery = true)
-//    fun findMetadataIdBetweenDuplicationHash(@Param("hashStart") hashStart: String, @Param("hashEnd") hashEnd: String): MutableList<Metadata>?
-
     @Query("SELECT *\n" +
             "FROM metadata m\n" +
             "WHERE hidden = 0 AND duplicate_hash IS NOT NULL AND type LIKE \"%image%\" " +
-//            "AND type NOT LIKE \"%gif%\" " +
-//            "AND NOT EXISTS (\n" +
-//            "    SELECT 1\n" +
-//            "    FROM duplicates d\n" +
-//            "    WHERE d.distance = 0 AND (d.image_id1 = m.id OR d.image_id2 = m.id)\n" +
-//            ") " +
             "LIMIT :offset, :limit", nativeQuery = true)
     fun findDuplicateImageHash(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
-//    @Query("SELECT DISTINCT sub.*\n" +
-//            "FROM (\n" +
-//            "         SELECT m.*, m.duplicate_hash\n" +
-//            "         FROM duplicates d\n" +
-//            "         JOIN metadata m ON m.id = d.image_id_1\n" +
-//            "         WHERE m.hidden = 0 AND d.distance = 0\n" +
-//            "         UNION ALL\n" +
-//            "         SELECT m.*, m.duplicate_hash\n" +
-//            "         FROM duplicates d\n" +
-//            "         JOIN metadata m ON m.id = d.image_id_2\n" +
-//            "         WHERE m.hidden = 0 AND d.distance = 0\n" +
-//            "     ) AS sub\n" +
-//            "WHERE sub.duplicate_hash IN (\n" +
-//            "    SELECT duplicate_hash\n" +
-//            "    FROM metadata\n" +
-//            "    WHERE hidden = 0\n" +
-//            "    GROUP BY duplicate_hash\n" +
-//            "    HAVING COUNT(*) > 1\n" +
-//            ")\n" +
-//            "ORDER BY sub.duplicate_hash, sub.taken_at " +
-//            "LIMIT :offset, :limit", nativeQuery = true)
     @Query("SELECT DISTINCT m.*\n" +
             "FROM metadata m\n" +
             "JOIN duplicates d \n" +
@@ -72,28 +41,6 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "LIMIT :offset, :limit;", nativeQuery = true)
     fun findAllMetadataIds(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
-//    @Query("SELECT COUNT(*)\n" +
-//            "FROM (\n" +
-//            "    SELECT DISTINCT sub.*\n" +
-//            "    FROM (\n" +
-//            "             SELECT m.*, m.duplicate_hash\n" +
-//            "             FROM duplicates d\n" +
-//            "             JOIN metadata m ON m.id = d.image_id_1\n" +
-//            "             WHERE m.hidden = 0 AND d.distance = 0\n" +
-//            "             UNION ALL\n" +
-//            "             SELECT m.*, m.duplicate_hash\n" +
-//            "             FROM duplicates d\n" +
-//            "             JOIN metadata m ON m.id = d.image_id_2\n" +
-//            "             WHERE m.hidden = 0 AND d.distance = 0\n" +
-//            "         ) AS sub\n" +
-//            "    WHERE sub.duplicate_hash IN (\n" +
-//            "        SELECT duplicate_hash\n" +
-//            "        FROM metadata\n" +
-//            "        WHERE hidden = 0\n" +
-//            "        GROUP BY duplicate_hash\n" +
-//            "        HAVING COUNT(*) > 1\n" +
-//            "    )\n" +
-//            ") AS counted;", nativeQuery = true)
     @Query("SELECT COUNT(DISTINCT m.id) AS counted\n" +
             "FROM duplicates d\n" +
             "         JOIN metadata m\n" +
