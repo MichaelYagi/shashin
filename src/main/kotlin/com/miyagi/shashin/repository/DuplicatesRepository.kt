@@ -27,17 +27,14 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
 
     @Query("SELECT DISTINCT m.*\n" +
             "FROM metadata m\n" +
-            "JOIN duplicates d \n" +
-            "  ON m.id = d.image_id_one OR m.id = d.image_id_two\n" +
-            "JOIN (\n" +
-            "    SELECT duplicate_hash\n" +
-            "    FROM metadata\n" +
-            "    WHERE hidden = 0\n" +
-            "    GROUP BY duplicate_hash\n" +
-            "    HAVING COUNT(*) > 1\n" +
-            ") dup ON dup.duplicate_hash = m.duplicate_hash\n" +
-            "WHERE m.hidden = 0 AND d.distance IN (0, 1)\n" +
-            "ORDER BY m.duplicate_hash, m.taken_at\n" +
+            "         JOIN duplicates d ON m.id = d.image_id_one\n" +
+            "WHERE m.hidden = 0\n" +
+            "UNION\n" +
+            "SELECT DISTINCT m.*\n" +
+            "FROM metadata m\n" +
+            "         JOIN duplicates d ON m.id = d.image_id_two\n" +
+            "WHERE m.hidden = 0\n" +
+            "ORDER BY duplicate_hash\n" +
             "LIMIT :offset, :limit;", nativeQuery = true)
     fun findAllMetadataIds(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
@@ -45,13 +42,7 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "FROM duplicates d\n" +
             "         JOIN metadata m\n" +
             "              ON m.id IN (d.image_id_one, d.image_id_two)\n" +
-            "WHERE m.hidden = 0 AND d.distance IN (0, 1)\n" +
-            "  AND m.duplicate_hash IN (\n" +
-            "    SELECT duplicate_hash\n" +
-            "    FROM metadata\n" +
-            "    WHERE hidden = 0\n" +
-            "    GROUP BY duplicate_hash\n" +
-            "    HAVING COUNT(*) > 1\n" +
-            ");", nativeQuery = true)
+            "WHERE m.hidden = 0"
+        , nativeQuery = true)
     fun countAllMetadataIds(): Int?
 }
