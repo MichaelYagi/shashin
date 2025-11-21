@@ -25,25 +25,41 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "LIMIT :offset, :limit", nativeQuery = true)
     fun findDuplicateImageHash(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
-    @Query("WITH dup_hashes AS (\n" +
-            "    SELECT duplicate_hash\n" +
-            "    FROM metadata\n" +
-            "    WHERE hidden = 0\n" +
-            "    GROUP BY duplicate_hash\n" +
-            "    HAVING COUNT(*) > 1\n" +
+    @Query("WITH counts AS (\n" +
+            "  SELECT id, COUNT(*) AS c\n" +
+            "  FROM (\n" +
+            "    SELECT image_id_one AS id FROM duplicates\n" +
+            "    UNION ALL\n" +
+            "    SELECT image_id_two FROM duplicates\n" +
+            "  )\n" +
+            "  GROUP BY id\n" +
+            "  HAVING COUNT(*) > 1\n" +
+            "),\n" +
+            "edges AS (\n" +
+            "  SELECT image_id_one AS a, image_id_two AS b FROM duplicates\n" +
+            "  UNION\n" +
+            "  SELECT image_id_two AS a, image_id_one AS b FROM duplicates\n" +
+            "),\n" +
+            "seeds AS (\n" +
+            "  SELECT id AS root, id AS node FROM counts\n" +
+            "),\n" +
+            "reach(root, node) AS (\n" +
+            "  SELECT root, node FROM seeds\n" +
+            "  UNION\n" +
+            "  SELECT r.root, e.b\n" +
+            "  FROM reach r\n" +
+            "  JOIN edges e ON e.a = r.node\n" +
+            "),\n" +
+            "min_root AS (\n" +
+            "  SELECT node, MIN(root) AS component_id\n" +
+            "  FROM reach\n" +
+            "  GROUP BY node\n" +
             ")\n" +
-            "SELECT DISTINCT m.*\n" +
-            "FROM metadata m\n" +
-            "         JOIN duplicates d ON m.id = d.image_id_one\n" +
+            "SELECT m.*, mr.component_id\n" +
+            "FROM min_root mr\n" +
+            "JOIN metadata m ON m.id = mr.node\n" +
             "WHERE m.hidden = 0\n" +
-            "  AND m.duplicate_hash IN (SELECT duplicate_hash FROM dup_hashes)\n" +
-            "UNION\n" +
-            "SELECT DISTINCT m.*\n" +
-            "FROM metadata m\n" +
-            "         JOIN duplicates d ON m.id = d.image_id_two\n" +
-            "WHERE m.hidden = 0\n" +
-            "  AND m.duplicate_hash IN (SELECT duplicate_hash FROM dup_hashes)\n" +
-            "ORDER BY duplicate_hash \n" +
+            "ORDER BY mr.component_id, m.id\n" +
             "LIMIT :offset, :limit;", nativeQuery = true)
     fun findAllMetadataIds(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
