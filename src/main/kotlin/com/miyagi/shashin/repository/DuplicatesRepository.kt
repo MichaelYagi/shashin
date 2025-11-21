@@ -25,16 +25,25 @@ interface DuplicatesRepository : CrudRepository<Duplicates?, Int?> {
             "LIMIT :offset, :limit", nativeQuery = true)
     fun findDuplicateImageHash(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
-    @Query("SELECT DISTINCT m.*\n" +
+    @Query("WITH dup_hashes AS (\n" +
+            "    SELECT duplicate_hash\n" +
+            "    FROM metadata\n" +
+            "    WHERE hidden = 0\n" +
+            "    GROUP BY duplicate_hash\n" +
+            "    HAVING COUNT(*) > 1\n" +
+            ")\n" +
+            "SELECT DISTINCT m.*\n" +
             "FROM metadata m\n" +
             "         JOIN duplicates d ON m.id = d.image_id_one\n" +
             "WHERE m.hidden = 0\n" +
+            "  AND m.duplicate_hash IN (SELECT duplicate_hash FROM dup_hashes)\n" +
             "UNION\n" +
             "SELECT DISTINCT m.*\n" +
             "FROM metadata m\n" +
             "         JOIN duplicates d ON m.id = d.image_id_two\n" +
             "WHERE m.hidden = 0\n" +
-            "ORDER BY duplicate_hash\n" +
+            "  AND m.duplicate_hash IN (SELECT duplicate_hash FROM dup_hashes)\n" +
+            "ORDER BY duplicate_hash \n" +
             "LIMIT :offset, :limit;", nativeQuery = true)
     fun findAllMetadataIds(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableList<Metadata>?
 
