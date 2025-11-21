@@ -1131,7 +1131,7 @@ class TextUtils {
                 val sourceDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
                 sourceDateFormat.timeZone = TimeZone.getTimeZone("PST") // force PST
                 val date = sourceDateFormat.parse(dateString)
-                logger.log(Level.INFO, "Date returned ${date.toString()}")
+                logger.log(Level.INFO, "Date returned ${sourceDateFormat.format(date)}")
                 return date
             } catch (e: Exception) {
                 logger.log(Level.WARNING, "Date must be in format yyyy-MM-dd HH:mm:ss. $dateString given: ${e.message}")
