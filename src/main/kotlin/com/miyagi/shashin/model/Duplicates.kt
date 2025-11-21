@@ -1,6 +1,7 @@
 package com.miyagi.shashin.model
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -17,16 +18,16 @@ class Duplicates {
     private var id: Int = 0
 
     @NotBlank
+    @Column(name = "image_id_1")
     private var imageId1: String? = null
 
     @NotBlank
+    @Column(name = "image_id_2")
     private var imageId2: String? = null
 
     private var distance: Int? = null
 
     private var createdAt: String? = null
-
-    fun Comment() {}
 
     fun getId(): Int {
         return this.id
