@@ -1257,6 +1257,10 @@ class TimelineController(
 
                 createVideoGif(metadataIdArray, metadataRepository, true)
 
+                Thread {
+                    DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository)
+                }.start()
+
                 return if (errorDetected) {
                     resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
                     resp["status"] = ApiResponse.WARN.status
@@ -1307,6 +1311,7 @@ class TimelineController(
 
                 if (isHidden) {
                     metadataObj.get().setHidden(true)
+                    duplicatesRepository.deleteByImageIdOneOrImageIdTwo(metadataObj.get().getId(), metadataObj.get().getId())
                     metadataObj.get().setModifiedAt(getCurrentTimestamp())
                     removeMetadata(metadataId, locale)
                 }
@@ -1639,6 +1644,7 @@ class TimelineController(
                 val removeDuplicateHash = metadataMap["removeDuplicateHash"].toString().toBoolean()
                 if (removeDuplicateHash && metadataObj.get().getDuplicateHash() != null) {
                     metadataObj.get().setDuplicateHash(null)
+                    duplicatesRepository.deleteByImageIdOneOrImageIdTwo(metadataObj.get().getId(), metadataObj.get().getId())
                 } else {
                     // Generate a hash for comparing potential duplicates
                     if (metadataObj.get().getDuplicateHash() == null && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
@@ -2096,6 +2102,7 @@ class TimelineController(
 
                     metadata.setModifiedAt(dtf.format(adjustedNow))
                     metadata.setHidden(true)
+                    duplicatesRepository.deleteByImageIdOneOrImageIdTwo(metadata.getId(), metadata.getId())
                     removeMetadata(id, locale)
                 }
 
@@ -2332,6 +2339,7 @@ class TimelineController(
                     if (enableDuplicateScan) {
                         if (removeDuplicateHash && metadata.getDuplicateHash() != null) {
                             metadata.setDuplicateHash(null)
+                            duplicatesRepository.deleteByImageIdOneOrImageIdTwo(metadataObj.get().getId(), metadataObj.get().getId())
                         } else {
                             // Generate a hash for comparing potential duplicates
                             if (metadata.getDuplicateHash() == null && !metadata.getType()
@@ -2349,6 +2357,7 @@ class TimelineController(
 
                     if (isHidden) {
                         metadata.setHidden(true)
+                        duplicatesRepository.deleteByImageIdOneOrImageIdTwo(metadata.getId(), metadata.getId())
                         removeMetadata(id, locale)
                     } else {
                         // Add album photo
