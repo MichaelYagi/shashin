@@ -12,9 +12,13 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
+- Rescan scan duplicates
+
 ### Deprecated
 ### Removed
 ### Fixed
+- Query for duplicates
+
 ### Security
 
 ## [2.17.2] - 2025-11-19
