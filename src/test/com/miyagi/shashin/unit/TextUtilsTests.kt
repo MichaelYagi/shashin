@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 @SpringBootTest
 @Import(ToolsControllerTestConfig::class)
@@ -21,10 +24,15 @@ class TextUtilsTests {
     @Test
     fun convertDateStringToDateObjectTest() {
         var stringToDate = TextUtils.convertDateStringToDateObject("2025-11-20 12:34:56")
-        Assertions.assertTrue(stringToDate.toString() == "Thu Nov 20 12:34:56 PST 2025")
+        var formatter = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
+        formatter.timeZone = TimeZone.getTimeZone("PST")
+        Assertions.assertEquals("Thu Nov 20 12:34:56 PST 2025", formatter.format(stringToDate))
 
         val stringToDate2 = TextUtils.convertDateStringToDateObject("2025-11-21 12:34:56")
-        Assertions.assertTrue(stringToDate2.toString() == "Fri Nov 21 12:34:56 PST 2025")
+        formatter = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
+        formatter.timeZone = TimeZone.getTimeZone("PST")
+        Assertions.assertEquals("Fri Nov 21 12:34:56 PST 2025", formatter.format(stringToDate2))
+
 
         if (stringToDate2 != null) {
             Assertions.assertTrue(stringToDate2 > stringToDate)
