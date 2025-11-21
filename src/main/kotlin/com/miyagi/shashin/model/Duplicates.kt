@@ -18,12 +18,10 @@ class Duplicates {
     private var id: Int = 0
 
     @NotBlank
-    @Column(name = "image_id_1")
-    private var imageId1: String? = null
+    private var imageIdOne: String? = null
 
     @NotBlank
-    @Column(name = "image_id_2")
-    private var imageId2: String? = null
+    private var imageIdTwo: String? = null
 
     private var distance: Int? = null
 
@@ -37,20 +35,20 @@ class Duplicates {
         this.id = id
     }
 
-    fun getImageId1(): String? {
-        return this.imageId1
+    fun getImageIdOne(): String? {
+        return this.imageIdOne
     }
 
-    fun setImageId1(imageId1: String?) {
-        this.imageId1 = imageId1
+    fun setImageIdOne(imageIdOne: String?) {
+        this.imageIdOne = imageIdOne
     }
 
-    fun getImageId2(): String? {
-        return this.imageId2
+    fun getImageIdTwo(): String? {
+        return this.imageIdTwo
     }
 
-    fun setImageId2(imageId2: String?) {
-        this.imageId2 = imageId2
+    fun setImageIdTwo(imageIdTwo: String?) {
+        this.imageIdTwo = imageIdTwo
     }
 
     fun getDistance(): Int? {
@@ -72,8 +70,8 @@ class Duplicates {
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
-        map["imageId1"] = this.imageId1
-        map["imageId2"] = this.imageId2
+        map["imageIdOne"] = this.imageIdOne
+        map["imageIdTwo"] = this.imageIdTwo
         map["distance"] = this.distance
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

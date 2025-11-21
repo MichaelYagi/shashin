@@ -320,12 +320,12 @@ CREATE TABLE `searchhistory` (
 DROP TABLE IF EXISTS `duplicates`;
 CREATE TABLE `duplicates` (
                                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                                `image_id_1` INTEGER NOT NULL,
-                                `image_id_2` INTEGER NOT NULL,
+                                `image_id_one` INTEGER NOT NULL,
+                                `image_id_two` INTEGER NOT NULL,
                                 `distance` INTEGER NOT NULL,
                                 `created_at` DATETIME DEFAULT NULL,
-                                FOREIGN KEY (image_id_1) REFERENCES metadata(id),
-                                FOREIGN KEY (image_id_2) REFERENCES metadata(id)
+                                FOREIGN KEY (image_id_one) REFERENCES metadata(id),
+                                FOREIGN KEY (image_id_two) REFERENCES metadata(id)
 );
 
 INSERT INTO `hibernate_sequence` VALUES (362);

@@ -1787,7 +1787,7 @@ class SettingsController(
                                     )
 
                                     // Delete from duplicates
-                                    duplicatesRepository?.deleteByImageId1OrImageId2(metadata.getId(), metadata.getId())
+                                    duplicatesRepository?.deleteByImageIdOneOrImageIdTwo(metadata.getId(), metadata.getId())
                                     logger.log(
                                         Level.INFO,
                                         "Removed duplicates records for: " + metadata.getId()
