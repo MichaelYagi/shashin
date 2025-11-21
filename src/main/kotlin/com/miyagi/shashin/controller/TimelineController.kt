@@ -1055,7 +1055,7 @@ class TimelineController(
     @RequestMapping(value = ["/rescan/metadata", "/api/v1/rescan/metadata"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun rescanMetadata(@RequestBody requestBody: JsonNode, locale: Locale): String? {
+    fun rescanMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         val retMap = mutableMapOf<String,Metadata>()
@@ -1064,6 +1064,8 @@ class TimelineController(
             val metadataIdArray = metadataMap["metadataIdList"] as ArrayList<String>?
             if (!metadataIdArray.isNullOrEmpty()) {
                 var errorDetected = false
+
+                val settings = model.getAttribute("settings") as Settings?
 
                 for (metadataId in metadataIdArray) {
                     val metadataObj = metadataRepository.findById(metadataId)
@@ -1257,9 +1259,11 @@ class TimelineController(
 
                 createVideoGif(metadataIdArray, metadataRepository, true)
 
-                Thread {
-                    DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository)
-                }.start()
+                if (settings?.getDuplicateDetection() == true) {
+                    Thread {
+                        DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository)
+                    }.start()
+                }
 
                 return if (errorDetected) {
                     resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
