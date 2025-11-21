@@ -1127,10 +1127,10 @@ class TextUtils {
 
         // Must be in format yyyy-mm-dd hh:mm:ss
         // Used only in tests
-        fun convertDateStringToDateObject(dateString: String): Date? {
+        fun convertDateStringToDateObject(dateString: String, timeZone: String = "PST"): Date? {
             try {
                 val sourceDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
-                sourceDateFormat.timeZone = TimeZone.getTimeZone("PST") // force PST
+                sourceDateFormat.timeZone = TimeZone.getTimeZone(timeZone)
                 val date = sourceDateFormat.parse(dateString)
                 logger.log(Level.INFO, "Date returned ${sourceDateFormat.format(date)}")
                 return date
