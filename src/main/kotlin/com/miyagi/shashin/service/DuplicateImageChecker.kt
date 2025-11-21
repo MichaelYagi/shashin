@@ -213,8 +213,8 @@ class DuplicateImageChecker {
                                     )
 
                                     val duplicate = Duplicates()
-                                    duplicate.setImageId1(metadata.getId())
-                                    duplicate.setImageId2(dupe.id)
+                                    duplicate.setImageIdOne(metadata.getId())
+                                    duplicate.setImageIdTwo(dupe.id)
                                     duplicate.setDistance(query.hammingDistance(dupe.hash))
                                     duplicate.setCreatedAt(getCurrentTimestamp())
                                     duplicateList.add(duplicate)
