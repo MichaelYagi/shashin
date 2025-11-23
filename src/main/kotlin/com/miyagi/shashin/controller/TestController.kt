@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
-import com.miyagi.shashin.model.Duplicates
 import com.miyagi.shashin.service.DuplicateImageChecker
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.MetadataDate
@@ -16,11 +15,8 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.MetadataProcessing
-import com.miyagi.shashin.util.BKTree
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
-import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import dev.brachtendorf.jimagehash.hash.Hash
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
@@ -34,8 +30,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.math.BigInteger
 import java.time.ZoneId
+import javax.imageio.ImageIO
 import kotlin.String
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
@@ -77,13 +73,38 @@ class TestController(
         model["mike"] = "Mike"
         model["noah"] = "Noah"
 
-        println("recognitionLabelPhotoCount:")
-        val recognitionLabelPhotoCount =
-            recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                2,
-                "18f15435-a2da-3492-a62e-a27d113b7655"
-            )
-        println(recognitionLabelPhotoCount)
+        println("hash_experiment")
+        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
+        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
+//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\005_Aug_22__1984.jpg")
+//        var fileTwo = fileOne
+
+        var resolution = 64
+
+        var imageOne = ImageIO.read(fileOne)
+        var imageTwo = ImageIO.read(fileTwo)
+
+        var dcheck = DuplicateImageChecker()
+        var d1 = dcheck.dhash(imageOne,resolution)
+        var d2 = dcheck.dhash(imageTwo,resolution)
+        println(d1.toString())
+        println(d2.toString())
+
+        println("purekotlin")
+        println(dcheck.hammingDistance(d1, d2))
+        println(dcheck.similarityPercentage(d1, d2, resolution))
+
+        //-----------
+
+        println("jimagehash")
+        val dupeImageChecker = DuplicateImageChecker()
+        dupeImageChecker.setAlgorithm("dhash", resolution)
+        var hashOne = dupeImageChecker.computeHash(fileOne)
+        var hashTwo = dupeImageChecker.computeHash(fileTwo)
+        println(hashOne?.hashValue)
+        println(hashTwo?.hashValue)
+        println(hashOne?.hammingDistance(hashTwo))
+        println(dupeImageChecker.similarityScore(hashOne!!, hashTwo!!))
 
         model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
         model["defaultTZ"] = ZoneId.systemDefault()

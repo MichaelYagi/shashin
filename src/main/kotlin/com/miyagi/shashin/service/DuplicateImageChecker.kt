@@ -1,24 +1,22 @@
 package com.miyagi.shashin.service
 
 import com.miyagi.shashin.model.Duplicates
-import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.DuplicatesRepository
 import com.miyagi.shashin.util.BKTree
-import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import dev.brachtendorf.jimagehash.hash.Hash
 import dev.brachtendorf.jimagehash.hashAlgorithms.AverageHash
 import dev.brachtendorf.jimagehash.hashAlgorithms.DifferenceHash
 import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm
 import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash
+import java.awt.Color
+import java.awt.Graphics2D
+import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.math.BigInteger
-import java.text.SimpleDateFormat
-import java.time.ZoneId
 import java.util.Base64
-import java.util.TimeZone
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -137,6 +135,57 @@ class DuplicateImageChecker {
 
     fun similarityScore(hash1: Hash, hash2: Hash): Double {
         return 1.0 - hash1.normalizedHammingDistance(hash2)
+    }
+
+    // ------------------------------ USING PURE KOTLIN, NO LIBRARY ------------------------------
+
+    fun dhash(image: BufferedImage?, hashSize: Int): BigInteger {
+        if (hashSize < 2 || image == null) {
+            throw IllegalArgumentException("hashSize must be >= 2 and image can't be null")
+        }
+
+        // 1) Grayscale normalization and tiny resize
+        val resized = resizeAndGrayscale(image, hashSize + 1, hashSize)
+
+        var result = BigInteger.ZERO
+        var bitIndex = 0
+
+        for (y in 0 until hashSize) {
+            for (x in 0 until hashSize) {
+                val leftPix = resized.raster.getSample(x, y, 0)
+                val rightPix = resized.raster.getSample(x + 1, y, 0)
+                val bit = if (rightPix < leftPix) 1 else 0
+                if (bit == 1) {
+                    result = result.setBit(bitIndex)
+                }
+                bitIndex++
+            }
+        }
+
+        return result
+    }
+
+    private fun resizeAndGrayscale(img: BufferedImage, width: Int, height: Int): BufferedImage {
+        val gray = BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY)
+        val g2d = gray.createGraphics()
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
+        g2d.drawImage(img, 0, 0, width, height, null)
+        g2d.dispose()
+        return gray
+    }
+
+    fun hammingDistance(hash1: BigInteger, hash2: BigInteger): Int {
+        // XOR the two BigIntegers
+        val xorResult = hash1.xor(hash2)
+
+        // Count the number of set bits (Hamming weight)
+        return xorResult.bitCount()
+    }
+
+    fun similarityPercentage(hash1: BigInteger, hash2: BigInteger, hashSize: Int): Double {
+        val totalBits = hashSize * hashSize
+        val distance = hammingDistance(hash1, hash2)
+        return (totalBits - distance).toDouble() / totalBits.toDouble()
     }
 
     companion object {
