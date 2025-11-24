@@ -140,7 +140,7 @@ class DuplicateImageChecker {
 
     // ------------------------------ USING PURE KOTLIN, NO LIBRARY ------------------------------
 
-    fun dhash(image: BufferedImage?, resolution: Int): BigInteger {
+    fun dhash(image: BufferedImage?, resolution: Int = 64): BigInteger {
         if (resolution%8 != 0 || image == null) {
             throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
         }
@@ -201,7 +201,7 @@ class DuplicateImageChecker {
         return xorResult.bitCount()
     }
 
-    fun similarityPercentage(hash1: BigInteger, hash2: BigInteger, resolution: Int): Double {
+    fun similarityPercentage(hash1: BigInteger, hash2: BigInteger, resolution: Int = 64): Double {
         if (resolution%8 != 0) {
             throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
         }
