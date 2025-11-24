@@ -18,13 +18,10 @@ import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.BKTree
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
-import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
-import dev.brachtendorf.jimagehash.hash.Hash
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -51,7 +48,6 @@ import java.awt.image.DataBufferInt
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
-import java.math.BigInteger
 import java.util.Locale
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors

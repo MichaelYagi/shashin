@@ -3,15 +3,7 @@ package com.miyagi.shashin.service
 import com.miyagi.shashin.model.Duplicates
 import com.miyagi.shashin.repository.DuplicatesRepository
 import com.miyagi.shashin.util.BKTree
-import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import dev.brachtendorf.jimagehash.hash.Hash
-import dev.brachtendorf.jimagehash.hashAlgorithms.AverageHash
-import dev.brachtendorf.jimagehash.hashAlgorithms.DifferenceHash
-import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm
-import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash
-import java.awt.Color
-import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
@@ -26,14 +18,12 @@ import javax.imageio.ImageIO
 //val file2 = File(setTwoFilename)
 //
 //val i = DuplicateImageChecker()
+// //
+//var hash1 = i.dhash(file1)
+//var hash2 = i.dhash(file2)
 //
-//i.setAlgorithm(algorithm, resolution) //ahash, dhash, phash
-//
-//var hash1 = i.computeHashValue(file1)
-//var hash2 = i.computeHashValue(file2)
-//
-//var computedHash1 = i.computeHashFromString(hash1.toString())
-//var computedHash2 = i.computeHashFromString(hash2.toString())
+//var computedHash1 = hash1.toString()
+//var computedHash2 = hash2.toString()
 //
 //val isDuplicate = i.isDuplicate(computedHash1, computedHash2)
 class DuplicateImageChecker {
@@ -43,107 +33,16 @@ class DuplicateImageChecker {
     // Default resolution
     private var resolution: Int = 64
 
-    // Default algorithm: aHash
-    private var algorithm: HashingAlgorithm = AverageHash(resolution)
-
     private var algorithmName = "ahash"
 
     private var distance = 0
 
-    /**
-     * Setter to change algorithm dynamically.
-     * Supported: "ahash", "dhash", "phash"
-     */
-    fun setAlgorithm(nameParam: String = "ahash", resolution: Int = 64) {
-        var name = nameParam
-        this.resolution = resolution
-
-        algorithm = when (name.lowercase()) {
-            "ahash" -> AverageHash(resolution)
-            "dhash" -> DifferenceHash(resolution, DifferenceHash.Precision.Simple)
-            "phash" -> PerceptiveHash(resolution)
-            else -> {
-                name = "ahash"
-                AverageHash(resolution)
-            } // fallback
-        }
-
-        this.algorithmName = name.lowercase()
-    }
-
-    fun getAlgorithmName(): String {
-        return this.algorithmName
-    }
-
-    fun getResolution(): Int {
-        return resolution
-    }
-
-    /**
-     * Compute perceptual hash for an image file.
-     */
-    fun computeHash(file: File): Hash? {
-        try {
-            val image: BufferedImage = ImageIO.read(file)
-            return algorithm.hash(image) // use currently selected algorithm
-        } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error computeHash: ${e.message}")
-            return null
-        }
-    }
-
-    fun computeHashValue(file: File): String? {
-        try {
-            val image: BufferedImage = ImageIO.read(file)
-            return algorithm.hash(image).hashValue.toString() // use currently selected algorithm
-        } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error computeHashValue: ${e.message}")
-            return null
-        }
-    }
-
-    fun computeHashFromString(value: String, resolution: Int = 64, algorithmId: Int = 1): Hash {
-        val bigInt = BigInteger(value)
-        return Hash(bigInt, resolution, algorithmId)
-    }
-
-    fun computeHashFromValue(value: BigInteger, resolution: Int = 64, algorithmId: Int = 1): Hash {
-        return Hash(value, resolution, algorithmId)
-    }
-
-    fun getBase64(file: File?): String? {
-        try {
-            if (file != null) {
-                val os = ByteArrayOutputStream()
-                ImageIO.write(ImageIO.read(file), "jpg", os)
-                return Base64.getEncoder().encodeToString(os.toByteArray())
-            }
-        } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error getBase64: ${e.message}")
-        }
-
-        return null
-    }
-
-    fun getDistance(): Int {
-        return distance
-    }
-
-    fun isDuplicate(hash1: Hash, hash2: Hash, threshold: Int = 5): Boolean {
-        this.distance = hash1.hammingDistance(hash2)
-        return this.distance <= threshold
-    }
-
-    fun similarityScore(hash1: Hash, hash2: Hash): Double {
-        return 1.0 - hash1.normalizedHammingDistance(hash2)
-    }
-
-    // ------------------------------ USING PURE KOTLIN, NO LIBRARY ------------------------------
-
-    fun dhash(image: BufferedImage?, resolution: Int = 64): BigInteger {
-        if (resolution%8 != 0 || image == null) {
+    fun dhash(imageFile: File?, resolution: Int = 64): BigInteger? {
+        if (resolution%8 != 0 || imageFile == null) {
             throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
         }
+
+        var image: BufferedImage = ImageIO.read(imageFile)
 
         val hashSize = resolution/8
 
@@ -166,6 +65,32 @@ class DuplicateImageChecker {
         }
 
         return result
+    }
+
+    fun getAlgorithmName(): String {
+        return this.algorithmName
+    }
+
+    fun getResolution(): Int {
+        return resolution
+    }
+
+    fun getBase64(file: File?): String? {
+        try {
+            if (file != null) {
+                val os = ByteArrayOutputStream()
+                ImageIO.write(ImageIO.read(file), "jpg", os)
+                return Base64.getEncoder().encodeToString(os.toByteArray())
+            }
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error getBase64: ${e.message}")
+        }
+
+        return null
+    }
+
+    fun getDistance(): Int {
+        return distance
     }
 
     private fun resizeAndGrayscale(img: BufferedImage, width: Int, height: Int): BufferedImage {
@@ -193,27 +118,17 @@ class DuplicateImageChecker {
         }
     }
 
-    fun hammingDistance(hash1: BigInteger, hash2: BigInteger): Int {
-        // XOR the two BigIntegers
-        val xorResult = hash1.xor(hash2)
-
-        // Count the number of set bits (Hamming weight)
-        return xorResult.bitCount()
-    }
-
-    fun similarityPercentage(hash1: BigInteger, hash2: BigInteger, resolution: Int = 64): Double {
-        if (resolution%8 != 0) {
-            throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
-        }
-
-        val hashSize = resolution/8
-        val totalBits = hashSize * hashSize
-        val distance = hammingDistance(hash1, hash2)
-        return (totalBits - distance).toDouble() / totalBits.toDouble()
-    }
-
     companion object {
         private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
+
+        fun isDuplicate(hash1: BigInteger, hash2: BigInteger, threshold: Int = 5): Boolean? {
+            val distance = hammingDistance(hash1, hash2)
+            if (distance != null) {
+                return distance <= threshold
+            }
+
+            return null
+        }
 
         fun isDuplicate(filename1: String?, filename2: String?): Boolean {
             var isDuplicate = false
@@ -222,10 +137,10 @@ class DuplicateImageChecker {
                 val file2 = File(filename2)
 
                 val i = DuplicateImageChecker()
-                val hash1 = i.computeHash(file1)
-                val hash2 = i.computeHash(file2)
+                val hash1 = i.dhash(file1)
+                val hash2 = i.dhash(file2)
                 if (hash1 != null && hash2 != null) {
-                    isDuplicate = i.isDuplicate(hash1, hash2)
+                    isDuplicate = isDuplicate(hash1, hash2) == true
                 } else {
                     isDuplicate = false
                 }
@@ -233,10 +148,33 @@ class DuplicateImageChecker {
             return isDuplicate
         }
 
+        fun hammingDistance(hash1: BigInteger?, hash2: BigInteger?): Int? {
+            if (hash1 == null || hash2 == null) {
+                throw IllegalArgumentException("resolution must be divisible by 8")
+            }
+
+            // XOR the two BigIntegers
+            val xorResult = hash1.xor(hash2)
+
+            // Count the number of set bits (Hamming weight)
+            return xorResult.bitCount()
+        }
+
+        fun similarityPercentage(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
+            if (resolution%8 != 0 || hash1 == null || hash2 == null) {
+                throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
+            }
+
+            val hashSize = resolution/8
+            val totalBits = hashSize * hashSize
+            val distance = hammingDistance(hash1, hash2)!!.toInt()
+            return (totalBits - distance).toDouble() / totalBits.toDouble()
+        }
+
         fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, page: Int = 1, size: Int = 2500): Int {
             // Implement as part of dupe module
             // Distance function using Hamming distance
-            val tree = BKTree { h1, h2 -> h1.hammingDistance(h2) }
+            val tree = BKTree { h1, h2 -> hammingDistance(h1, h2)!! }
 
             val metadataList = duplicatesRepository.findDuplicateImageHash(page, size)
             logger.log(
@@ -253,7 +191,7 @@ class DuplicateImageChecker {
                         // The last parameter 2 is called the algorithmId,
                         // It's meant for metadata, not the actual hashing algorithm
                         // It can be an arbitrary int
-                        val entry = BKTree.HashEntry(metadata.getId(), Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2))
+                        val entry = BKTree.HashEntry(metadata.getId(), BigInteger(metadata.getDuplicateHash().toString()))
                         logger.log(
                             Level.INFO,
                             "Adding entry into BKTree ${metadata.getId()}"
@@ -272,7 +210,7 @@ class DuplicateImageChecker {
                         // The last parameter 2 is called the algorithmId,
                         // It's meant for metadata, not the actual hashing algorithm
                         // It can be an arbitrary int
-                        val query = Hash(BigInteger(metadata.getDuplicateHash().toString()), 64, 2)
+                        val query = BigInteger(metadata.getDuplicateHash().toString())
                         val duplicates = tree.search(query, threshold = 5)
 
                         for (dupe in duplicates) {
@@ -282,13 +220,13 @@ class DuplicateImageChecker {
                                 if (dupCount == 0) {
                                     logger.log(
                                         Level.INFO,
-                                        "Duplicate ${metadata.getId()} found: id=${dupe.id}, distance=${query.hammingDistance(dupe.hash)}"
+                                        "Duplicate ${metadata.getId()} found: id=${dupe.id}, distance=${hammingDistance(query, dupe.hash)}"
                                     )
 
                                     val duplicate = Duplicates()
                                     duplicate.setImageIdOne(metadata.getId())
                                     duplicate.setImageIdTwo(dupe.id)
-                                    duplicate.setDistance(query.hammingDistance(dupe.hash))
+                                    duplicate.setDistance(hammingDistance(query, dupe.hash))
                                     duplicate.setCreatedAt(getCurrentTimestamp())
                                     duplicateList.add(duplicate)
                                 }

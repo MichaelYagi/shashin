@@ -30,7 +30,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.math.BigInteger
 import java.time.ZoneId
 import javax.imageio.ImageIO
 import kotlin.String
@@ -74,42 +73,42 @@ class TestController(
         model["mike"] = "Mike"
         model["noah"] = "Noah"
 
-        println("hash_experiment")
-//        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
-        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup_bw.jpg")
-//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
-        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup.jpg")
-//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\005_Aug_22__1984.jpg")
-//        var fileTwo = fileOne
-
-        var resolution = 64
-
-        var imageOne = ImageIO.read(fileOne)
-        var imageTwo = ImageIO.read(fileTwo)
-
-        var dcheck = DuplicateImageChecker()
-        var d1 = dcheck.dhash(imageOne,resolution)
-        var d2 = dcheck.dhash(imageTwo,resolution)
-
-        println("purekotlin")
-        println(d1.toString())
-        println(d2.toString())
-//        println(dcheck.hammingDistance(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911")))
-//        println(dcheck.similarityPercentage(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911"), resolution))
-        println(dcheck.hammingDistance(d1, d2))
-        println(dcheck.similarityPercentage(d1, d2, resolution))
-
-        //-----------
-
-        println("jimagehash")
-        val dupeImageChecker = DuplicateImageChecker()
-        dupeImageChecker.setAlgorithm("dhash", resolution)
-        var hashOne = dupeImageChecker.computeHash(fileOne)
-        var hashTwo = dupeImageChecker.computeHash(fileTwo)
-        println(hashOne?.hashValue)
-        println(hashTwo?.hashValue)
-        println(hashOne?.hammingDistance(hashTwo))
-        println(dupeImageChecker.similarityScore(hashOne!!, hashTwo!!))
+//        println("hash_experiment")
+////        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
+//        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup_bw.jpg")
+////        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
+//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup.jpg")
+////        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\005_Aug_22__1984.jpg")
+////        var fileTwo = fileOne
+//
+//        var resolution = 64
+//
+//        var imageOne = ImageIO.read(fileOne)
+//        var imageTwo = ImageIO.read(fileTwo)
+//
+//        var dcheck = DuplicateImageChecker()
+//        var d1 = dcheck.dhash(fileOne,resolution)
+//        var d2 = dcheck.dhash(fileTwo,resolution)
+//
+//        println("purekotlin")
+//        println(d1.toString())
+//        println(d2.toString())
+////        println(dcheck.hammingDistance(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911")))
+////        println(dcheck.similarityPercentage(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911"), resolution))
+//        println(DuplicateImageChecker.hammingDistance(d1, d2))
+//        println(DuplicateImageChecker.similarityPercentage(d1, d2, resolution))
+//
+//        //-----------
+//
+//        println("jimagehash")
+//        val dupeImageChecker = DuplicateImageChecker()
+//        dupeImageChecker.setAlgorithm("dhash", resolution)
+//        var hashOne = dupeImageChecker.computeHash(fileOne)
+//        var hashTwo = dupeImageChecker.computeHash(fileTwo)
+//        println(hashOne?.hashValue)
+//        println(hashTwo?.hashValue)
+//        println(hashOne?.hammingDistance(hashTwo))
+//        println(dupeImageChecker.similarityScore(hashOne!!, hashTwo!!))
 
         model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
         model["defaultTZ"] = ZoneId.systemDefault()
@@ -145,54 +144,54 @@ class TestController(
 //        println(similarityScore)
 
         if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo") && payloadMap.containsKey("algorithm") && payloadMap.containsKey("resolution")) {
-            var setOneFilename = payloadMap["setone"].toString()
-            var setTwoFilename = payloadMap["settwo"].toString()
-            var algorithm = payloadMap["algorithm"].toString()
-            var resolution = payloadMap["resolution"].toString().toInt()
-
-            response["setone"] = setOneFilename
-            response["settwo"] = setTwoFilename
-
-            val metricsUtil = MetricsUtil()
-            metricsUtil.start("Start dupe detection")
-
-            val file1 = File(setOneFilename)
-            val file2 = File(setTwoFilename)
-
-            val i = DuplicateImageChecker()
-
-            i.setAlgorithm(algorithm, resolution) //ahash, dhash, phash
-
-            var hash1 = i.computeHashValue(file1)
-            var hash2 = i.computeHashValue(file2)
-
-            var computedHash1 = i.computeHashFromString(hash1.toString())
-            println(i.computeHashFromString(hash1.toString()))
-            println(i.computeHashFromString(hash1.toString(), 64, 1))
-            println(i.computeHashFromString(hash1.toString(), 64, 2))
-            println(i.computeHashFromString(hash1.toString(), 64, 3))
-            println(i.computeHashFromString(hash1.toString(), 64, 4))
-            var computedHash2 = i.computeHashFromString(hash2.toString())
-
-            metricsUtil.end()
-
-            metricsUtil.start("dupe check")
-            val isDuplicate = i.isDuplicate(computedHash1, computedHash2)
-            metricsUtil.end()
-
-            response["text"] = "Algorithm: "+i.getAlgorithmName()+
-                    "<br>Resolution: "+i.getResolution()+
-                    "<br>hash 1: " + hash1 +
-                    "<br>hash 2: " + hash2 +
-                    "<br>Is duplicate: " + isDuplicate +
-                    "<br>Similarity: " + i.similarityScore(computedHash1, computedHash2) +
-                    "<br>Timings: " + metricsUtil.getMetricsList().toString() +
-                    "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
-
-            // data:image/png;base64,
-            val pre = "data:image/png;base64, "
-            response["base64_1"] = pre + i.getBase64(file1)
-            response["base64_2"] = pre + i.getBase64(file2)
+//            var setOneFilename = payloadMap["setone"].toString()
+//            var setTwoFilename = payloadMap["settwo"].toString()
+//            var algorithm = payloadMap["algorithm"].toString()
+//            var resolution = payloadMap["resolution"].toString().toInt()
+//
+//            response["setone"] = setOneFilename
+//            response["settwo"] = setTwoFilename
+//
+//            val metricsUtil = MetricsUtil()
+//            metricsUtil.start("Start dupe detection")
+//
+//            val file1 = File(setOneFilename)
+//            val file2 = File(setTwoFilename)
+//
+//            val i = DuplicateImageChecker()
+//
+//            i.setAlgorithm(algorithm, resolution) //ahash, dhash, phash
+//
+//            var hash1 = i.computeHashValue(file1)
+//            var hash2 = i.computeHashValue(file2)
+//
+//            var computedHash1 = i.computeHashFromString(hash1.toString())
+//            println(i.computeHashFromString(hash1.toString()))
+//            println(i.computeHashFromString(hash1.toString(), 64, 1))
+//            println(i.computeHashFromString(hash1.toString(), 64, 2))
+//            println(i.computeHashFromString(hash1.toString(), 64, 3))
+//            println(i.computeHashFromString(hash1.toString(), 64, 4))
+//            var computedHash2 = i.computeHashFromString(hash2.toString())
+//
+//            metricsUtil.end()
+//
+//            metricsUtil.start("dupe check")
+//            val isDuplicate = i.isDuplicate(computedHash1, computedHash2)
+//            metricsUtil.end()
+//
+//            response["text"] = "Algorithm: "+i.getAlgorithmName()+
+//                    "<br>Resolution: "+i.getResolution()+
+//                    "<br>hash 1: " + hash1 +
+//                    "<br>hash 2: " + hash2 +
+//                    "<br>Is duplicate: " + isDuplicate +
+//                    "<br>Similarity: " + i.similarityScore(computedHash1, computedHash2) +
+//                    "<br>Timings: " + metricsUtil.getMetricsList().toString() +
+//                    "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
+//
+//            // data:image/png;base64,
+//            val pre = "data:image/png;base64, "
+//            response["base64_1"] = pre + i.getBase64(file1)
+//            response["base64_2"] = pre + i.getBase64(file2)
 
             response["status"] = ApiResponse.SUCCESS.status
         }
@@ -228,7 +227,7 @@ class TestController(
 
         val pageValue = page*size
         // Find all duplicates
-        DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository, pageValue, size)
+//        DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository, pageValue, size)
 
         // Display and group by duplicate images
         model["metadataList"] = duplicatesRepository.findAllMetadataIds(pageValue, size)
@@ -382,9 +381,8 @@ class TestController(
 
                 if (metadata.getDuplicateHash() == null && file.exists() && file.length() > 0) {
                     val dupeImageChecker = DuplicateImageChecker()
-                    dupeImageChecker.setAlgorithm("dhash")
-                    var hash = dupeImageChecker.computeHashValue(file)
-                    metadata.setDuplicateHash(hash)
+                    var hash = dupeImageChecker.dhash(File(metadata.getPath()!!))
+                    metadata.setDuplicateHash(hash.toString())
                     metadataList.add(metadata)
                     println("Saving metadata ${metadata.getPath()} at ${index+1}/$count")
 
