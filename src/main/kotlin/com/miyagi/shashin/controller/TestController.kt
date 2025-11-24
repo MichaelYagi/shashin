@@ -30,6 +30,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.math.BigInteger
 import java.time.ZoneId
 import javax.imageio.ImageIO
 import kotlin.String
@@ -89,10 +90,12 @@ class TestController(
         var dcheck = DuplicateImageChecker()
         var d1 = dcheck.dhash(imageOne,resolution)
         var d2 = dcheck.dhash(imageTwo,resolution)
-        println(d1.toString())
-        println(d2.toString())
 
         println("purekotlin")
+        println(d1.toString())
+        println(d2.toString())
+//        println(dcheck.hammingDistance(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911")))
+//        println(dcheck.similarityPercentage(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911"), resolution))
         println(dcheck.hammingDistance(d1, d2))
         println(dcheck.similarityPercentage(d1, d2, resolution))
 
