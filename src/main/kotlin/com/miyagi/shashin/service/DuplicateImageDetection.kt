@@ -191,15 +191,23 @@ class DuplicateImageDetection {
             return null
         }
 
-        fun isDuplicate(filename1: String?, filename2: String?): Boolean {
+        fun isDuplicate(filename1: String?, filename2: String?, algorithm: String = "dhash"): Boolean {
             var isDuplicate = false
             if (filename1 != null && filename2 != null) {
                 val file1 = File(filename1)
                 val file2 = File(filename2)
 
                 val i = DuplicateImageDetection()
-                val hash1 = i.dhash(file1)
-                val hash2 = i.dhash(file2)
+                var hash1: BigInteger? = null
+                var hash2: BigInteger? = null
+                if (algorithm == "dhash") {
+                    hash1 = i.dhash(file1)
+                    hash2 = i.dhash(file2)
+                } else {
+                    hash1 = i.ahash(file1)
+                    hash2 = i.ahash(file2)
+                }
+
                 if (hash1 != null && hash2 != null) {
                     isDuplicate = isDuplicate(hash1, hash2) == true
                 } else {
