@@ -261,15 +261,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         .size(img.width, img.height)
                         .outputQuality(0.3)
                         .toFile(tnFile)
-
-                    // Generate a hash for comparing potential duplicates
-                    if (!metadataObj.getType().isNullOrBlank() && metadataObj.getType()?.contains("image")!!) {
-                        val dupeImageChecker = DuplicateImageChecker()
-                        val hash = dupeImageChecker.dhash(tnFile)
-                        if (hash != null) {
-                            metadataObj.setDuplicateHash(hash.toString())
-                        }
-                    }
                 }
 
 //                metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
