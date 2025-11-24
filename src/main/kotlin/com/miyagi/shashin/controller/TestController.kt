@@ -74,8 +74,10 @@ class TestController(
         model["noah"] = "Noah"
 
         println("hash_experiment")
-        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
-        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
+//        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
+        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup_bw.jpg")
+//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
+        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup.jpg")
 //        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\005_Aug_22__1984.jpg")
 //        var fileTwo = fileOne
 

@@ -347,6 +347,10 @@ class TextUtils {
             return "yyyy-MM-dd"
         }
 
+        fun getDateFormatWithMS(): String {
+            return "yyyy-MM-dd HH:mm:ss.SSS"
+        }
+
         fun getCommonDateFormat(): String {
             return "yyyy-MM-dd HH:mm:ss"
         }
@@ -510,6 +514,12 @@ class TextUtils {
 
         fun getCurrentTimestamp(): String {
             val dtf = DateTimeFormatter.ofPattern(getCommonDateFormat())
+            val now = LocalDateTime.now()
+            return dtf.format(now)
+        }
+
+        fun getCurrentTimestampMS(): String {
+            val dtf = DateTimeFormatter.ofPattern(getDateFormatWithMS())
             val now = LocalDateTime.now()
             return dtf.format(now)
         }

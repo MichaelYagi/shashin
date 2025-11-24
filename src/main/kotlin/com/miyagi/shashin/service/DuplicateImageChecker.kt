@@ -3,6 +3,7 @@ package com.miyagi.shashin.service
 import com.miyagi.shashin.model.Duplicates
 import com.miyagi.shashin.repository.DuplicatesRepository
 import com.miyagi.shashin.util.BKTree
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import dev.brachtendorf.jimagehash.hash.Hash
 import dev.brachtendorf.jimagehash.hashAlgorithms.AverageHash
@@ -139,13 +140,16 @@ class DuplicateImageChecker {
 
     // ------------------------------ USING PURE KOTLIN, NO LIBRARY ------------------------------
 
-    fun dhash(image: BufferedImage?, hashSize: Int): BigInteger {
-        if (hashSize < 2 || image == null) {
-            throw IllegalArgumentException("hashSize must be >= 2 and image can't be null")
+    fun dhash(image: BufferedImage?, resolution: Int): BigInteger {
+        if (resolution%8 != 0 || image == null) {
+            throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
         }
+
+        val hashSize = resolution/8
 
         // 1) Grayscale normalization and tiny resize
         val resized = resizeAndGrayscale(image, hashSize + 1, hashSize)
+//        saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
 
         var result = BigInteger.ZERO
         var bitIndex = 0
@@ -154,8 +158,7 @@ class DuplicateImageChecker {
             for (x in 0 until hashSize) {
                 val leftPix = resized.raster.getSample(x, y, 0)
                 val rightPix = resized.raster.getSample(x + 1, y, 0)
-                val bit = if (rightPix < leftPix) 1 else 0
-                if (bit == 1) {
+                if (rightPix < leftPix) {
                     result = result.setBit(bitIndex)
                 }
                 bitIndex++
@@ -174,6 +177,22 @@ class DuplicateImageChecker {
         return gray
     }
 
+    private fun saveBufferedImageToFile(image: BufferedImage, filePath: String, formatName: String) {
+        try {
+            val outputFile = File(filePath)
+            if (outputFile.createNewFile()) {
+                ImageIO.write(image, formatName, outputFile)
+                println("BufferedImage successfully saved to: ${outputFile.absolutePath}")
+            } else {
+                println("File already exists: ${outputFile.absolutePath}")
+            }
+
+        } catch (e: Exception) {
+            println("Error saving BufferedImage: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
     fun hammingDistance(hash1: BigInteger, hash2: BigInteger): Int {
         // XOR the two BigIntegers
         val xorResult = hash1.xor(hash2)
@@ -182,7 +201,12 @@ class DuplicateImageChecker {
         return xorResult.bitCount()
     }
 
-    fun similarityPercentage(hash1: BigInteger, hash2: BigInteger, hashSize: Int): Double {
+    fun similarityPercentage(hash1: BigInteger, hash2: BigInteger, resolution: Int): Double {
+        if (resolution%8 != 0) {
+            throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
+        }
+
+        val hashSize = resolution/8
         val totalBits = hashSize * hashSize
         val distance = hammingDistance(hash1, hash2)
         return (totalBits - distance).toDouble() / totalBits.toDouble()
