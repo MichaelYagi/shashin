@@ -30,6 +30,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.math.BigInteger
 import java.time.ZoneId
 import javax.imageio.ImageIO
 import kotlin.String
@@ -128,6 +129,7 @@ class TestController(
         response["setone"] = ""
         response["settwo"] = ""
         response["base64_1"] = ""
+        response["base64_2"] = ""
         response["msg"] = ""
         response["status"] = ApiResponse.FAIL.status
 
@@ -143,11 +145,16 @@ class TestController(
 //        println(isDupe)
 //        println(similarityScore)
 
-        if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo") && payloadMap.containsKey("resolution") && payloadMap.containsKey("threshold")) {
+        if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo") &&
+            payloadMap.containsKey("resolution") &&
+            payloadMap.containsKey("threshold") &&
+            payloadMap.containsKey("algorithm")
+        ) {
             var setOneFilename = payloadMap["setone"].toString()
             var setTwoFilename = payloadMap["settwo"].toString()
             var threshold = payloadMap["threshold"].toString().toInt()
             var resolution = payloadMap["resolution"].toString().toInt()
+            var algorithm = payloadMap["algorithm"].toString()
 
             response["setone"] = setOneFilename
             response["settwo"] = setTwoFilename
@@ -160,8 +167,15 @@ class TestController(
 
             val i = DuplicateImageDetection()
 
-            var hash1 = i.dhash(file1, resolution)
-            var hash2 = i.dhash(file2, resolution)
+            var hash1: BigInteger? = null
+            var hash2: BigInteger? = null
+            if (algorithm == "ahash") {
+                hash1 = i.ahash(file1, resolution)
+                hash2 = i.ahash(file2, resolution)
+            } else {
+                hash1 = i.dhash(file1, resolution)
+                hash2 = i.dhash(file2, resolution)
+            }
 
             metricsUtil.end()
 
@@ -169,7 +183,7 @@ class TestController(
             val isDuplicate = DuplicateImageDetection.isDuplicate(hash1!!, hash2!!, threshold)
             metricsUtil.end()
 
-            response["text"] = "Algorithm: dhash"+
+            response["text"] = "Algorithm: "+algorithm+
                     "<br>Resolution: "+i.getResolution()+
                     "<br>hash 1: " + hash1 +
                     "<br>hash 2: " + hash2 +
@@ -178,6 +192,10 @@ class TestController(
                     "<br>Similarity: " + DuplicateImageDetection.similarityPercentage(hash1, hash2) +
                     "<br>Timings: " + metricsUtil.getMetricsList().toString() +
                     "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
+
+            val pre = "data:image/png;base64, "
+            response["base64_1"] = pre + DuplicateImageDetection.getBase64(file1)
+            response["base64_2"] = pre + DuplicateImageDetection.getBase64(file2)
 
             response["status"] = ApiResponse.SUCCESS.status
         }

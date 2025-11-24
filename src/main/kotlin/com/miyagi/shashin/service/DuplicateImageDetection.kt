@@ -32,6 +32,68 @@ class DuplicateImageDetection {
     // Default resolution
     private var resolution: Int = 64
 
+    // Average Hash
+    fun ahash(imageFile: File?, resolution: Int = 64): BigInteger? {
+        if (resolution%8 != 0 || imageFile == null || !imageFile.exists()) {
+            throw IllegalArgumentException("resolution must be divisible by 8 and image must exist")
+        }
+
+        this.resolution = resolution
+
+        var hashSize = resolution/8
+        var image: BufferedImage? = null
+        var result: BigInteger? = null
+
+        try {
+            image = ImageIO.read(imageFile)
+
+            if (image != null) {
+                // 1) Grayscale normalization and tiny resize
+                val resized = resizeAndGrayscale(image, hashSize + 1, hashSize)
+
+                // Download
+                // saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
+                val pixels = IntArray((hashSize + 1) * hashSize)
+                var sum = 0L
+                var idx = 0
+
+                for (y in 0 until hashSize) {
+                    for (x in 0 until (hashSize + 1)) {
+                        val gray = resized.raster.getSample(x, y, 0)
+                        pixels[idx++] = gray
+                        sum += gray
+                    }
+                }
+                val avg = sum.toDouble() / pixels.size
+
+                result = BigInteger.ZERO
+                var bitIndex = 0
+                val bitList = mutableListOf<Int>()
+
+                for (pixel in pixels) {
+                    val bit = if (pixel >= avg) 1 else 0
+                    bitList.add(bitIndex, bit)
+                    if (pixel >= avg) {
+                        result = result?.setBit(bitIndex)
+                    }
+                    bitIndex++
+                }
+            } else {
+                logger.log(
+                    Level.SEVERE,
+                    "Could not read image"
+                )
+            }
+        } catch (e: IOException) {
+            logger.log(
+                Level.SEVERE,
+                "Could not read image ${e.message}"
+            )
+        }
+
+        return result
+    }
+
     // Difference Hash
     fun dhash(imageFile: File?, resolution: Int = 64): BigInteger? {
         if (resolution%8 != 0 || imageFile == null || !imageFile.exists()) {
@@ -90,20 +152,6 @@ class DuplicateImageDetection {
 
     fun getResolution(): Int {
         return this.resolution
-    }
-
-    fun getBase64(file: File?): String? {
-        try {
-            if (file != null) {
-                val os = ByteArrayOutputStream()
-                ImageIO.write(ImageIO.read(file), "jpg", os)
-                return Base64.getEncoder().encodeToString(os.toByteArray())
-            }
-        } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error getBase64: ${e.message}")
-        }
-
-        return null
     }
 
     private fun resizeAndGrayscale(img: BufferedImage, width: Int, height: Int): BufferedImage {
@@ -182,6 +230,20 @@ class DuplicateImageDetection {
             val totalBits = hashSize * hashSize
             val distance = hammingDistance(hash1, hash2)!!.toInt()
             return (totalBits - distance).toDouble() / totalBits.toDouble()
+        }
+
+        fun getBase64(file: File?): String? {
+            try {
+                if (file != null) {
+                    val os = ByteArrayOutputStream()
+                    ImageIO.write(ImageIO.read(file), "jpg", os)
+                    return Base64.getEncoder().encodeToString(os.toByteArray())
+                }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error getBase64: ${e.message}")
+            }
+
+            return null
         }
 
         fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, threshold: Int = 5, page: Int = 0, size: Int = 3000): Int {
