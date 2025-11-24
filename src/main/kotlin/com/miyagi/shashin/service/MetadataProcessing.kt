@@ -523,22 +523,6 @@ class MetadataProcessing() {
 
         saveExifdata(exifMap, sidecarDir, file!!.path)
 
-        // Generate a hash for comparing potential duplicates
-        if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!! && file!!.exists()) {
-            if (file != null) {
-                val dupeImageChecker = DuplicateImageChecker()
-                val hash = dupeImageChecker.dhash(file)
-                if (hash != null) {
-                    this.metadataObj.setDuplicateHash(hash.toString())
-                }
-            } else {
-                logger.log(
-                    Level.WARNING,
-                    "Could not read metadata for DuplicateImageChecker " + file!!.name
-                )
-            }
-        }
-
         this.metadataObj.setId(
             TextUtils.generateUUID(
                 file!!.path,
