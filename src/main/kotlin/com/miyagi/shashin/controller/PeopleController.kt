@@ -8,7 +8,7 @@ import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.service.DuplicateImageChecker
+import com.miyagi.shashin.service.DuplicateImageDetection
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
@@ -210,7 +210,7 @@ private val relativeSidecarDir: String? = null
                 // Find duplicate images
                 var duplicateCount = 0
                 if (settings.getDuplicateDetection() == true) {
-                    duplicateCount = DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository!!)
+                    duplicateCount = DuplicateImageDetection.findAndStoreDuplicates(duplicatesRepository!!)
                 }
 
                 // Find faces

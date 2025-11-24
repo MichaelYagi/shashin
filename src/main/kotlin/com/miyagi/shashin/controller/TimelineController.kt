@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.service.DuplicateImageChecker
+import com.miyagi.shashin.service.DuplicateImageDetection
 import com.miyagi.shashin.service.FileStats
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.MetadataProcessing
@@ -1261,7 +1261,7 @@ class TimelineController(
 
                 if (settings?.getDuplicateDetection() == true) {
                     Thread {
-                        DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository)
+                        DuplicateImageDetection.findAndStoreDuplicates(duplicatesRepository)
                     }.start()
                 }
 
@@ -1652,8 +1652,8 @@ class TimelineController(
                 } else {
                     // Generate a hash for comparing potential duplicates
                     if (metadataObj.get().getDuplicateHash() == null && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
-                        val dupeImageChecker = DuplicateImageChecker()
-                        val hash = dupeImageChecker.dhash(File(metadataObj.get().getPath()!!))
+                        val dupeImageDetection = DuplicateImageDetection()
+                        val hash = dupeImageDetection.dhash(File(metadataObj.get().getPath()!!))
                         if (hash != null) {
                             metadataObj.get().setDuplicateHash(hash.toString())
                         }
@@ -2348,8 +2348,8 @@ class TimelineController(
                             if (metadata.getDuplicateHash() == null && !metadata.getType()
                                     .isNullOrBlank() && metadata.getType()?.contains("image")!!
                             ) {
-                                val dupeImageChecker = DuplicateImageChecker()
-                                val hash = dupeImageChecker.dhash(File(metadata.getPath()!!))
+                                val dupeImageDetection = DuplicateImageDetection()
+                                val hash = dupeImageDetection.dhash(File(metadata.getPath()!!))
                                 if (hash != null) {
                                     metadata.setDuplicateHash(hash.toString())
                                 }

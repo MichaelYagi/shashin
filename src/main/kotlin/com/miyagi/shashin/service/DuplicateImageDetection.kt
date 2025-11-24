@@ -15,21 +15,19 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 
-//val file1 = File(setOneFilename)
-//val file2 = File(setTwoFilename)
+// Example usage:
+//val file1 = File(filenameOne)
+//val file2 = File(filenameTwo)
 //
-//val i = DuplicateImageChecker()
-// //
-//var hash1 = i.dhash(file1)
-//var hash2 = i.dhash(file2)
+//val i = DuplicateImageDetection()
 //
-//var computedHash1 = hash1.toString()
-//var computedHash2 = hash2.toString()
+//var hash1 = i.dhash(file1, resolution)
+//var hash2 = i.dhash(file2, resolution)
 //
-//val isDuplicate = i.isDuplicate(computedHash1, computedHash2)
-class DuplicateImageChecker {
+//val isDuplicate = DuplicateImageDetection.isDuplicate(hash1, hash2)
+class DuplicateImageDetection {
 
-    private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
+    private var logger: Logger = Logger.getLogger(DuplicateImageDetection::class.simpleName)
 
     // Default resolution
     private var resolution: Int = 64
@@ -132,7 +130,7 @@ class DuplicateImageChecker {
     }
 
     companion object {
-        private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
+        private var logger: Logger = Logger.getLogger(DuplicateImageDetection::class.simpleName)
 
         fun isDuplicate(hash1: BigInteger, hash2: BigInteger, threshold: Int = 5): Boolean? {
             val distance = hammingDistance(hash1, hash2)
@@ -149,7 +147,7 @@ class DuplicateImageChecker {
                 val file1 = File(filename1)
                 val file2 = File(filename2)
 
-                val i = DuplicateImageChecker()
+                val i = DuplicateImageDetection()
                 val hash1 = i.dhash(file1)
                 val hash2 = i.dhash(file2)
                 if (hash1 != null && hash2 != null) {
