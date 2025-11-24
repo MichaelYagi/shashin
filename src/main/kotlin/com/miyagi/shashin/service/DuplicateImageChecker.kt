@@ -34,8 +34,8 @@ class DuplicateImageChecker {
     private var resolution: Int = 64
 
     fun dhash(imageFile: File?, resolution: Int = 64): BigInteger? {
-        if (resolution%8 != 0 || imageFile == null) {
-            throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
+        if (resolution%8 != 0 || imageFile == null || !imageFile.exists()) {
+            throw IllegalArgumentException("resolution must be divisible by 8 and image must exist")
         }
 
         val image: BufferedImage = ImageIO.read(imageFile)
