@@ -25,7 +25,7 @@ class MetadataProcessing() {
 
     private var logger: Logger = Logger.getLogger(MetadataProcessing::class.simpleName)
     private lateinit var apiVersion: String
-    private lateinit var file: File
+    private var file: File? = null
     private lateinit var sidecarDir: String
     private lateinit var metadataObj: Metadata
     private lateinit var geocodeUrl: String
@@ -39,9 +39,9 @@ class MetadataProcessing() {
     }
 
     fun populateMetadata(): Metadata {
-        this.metadataObj.setPath(file.path)
-        this.metadataObj.setFileName(file.name)
-        this.metadataObj.setTitle(file.name)
+        this.metadataObj.setPath(file!!.path)
+        this.metadataObj.setFileName(file!!.name)
+        this.metadataObj.setTitle(file!!.name)
         this.metadataObj.setBrightness("1.0")
         this.metadataObj.setContrast("1.0")
         this.metadataObj.setSaturation("1.0")
@@ -52,7 +52,7 @@ class MetadataProcessing() {
 
         // Get file data
         val attr: BasicFileAttributes = Files.readAttributes(
-            file.toPath(),
+            file!!.toPath(),
             BasicFileAttributes::class.java
         )
 
@@ -195,7 +195,7 @@ class MetadataProcessing() {
                                         formattedDate = getCurrentTimestamp()
                                         logger.log(
                                             Level.INFO,
-                                            "Epoch time detected for " + file.name + ". Changing CreatedAt/TakenAt datetime to the current datetime"
+                                            "Epoch time detected for " + file!!.name + ". Changing CreatedAt/TakenAt datetime to the current datetime"
                                         )
                                     }
                                     this.metadataObj.setTakenAt(formattedDate)
@@ -215,7 +215,7 @@ class MetadataProcessing() {
 
                                     logger.log(
                                         Level.INFO,
-                                        "Dates set for " + file.name
+                                        "Dates set for " + file!!.name
                                     )
                                 }
                             }
@@ -263,7 +263,7 @@ class MetadataProcessing() {
                                     this.metadataObj.setModifiedAt(destFormat.format(date))
                                     logger.log(
                                         Level.INFO,
-                                        "Modification dates set for " + file.name
+                                        "Modification dates set for " + file!!.name
                                     )
                                 }
                             }
@@ -271,7 +271,7 @@ class MetadataProcessing() {
                                 this.metadataObj.setType(tag.description)
                                 logger.log(
                                     Level.INFO,
-                                    "Type set for " + file.name
+                                    "Type set for " + file!!.name
                                 )
                             }
                             "Expected File Name Extension" -> {
@@ -334,7 +334,7 @@ class MetadataProcessing() {
                                     this.metadataObj.setLat(latDecimal)
                                     logger.log(
                                         Level.INFO,
-                                        "Lat set for " + file.name
+                                        "Lat set for " + file!!.name
                                     )
                                 }
 //                                else {
@@ -364,7 +364,7 @@ class MetadataProcessing() {
                                     this.metadataObj.setLng(lngDecimal)
                                     logger.log(
                                         Level.INFO,
-                                        "Lng set for " + file.name
+                                        "Lng set for " + file!!.name
                                     )
                                 }
 //                                else {
@@ -375,14 +375,14 @@ class MetadataProcessing() {
                                 this.metadataObj.setIso(tag.description.toInt())
                                 logger.log(
                                     Level.INFO,
-                                    "ISO set for " + file.name
+                                    "ISO set for " + file!!.name
                                 )
                             }
                             "Compressor Name", "Compression Type" -> {
                                 this.metadataObj.setCompressionType(tag.description)
                                 logger.log(
                                     Level.INFO,
-                                    "Compression Type set for " + file.name
+                                    "Compression Type set for " + file!!.name
                                 )
                             }
                             "Exposure Time" -> {
@@ -395,7 +395,7 @@ class MetadataProcessing() {
                                 this.metadataObj.setExposure(fraction)
                                 logger.log(
                                     Level.INFO,
-                                    "Exposure Time set for " + file.name
+                                    "Exposure Time set for " + file!!.name
                                 )
                             }
                             "F-Number" -> {
@@ -407,7 +407,7 @@ class MetadataProcessing() {
                                     this.metadataObj.setFstopNumber(matchValue.toDouble())
                                     logger.log(
                                         Level.INFO,
-                                        "F-Number set for " + file.name
+                                        "F-Number set for " + file!!.name
                                     )
                                 }
                             }
@@ -418,7 +418,7 @@ class MetadataProcessing() {
                                 this.metadataObj.setFocalLength(df.format(fLengthValue).toDouble())
                                 logger.log(
                                     Level.INFO,
-                                    "Focal Length set for " + file.name
+                                    "Focal Length set for " + file!!.name
                                 )
                             }
                             "Make" -> {
@@ -458,7 +458,7 @@ class MetadataProcessing() {
                     } else {
                         logger.log(
                             Level.WARNING,
-                            "Tag description not available for " + file.name + " for tag " + tag.tagName
+                            "Tag description not available for " + file!!.name + " for tag " + tag.tagName
                         )
                     }
                 }
@@ -480,7 +480,7 @@ class MetadataProcessing() {
                     this.metadataObj.setCamera(camera.trim())
                     logger.log(
                         Level.INFO,
-                        "Camera set for " + file.name
+                        "Camera set for " + file!!.name
                     )
                 }
             }
@@ -496,7 +496,7 @@ class MetadataProcessing() {
                     this.metadataObj.setLens(lens.trim())
                     logger.log(
                         Level.INFO,
-                        "Lens set for " + file.name
+                        "Lens set for " + file!!.name
                     )
                 }
             }
@@ -511,30 +511,37 @@ class MetadataProcessing() {
                 }
                 logger.log(
                     Level.INFO,
-                    "Width/height set for " + file.name
+                    "Width/height set for " + file!!.name
                 )
             }
         } catch (e: Exception) {
             logger.log(
                 Level.WARNING,
-                "Could not read metadata for " + file.name + ": " + e.message
+                "Could not read metadata for " + file!!.name + ": " + e.message
             )
         }
 
-        saveExifdata(exifMap, sidecarDir, file.path)
+        saveExifdata(exifMap, sidecarDir, file!!.path)
 
         // Generate a hash for comparing potential duplicates
-        if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!! && file.exists()) {
-            val dupeImageChecker = DuplicateImageChecker()
-            val hash = dupeImageChecker.dhash(file)
-            if (hash != null) {
-                this.metadataObj.setDuplicateHash(hash.toString())
+        if (!this.metadataObj.getType().isNullOrBlank() && this.metadataObj.getType()?.contains("image")!! && file!!.exists()) {
+            if (file != null) {
+                val dupeImageChecker = DuplicateImageChecker()
+                val hash = dupeImageChecker.dhash(file)
+                if (hash != null) {
+                    this.metadataObj.setDuplicateHash(hash.toString())
+                }
+            } else {
+                logger.log(
+                    Level.WARNING,
+                    "Could not read metadata for DuplicateImageChecker " + file!!.name
+                )
             }
         }
 
         this.metadataObj.setId(
-            TextUtils.Companion.generateUUID(
-                file.path,
+            TextUtils.generateUUID(
+                file!!.path,
                 this.metadataObj.getCreatedAt(),
                 this.metadataObj.getType(),
                 this.metadataObj.getFstopNumber(),
@@ -545,7 +552,7 @@ class MetadataProcessing() {
 
         val supportedImageFormats = FileUtils.Companion.allowableImageFiles()
         val supportedVideoFormats = FileUtils.Companion.allowableVideoFiles()
-        val mediaExtension = FileUtils.Companion.probeFileExtension(file)
+        val mediaExtension = FileUtils.Companion.probeFileExtension(file!!)
 
         if (supportedImageFormats.contains(mediaExtension)) {
             this.metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/image/${this.metadataObj.getId()}")
