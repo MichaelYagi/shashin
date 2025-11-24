@@ -38,7 +38,7 @@ class DuplicateImageChecker {
             throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
         }
 
-        var image: BufferedImage = ImageIO.read(imageFile)
+        val image: BufferedImage = ImageIO.read(imageFile)
 
         val hashSize = resolution/8
 

@@ -73,25 +73,25 @@ class TestController(
         model["mike"] = "Mike"
         model["noah"] = "Noah"
 
-//        println("hash_experiment")
-////        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
-//        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup_bw.jpg")
-////        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
+        println("hash_experiment")
+//        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
+        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\IMG_2409.HEIC")
+//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
 //        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup.jpg")
-////        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\005_Aug_22__1984.jpg")
-////        var fileTwo = fileOne
+//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\005_Aug_22__1984.jpg")
+//        var fileTwo = fileOne
 //
-//        var resolution = 64
+        var resolution = 64
 //
-//        var imageOne = ImageIO.read(fileOne)
+        var imageOne = ImageIO.read(fileOne)
 //        var imageTwo = ImageIO.read(fileTwo)
 //
-//        var dcheck = DuplicateImageChecker()
-//        var d1 = dcheck.dhash(fileOne,resolution)
+        var dcheck = DuplicateImageChecker()
+        var d1 = dcheck.dhash(fileOne,resolution)
 //        var d2 = dcheck.dhash(fileTwo,resolution)
 //
 //        println("purekotlin")
-//        println(d1.toString())
+        println(d1.toString())
 //        println(d2.toString())
 ////        println(dcheck.hammingDistance(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911")))
 ////        println(dcheck.similarityPercentage(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911"), resolution))
@@ -381,7 +381,7 @@ class TestController(
 
                 if (metadata.getDuplicateHash() == null && file.exists() && file.length() > 0) {
                     val dupeImageChecker = DuplicateImageChecker()
-                    var hash = dupeImageChecker.dhash(File(metadata.getPath()!!))
+                    val hash = dupeImageChecker.dhash(File(metadata.getPath()!!))
                     metadata.setDuplicateHash(hash.toString())
                     metadataList.add(metadata)
                     println("Saving metadata ${metadata.getPath()} at ${index+1}/$count")
