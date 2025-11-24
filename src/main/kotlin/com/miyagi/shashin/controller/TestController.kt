@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
-import com.miyagi.shashin.service.DuplicateImageChecker
+import com.miyagi.shashin.service.DuplicateImageDetection
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.MetadataDate
 import com.miyagi.shashin.model.User
@@ -86,7 +86,7 @@ class TestController(
         var imageOne = ImageIO.read(fileOne)
 //        var imageTwo = ImageIO.read(fileTwo)
 //
-        var dcheck = DuplicateImageChecker()
+        var dcheck = DuplicateImageDetection()
         var d1 = dcheck.dhash(fileOne,resolution)
 //        var d2 = dcheck.dhash(fileTwo,resolution)
 //
@@ -101,8 +101,8 @@ class TestController(
 //        //-----------
 //
 //        println("jimagehash")
-//        val dupeImageChecker = DuplicateImageChecker()
-//        dupeImageChecker.setAlgorithm("dhash", resolution)
+//        val dupeImageDetection = DuplicateImageDetection()
+//        dupeImageDetection.setAlgorithm("dhash", resolution)
 //        var hashOne = dupeImageChecker.computeHash(fileOne)
 //        var hashTwo = dupeImageChecker.computeHash(fileTwo)
 //        println(hashOne?.hashValue)
@@ -143,55 +143,41 @@ class TestController(
 //        println(isDupe)
 //        println(similarityScore)
 
-        if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo") && payloadMap.containsKey("algorithm") && payloadMap.containsKey("resolution")) {
-//            var setOneFilename = payloadMap["setone"].toString()
-//            var setTwoFilename = payloadMap["settwo"].toString()
-//            var algorithm = payloadMap["algorithm"].toString()
-//            var resolution = payloadMap["resolution"].toString().toInt()
-//
-//            response["setone"] = setOneFilename
-//            response["settwo"] = setTwoFilename
-//
-//            val metricsUtil = MetricsUtil()
-//            metricsUtil.start("Start dupe detection")
-//
-//            val file1 = File(setOneFilename)
-//            val file2 = File(setTwoFilename)
-//
-//            val i = DuplicateImageChecker()
-//
-//            i.setAlgorithm(algorithm, resolution) //ahash, dhash, phash
-//
-//            var hash1 = i.computeHashValue(file1)
-//            var hash2 = i.computeHashValue(file2)
-//
-//            var computedHash1 = i.computeHashFromString(hash1.toString())
-//            println(i.computeHashFromString(hash1.toString()))
-//            println(i.computeHashFromString(hash1.toString(), 64, 1))
-//            println(i.computeHashFromString(hash1.toString(), 64, 2))
-//            println(i.computeHashFromString(hash1.toString(), 64, 3))
-//            println(i.computeHashFromString(hash1.toString(), 64, 4))
-//            var computedHash2 = i.computeHashFromString(hash2.toString())
-//
-//            metricsUtil.end()
-//
-//            metricsUtil.start("dupe check")
-//            val isDuplicate = i.isDuplicate(computedHash1, computedHash2)
-//            metricsUtil.end()
-//
-//            response["text"] = "Algorithm: "+i.getAlgorithmName()+
-//                    "<br>Resolution: "+i.getResolution()+
-//                    "<br>hash 1: " + hash1 +
-//                    "<br>hash 2: " + hash2 +
-//                    "<br>Is duplicate: " + isDuplicate +
-//                    "<br>Similarity: " + i.similarityScore(computedHash1, computedHash2) +
-//                    "<br>Timings: " + metricsUtil.getMetricsList().toString() +
-//                    "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
-//
-//            // data:image/png;base64,
-//            val pre = "data:image/png;base64, "
-//            response["base64_1"] = pre + i.getBase64(file1)
-//            response["base64_2"] = pre + i.getBase64(file2)
+        if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo") && payloadMap.containsKey("resolution") && payloadMap.containsKey("threshold")) {
+            var setOneFilename = payloadMap["setone"].toString()
+            var setTwoFilename = payloadMap["settwo"].toString()
+            var threshold = payloadMap["threshold"].toString().toInt()
+            var resolution = payloadMap["resolution"].toString().toInt()
+
+            response["setone"] = setOneFilename
+            response["settwo"] = setTwoFilename
+
+            val metricsUtil = MetricsUtil()
+            metricsUtil.start("Start dupe detection")
+
+            val file1 = File(setOneFilename)
+            val file2 = File(setTwoFilename)
+
+            val i = DuplicateImageDetection()
+
+            var hash1 = i.dhash(file1, resolution)
+            var hash2 = i.dhash(file2, resolution)
+
+            metricsUtil.end()
+
+            metricsUtil.start("dupe check")
+            val isDuplicate = DuplicateImageDetection.isDuplicate(hash1!!, hash2!!, threshold)
+            metricsUtil.end()
+
+            response["text"] = "Algorithm: dhash"+
+                    "<br>Resolution: "+i.getResolution()+
+                    "<br>hash 1: " + hash1 +
+                    "<br>hash 2: " + hash2 +
+                    "<br>threshold: " + threshold +
+                    "<br>Is duplicate: " + isDuplicate +
+                    "<br>Similarity: " + DuplicateImageDetection.similarityPercentage(hash1, hash2) +
+                    "<br>Timings: " + metricsUtil.getMetricsList().toString() +
+                    "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
 
             response["status"] = ApiResponse.SUCCESS.status
         }
@@ -207,7 +193,7 @@ class TestController(
         val size = 1000
 
         // Find all duplicates - put entries in duplicates table
-        DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository, 0, size)
+        DuplicateImageDetection.findAndStoreDuplicates(duplicatesRepository, 0, size)
 
         // Display and group by duplicate images
         model["metadataList"] = duplicatesRepository.findAllMetadataIds(0, size)
@@ -380,8 +366,8 @@ class TestController(
                 val file = File(metadata.getPath().toString())
 
                 if (metadata.getDuplicateHash() == null && file.exists() && file.length() > 0) {
-                    val dupeImageChecker = DuplicateImageChecker()
-                    val hash = dupeImageChecker.dhash(File(metadata.getPath()!!))
+                    val dupeImageDetection = DuplicateImageDetection()
+                    val hash = dupeImageDetection.dhash(File(metadata.getPath()!!))
                     metadata.setDuplicateHash(hash.toString())
                     metadataList.add(metadata)
                     println("Saving metadata ${metadata.getPath()} at ${index+1}/$count")

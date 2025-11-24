@@ -16,7 +16,7 @@ import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.service.DuplicateImageChecker
+import com.miyagi.shashin.service.DuplicateImageDetection
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
@@ -38,7 +38,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -1958,7 +1957,7 @@ class SettingsController(
 
                 var duplicateCount = 0
                 if (settings?.getDuplicateDetection() == true) {
-                    duplicateCount = DuplicateImageChecker.findAndStoreDuplicates(duplicatesRepository!!)
+                    duplicateCount = DuplicateImageDetection.findAndStoreDuplicates(duplicatesRepository!!)
                 }
 
                 val metadataArrayCount = metadataIdArray.count()
