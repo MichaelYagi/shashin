@@ -69,4 +69,3 @@ Tech Stack
 * [Deep Java Library](https://djl.ai/) - Face and object recognition library
 * [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin
 * [Chart.js](https://www.chartjs.org/) - Javascript charting library
-* [JImageHash](https://github.com/KilianB/JImageHash) - Library for perceptual hashing for duplication detection
