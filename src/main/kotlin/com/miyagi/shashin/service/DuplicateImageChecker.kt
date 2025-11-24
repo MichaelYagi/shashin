@@ -46,23 +46,29 @@ class DuplicateImageChecker {
         try {
             image = ImageIO.read(imageFile)
 
-            // 1) Grayscale normalization and tiny resize
-            val resized = resizeAndGrayscale(image, hashSize + 1, hashSize)
+            if (image != null) {
+                // 1) Grayscale normalization and tiny resize
+                val resized = resizeAndGrayscale(image, hashSize + 1, hashSize)
 //        saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
 
+                result = BigInteger.ZERO
+                var bitIndex = 0
 
-            result = BigInteger.ZERO
-            var bitIndex = 0
-
-            for (y in 0 until hashSize) {
-                for (x in 0 until hashSize) {
-                    val leftPix = resized.raster.getSample(x, y, 0)
-                    val rightPix = resized.raster.getSample(x + 1, y, 0)
-                    if (rightPix < leftPix) {
-                        result = result?.setBit(bitIndex)
+                for (y in 0 until hashSize) {
+                    for (x in 0 until hashSize) {
+                        val leftPix = resized.raster.getSample(x, y, 0)
+                        val rightPix = resized.raster.getSample(x + 1, y, 0)
+                        if (rightPix < leftPix) {
+                            result = result?.setBit(bitIndex)
+                        }
+                        bitIndex++
                     }
-                    bitIndex++
                 }
+            } else {
+                logger.log(
+                    Level.SEVERE,
+                    "Could not read image"
+                )
             }
         } catch (e: IOException) {
             logger.log(
