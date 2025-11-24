@@ -1653,7 +1653,7 @@ class TimelineController(
                     // Generate a hash for comparing potential duplicates
                     if (metadataObj.get().getDuplicateHash() == null && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
                         val dupeImageChecker = DuplicateImageChecker()
-                        var hash = dupeImageChecker.dhash(File(metadataObj.get().getPath()!!))
+                        val hash = dupeImageChecker.dhash(File(metadataObj.get().getPath()!!))
                         if (hash != null) {
                             metadataObj.get().setDuplicateHash(hash.toString())
                         }
@@ -2349,7 +2349,7 @@ class TimelineController(
                                     .isNullOrBlank() && metadata.getType()?.contains("image")!!
                             ) {
                                 val dupeImageChecker = DuplicateImageChecker()
-                                var hash = dupeImageChecker.dhash(File(metadata.getPath()!!))
+                                val hash = dupeImageChecker.dhash(File(metadata.getPath()!!))
                                 if (hash != null) {
                                     metadata.setDuplicateHash(hash.toString())
                                 }
