@@ -33,10 +33,6 @@ class DuplicateImageChecker {
     // Default resolution
     private var resolution: Int = 64
 
-    private var algorithmName = "ahash"
-
-    private var distance = 0
-
     fun dhash(imageFile: File?, resolution: Int = 64): BigInteger? {
         if (resolution%8 != 0 || imageFile == null) {
             throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
@@ -67,10 +63,6 @@ class DuplicateImageChecker {
         return result
     }
 
-    fun getAlgorithmName(): String {
-        return this.algorithmName
-    }
-
     fun getResolution(): Int {
         return resolution
     }
@@ -87,10 +79,6 @@ class DuplicateImageChecker {
         }
 
         return null
-    }
-
-    fun getDistance(): Int {
-        return distance
     }
 
     private fun resizeAndGrayscale(img: BufferedImage, width: Int, height: Int): BufferedImage {
