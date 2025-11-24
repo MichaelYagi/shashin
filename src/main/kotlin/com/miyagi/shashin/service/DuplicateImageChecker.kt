@@ -34,6 +34,7 @@ class DuplicateImageChecker {
     // Default resolution
     private var resolution: Int = 64
 
+    // Difference Hash
     fun dhash(imageFile: File?, resolution: Int = 64): BigInteger? {
         if (resolution%8 != 0 || imageFile == null || !imageFile.exists()) {
             throw IllegalArgumentException("resolution must be divisible by 8 and image must exist")
@@ -49,8 +50,11 @@ class DuplicateImageChecker {
             if (image != null) {
                 // 1) Grayscale normalization and tiny resize
                 val resized = resizeAndGrayscale(image, hashSize + 1, hashSize)
-//        saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
 
+                // Download
+                // saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
+
+                // 2) Generate differences left-to-right for each row
                 result = BigInteger.ZERO
                 var bitIndex = 0
 
@@ -58,7 +62,11 @@ class DuplicateImageChecker {
                     for (x in 0 until hashSize) {
                         val leftPix = resized.raster.getSample(x, y, 0)
                         val rightPix = resized.raster.getSample(x + 1, y, 0)
-                        if (rightPix < leftPix) {
+
+                        // Compare pixels grey scale from black to white (0-255)
+                        // Set bit if current pixel is lighter than neighbor
+                        if (leftPix > rightPix) {
+                            // returns a new BigInteger with the bit at position bitIndex set to 1
                             result = result?.setBit(bitIndex)
                         }
                         bitIndex++
@@ -193,14 +201,12 @@ class DuplicateImageChecker {
                 // Insert hashes
                 for (metadata in metadataList) {
                     if (metadata.getDuplicateHash() != null) {
-                        // The last parameter 2 is called the algorithmId,
-                        // It's meant for metadata, not the actual hashing algorithm
-                        // It can be an arbitrary int
-                        val entry = BKTree.HashEntry(metadata.getId(), BigInteger(metadata.getDuplicateHash().toString()))
                         logger.log(
                             Level.INFO,
                             "Adding entry into BKTree ${metadata.getId()}"
                         )
+
+                        val entry = BKTree.HashEntry(metadata.getId(), BigInteger(metadata.getDuplicateHash().toString()))
                         tree.insert(entry)
                     }
                 }
@@ -212,14 +218,11 @@ class DuplicateImageChecker {
                             Level.INFO,
                             "Searching duplicate hash ${metadata.getDuplicateHash()} for ${metadata.getId()}"
                         )
-                        // The last parameter 2 is called the algorithmId,
-                        // It's meant for metadata, not the actual hashing algorithm
-                        // It can be an arbitrary int
+
                         val query = BigInteger(metadata.getDuplicateHash().toString())
                         val duplicates = tree.search(query, threshold = 5)
 
                         for (dupe in duplicates) {
-
                             if (dupe.id != metadata.getId()) { // ignore self
                                 val dupCount = duplicatesRepository.findDuplicateMetadataId(metadata.getId(), dupe.id)
                                 if (dupCount == 0) {
