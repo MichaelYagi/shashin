@@ -38,6 +38,8 @@ class DuplicateImageDetection {
             throw IllegalArgumentException("resolution must be divisible by 8 and image must exist")
         }
 
+        this.resolution = resolution
+
         var hashSize = resolution/8
         var image: BufferedImage? = null
         var result: BigInteger? = null
@@ -87,7 +89,7 @@ class DuplicateImageDetection {
     }
 
     fun getResolution(): Int {
-        return resolution
+        return this.resolution
     }
 
     fun getBase64(file: File?): String? {
@@ -182,7 +184,7 @@ class DuplicateImageDetection {
             return (totalBits - distance).toDouble() / totalBits.toDouble()
         }
 
-        fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, page: Int = 1, size: Int = 2500): Int {
+        fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, threshold: Int = 5, page: Int = 0, size: Int = 3000): Int {
             // Implement as part of dupe module
             // Distance function using Hamming distance
             val tree = BKTree { h1, h2 -> hammingDistance(h1, h2)!! }
@@ -218,7 +220,7 @@ class DuplicateImageDetection {
                         )
 
                         val query = BigInteger(metadata.getDuplicateHash().toString())
-                        val duplicates = tree.search(query, threshold = 5)
+                        val duplicates = tree.search(query, threshold = threshold)
 
                         for (dupe in duplicates) {
                             if (dupe.id != metadata.getId()) { // ignore self
