@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.SearchHistory
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.FavoriteRepository
@@ -115,6 +116,7 @@ class SearchController(
         response["size"] = size
         response["totalPages"] = 0
         val currentUserObj = model.getAttribute("currentUser") as User?
+        val settingsObj = model.getAttribute("settings") as Settings?
 
         if (!term.isNullOrBlank()) {
             response["term"] = term
@@ -139,7 +141,7 @@ class SearchController(
             ) {
                 metadataList = if (updatedTerm.lowercase() == "shashinedit" || updatedTerm.lowercase() == "shashinedited") {
                     searchRepository?.findMetadataEditedPhotos(pageValue, queryLimit)
-                } else if (updatedTerm.lowercase() == "nodupehash") {
+                } else if (updatedTerm.lowercase() == "nodupehash" && settingsObj?.getDuplicateDetection() == true) {
                     metadataRepository.findAllNoDupeHashOffsetAndLimit(
                         pageValue,
                         queryLimit
