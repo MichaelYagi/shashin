@@ -172,6 +172,9 @@ class TestController(
             if (algorithm == "ahash") {
                 hash1 = i.ahash(file1, resolution)
                 hash2 = i.ahash(file2, resolution)
+            } else if (algorithm == "phash") {
+                hash1 = i.phash(file1, resolution)
+                hash2 = i.phash(file2, resolution)
             } else {
                 hash1 = i.dhash(file1, resolution)
                 hash2 = i.dhash(file2, resolution)

@@ -14,6 +14,8 @@ import java.util.Base64
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
+import kotlin.math.abs
+import kotlin.math.round
 
 // Example usage:
 //val file1 = File(filenameOne)
@@ -34,9 +36,7 @@ class DuplicateImageDetection {
 
     // Average Hash
     fun ahash(imageFile: File?, resolution: Int = 64): BigInteger? {
-        if (resolution%8 != 0 || imageFile == null || !imageFile.exists()) {
-            throw IllegalArgumentException("resolution must be divisible by 8 and image must exist")
-        }
+        checkAndThrowIllegalArgumentException(imageFile, resolution)
 
         this.resolution = resolution
 
@@ -96,9 +96,7 @@ class DuplicateImageDetection {
 
     // Difference Hash
     fun dhash(imageFile: File?, resolution: Int = 64): BigInteger? {
-        if (resolution%8 != 0 || imageFile == null || !imageFile.exists()) {
-            throw IllegalArgumentException("resolution must be divisible by 8 and image must exist")
-        }
+        checkAndThrowIllegalArgumentException(imageFile, resolution)
 
         this.resolution = resolution
 
@@ -150,8 +148,101 @@ class DuplicateImageDetection {
         return result
     }
 
+    fun phash(imageFile: File?, resolution: Int = 64, highfreqFactor: Int = 4): BigInteger? {
+        checkAndThrowIllegalArgumentException(imageFile, resolution)
+
+        this.resolution = resolution
+
+        var hashSize = resolution/8
+        var image: BufferedImage? = null
+        var result: BigInteger? = null
+
+        try {
+            image = ImageIO.read(imageFile)
+
+            if (image != null) {
+                // Step 1: Resize to larger size (hashSize * highfreqFactor)
+                val imgSize = hashSize * highfreqFactor
+                val resized = resizeAndGrayscale(image, imgSize, imgSize)
+
+                // Step 2: Convert image to grayscale matrix
+                val pixels = Array(imgSize) { DoubleArray(imgSize) }
+                for (y in 0 until imgSize) {
+                    for (x in 0 until imgSize) {
+                        pixels[y][x] = resized.raster.getSample(x, y, 0).toDouble()
+                    }
+                }
+
+                // Step 3: Apply 2D DCT
+                val dct = dctLowFreq(pixels, hashSize)
+
+                // Step 4: Take top-left low-frequency coefficients
+                val dctLowFreq = Array(hashSize) { DoubleArray(hashSize) }
+                for (y in 0 until hashSize) {
+                    for (x in 0 until hashSize) {
+                        dctLowFreq[y][x] = dct[y][x]
+                    }
+                }
+
+                // Step 5: Compute median
+                // dctLowFreq is Array<DoubleArray>
+                val flat: List<Double> = dctLowFreq.flatMap { row -> row.toList() }.sorted()
+                val med = flat[flat.size / 2]
+
+                // Step 6: Build hash
+                result = BigInteger.ZERO
+                var bitIndex = 0
+                for (y in 0 until hashSize) {
+                    for (x in 0 until hashSize) {
+                        val bit = if (dctLowFreq[y][x] > med) 1 else 0
+                        if (bit == 1) {
+                            result = result?.setBit(bitIndex)
+                        }
+                        bitIndex++
+                    }
+                }
+            }
+        } catch (e: IOException) {
+            logger.log(
+                Level.SEVERE,
+                "Could not read image ${e.message}"
+            )
+        }
+
+        return result
+    }
+
     fun getResolution(): Int {
         return this.resolution
+    }
+
+    private fun checkAndThrowIllegalArgumentException(imageFile: File?, resolution: Int) {
+        if (resolution%8 != 0 || imageFile == null || !imageFile.exists()) {
+            throw IllegalArgumentException("resolution must be divisible by 8 and image must exist")
+        }
+    }
+
+    private fun dctLowFreq(input: Array<DoubleArray>, blockSize: Int): Array<DoubleArray> {
+        val n = input.size
+        val m = input[0].size
+        val output = Array(blockSize) { DoubleArray(blockSize) }
+
+        for (u in 0 until blockSize) {
+            for (v in 0 until blockSize) {
+                var sum = 0.0
+                for (x in 0 until n) {
+                    for (y in 0 until m) {
+                        sum += input[x][y] *
+                                kotlin.math.cos(((2 * x + 1) * u * Math.PI) / (2 * n)) *
+                                kotlin.math.cos(((2 * y + 1) * v * Math.PI) / (2 * m))
+                    }
+                }
+                val alphaU = if (u == 0) kotlin.math.sqrt(1.0 / n) else kotlin.math.sqrt(2.0 / n)
+                val alphaV = if (v == 0) kotlin.math.sqrt(1.0 / m) else kotlin.math.sqrt(2.0 / m)
+                output[u][v] = alphaU * alphaV * sum
+            }
+        }
+        return output
     }
 
     private fun resizeAndGrayscale(img: BufferedImage, width: Int, height: Int): BufferedImage {
@@ -237,7 +328,8 @@ class DuplicateImageDetection {
             val hashSize = resolution/8
             val totalBits = hashSize * hashSize
             val distance = hammingDistance(hash1, hash2)!!.toInt()
-            return (totalBits - distance).toDouble() / totalBits.toDouble()
+            var percentage = (totalBits - distance).toDouble() / totalBits.toDouble()
+            return abs(round(percentage))
         }
 
         fun getBase64(file: File?): String? {
