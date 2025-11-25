@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.repository.DuplicatesRepository
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -25,6 +26,7 @@ import kotlin.math.ceil
 @Secured("ROLE_SUPER","ROLE_ADMIN")
 class ArchiveController(
     private var metadataRepository: MetadataRepository,
+    private var duplicatesRepository: DuplicatesRepository,
     private val keywordRepository: KeywordRepository? = null,
     var messageSource: MessageSource? = null
 ) {
@@ -36,6 +38,7 @@ class ArchiveController(
         val module = "archived"
         model["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
         model["foldersCount"] = metadataRepository.countByFolder()
+        model["duplicatesCount"] = duplicatesRepository.countAllMetadataIds()
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
         model["pageParam"] = 0
@@ -70,6 +73,7 @@ class ArchiveController(
         val module = "archived"
         model["message"] = "<a href='/articles/quickstart' target='_blank'>"+messageSource?.getMessage("main.nothing", null, locale)+"</a>"
         model["foldersCount"] = metadataRepository.countByFolder()
+        model["duplicatesCount"] = duplicatesRepository.countAllMetadataIds()
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
         model["totalPages"] = 0
