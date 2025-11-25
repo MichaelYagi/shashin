@@ -28,6 +28,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
 import kotlin.collections.mutableListOf
+import kotlin.collections.set
 import kotlin.math.ceil
 
 @Controller
@@ -931,6 +932,7 @@ class BrowseController(
         getAllAttributeData(model)
 
         model["foldersCount"] = metadataRepository.countByFolder()
+        model["duplicatesCount"] = duplicatesRepository?.countAllMetadataIds()
 
         return model
     }
@@ -1159,6 +1161,7 @@ class BrowseController(
 
         model["pageParam"] = 0
         model["foldersCount"] = metadataRepository.countByFolder()
+        model["duplicatesCount"] = duplicatesRepository?.countAllMetadataIds()
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

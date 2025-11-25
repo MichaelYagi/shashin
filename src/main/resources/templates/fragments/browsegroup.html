@@ -19,7 +19,7 @@
     </li>
     <th:block th:if="${settings.duplicateDetection==true}">
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='duplicates' ? ' active' : ''}" href="/duplicates"><th:block th:text="#{main.pages.browse.tabs.duplicates}"></th:block></a>
+        <a th:attr="class='nav-link' + ${activePage=='duplicates' ? ' active' : ''}" href="/duplicates"><th:block th:text="#{main.pages.browse.tabs.duplicates}"></th:block> <span class="badge bg-secondary" th:text="${duplicatesCount}"></span></a>
     </li>
     </th:block>
     <li class="nav-item">
