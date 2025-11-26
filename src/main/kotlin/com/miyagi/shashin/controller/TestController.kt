@@ -200,7 +200,7 @@ class TestController(
             metricsUtil.end()
 
             metricsUtil.start("dupe check")
-            val isDuplicate = DuplicateImageDetection.isDuplicate(hash1!!, hash2!!, threshold)
+            val isDuplicate = DuplicateImageDetection.isDuplicate(hash1!!, hash2!!, resolution, threshold)
             metricsUtil.end()
 
             var html = ""
@@ -221,7 +221,7 @@ class TestController(
                     "<br>Is duplicate: " + isDuplicate +
                     "<br>Distance: " + DuplicateImageDetection.hammingDistance(hash1, hash2) +
                     "<br>Normalized Distance: " + DuplicateImageDetection.normalizedHammingDistance(hash1, hash2, resolution) +
-                    "<br>Distance threshold: " + threshold +
+                    "<br>normalizedHammingDistance: " + threshold +
                     "<br>Similarity: " + DuplicateImageDetection.similarity(hash1, hash2, resolution) +
                     "<br>Timings: " + metricsUtil.getMetricsList().toString() +
                     "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
