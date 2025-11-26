@@ -299,13 +299,9 @@ class DuplicateImageDetection {
     companion object {
         private var logger: Logger = Logger.getLogger(DuplicateImageDetection::class.simpleName)
 
-        fun isDuplicate(hash1: BigInteger, hash2: BigInteger, threshold: Int = 5): Boolean? {
-            val distance = hammingDistance(hash1, hash2)
-            if (distance != null) {
-                return distance <= threshold
-            }
-
-            return null
+        fun isDuplicate(hash1: BigInteger, hash2: BigInteger, resolution: Int = 64, threshold: Int = 10): Boolean? {
+            val distance = 100-similarity(hash1, hash2, resolution)
+            return distance <= threshold
         }
 
         fun isDuplicate(filename1: String?, filename2: String?, algorithm: String = "dhash"): Boolean {
