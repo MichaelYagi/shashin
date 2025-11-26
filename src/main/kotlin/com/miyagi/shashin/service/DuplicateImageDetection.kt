@@ -34,6 +34,8 @@ class DuplicateImageDetection {
     // Default resolution
     private var resolution: Int = 64
 
+    private var bitString: String = ""
+
     // Average Hash
     fun ahash(imageFile: File?, resolution: Int = 64): BigInteger? {
         checkAndThrowIllegalArgumentException(imageFile, resolution)
@@ -69,15 +71,22 @@ class DuplicateImageDetection {
                 result = BigInteger.ZERO
                 var bitIndex = 0
                 val bitList = mutableListOf<Int>()
+                var bitArray = mutableListOf<String>()
 
                 for (pixel in pixels) {
                     val bit = if (pixel >= avg) 1 else 0
                     bitList.add(bitIndex, bit)
                     if (pixel >= avg) {
                         result = result?.setBit(bitIndex)
+                        bitArray.add("1")
+                    } else {
+                        bitArray.add("0")
                     }
                     bitIndex++
                 }
+
+                bitArray.reverse()
+                this.bitString = bitArray.joinToString("")
             } else {
                 logger.log(
                     Level.SEVERE,
@@ -117,6 +126,7 @@ class DuplicateImageDetection {
                 // 2) Generate differences left-to-right for each row
                 result = BigInteger.ZERO
                 var bitIndex = 0
+                var bitArray = mutableListOf<String>()
 
                 for (y in 0 until hashSize) {
                     for (x in 0 until hashSize) {
@@ -128,10 +138,16 @@ class DuplicateImageDetection {
                         if (leftPix > rightPix) {
                             // returns a new BigInteger with the bit at position bitIndex set to 1
                             result = result?.setBit(bitIndex)
+                            bitArray.add("1")
+                        } else {
+                            bitArray.add("0")
                         }
                         bitIndex++
                     }
                 }
+
+                bitArray.reverse()
+                this.bitString = bitArray.joinToString("")
             } else {
                 logger.log(
                     Level.SEVERE,
@@ -188,6 +204,7 @@ class DuplicateImageDetection {
                 // dctLowFreq is Array<DoubleArray>
                 val flat: List<Double> = dctLowFreq.flatMap { row -> row.toList() }.sorted()
                 val med = flat[flat.size / 2]
+                var bitArray = mutableListOf<String>()
 
                 // Step 6: Build hash
                 result = BigInteger.ZERO
@@ -197,10 +214,16 @@ class DuplicateImageDetection {
                         val bit = if (dctLowFreq[y][x] > med) 1 else 0
                         if (bit == 1) {
                             result = result?.setBit(bitIndex)
+                            bitArray.add("1")
+                        } else {
+                            bitArray.add("0")
                         }
                         bitIndex++
                     }
                 }
+
+                bitArray.reverse()
+                this.bitString = bitArray.joinToString("")
             }
         } catch (e: IOException) {
             logger.log(
@@ -210,6 +233,10 @@ class DuplicateImageDetection {
         }
 
         return result
+    }
+
+    fun getBitString(): String {
+        return this.bitString
     }
 
     fun getResolution(): Int {
@@ -328,8 +355,7 @@ class DuplicateImageDetection {
             val hashSize = resolution/8
             val totalBits = hashSize * hashSize
             val distance = hammingDistance(hash1, hash2)!!.toInt()
-            var percentage = (totalBits - distance).toDouble() / totalBits.toDouble()
-            return abs(round(percentage))
+            return (totalBits - distance).toDouble() / totalBits.toDouble()
         }
 
         fun getBase64(file: File?): String? {
