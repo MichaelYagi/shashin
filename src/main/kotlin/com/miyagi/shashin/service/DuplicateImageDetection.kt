@@ -335,6 +335,7 @@ class DuplicateImageDetection {
             return isDuplicate
         }
 
+        // Number of bits that don't match
         fun hammingDistance(hash1: BigInteger?, hash2: BigInteger?): Int? {
             if (hash1 == null || hash2 == null) {
                 throw IllegalArgumentException("resolution must be divisible by 8")
@@ -347,6 +348,7 @@ class DuplicateImageDetection {
             return xorResult.bitCount()
         }
 
+        // Normalized hamming distance - inverse of similarity
         fun normalizedHammingDistance(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
             if (resolution%8 != 0 || hash1 == null || hash2 == null) {
                 throw IllegalArgumentException("resolution must be divisible by 8 and hash can't be null")
