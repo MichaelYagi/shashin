@@ -14,6 +14,7 @@ import java.util.Base64
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
+import kotlin.collections.reversed
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -34,7 +35,7 @@ class DuplicateImageDetection {
     // Default resolution
     private var resolution: Int = 64
 
-    private var bitString: String = ""
+    private var bitArray: MutableList<Int> = mutableListOf()
 
     // Average Hash
     fun ahash(imageFile: File?, resolution: Int = 64): BigInteger? {
@@ -71,22 +72,21 @@ class DuplicateImageDetection {
                 result = BigInteger.ZERO
                 var bitIndex = 0
                 val bitList = mutableListOf<Int>()
-                var bitArray = mutableListOf<String>()
+                var bitArray = mutableListOf<Int>()
 
                 for (pixel in pixels) {
                     val bit = if (pixel >= avg) 1 else 0
                     bitList.add(bitIndex, bit)
                     if (pixel >= avg) {
                         result = result?.setBit(bitIndex)
-                        bitArray.add("1")
+                        bitArray.add(1)
                     } else {
-                        bitArray.add("0")
+                        bitArray.add(0)
                     }
                     bitIndex++
                 }
 
-                bitArray.reverse()
-                this.bitString = bitArray.joinToString("")
+                this.bitArray = bitArray.reversed().toMutableList()
             } else {
                 logger.log(
                     Level.SEVERE,
@@ -126,7 +126,7 @@ class DuplicateImageDetection {
                 // 2) Generate differences left-to-right for each row
                 result = BigInteger.ZERO
                 var bitIndex = 0
-                var bitArray = mutableListOf<String>()
+                var bitArray = mutableListOf<Int>()
 
                 for (y in 0 until hashSize) {
                     for (x in 0 until hashSize) {
@@ -138,16 +138,15 @@ class DuplicateImageDetection {
                         if (leftPix > rightPix) {
                             // returns a new BigInteger with the bit at position bitIndex set to 1
                             result = result?.setBit(bitIndex)
-                            bitArray.add("1")
+                            bitArray.add(1)
                         } else {
-                            bitArray.add("0")
+                            bitArray.add(0)
                         }
                         bitIndex++
                     }
                 }
 
-                bitArray.reverse()
-                this.bitString = bitArray.joinToString("")
+                this.bitArray = bitArray.reversed().toMutableList()
             } else {
                 logger.log(
                     Level.SEVERE,
@@ -204,7 +203,7 @@ class DuplicateImageDetection {
                 // dctLowFreq is Array<DoubleArray>
                 val flat: List<Double> = dctLowFreq.flatMap { row -> row.toList() }.sorted()
                 val med = flat[flat.size / 2]
-                var bitArray = mutableListOf<String>()
+                var bitArray = mutableListOf<Int>()
 
                 // Step 6: Build hash
                 result = BigInteger.ZERO
@@ -214,16 +213,15 @@ class DuplicateImageDetection {
                         val bit = if (dctLowFreq[y][x] > med) 1 else 0
                         if (bit == 1) {
                             result = result?.setBit(bitIndex)
-                            bitArray.add("1")
+                            bitArray.add(1)
                         } else {
-                            bitArray.add("0")
+                            bitArray.add(0)
                         }
                         bitIndex++
                     }
                 }
 
-                bitArray.reverse()
-                this.bitString = bitArray.joinToString("")
+                this.bitArray = bitArray.reversed().toMutableList()
             }
         } catch (e: IOException) {
             logger.log(
@@ -235,8 +233,8 @@ class DuplicateImageDetection {
         return result
     }
 
-    fun getBitString(): String {
-        return this.bitString
+    fun getBitArray(): MutableList<Int> {
+        return this.bitArray
     }
 
     fun getResolution(): Int {
@@ -346,6 +344,27 @@ class DuplicateImageDetection {
 
             // Count the number of set bits (Hamming weight) between the 2 hashes
             return xorResult.bitCount()
+        }
+
+        // Identify the differing bits position
+        fun hammingDistancePositions(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): MutableList<Int> {
+            if (resolution%8 != 0 || hash1 == null || hash2 == null) {
+                throw IllegalArgumentException("resolution must be divisible by 8 and hash can't be null")
+            }
+
+            val hashSize = resolution/8
+            val xor = hash1.xor(hash2)
+            val positions = mutableListOf<Int>()
+            val bitLength = hashSize*hashSize
+
+            for (i in 0 until bitLength) {
+                // Check if bit at position i is set
+                if (xor.testBit(i)) {
+                    val position = bitLength - i - 1
+                    positions.add(position)
+                }
+            }
+            return positions
         }
 
         // Normalized hamming distance - inverse of similarity
