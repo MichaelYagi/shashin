@@ -343,11 +343,19 @@ class DuplicateImageDetection {
             // XOR the two BigIntegers
             val xorResult = hash1.xor(hash2)
 
-            // Count the number of set bits (Hamming weight)
+            // Count the number of set bits (Hamming weight) between the 2 hashes
             return xorResult.bitCount()
         }
 
-        fun similarityPercentage(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
+        fun normalizedHammingDistance(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
+            if (resolution%8 != 0 || hash1 == null || hash2 == null) {
+                throw IllegalArgumentException("resolution must be divisible by 8 and hash can't be null")
+            }
+
+            return 1.0 - similarity(hash1, hash2, resolution)
+        }
+
+        fun similarity(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
             if (resolution%8 != 0 || hash1 == null || hash2 == null) {
                 throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
             }
