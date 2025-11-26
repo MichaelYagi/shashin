@@ -74,42 +74,48 @@ class TestController(
         model["mike"] = "Mike"
         model["noah"] = "Noah"
 
-        println("hash_experiment")
-//        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
-        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\IMG_2409.HEIC")
-//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
-//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup.jpg")
-//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\005_Aug_22__1984.jpg")
-//        var fileTwo = fileOne
+//        println("hash_experiment")
+////        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431_j1DHSrnNruAqFAC9iw07g.jpg")
+//        var fileOne = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest\\WP_000208_0.jpg")
+////        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\shashin_download_20251122_094127\\IMG_20181215_161431-edited_iZUJjIQ6PheCZaziOvljCA.jpg")
+////        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest3\\tablecup.jpg")
+////        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest\\WP_000208_1.jpg")
+//        var fileTwo = File("C:\\Users\\Michael\\Downloads\\testpics\\dupetest\\WP_000208_2.jpg")
+////        var fileTwo = fileOne
 //
-        var resolution = 64
+//        var resolution = 64
 //
-        var imageOne = ImageIO.read(fileOne)
+//        var imageOne = ImageIO.read(fileOne)
 //        var imageTwo = ImageIO.read(fileTwo)
 //
-        var dcheck = DuplicateImageDetection()
-        var d1 = dcheck.dhash(fileOne,resolution)
-//        var d2 = dcheck.dhash(fileTwo,resolution)
+//        var hashAlgo = DuplicateImageDetection()
+//        var d1 = hashAlgo.dhash(fileOne,resolution)
+//        println("Hash: ${hashAlgo.getBitString()}")
+//        var d2 = hashAlgo.dhash(fileTwo,resolution)
+//        println("Hash: ${hashAlgo.getBitString()}")
 //
 //        println("purekotlin")
-        println(d1.toString())
-//        println(d2.toString())
-////        println(dcheck.hammingDistance(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911")))
-////        println(dcheck.similarityPercentage(BigInteger("3176040817552762079483"), BigInteger("4356632438270173382911"), resolution))
-//        println(DuplicateImageChecker.hammingDistance(d1, d2))
-//        println(DuplicateImageChecker.similarityPercentage(d1, d2, resolution))
-//
-//        //-----------
-//
+//        println("kotlin hammingDistance: "+DuplicateImageDetection.hammingDistance(d1, d2))
+//        println("kotlin similarity: "+DuplicateImageDetection.similarityPercentage(d1, d2, resolution))
+
+        //-----------
+
 //        println("jimagehash")
-//        val dupeImageDetection = DuplicateImageDetection()
-//        dupeImageDetection.setAlgorithm("dhash", resolution)
-//        var hashOne = dupeImageChecker.computeHash(fileOne)
-//        var hashTwo = dupeImageChecker.computeHash(fileTwo)
-//        println(hashOne?.hashValue)
-//        println(hashTwo?.hashValue)
-//        println(hashOne?.hammingDistance(hashTwo))
-//        println(dupeImageChecker.similarityScore(hashOne!!, hashTwo!!))
+////        val hash = dev.brachtendorf.jimagehash.hashAlgorithms.AverageHash(resolution)
+//        val hash = dev.brachtendorf.jimagehash.hashAlgorithms.DifferenceHash(resolution, dev.brachtendorf.jimagehash.hashAlgorithms.DifferenceHash.Precision.Simple)
+////        val hash = dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash(resolution)
+//
+//        val hash0 = hash.hash(imageOne)
+//        val hash1 = hash.hash(imageTwo)
+//
+//        println(hash0.toString())
+//        println(hash1.toString())
+//
+//        val hammingDistance = hash1.hammingDistance(hash0)
+//        val similarity = 1.0 - hash1.normalizedHammingDistance(hash0)
+//
+//        println("jimagehash hammingDistance: $hammingDistance")
+//        println("jimagehash similarity: $similarity")
 
         model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
         model["defaultTZ"] = ZoneId.systemDefault()
@@ -190,8 +196,9 @@ class TestController(
                     "<br>Resolution: "+i.getResolution()+
                     "<br>hash 1: " + hash1 +
                     "<br>hash 2: " + hash2 +
-                    "<br>threshold: " + threshold +
                     "<br>Is duplicate: " + isDuplicate +
+                    "<br>Distance: " + DuplicateImageDetection.hammingDistance(hash1, hash2) +
+                    "<br>Distance threshold: " + threshold +
                     "<br>Similarity: " + DuplicateImageDetection.similarityPercentage(hash1, hash2) +
                     "<br>Timings: " + metricsUtil.getMetricsList().toString() +
                     "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
