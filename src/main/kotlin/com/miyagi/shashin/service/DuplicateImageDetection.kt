@@ -17,6 +17,7 @@ import javax.imageio.ImageIO
 import kotlin.collections.reversed
 import kotlin.math.abs
 import kotlin.math.round
+import kotlin.math.roundToInt
 
 // Example usage:
 //val file1 = File(filenameOne)
@@ -367,16 +368,16 @@ class DuplicateImageDetection {
             return positions
         }
 
-        // Normalized hamming distance - inverse of similarity
+        // Normalized hamming distance - inverse of rawSimilarity
         fun normalizedHammingDistance(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
             if (resolution%8 != 0 || hash1 == null || hash2 == null) {
                 throw IllegalArgumentException("resolution must be divisible by 8 and hash can't be null")
             }
 
-            return 1.0 - similarity(hash1, hash2, resolution)
+            return 1.0 - rawSimilarity(hash1, hash2, resolution)
         }
 
-        fun similarity(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
+        fun rawSimilarity(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
             if (resolution%8 != 0 || hash1 == null || hash2 == null) {
                 throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
             }
@@ -385,6 +386,17 @@ class DuplicateImageDetection {
             val totalBits = hashSize * hashSize
             val distance = hammingDistance(hash1, hash2)!!.toInt()
             return (totalBits - distance).toDouble() / totalBits.toDouble()
+        }
+
+        fun similarity(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Int {
+            if (resolution%8 != 0 || hash1 == null || hash2 == null) {
+                throw IllegalArgumentException("resolution must be divisible by 8 and image can't be null")
+            }
+
+            val hashSize = resolution/8
+            val totalBits = hashSize * hashSize
+            val distance = hammingDistance(hash1, hash2)!!.toInt()
+            return (100*(totalBits - distance).toDouble() / totalBits.toDouble()).roundToInt()
         }
 
         fun getBase64(file: File?): String? {
@@ -401,10 +413,10 @@ class DuplicateImageDetection {
             return null
         }
 
-        fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, threshold: Int = 5, page: Int = 0, size: Int = 3000): Int {
+        fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, threshold: Int = 10, page: Int = 0, size: Int = 3000): Int {
             // Implement as part of dupe module
             // Distance function using Hamming distance
-            val tree = BKTree { h1, h2 -> hammingDistance(h1, h2)!! }
+            val tree = BKTree { h1, h2 -> 100-similarity(h1, h2) }
 
             val metadataList = duplicatesRepository.findDuplicateImageHash(page, size)
             logger.log(
