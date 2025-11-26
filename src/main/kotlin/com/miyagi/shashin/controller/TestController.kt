@@ -136,6 +136,7 @@ class TestController(
         response["settwo"] = ""
         response["base64_1"] = ""
         response["base64_2"] = ""
+        response["hammingDistancePositions"] = mutableListOf<Int>()
         response["msg"] = ""
         response["status"] = ApiResponse.FAIL.status
 
@@ -174,25 +175,27 @@ class TestController(
             val i = DuplicateImageDetection()
 
             var hash1: BigInteger? = null
-            var bitString1: String? = null
+            var bitArray1: MutableList<Int>? = null
             var hash2: BigInteger? = null
-            var bitString2: String? = null
+            var bitArray2: MutableList<Int>? = null
             if (algorithm == "ahash") {
                 hash1 = i.ahash(file1, resolution)
-                bitString1 = i.getBitString()
+                bitArray1 = i.getBitArray()
                 hash2 = i.ahash(file2, resolution)
-                bitString2 = i.getBitString()
+                bitArray2 = i.getBitArray()
             } else if (algorithm == "phash") {
                 hash1 = i.phash(file1, resolution)
-                bitString1 = i.getBitString()
+                bitArray1 = i.getBitArray()
                 hash2 = i.phash(file2, resolution)
-                bitString2 = i.getBitString()
+                bitArray2 = i.getBitArray()
             } else {
                 hash1 = i.dhash(file1, resolution)
-                bitString1 = i.getBitString()
+                bitArray1 = i.getBitArray()
                 hash2 = i.dhash(file2, resolution)
-                bitString2 = i.getBitString()
+                bitArray2 = i.getBitArray()
             }
+
+            val hammingDistancePositions = DuplicateImageDetection.hammingDistancePositions(hash1, hash2, resolution)
 
             metricsUtil.end()
 
@@ -200,12 +203,21 @@ class TestController(
             val isDuplicate = DuplicateImageDetection.isDuplicate(hash1!!, hash2!!, threshold)
             metricsUtil.end()
 
+            var html = ""
+            bitArray2.forEachIndexed { index, value ->
+                if (hammingDistancePositions.contains(index)) {
+                    html += "<span class='overline'>$value</span>"
+                } else {
+                    html += value.toString()
+                }
+            }
+
             response["text"] = "Algorithm: "+algorithm+
                     "<br>Resolution: "+i.getResolution()+
                     "<br>hash 1: " + hash1 +
-                    "<br>bitString 1: " + bitString1 +
                     "<br>hash 2: " + hash2 +
-                    "<br>bitString 2: " + bitString2 +
+                    "<br>bitString 1: <code>" + bitArray1.joinToString("") + "</code>" +
+                    "<br>bitString 2: <code>" + html + "</code>" +
                     "<br>Is duplicate: " + isDuplicate +
                     "<br>Distance: " + DuplicateImageDetection.hammingDistance(hash1, hash2) +
                     "<br>Normalized Distance: " + DuplicateImageDetection.normalizedHammingDistance(hash1, hash2, resolution) +

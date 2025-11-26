@@ -6,6 +6,14 @@
 <body>
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
+<style>
+    .overline {
+        text-decoration: overline;
+        text-decoration-color: red; /* optional: color of underline */
+        text-decoration-thickness: 2px;
+    }
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
@@ -84,7 +92,6 @@
                     resolution: $("#resolution").val()
                 };
                 http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
-                    // console.log(results)
                     $("#base64_1").attr("src",results.base64_1);
                     $("#base64_2").attr("src",results.base64_2);
                     $("#sometext").html(results.text);
