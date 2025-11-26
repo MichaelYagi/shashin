@@ -174,16 +174,24 @@ class TestController(
             val i = DuplicateImageDetection()
 
             var hash1: BigInteger? = null
+            var bitString1: String? = null
             var hash2: BigInteger? = null
+            var bitString2: String? = null
             if (algorithm == "ahash") {
                 hash1 = i.ahash(file1, resolution)
+                bitString1 = i.getBitString()
                 hash2 = i.ahash(file2, resolution)
+                bitString2 = i.getBitString()
             } else if (algorithm == "phash") {
                 hash1 = i.phash(file1, resolution)
+                bitString1 = i.getBitString()
                 hash2 = i.phash(file2, resolution)
+                bitString2 = i.getBitString()
             } else {
                 hash1 = i.dhash(file1, resolution)
+                bitString1 = i.getBitString()
                 hash2 = i.dhash(file2, resolution)
+                bitString2 = i.getBitString()
             }
 
             metricsUtil.end()
@@ -195,11 +203,14 @@ class TestController(
             response["text"] = "Algorithm: "+algorithm+
                     "<br>Resolution: "+i.getResolution()+
                     "<br>hash 1: " + hash1 +
+                    "<br>bitString 1: " + bitString1 +
                     "<br>hash 2: " + hash2 +
+                    "<br>bitString 2: " + bitString2 +
                     "<br>Is duplicate: " + isDuplicate +
                     "<br>Distance: " + DuplicateImageDetection.hammingDistance(hash1, hash2) +
+                    "<br>Normalized Distance: " + DuplicateImageDetection.normalizedHammingDistance(hash1, hash2, resolution) +
                     "<br>Distance threshold: " + threshold +
-                    "<br>Similarity: " + DuplicateImageDetection.similarityPercentage(hash1, hash2) +
+                    "<br>Similarity: " + DuplicateImageDetection.similarity(hash1, hash2, resolution) +
                     "<br>Timings: " + metricsUtil.getMetricsList().toString() +
                     "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
 
