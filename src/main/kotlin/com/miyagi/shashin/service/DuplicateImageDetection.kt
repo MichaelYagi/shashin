@@ -244,8 +244,12 @@ class DuplicateImageDetection {
     }
 
     private fun checkAndThrowIllegalArgumentException(imageFile: File?, resolution: Int) {
-        if (resolution%8 != 0 || imageFile == null || !imageFile.exists()) {
-            throw IllegalArgumentException("resolution must be divisible by 8 and image must exist")
+        if (resolution%8 != 0) {
+            throw IllegalArgumentException("resolution must be divisible by 8")
+        }
+
+        if (imageFile == null || !imageFile.exists()) {
+            throw IllegalArgumentException("image must exist")
         }
     }
 
