@@ -4,6 +4,7 @@ import com.miyagi.shashin.model.Duplicates
 import com.miyagi.shashin.repository.DuplicatesRepository
 import com.miyagi.shashin.util.BKTree
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import org.opencv.core.Algorithm
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
@@ -344,7 +345,7 @@ class DuplicateImageDetection {
         }
 
         // Identify the differing bits position
-        fun hammingDistancePositions(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): MutableList<Int> {
+        fun hammingDistancePositions(hash1: BigInteger?, hash2: BigInteger?, hashingAlgorithm: String = "dhash", resolution: Int = 64): MutableList<Int> {
             if (resolution%8 != 0 || hash1 == null || hash2 == null) {
                 throw IllegalArgumentException("resolution must be divisible by 8 and hash can't be null")
             }
@@ -352,7 +353,10 @@ class DuplicateImageDetection {
             val hashSize = resolution/8
             val xor = hash1.xor(hash2)
             val positions = mutableListOf<Int>()
-            val bitLength = hashSize*hashSize
+            var bitLength = hashSize*hashSize
+            if (hashingAlgorithm == "ahash") {
+                bitLength = (hashSize+1)*hashSize
+            }
 
             for (i in 0 until bitLength) {
                 // Check if bit at position i is set
@@ -365,12 +369,21 @@ class DuplicateImageDetection {
         }
 
         // Normalized hamming distance - inverse of rawSimilarity
-        fun normalizedHammingDistance(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
+        fun rawNormalizedHammingDistance(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
             if (resolution%8 != 0 || hash1 == null || hash2 == null) {
                 throw IllegalArgumentException("resolution must be divisible by 8 and hash can't be null")
             }
 
             return 1.0 - rawSimilarity(hash1, hash2, resolution)
+        }
+
+        // Normalized hamming distance - inverse of rawSimilarity
+        fun normalizedHammingDistance(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Int {
+            if (resolution%8 != 0 || hash1 == null || hash2 == null) {
+                throw IllegalArgumentException("resolution must be divisible by 8 and hash can't be null")
+            }
+
+            return 100 - (100*rawSimilarity(hash1, hash2, resolution)).roundToInt()
         }
 
         fun rawSimilarity(hash1: BigInteger?, hash2: BigInteger?, resolution: Int = 64): Double {
@@ -412,7 +425,7 @@ class DuplicateImageDetection {
         fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, threshold: Int = 10, page: Int = 0, size: Int = 3000): Int {
             // Implement as part of dupe module
             // Distance function using Hamming distance
-            val tree = BKTree { h1, h2 -> 100-similarity(h1, h2) }
+            val tree = BKTree { h1, h2 -> normalizedHammingDistance(h1, h2, 64) }
 
             val metadataList = duplicatesRepository.findDuplicateImageHash(page, size)
             logger.log(
