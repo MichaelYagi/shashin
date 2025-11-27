@@ -104,29 +104,37 @@
                 }
             };
 
-            const createUpdateFn = (id, view, isSelected, opacityLevel, metadataIdArray) => {
-                return () => {
-                    updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
-                    const $image = $("#image" + id);
-                    if ($image.length > 0) {
-                        const imageUrl = $image.attr("src").replace(
-                            `/gif/${id}`,
-                            `/${Util.isMobile() ? "100" : "225"}/${id}`
-                        );
-                        $image.attr("src", imageUrl);
-                    }
-                };
-            };
+            const runUpdates = (metadataIdArray, view, isSelected, opacityLevel, chunkSize = 50) => {
+                let i = 0;
 
-            const runUpdates = (metadataIdArray, view, isSelected, opacityLevel) =>  {
-                const pendingUpdates = metadataIdArray.map(id =>
-                    createUpdateFn(id, view, isSelected, opacityLevel, metadataIdArray)
-                );
-                requestAnimationFrame(() => {
-                    pendingUpdates.forEach(fn => fn());
-                    enableToolbar();
-                    Util.showSpinner(false);
-                });
+                function processChunk() {
+                    const end = Math.min(i + chunkSize, metadataIdArray.length);
+
+                    for (; i < end; i++) {
+                        const id = metadataIdArray[i];
+                        updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
+
+                        const $image = $("#image" + id);
+                        if ($image.length > 0) {
+                            const imageUrl = $image.attr("src").replace(
+                                `/gif/${id}`,
+                                `/${Util.isMobile() ? "100" : "225"}/${id}`
+                            );
+                            $image.attr("src", imageUrl);
+                        }
+                    }
+
+                    if (i < metadataIdArray.length) {
+                        // Schedule next chunk
+                        requestAnimationFrame(processChunk);
+                    } else {
+                        // All updates done
+                        enableToolbar();
+                        Util.showSpinner(false);
+                    }
+                }
+
+                requestAnimationFrame(processChunk);
             };
 
             const finalizeSelection = (view) => {
