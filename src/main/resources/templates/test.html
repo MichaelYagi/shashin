@@ -41,11 +41,11 @@
             <label for="threshold"><strong>Distance Threshold</strong></label><br>
             <input type="text" id="threshold" name="threshold" style="width: 90%" value="10"><br><br>
 
-            <label for="setone"><strong>Image path 1</strong></label><br>
-            <input type="text" id="setone" name="setone" style="width: 90%"><br><br>
+            <label for="pathone"><strong>Image path 1</strong></label><br>
+            <input type="text" id="pathone" name="pathone" style="width: 90%"><br><br>
 
-            <label for="settwo"><strong>Image path 2</strong></label><br>
-            <input type="text" id="settwo" name="settwo" style="width: 90%"><br><br>
+            <label for="pathtwo"><strong>Image path 2</strong></label><br>
+            <input type="text" id="pathtwo" name="pathtwo" style="width: 90%"><br><br>
 
             <button id="dupeSubmit">Is duplicate?</button><br><br>
 
@@ -67,12 +67,41 @@
             const locale = /*[[${locale}]]*/ 'en';
             /*]]>*/
 
-            $("#language").html(locale);
-            const test = "Mike";
-            $('#test').html("test3:"+shashin.getTranslatedValue("test",test,"Noah"));
-            $('#test1').html("test4:"+shashin.getTranslatedValue("test",test));
+            const urlParams = new URLSearchParams(window.location.search);
 
-            $("#asdf").html("<strong>SOME TEXT</strong>");
+            // Get a specific parameter
+            let algorithm = $("#algorithm").val();
+            if (urlParams.has('algorithm')) {
+                algorithm = urlParams.get('algorithm');
+                $("#algorithm").val(algorithm);
+            }
+            let resolution = $("#resolution").val();
+            if (urlParams.has('resolution')) {
+                resolution = urlParams.get('resolution');
+                $("#resolution").val(resolution);
+            }
+            let threshold = $("#threshold").val();
+            if (urlParams.has('threshold')) {
+                threshold = urlParams.get('threshold');
+                $("#threshold").val(threshold);
+            }
+            let pathone = $("#pathone").val();
+            if (urlParams.has('pathone')) {
+                pathone = decodeURI(urlParams.get('pathone'));
+                $("#pathone").val(pathone);
+            }
+            let pathtwo = $("#pathtwo").val();
+            if (urlParams.has('pathtwo')) {
+                pathtwo = decodeURI(urlParams.get('pathtwo'));
+                $("#pathtwo").val(pathtwo);
+            }
+
+            // $("#language").html(locale);
+            // const test = "Mike";
+            // $('#test').html("test3:"+shashin.getTranslatedValue("test",test,"Noah"));
+            // $('#test1').html("test4:"+shashin.getTranslatedValue("test",test));
+
+            // $("#asdf").html("<strong>SOME TEXT</strong>");
 
             $(document).on("keydown", function(event) {
                 if (event.key === "Enter") {
@@ -83,19 +112,36 @@
             $("#dupeSubmit").on("click", function (e) {
                 e.preventDefault();
 
-                const http = new Http("dupe detect");
-                const json = {
-                    algorithm: $("#algorithm").val(),
-                    setone: $("#setone").val(),
-                    settwo: $("#settwo").val(),
-                    threshold: $("#threshold").val(),
-                    resolution: $("#resolution").val()
-                };
-                http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
-                    $("#base64_1").attr("src",results.base64_1);
-                    $("#base64_2").attr("src",results.base64_2);
-                    $("#sometext").html(results.text);
-                });
+                $("#sometext").html("");
+
+                if (algorithm !== "" &&
+                    resolution !== "" &&
+                    threshold !== "" &&
+                    pathone !== "" &&
+                    pathtwo !== ""
+                ) {
+                    const http = new Http("dupe detect");
+                    const json = {
+                        algorithm: $("#algorithm").val(),
+                        pathone: $("#pathone").val(),
+                        pathtwo: $("#pathtwo").val(),
+                        threshold: $("#threshold").val(),
+                        resolution: $("#resolution").val()
+                    };
+                    http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
+                        $("#base64_1").attr("src", results.base64_1);
+                        $("#base64_2").attr("src", results.base64_2);
+                        $("#sometext").html(results.text);
+                    });
+                } else {
+                    let html = "Inputs missing: " +
+                    (algorithm === "") ? "algorithm, " : "" +
+                    (resolution === "") ? "resolution, " : "" +
+                    (threshold === "") ? "threshold, " : "" +
+                    (pathone === "") ? "pathone, " : "" +
+                    (pathtwo === "") ? "pathtwo, " : "";
+                    $("#sometext").html(html);
+                }
             });
         });
     </script>

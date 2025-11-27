@@ -132,8 +132,8 @@ class TestController(
 
         response["activePage"] = "test"
         response["text"] = "Enter fields"
-        response["setone"] = ""
-        response["settwo"] = ""
+        response["pathone"] = ""
+        response["pathtwo"] = ""
         response["base64_1"] = ""
         response["base64_2"] = ""
         response["hammingDistancePositions"] = mutableListOf<Int>()
@@ -152,19 +152,19 @@ class TestController(
 //        println(isDupe)
 //        println(similarityScore)
 
-        if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo") &&
+        if (payloadMap.containsKey("pathone") && payloadMap.containsKey("pathtwo") &&
             payloadMap.containsKey("resolution") &&
             payloadMap.containsKey("threshold") &&
             payloadMap.containsKey("algorithm")
         ) {
-            var setOneFilename = payloadMap["setone"].toString()
-            var setTwoFilename = payloadMap["settwo"].toString()
+            var setOneFilename = payloadMap["pathone"].toString()
+            var setTwoFilename = payloadMap["pathtwo"].toString()
             var threshold = payloadMap["threshold"].toString().toInt()
             var resolution = payloadMap["resolution"].toString().toInt()
             var algorithm = payloadMap["algorithm"].toString()
 
-            response["setone"] = setOneFilename
-            response["settwo"] = setTwoFilename
+            response["pathone"] = setOneFilename
+            response["pathtwo"] = setTwoFilename
 
             val metricsUtil = MetricsUtil()
             metricsUtil.start("Start dupe detection")
