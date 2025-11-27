@@ -105,30 +105,57 @@
             };
 
             const runUpdates = (metadataIdArray, view, isSelected, opacityLevel, chunkSize = 50) => {
-                let i = 0;
+                const goingUp = (shashin.batchSelectDirection === "up");
+
+                // If going up, reverse the array so we iterate forwards through reversed order
+                const ids = goingUp ? [...metadataIdArray].reverse() : metadataIdArray;
+
+                let i = goingUp ? 0 : ids.length - 1;
 
                 function processChunk() {
-                    const end = Math.min(i + chunkSize, metadataIdArray.length);
+                    let processed = 0;
 
-                    for (; i < end; i++) {
-                        const id = metadataIdArray[i];
-                        updateImageSelection(id, view, isSelected, opacityLevel, metadataIdArray);
+                    if (goingUp) {
+                        // Iterate forwards through the reversed array
+                        while (processed < chunkSize && i < ids.length) {
+                            const id = ids[i];
+                            updateImageSelection(id, view, isSelected, opacityLevel, ids);
 
-                        const $image = $("#image" + id);
-                        if ($image.length > 0) {
-                            const imageUrl = $image.attr("src").replace(
-                                `/gif/${id}`,
-                                `/${Util.isMobile() ? "100" : "225"}/${id}`
-                            );
-                            $image.attr("src", imageUrl);
+                            const $image = $("#image" + id);
+                            if ($image.length > 0) {
+                                const imageUrl = $image.attr("src").replace(
+                                    `/gif/${id}`,
+                                    `/${Util.isMobile() ? "100" : "225"}/${id}`
+                                );
+                                $image.attr("src", imageUrl);
+                            }
+
+                            i++;
+                            processed++;
+                        }
+                    } else {
+                        // Iterate backwards through the original array
+                        while (processed < chunkSize && i >= 0) {
+                            const id = ids[i];
+                            updateImageSelection(id, view, isSelected, opacityLevel, ids);
+
+                            const $image = $("#image" + id);
+                            if ($image.length > 0) {
+                                const imageUrl = $image.attr("src").replace(
+                                    `/gif/${id}`,
+                                    `/${Util.isMobile() ? "100" : "225"}/${id}`
+                                );
+                                $image.attr("src", imageUrl);
+                            }
+
+                            i--;
+                            processed++;
                         }
                     }
 
-                    if (i < metadataIdArray.length) {
-                        // Schedule next chunk
+                    if (goingUp ? i < ids.length : i >= 0) {
                         requestAnimationFrame(processChunk);
                     } else {
-                        // All updates done
                         enableToolbar();
                         Util.showSpinner(false);
                     }
