@@ -9,17 +9,15 @@
 <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
     <header class="py-2 mb-2">
         <div class="container-fluid align-items-center">  <!-- d-flex -->
-            <div class="row">
+            <div class="row row-cols-auto g-1">
                 <div class="col">
                     <div class="flex-shrink-0">
                         <span class="display-6" th:utext="${'&lt;span id=&quot;albumNameTitle&quot;&gt;&lt;strong&gt;'+album.name + '&lt;/strong&gt;&lt;/span&gt;'}"></span>
                     </div>
                 </div>
-            </div>
-            <div class="row row-cols-auto g-0">
                 <th:block th:if="${loggedIn == false}">
                     <div class="col">
-                        <a class="nav-link dropdown-toggle" style="padding-left: 5px; padding-top: 12px;" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><th:block th:text="#{main.language}"></th:block></a>
+                        <a class="nav-link dropdown-toggle" style="padding-left: 15px; padding-top: 23px;" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><th:block th:text="#{main.language}"></th:block></a>
                         <ul class="dropdown-menu" id="languageSelect">
                             <th:block th:each="lang : ${languageList}">
                                 <li><a th:class="'dropdown-item' + ${locale == lang.code ? ' active' : ''}" th:id="${lang.code}" href="#"><th:block th:text="${lang.label}"></th:block></a></li>
@@ -27,6 +25,8 @@
                         </ul>
                     </div>
                 </th:block>
+            </div>
+            <div class="row row-cols-auto g-0">
                 <div class="col">
                     <form id="downloadWrapper" method="post" th:action="${'/download/share/' + shareLink + '/album/' + albumId}" style="display: inline-block;white-space: nowrap;">
                         <button th:id="${'download' + albumId}" th:class="'bi-download '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;background: none;border: none;" type="submit" name="download" th:value="${albumId}" th:title="#{main.pages.tooltip.albums.msg.downloadalbum}"></button>
