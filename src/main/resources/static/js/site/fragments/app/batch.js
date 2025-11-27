@@ -346,6 +346,7 @@
         const downloadEl = $("#download" + albumId);
 
         if ($('.thumbnail-tl .bi-circle-fill').length > 0) {
+            $("#shareSelect").show();
             $("#clearMultiSelect").show();
             $("#albumNumberSelected").show();
             downloadEl.attr({
@@ -355,6 +356,7 @@
             });
         } else {
             shashin.clearSelection("album");
+            $("#shareSelect").hide();
             $("#clearMultiSelect").hide();
             shashin.removeAllMetadataIdList();
             $("#albumNumberSelected").hide();
