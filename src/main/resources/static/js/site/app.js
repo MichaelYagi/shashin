@@ -776,6 +776,7 @@
                     window.clearInterval(downloadTimer);
 
                     shashin.clearSelection("album");
+                    $("#shareSelect").hide();
                     $("#clearMultiSelect").hide();
                     shashin.removeAllMetadataIdList();
                     $("#albumNumberSelected").hide();
