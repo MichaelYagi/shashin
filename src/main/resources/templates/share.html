@@ -10,7 +10,7 @@
     <header class="py-2 mb-2">
         <div class="container-fluid align-items-center">  <!-- d-flex -->
             <div class="row">
-                <div th:class="'col-'${loggedIn == false ? '11' : '12'}">
+                <div th:class="'col-'+${loggedIn == false ? '11' : '12'}">
                     <div class="flex-shrink-0">
                         <span class="display-6" th:utext="${'&lt;span id=&quot;albumNameTitle&quot;&gt;&lt;strong&gt;'+album.name + '&lt;/strong&gt;&lt;/span&gt;'}"></span>
                     </div>
