@@ -4,20 +4,15 @@ import com.miyagi.shashin.model.Duplicates
 import com.miyagi.shashin.repository.DuplicatesRepository
 import com.miyagi.shashin.util.BKTree
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.opencv.core.Algorithm
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.math.BigInteger
-import java.util.Base64
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import kotlin.collections.reversed
-import kotlin.math.abs
-import kotlin.math.round
 import kotlin.math.roundToInt
 
 // Example usage:
@@ -41,6 +36,8 @@ class DuplicateImageDetection {
 
     private var debug: Boolean = false
 
+    private var resizedGreyscaleImage: BufferedImage? = null
+
     // Average Hash
     fun ahash(imageFile: File?, resolution: Int = 64): BigInteger? {
         checkAndThrowIllegalArgumentException(imageFile, resolution)
@@ -60,6 +57,10 @@ class DuplicateImageDetection {
 
                 // Download
                 // saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
+                if (this.debug) {
+                    this.resizedGreyscaleImage = resized
+                }
+
                 val pixels = IntArray((hashSize + 1) * hashSize)
                 var sum = 0L
                 var idx = 0
@@ -132,6 +133,9 @@ class DuplicateImageDetection {
 
                 // Download
                 // saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
+                if (this.debug) {
+                    this.resizedGreyscaleImage = resized
+                }
 
                 // 2) Generate differences left-to-right for each row
                 result = BigInteger.ZERO
@@ -196,6 +200,10 @@ class DuplicateImageDetection {
                 val imgSize = hashSize * highfreqFactor
                 val resized = resizeAndGrayscale(image, imgSize, imgSize)
 
+                if (this.debug) {
+                    this.resizedGreyscaleImage = resized
+                }
+
                 // Step 2: Convert image to grayscale matrix
                 val pixels = Array(imgSize) { DoubleArray(imgSize) }
                 for (y in 0 until imgSize) {
@@ -257,6 +265,10 @@ class DuplicateImageDetection {
 
     fun setDebug(debug: Boolean) {
         this.debug = debug
+    }
+
+    fun getResizedGreyscaleImage(): BufferedImage? {
+        return this.resizedGreyscaleImage
     }
 
     fun getBitArray(): MutableList<Int> {
@@ -434,20 +446,6 @@ class DuplicateImageDetection {
             val totalBits = hashSize * hashSize
             val distance = hammingDistance(hash1, hash2)!!.toInt()
             return (100*(totalBits - distance).toDouble() / totalBits.toDouble()).roundToInt()
-        }
-
-        fun getBase64(file: File?): String? {
-            try {
-                if (file != null) {
-                    val os = ByteArrayOutputStream()
-                    ImageIO.write(ImageIO.read(file), "jpg", os)
-                    return Base64.getEncoder().encodeToString(os.toByteArray())
-                }
-            } catch (e: Exception) {
-                logger.log(Level.WARNING, "Error getBase64: ${e.message}")
-            }
-
-            return null
         }
 
         fun findAndStoreDuplicates(duplicatesRepository: DuplicatesRepository, threshold: Int = 10, page: Int = 0, size: Int = 3000): Int {
