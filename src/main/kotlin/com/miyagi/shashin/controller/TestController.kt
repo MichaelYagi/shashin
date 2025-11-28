@@ -241,6 +241,8 @@ class TestController(
             response["base64_2"] = ImageProcessing.getBase64(file2)
             response["base64_3"] = ImageProcessing.getBase64(bufferedImageResize1)
             response["base64_4"] = ImageProcessing.getBase64(bufferedImageResize2)
+            response["bitString_1"] = bitArray1.joinToString("")
+            response["bitString_2"] = bitArray2.joinToString("")
 
             response["status"] = ApiResponse.SUCCESS.status
         }
