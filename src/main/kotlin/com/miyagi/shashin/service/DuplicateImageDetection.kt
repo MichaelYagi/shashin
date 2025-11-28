@@ -39,6 +39,8 @@ class DuplicateImageDetection {
 
     private var bitArray: MutableList<Int> = mutableListOf()
 
+    private var debug: Boolean = false
+
     // Average Hash
     fun ahash(imageFile: File?, resolution: Int = 64): BigInteger? {
         checkAndThrowIllegalArgumentException(imageFile, resolution)
@@ -81,14 +83,20 @@ class DuplicateImageDetection {
                     bitList.add(bitIndex, bit)
                     if (pixel >= avg) {
                         result = result?.setBit(bitIndex)
-                        bitArray.add(1)
+                        if (this.debug) {
+                            bitArray.add(1)
+                        }
                     } else {
-                        bitArray.add(0)
+                        if (this.debug) {
+                            bitArray.add(0)
+                        }
                     }
                     bitIndex++
                 }
 
-                this.bitArray = bitArray.reversed().toMutableList()
+                if (this.debug) {
+                    this.bitArray = bitArray.reversed().toMutableList()
+                }
             } else {
                 logger.log(
                     Level.SEVERE,
@@ -140,15 +148,21 @@ class DuplicateImageDetection {
                         if (leftPix > rightPix) {
                             // returns a new BigInteger with the bit at position bitIndex set to 1
                             result = result?.setBit(bitIndex)
-                            bitArray.add(1)
+                            if (this.debug) {
+                                bitArray.add(1)
+                            }
                         } else {
-                            bitArray.add(0)
+                            if (this.debug) {
+                                bitArray.add(0)
+                            }
                         }
                         bitIndex++
                     }
                 }
 
-                this.bitArray = bitArray.reversed().toMutableList()
+                if (this.debug) {
+                    this.bitArray = bitArray.reversed().toMutableList()
+                }
             } else {
                 logger.log(
                     Level.SEVERE,
@@ -215,15 +229,21 @@ class DuplicateImageDetection {
                         val bit = if (dctLowFreq[y][x] > med) 1 else 0
                         if (bit == 1) {
                             result = result?.setBit(bitIndex)
-                            bitArray.add(1)
+                            if (this.debug) {
+                                bitArray.add(1)
+                            }
                         } else {
-                            bitArray.add(0)
+                            if (this.debug) {
+                                bitArray.add(0)
+                            }
                         }
                         bitIndex++
                     }
                 }
 
-                this.bitArray = bitArray.reversed().toMutableList()
+                if (this.debug) {
+                    this.bitArray = bitArray.reversed().toMutableList()
+                }
             }
         } catch (e: IOException) {
             logger.log(
@@ -233,6 +253,10 @@ class DuplicateImageDetection {
         }
 
         return result
+    }
+
+    fun setDebug(debug: Boolean) {
+        this.debug = debug
     }
 
     fun getBitArray(): MutableList<Int> {
