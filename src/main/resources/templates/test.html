@@ -57,7 +57,8 @@
             <span id="sometext"></span><br>
             <img id="base64_1" src="" style="width: 200px;margin-right: 5px;"><img id="base64_2" src="" style="width: 200px"><br>
 <!--            <img id="base64_3" src="" style="width: 400px;margin-right: 5px;margin-top: 5px"><img id="base64_4" src="" style="width: 400px;margin-top: 5px;"><br><br>-->
-            <canvas id="base64_3" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_4" style="margin-top: 5px;"></canvas>
+            <canvas id="base64_3" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_4" style="margin-top: 5px;"></canvas><br>
+            <canvas id="base64_5" style="margin-left: 16px;margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_6" style="margin-left: 16px;margin-top: 5px;"></canvas><br>
 
             <span id="photos"></span>
 
@@ -121,6 +122,68 @@
                 };
             }
 
+            function drawBitString(canvasEl, bitString, resolution, cellSize) {
+                const canvas = document.getElementById(canvasEl);
+                const ctx = canvas.getContext("2d");
+
+                // resolution = hash parameter (16, 32, 64, 128...)
+                // bitString length = resolution / 2
+                // grid side length = sqrt(resolution / 2)
+                const gridSize = Math.sqrt(bitString.length);
+
+                // Set canvas dimensions based on gridSize × cellSize
+                canvas.width = gridSize * cellSize;
+                canvas.height = gridSize * cellSize;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.font = `${cellSize * 0.6}px Arial`;
+
+                for (let i = 0; i < bitString.length; i++) {
+                    const bit = bitString[i];
+                    const row = Math.floor(i / gridSize);
+                    const col = i % gridSize;
+
+                    const x = col * cellSize;
+                    const y = row * cellSize;
+
+                    // Background color based on bit
+                    ctx.fillStyle = bit === "1" ? "#000" : "#fff";
+                    ctx.fillRect(x, y, cellSize, cellSize);
+
+                    // Text color opposite of background
+                    ctx.fillStyle = bit === "1" ? "#fff" : "#000";
+                    ctx.fillText(bit, x + cellSize / 2, y + cellSize / 2);
+                }
+
+                // Draw grid lines
+                ctx.strokeStyle = "#888";
+                ctx.lineWidth = 1;
+
+                // Vertical lines
+                for (let c = 0; c <= gridSize; c++) {
+                    const pos = c * cellSize;
+                    ctx.beginPath();
+                    ctx.moveTo(pos, 0);
+                    ctx.lineTo(pos, canvas.height);
+                    ctx.stroke();
+                }
+
+                // Horizontal lines
+                for (let r = 0; r <= gridSize; r++) {
+                    const pos = r * cellSize;
+                    ctx.beginPath();
+                    ctx.moveTo(0, pos);
+                    ctx.lineTo(canvas.width, pos);
+                    ctx.stroke();
+                }
+            }
+
+            function reverseString(str) {
+                return str.split('').reverse().join('');
+            }
+
             $(document).on("keydown", function(event) {
                 if (event.key === "Enter") {
                     $("#dupeSubmit").click();
@@ -136,6 +199,12 @@
                 let ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 canvas = document.getElementById('base64_4');
+                ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                canvas = document.getElementById('base64_5');
+                ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                canvas = document.getElementById('base64_6');
                 ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -162,6 +231,8 @@
                         $("#base64_2").attr("src", results.base64_2);
                         canvasImage("base64_3", results.base64_3, scale);
                         canvasImage("base64_4", results.base64_4, scale);
+                        drawBitString("base64_5", reverseString(results.bitString_1), resolution, 16)
+                        drawBitString("base64_6", reverseString(results.bitString_2), resolution, 16)
                         $("#sometext").html(results.text);
                     });
                 } else {
