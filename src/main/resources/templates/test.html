@@ -76,6 +76,8 @@
             /*]]>*/
 
             const pixelWidth = 25;
+            const showOverlay = true;
+
             $("#base64_5").css("margin-left", pixelWidth+"px");
             $("#base64_6").css("margin-left", pixelWidth+"px");
 
@@ -178,13 +180,15 @@
                         ctx.fillStyle = `rgb(${gray}, ${gray}, ${gray})`;
                         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
 
-                        // Overlay grayscale value text
-                        ctx.fillStyle = gray < 128 ? "#fff" : "#000";
-                        ctx.fillText(
-                            gray,
-                            x * cellSize + cellSize / 2,
-                            y * cellSize + cellSize / 2
-                        );
+                        if (showOverlay === true) {
+                            // Overlay grayscale value text
+                            ctx.fillStyle = gray < 128 ? "#fff" : "#000";
+                            ctx.fillText(
+                                gray,
+                                x * cellSize + cellSize / 2,
+                                y * cellSize + cellSize / 2
+                            );
+                        }
                     }
                 }
 
@@ -237,28 +241,30 @@
                     const cellWidth = scale;
                     const cellHeight = scale;
 
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
-                    ctx.font = `${Math.min(cellWidth, cellHeight) * 0.4}px Arial`;
+                    if (showOverlay === true) {
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+                        ctx.font = `${Math.min(cellWidth, cellHeight) * 0.4}px Arial`;
 
-                    // Loop through original pixels
-                    for (let y = 0; y < originalHeight; y++) {
-                        for (let x = 0; x < originalWidth; x++) {
-                            const idx = (y * originalWidth + x) * 4;
-                            const r = data[idx];
-                            const g = data[idx + 1];
-                            const b = data[idx + 2];
+                        // Loop through original pixels
+                        for (let y = 0; y < originalHeight; y++) {
+                            for (let x = 0; x < originalWidth; x++) {
+                                const idx = (y * originalWidth + x) * 4;
+                                const r = data[idx];
+                                const g = data[idx + 1];
+                                const b = data[idx + 2];
 
-                            // Compute grayscale value
-                            const gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+                                // Compute grayscale value
+                                const gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
 
-                            // Overlay grayscale value text
-                            ctx.fillStyle = gray < 128 ? "#fff" : "#000";
-                            ctx.fillText(
-                                gray,
-                                x * cellWidth + cellWidth / 2,
-                                y * cellHeight + cellHeight / 2
-                            );
+                                // Overlay grayscale value text
+                                ctx.fillStyle = gray < 128 ? "#fff" : "#000";
+                                ctx.fillText(
+                                    gray,
+                                    x * cellWidth + cellWidth / 2,
+                                    y * cellHeight + cellHeight / 2
+                                );
+                            }
                         }
                     }
                 };
@@ -294,9 +300,11 @@
                     ctx.fillStyle = bit === "1" ? "#000" : "#fff";
                     ctx.fillRect(x, y, cellSize, cellSize);
 
-                    // Text color opposite of background
-                    ctx.fillStyle = bit === "1" ? "#fff" : "#000";
-                    ctx.fillText(bit, x + cellSize / 2, y + cellSize / 2);
+                    if (showOverlay === true) {
+                        // Text color opposite of background
+                        ctx.fillStyle = bit === "1" ? "#fff" : "#000";
+                        ctx.fillText(bit, x + cellSize / 2, y + cellSize / 2);
+                    }
                 }
 
                 // Draw grid lines
