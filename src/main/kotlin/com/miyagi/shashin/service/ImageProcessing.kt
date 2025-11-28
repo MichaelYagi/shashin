@@ -46,8 +46,10 @@ import java.awt.image.BufferedImageOp
 import java.awt.image.ConvolveOp
 import java.awt.image.DataBufferInt
 import java.awt.image.Kernel
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.util.Base64
 import java.util.Locale
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -419,6 +421,44 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
         private val NCPUS = Runtime.getRuntime().availableProcessors()
+
+        fun getBase64(file: File?, includePrefix: Boolean = true): String? {
+            try {
+                if (file != null) {
+                    val os = ByteArrayOutputStream()
+                    ImageIO.write(ImageIO.read(file), "jpg", os)
+
+                    return if (includePrefix == true) {
+                        "data:image/png;base64, ${Base64.getEncoder().encodeToString(os.toByteArray())}"
+                    } else {
+                        Base64.getEncoder().encodeToString(os.toByteArray())
+                    }
+                }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error getBase64: ${e.message}")
+            }
+
+            return null
+        }
+
+        fun getBase64(bi: BufferedImage?, includePrefix: Boolean = true): String? {
+            try {
+                if (bi != null) {
+                    val os = ByteArrayOutputStream()
+                    ImageIO.write(bi, "jpg", os)
+
+                    return if (includePrefix == true) {
+                        "data:image/png;base64, ${Base64.getEncoder().encodeToString(os.toByteArray())}"
+                    } else {
+                        Base64.getEncoder().encodeToString(os.toByteArray())
+                    }
+                }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error getBase64: ${e.message}")
+            }
+
+            return null
+        }
 
         fun createVideoGif(metadataId: String, metadataRepository: MetadataRepository?, overwrite: Boolean = false) {
 

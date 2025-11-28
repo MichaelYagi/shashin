@@ -30,6 +30,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.awt.image.BufferedImage
 import java.math.BigInteger
 import java.time.ZoneId
 import javax.imageio.ImageIO
@@ -136,6 +137,7 @@ class TestController(
         response["pathtwo"] = ""
         response["base64_1"] = ""
         response["base64_2"] = ""
+        response["base64_3"] = ""
         response["hammingDistancePositions"] = mutableListOf<Int>()
         response["msg"] = ""
         response["status"] = ApiResponse.FAIL.status
@@ -173,26 +175,36 @@ class TestController(
             val file2 = File(setTwoFilename)
 
             val i = DuplicateImageDetection()
+            i.setDebug(true)
 
             var hash1: BigInteger? = null
             var bitArray1: MutableList<Int>? = null
+            var bufferedImageResize1: BufferedImage? = null
             var hash2: BigInteger? = null
             var bitArray2: MutableList<Int>? = null
+            var bufferedImageResize2: BufferedImage? = null
+
             if (algorithm == "ahash") {
                 hash1 = i.ahash(file1, resolution)
                 bitArray1 = i.getBitArray()
+                bufferedImageResize1 = i.getResizedGreyscaleImage()
                 hash2 = i.ahash(file2, resolution)
                 bitArray2 = i.getBitArray()
+                bufferedImageResize2 = i.getResizedGreyscaleImage()
             } else if (algorithm == "phash") {
                 hash1 = i.phash(file1, resolution)
                 bitArray1 = i.getBitArray()
+                bufferedImageResize1 = i.getResizedGreyscaleImage()
                 hash2 = i.phash(file2, resolution)
                 bitArray2 = i.getBitArray()
+                bufferedImageResize2 = i.getResizedGreyscaleImage()
             } else {
                 hash1 = i.dhash(file1, resolution)
                 bitArray1 = i.getBitArray()
+                bufferedImageResize1 = i.getResizedGreyscaleImage()
                 hash2 = i.dhash(file2, resolution)
                 bitArray2 = i.getBitArray()
+                bufferedImageResize2 = i.getResizedGreyscaleImage()
             }
 
             val hammingDistancePositions = DuplicateImageDetection.hammingDistancePositions(hash1, hash2, algorithm, resolution)
@@ -225,9 +237,10 @@ class TestController(
                     "<br>Timings: " + metricsUtil.getMetricsList().toString() +
                     "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
 
-            val pre = "data:image/png;base64, "
-            response["base64_1"] = pre + DuplicateImageDetection.getBase64(file1)
-            response["base64_2"] = pre + DuplicateImageDetection.getBase64(file2)
+            response["base64_1"] = ImageProcessing.getBase64(file1)
+            response["base64_2"] = ImageProcessing.getBase64(file2)
+            response["base64_3"] = ImageProcessing.getBase64(bufferedImageResize1)
+            response["base64_4"] = ImageProcessing.getBase64(bufferedImageResize2)
 
             response["status"] = ApiResponse.SUCCESS.status
         }
