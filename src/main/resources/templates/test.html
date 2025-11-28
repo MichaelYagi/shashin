@@ -40,7 +40,8 @@
                 <option value="32">32 - very coarse, fast, prone to false positives</option>
                 <option value="64" selected>64 - balanced</option>
                 <option value="128">128 - more robust</option>
-                <option value="256">256 - maximum fidelity, slower but very precise</option>
+                <option value="256">256 - high fidelity, slower but very precise</option>
+                <option value="512">512 - higher fidelity, even slower but very precise</option>
             </select><br><br>
 
             <label for="threshold"><strong>Distance Threshold</strong></label><br>
@@ -77,30 +78,62 @@
             const urlParams = new URLSearchParams(window.location.search);
 
             // Get a specific parameter
+            function buildUrl(baseUrl, params = {}) {
+                const query = Object.entries(params)
+                    .map(([key, value]) =>
+                        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+                    )
+                    .join("&");
+
+                return query ? `${baseUrl}?${query}` : baseUrl;
+            }
+            const qpBuilder = {};
+
             let algorithm = $("#algorithm").val();
             if (urlParams.has('algorithm')) {
                 algorithm = urlParams.get('algorithm');
                 $("#algorithm").val(algorithm);
+            } else if (algorithm !== null && algorithm !== "") {
+                qpBuilder["algorithm"] = algorithm;
             }
             let resolution = $("#resolution").val();
             if (urlParams.has('resolution')) {
                 resolution = urlParams.get('resolution');
                 $("#resolution").val(resolution);
+            } else if (resolution !== null && resolution !== "") {
+                qpBuilder["resolution"] = resolution;
             }
             let threshold = $("#threshold").val();
             if (urlParams.has('threshold')) {
                 threshold = urlParams.get('threshold');
                 $("#threshold").val(threshold);
+            } else if (threshold !== null && threshold !== "") {
+                qpBuilder["threshold"] = threshold;
             }
             let pathone = $("#pathone").val();
             if (urlParams.has('pathone')) {
                 pathone = decodeURI(urlParams.get('pathone'));
                 $("#pathone").val(pathone);
+            } else if (pathone !== null && pathone !== "") {
+                pathone = decodeURI(urlParams.get('pathone'));
+                qpBuilder["pathone"] = pathone;
             }
             let pathtwo = $("#pathtwo").val();
             if (urlParams.has('pathtwo')) {
                 pathtwo = decodeURI(urlParams.get('pathtwo'));
                 $("#pathtwo").val(pathtwo);
+            } else if (pathtwo !== null && pathtwo !== "") {
+                pathtwo = decodeURI(urlParams.get('pathtwo'));
+                qpBuilder["pathtwo"] = pathtwo;
+            }
+
+            const size = Object.keys(qpBuilder).length;
+            if (size > 0) {
+                const baseUrl = window.location.origin;
+                const url = new URL(buildUrl(`${baseUrl}/test`, qpBuilder));
+
+console.log(url)
+                window.history.replaceState({}, "", url);
             }
 
             function canvasImage(canvasEl, base64Image, scale) {
