@@ -58,7 +58,7 @@
             <span id="sometext"></span><br>
             <img id="base64_1" src="" style="width: 200px;margin-right: 5px;"><img id="base64_2" src="" style="width: 200px"><br>
             <canvas id="base64_3" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_4" style="margin-top: 5px;"></canvas><br>
-            <canvas id="base64_5" style="margin-left: 25px;margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_6" style="margin-left: 25px;margin-top: 5px;"></canvas><br>
+            <canvas id="base64_5" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_6" style="margin-top: 5px;"></canvas><br>
 
             <span id="photos"></span>
 
@@ -74,6 +74,10 @@
             const currentPage = /*[[${currentPage}]]*/ 0;
             const locale = /*[[${locale}]]*/ 'en';
             /*]]>*/
+
+            const pixelWidth = 25;
+            $("#base64_5").css("margin-left", pixelWidth+"px");
+            $("#base64_6").css("margin-left", pixelWidth+"px");
 
             const urlParams = new URLSearchParams(window.location.search);
 
@@ -132,7 +136,6 @@
                 const baseUrl = window.location.origin;
                 const url = new URL(buildUrl(`${baseUrl}/test`, qpBuilder));
 
-console.log(url)
                 window.history.replaceState({}, "", url);
             }
 
@@ -371,14 +374,14 @@ console.log(url)
                         // canvasImage("base64_3", results.base64_3, scale);
                         // canvasImage("base64_4", results.base64_4, scale);
 
-                        // canvasImageWithGrayscale("base64_3", results.base64_3, 25)
-                        // canvasImageWithGrayscale("base64_4", results.base64_4, 25)
+                        // canvasImageWithGrayscale("base64_3", results.base64_3, pixelWidth)
+                        // canvasImageWithGrayscale("base64_4", results.base64_4, pixelWidth)
 
-                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, 25)
-                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, 25)
+                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth)
+                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth)
 
-                        drawBitString("base64_5", reverseString(results.bitString_1), resolution, 25)
-                        drawBitString("base64_6", reverseString(results.bitString_2), resolution, 25)
+                        drawBitString("base64_5", reverseString(results.bitString_1), resolution, pixelWidth)
+                        drawBitString("base64_6", reverseString(results.bitString_2), resolution, pixelWidth)
                         $("#sometext").html(results.text);
                     });
                 } else {
