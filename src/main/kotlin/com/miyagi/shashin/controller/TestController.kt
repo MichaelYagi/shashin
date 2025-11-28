@@ -118,6 +118,11 @@ class TestController(
 //        println("jimagehash hammingDistance: $hammingDistance")
 //        println("jimagehash similarity: $similarity")
 
+        val i = DuplicateImageDetection()
+        i.setDebug(true)
+        var file = File("C:\\Users\\Michael\\Downloads\\testpics\\Japan 2018\\IMG_20181215_161431-edited.jpg")
+        i.debugDhash(file, 16)
+
         model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
         model["defaultTZ"] = ZoneId.systemDefault()
 
@@ -179,31 +184,39 @@ class TestController(
 
             var hash1: BigInteger? = null
             var bitArray1: MutableList<Int>? = null
+            var grayScaleArray1: MutableList<Any>? = null
             var bufferedImageResize1: BufferedImage? = null
             var hash2: BigInteger? = null
             var bitArray2: MutableList<Int>? = null
+            var grayScaleArray2: MutableList<Any>? = null
             var bufferedImageResize2: BufferedImage? = null
 
             if (algorithm == "ahash") {
                 hash1 = i.ahash(file1, resolution)
                 bitArray1 = i.getBitArray()
+                grayScaleArray1 = i.getAhashGrayScaleArray().toMutableList()
                 bufferedImageResize1 = i.getResizedGreyscaleImage()
                 hash2 = i.ahash(file2, resolution)
                 bitArray2 = i.getBitArray()
+                grayScaleArray2 = i.getAhashGrayScaleArray().toMutableList()
                 bufferedImageResize2 = i.getResizedGreyscaleImage()
             } else if (algorithm == "phash") {
                 hash1 = i.phash(file1, resolution)
                 bitArray1 = i.getBitArray()
+                grayScaleArray1 = null
                 bufferedImageResize1 = i.getResizedGreyscaleImage()
                 hash2 = i.phash(file2, resolution)
                 bitArray2 = i.getBitArray()
+                grayScaleArray2 = null
                 bufferedImageResize2 = i.getResizedGreyscaleImage()
             } else {
                 hash1 = i.dhash(file1, resolution)
                 bitArray1 = i.getBitArray()
+                grayScaleArray1 = i.getDhashGrayScaleArray() as MutableList<Any>
                 bufferedImageResize1 = i.getResizedGreyscaleImage()
                 hash2 = i.dhash(file2, resolution)
                 bitArray2 = i.getBitArray()
+                grayScaleArray2 = i.getDhashGrayScaleArray() as MutableList<Any>
                 bufferedImageResize2 = i.getResizedGreyscaleImage()
             }
 
@@ -243,6 +256,9 @@ class TestController(
             response["base64_4"] = ImageProcessing.getBase64(bufferedImageResize2)
             response["bitString_1"] = bitArray1.joinToString("")
             response["bitString_2"] = bitArray2.joinToString("")
+
+            response["grayScaleArray_1"] = grayScaleArray1
+            response["grayScaleArray_2"] = grayScaleArray2
 
             response["status"] = ApiResponse.SUCCESS.status
         }
