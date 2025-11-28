@@ -56,9 +56,8 @@
 
             <span id="sometext"></span><br>
             <img id="base64_1" src="" style="width: 200px;margin-right: 5px;"><img id="base64_2" src="" style="width: 200px"><br>
-<!--            <img id="base64_3" src="" style="width: 400px;margin-right: 5px;margin-top: 5px"><img id="base64_4" src="" style="width: 400px;margin-top: 5px;"><br><br>-->
             <canvas id="base64_3" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_4" style="margin-top: 5px;"></canvas><br>
-            <canvas id="base64_5" style="margin-left: 16px;margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_6" style="margin-left: 16px;margin-top: 5px;"></canvas><br>
+            <canvas id="base64_5" style="margin-left: 25px;margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_6" style="margin-left: 25px;margin-top: 5px;"></canvas><br>
 
             <span id="photos"></span>
 
@@ -119,6 +118,63 @@
                     const ctx = canvas.getContext("2d");
                     ctx.imageSmoothingEnabled = false;
                     ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+                };
+            }
+
+            function canvasImageWithGrayscale(canvasEl, base64Image, scale) {
+                const img = new Image();
+                img.src = base64Image;
+                img.onload = () => {
+                    const originalWidth = img.width;
+                    const originalHeight = img.height;
+                    const scaledWidth = originalWidth * scale;
+                    const scaledHeight = originalHeight * scale;
+
+                    const canvas = document.getElementById(canvasEl);
+                    canvas.width = scaledWidth;
+                    canvas.height = scaledHeight;
+                    const ctx = canvas.getContext("2d");
+                    ctx.imageSmoothingEnabled = false;
+
+                    // Draw the pixelated image
+                    ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+
+                    // Get pixel data from the ORIGINAL image size
+                    const tempCanvas = document.createElement("canvas");
+                    tempCanvas.width = originalWidth;
+                    tempCanvas.height = originalHeight;
+                    const tempCtx = tempCanvas.getContext("2d");
+                    tempCtx.drawImage(img, 0, 0, originalWidth, originalHeight);
+                    const imageData = tempCtx.getImageData(0, 0, originalWidth, originalHeight);
+                    const data = imageData.data;
+
+                    const cellWidth = scale;
+                    const cellHeight = scale;
+
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.font = `${Math.min(cellWidth, cellHeight) * 0.4}px Arial`;
+
+                    // Loop through original pixels
+                    for (let y = 0; y < originalHeight; y++) {
+                        for (let x = 0; x < originalWidth; x++) {
+                            const idx = (y * originalWidth + x) * 4;
+                            const r = data[idx];
+                            const g = data[idx + 1];
+                            const b = data[idx + 2];
+
+                            // Compute grayscale value
+                            const gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+
+                            // Overlay grayscale value text
+                            ctx.fillStyle = gray < 128 ? "#fff" : "#000";
+                            ctx.fillText(
+                                gray,
+                                x * cellWidth + cellWidth / 2,
+                                y * cellHeight + cellHeight / 2
+                            );
+                        }
+                    }
                 };
             }
 
@@ -229,10 +285,12 @@
 
                         $("#base64_1").attr("src", results.base64_1);
                         $("#base64_2").attr("src", results.base64_2);
-                        canvasImage("base64_3", results.base64_3, scale);
-                        canvasImage("base64_4", results.base64_4, scale);
-                        drawBitString("base64_5", reverseString(results.bitString_1), resolution, 16)
-                        drawBitString("base64_6", reverseString(results.bitString_2), resolution, 16)
+                        // canvasImage("base64_3", results.base64_3, scale);
+                        // canvasImage("base64_4", results.base64_4, scale);
+                        canvasImageWithGrayscale("base64_3", results.base64_3, 25)
+                        canvasImageWithGrayscale("base64_4", results.base64_4, 25)
+                        drawBitString("base64_5", reverseString(results.bitString_1), resolution, 25)
+                        drawBitString("base64_6", reverseString(results.bitString_2), resolution, 25)
                         $("#sometext").html(results.text);
                     });
                 } else {
