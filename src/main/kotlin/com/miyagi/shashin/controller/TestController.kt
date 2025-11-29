@@ -170,6 +170,13 @@ class TestController(
             var resolution = payloadMap["resolution"].toString().toInt()
             var algorithm = payloadMap["algorithm"].toString()
 
+//            println("payload")
+//            println(setOneFilename)
+//            println(setTwoFilename)
+//            println(threshold)
+//            println(resolution)
+//            println(algorithm)
+
             response["pathone"] = setOneFilename
             response["pathtwo"] = setTwoFilename
 
@@ -179,88 +186,99 @@ class TestController(
             val file1 = File(setOneFilename)
             val file2 = File(setTwoFilename)
 
-            val i = DuplicateImageDetection()
-            i.setDebug(true)
+            if (file1.exists() && file2.exists()) {
 
-            var hash1: BigInteger? = null
-            var bitArray1: MutableList<Int>? = null
-            var grayScaleArray1: MutableList<Any>? = null
-            var bufferedImageResize1: BufferedImage? = null
-            var hash2: BigInteger? = null
-            var bitArray2: MutableList<Int>? = null
-            var grayScaleArray2: MutableList<Any>? = null
-            var bufferedImageResize2: BufferedImage? = null
+                val i = DuplicateImageDetection()
+                i.setDebug(true)
 
-            if (algorithm == "ahash") {
-                hash1 = i.ahash(file1, resolution)
-                bitArray1 = i.getBitArray()
-                grayScaleArray1 = i.getAhashGrayScaleArray().toMutableList()
-                bufferedImageResize1 = i.getResizedGreyscaleImage()
-                hash2 = i.ahash(file2, resolution)
-                bitArray2 = i.getBitArray()
-                grayScaleArray2 = i.getAhashGrayScaleArray().toMutableList()
-                bufferedImageResize2 = i.getResizedGreyscaleImage()
-            } else if (algorithm == "phash") {
-                hash1 = i.phash(file1, resolution)
-                bitArray1 = i.getBitArray()
-                grayScaleArray1 = null
-                bufferedImageResize1 = i.getResizedGreyscaleImage()
-                hash2 = i.phash(file2, resolution)
-                bitArray2 = i.getBitArray()
-                grayScaleArray2 = null
-                bufferedImageResize2 = i.getResizedGreyscaleImage()
-            } else {
-                hash1 = i.dhash(file1, resolution)
-                bitArray1 = i.getBitArray()
-                grayScaleArray1 = i.getDhashGrayScaleArray() as MutableList<Any>
-                bufferedImageResize1 = i.getResizedGreyscaleImage()
-                hash2 = i.dhash(file2, resolution)
-                bitArray2 = i.getBitArray()
-                grayScaleArray2 = i.getDhashGrayScaleArray() as MutableList<Any>
-                bufferedImageResize2 = i.getResizedGreyscaleImage()
-            }
+                var hash1: BigInteger? = null
+                var bitArray1: MutableList<Int>? = null
+                var grayScaleArray1: MutableList<Any>? = null
+                var bufferedImageResize1: BufferedImage? = null
+                var hash2: BigInteger? = null
+                var bitArray2: MutableList<Int>? = null
+                var grayScaleArray2: MutableList<Any>? = null
+                var bufferedImageResize2: BufferedImage? = null
 
-            val hammingDistancePositions = DuplicateImageDetection.hammingDistancePositions(hash1, hash2, algorithm, resolution)
-
-            metricsUtil.end()
-
-            metricsUtil.start("dupe check")
-            val isDuplicate = DuplicateImageDetection.isDuplicate(hash1!!, hash2!!, resolution, threshold)
-            metricsUtil.end()
-
-            var html = ""
-            bitArray2.forEachIndexed { index, value ->
-                if (hammingDistancePositions.contains(index)) {
-                    html += "<span class='overline'>$value</span>"
+                if (algorithm == "ahash") {
+                    hash1 = i.ahash(file1, resolution)
+                    bitArray1 = i.getBitArray()
+                    grayScaleArray1 = i.getAhashGrayScaleArray().toMutableList()
+                    bufferedImageResize1 = i.getResizedGreyscaleImage()
+                    hash2 = i.ahash(file2, resolution)
+                    bitArray2 = i.getBitArray()
+                    grayScaleArray2 = i.getAhashGrayScaleArray().toMutableList()
+                    bufferedImageResize2 = i.getResizedGreyscaleImage()
+                } else if (algorithm == "phash") {
+                    hash1 = i.phash(file1, resolution)
+                    bitArray1 = i.getBitArray()
+                    grayScaleArray1 = null
+                    bufferedImageResize1 = i.getResizedGreyscaleImage()
+                    hash2 = i.phash(file2, resolution)
+                    bitArray2 = i.getBitArray()
+                    grayScaleArray2 = null
+                    bufferedImageResize2 = i.getResizedGreyscaleImage()
                 } else {
-                    html += value.toString()
+                    hash1 = i.dhash(file1, resolution)
+                    bitArray1 = i.getBitArray()
+                    grayScaleArray1 = i.getDhashGrayScaleArray() as MutableList<Any>
+                    bufferedImageResize1 = i.getResizedGreyscaleImage()
+                    hash2 = i.dhash(file2, resolution)
+                    bitArray2 = i.getBitArray()
+                    grayScaleArray2 = i.getDhashGrayScaleArray() as MutableList<Any>
+                    bufferedImageResize2 = i.getResizedGreyscaleImage()
                 }
+
+                val hammingDistancePositions =
+                    DuplicateImageDetection.hammingDistancePositions(hash1, hash2, algorithm, resolution)
+
+                metricsUtil.end()
+
+                metricsUtil.start("dupe check")
+                val isDuplicate = DuplicateImageDetection.isDuplicate(hash1!!, hash2!!, resolution, threshold)
+                metricsUtil.end()
+
+                var html = ""
+                bitArray2.forEachIndexed { index, value ->
+                    if (hammingDistancePositions.contains(index)) {
+                        html += "<span class='overline'>$value</span>"
+                    } else {
+                        html += value.toString()
+                    }
+                }
+
+                response["text"] = "Algorithm: " + algorithm +
+                        "<br>Resolution: " + i.getResolution() +
+                        "<br>hash 1: " + hash1 +
+                        "<br>hash 2: " + hash2 +
+                        "<br>bitString 1: <code>" + bitArray1.joinToString("") + "</code>" +
+                        "<br>bitString 2: <code>" + html + "</code>" +
+                        "<br>Is duplicate: " + isDuplicate +
+                        "<br>Distance: " + DuplicateImageDetection.hammingDistance(hash1, hash2) +
+                        "<br>Normalized Distance: " + DuplicateImageDetection.normalizedHammingDistance(
+                    hash1,
+                    hash2,
+                    resolution
+                ) +
+                        "<br>Similarity: " + DuplicateImageDetection.similarity(hash1, hash2, resolution) +
+                        "<br>Timings: " + metricsUtil.getMetricsList().toString() +
+                        "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
+
+                response["base64_1"] = ImageProcessing.getBase64(file1)
+                response["base64_2"] = ImageProcessing.getBase64(file2)
+                response["base64_3"] = ImageProcessing.getBase64(bufferedImageResize1)
+                response["base64_4"] = ImageProcessing.getBase64(bufferedImageResize2)
+                response["bitString_1"] = bitArray1.joinToString("")
+                response["bitString_2"] = bitArray2.joinToString("")
+
+                response["grayScaleArray_1"] = grayScaleArray1
+                response["grayScaleArray_2"] = grayScaleArray2
+
+                response["status"] = ApiResponse.SUCCESS.status
+            } else {
+                response["msg"] = "files not found"
+                response["text"] = "files not found"
             }
-
-            response["text"] = "Algorithm: "+algorithm+
-                    "<br>Resolution: "+i.getResolution()+
-                    "<br>hash 1: " + hash1 +
-                    "<br>hash 2: " + hash2 +
-                    "<br>bitString 1: <code>" + bitArray1.joinToString("") + "</code>" +
-                    "<br>bitString 2: <code>" + html + "</code>" +
-                    "<br>Is duplicate: " + isDuplicate +
-                    "<br>Distance: " + DuplicateImageDetection.hammingDistance(hash1, hash2) +
-                    "<br>Normalized Distance: " + DuplicateImageDetection.normalizedHammingDistance(hash1, hash2, resolution) +
-                    "<br>Similarity: " + DuplicateImageDetection.similarity(hash1, hash2, resolution) +
-                    "<br>Timings: " + metricsUtil.getMetricsList().toString() +
-                    "<br>Elapsed Time: " + metricsUtil.getTotalElapsedTime() + "ms"
-
-            response["base64_1"] = ImageProcessing.getBase64(file1)
-            response["base64_2"] = ImageProcessing.getBase64(file2)
-            response["base64_3"] = ImageProcessing.getBase64(bufferedImageResize1)
-            response["base64_4"] = ImageProcessing.getBase64(bufferedImageResize2)
-            response["bitString_1"] = bitArray1.joinToString("")
-            response["bitString_2"] = bitArray2.joinToString("")
-
-            response["grayScaleArray_1"] = grayScaleArray1
-            response["grayScaleArray_2"] = grayScaleArray2
-
-            response["status"] = ApiResponse.SUCCESS.status
         }
 
         return mapper.writeValueAsString(response)
