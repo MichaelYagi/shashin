@@ -75,11 +75,8 @@
             const locale = /*[[${locale}]]*/ 'en';
             /*]]>*/
 
-            const pixelWidth = 25;
-            const showOverlay = true;
-
-            $("#base64_5").css("margin-left", pixelWidth+"px");
-            $("#base64_6").css("margin-left", pixelWidth+"px");
+            let pixelWidth = 25;
+            let showOverlay = true;
 
             const urlParams = new URLSearchParams(window.location.search);
 
@@ -94,7 +91,12 @@
                 return query ? `${baseUrl}?${query}` : baseUrl;
             }
             const qpBuilder = {};
-
+            if (urlParams.has('pixelWidth')) {
+                pixelWidth = parseInt(urlParams.get('pixelWidth'));
+            }
+            if (urlParams.has('showOverlay')) {
+                showOverlay = urlParams.get('showOverlay') === "true";
+            }
             let algorithm = $("#algorithm").val();
             if (urlParams.has('algorithm')) {
                 algorithm = urlParams.get('algorithm');
@@ -133,6 +135,9 @@
                 qpBuilder["pathtwo"] = pathtwo;
             }
 
+            $("#base64_5").css("margin-left", pixelWidth+"px");
+            $("#base64_6").css("margin-left", pixelWidth+"px");
+
             const size = Object.keys(qpBuilder).length;
             if (size > 0) {
                 const baseUrl = window.location.origin;
@@ -159,7 +164,7 @@
                 };
             }
 
-            function canvasImageWithGrayscaleArray(canvasEl, grayArray, cellSize) {
+            function canvasImageWithGrayscaleArray(canvasEl, grayArray, cellSize, showOverlay) {
                 const rows = grayArray.length;
                 const cols = grayArray[0].length;
 
@@ -192,22 +197,24 @@
                     }
                 }
 
-                // Optional: draw grid lines
-                ctx.strokeStyle = "#888";
-                ctx.lineWidth = 1;
-                for (let c = 0; c <= cols; c++) {
-                    const pos = c * cellSize;
-                    ctx.beginPath();
-                    ctx.moveTo(pos, 0);
-                    ctx.lineTo(pos, canvas.height);
-                    ctx.stroke();
-                }
-                for (let r = 0; r <= rows; r++) {
-                    const pos = r * cellSize;
-                    ctx.beginPath();
-                    ctx.moveTo(0, pos);
-                    ctx.lineTo(canvas.width, pos);
-                    ctx.stroke();
+                if (showOverlay === true) {
+                    // Optional: draw grid lines
+                    ctx.strokeStyle = "#888";
+                    ctx.lineWidth = 1;
+                    for (let c = 0; c <= cols; c++) {
+                        const pos = c * cellSize;
+                        ctx.beginPath();
+                        ctx.moveTo(pos, 0);
+                        ctx.lineTo(pos, canvas.height);
+                        ctx.stroke();
+                    }
+                    for (let r = 0; r <= rows; r++) {
+                        const pos = r * cellSize;
+                        ctx.beginPath();
+                        ctx.moveTo(0, pos);
+                        ctx.lineTo(canvas.width, pos);
+                        ctx.stroke();
+                    }
                 }
             }
 
@@ -270,7 +277,7 @@
                 };
             }
 
-            function drawBitString(canvasEl, bitString, resolution, cellSize) {
+            function drawBitString(canvasEl, bitString, resolution, cellSize, showOverlay) {
                 const canvas = document.getElementById(canvasEl);
                 const ctx = canvas.getContext("2d");
 
@@ -307,26 +314,28 @@
                     }
                 }
 
-                // Draw grid lines
-                ctx.strokeStyle = "#888";
-                ctx.lineWidth = 1;
+                if (showOverlay === true) {
+                    // Draw grid lines
+                    ctx.strokeStyle = "#888";
+                    ctx.lineWidth = 1;
 
-                // Vertical lines
-                for (let c = 0; c <= gridSize; c++) {
-                    const pos = c * cellSize;
-                    ctx.beginPath();
-                    ctx.moveTo(pos, 0);
-                    ctx.lineTo(pos, canvas.height);
-                    ctx.stroke();
-                }
+                    // Vertical lines
+                    for (let c = 0; c <= gridSize; c++) {
+                        const pos = c * cellSize;
+                        ctx.beginPath();
+                        ctx.moveTo(pos, 0);
+                        ctx.lineTo(pos, canvas.height);
+                        ctx.stroke();
+                    }
 
-                // Horizontal lines
-                for (let r = 0; r <= gridSize; r++) {
-                    const pos = r * cellSize;
-                    ctx.beginPath();
-                    ctx.moveTo(0, pos);
-                    ctx.lineTo(canvas.width, pos);
-                    ctx.stroke();
+                    // Horizontal lines
+                    for (let r = 0; r <= gridSize; r++) {
+                        const pos = r * cellSize;
+                        ctx.beginPath();
+                        ctx.moveTo(0, pos);
+                        ctx.lineTo(canvas.width, pos);
+                        ctx.stroke();
+                    }
                 }
             }
 
@@ -385,11 +394,11 @@
                         // canvasImageWithGrayscale("base64_3", results.base64_3, pixelWidth)
                         // canvasImageWithGrayscale("base64_4", results.base64_4, pixelWidth)
 
-                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth)
-                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth)
+                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay)
+                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay)
 
-                        drawBitString("base64_5", reverseString(results.bitString_1), resolution, pixelWidth)
-                        drawBitString("base64_6", reverseString(results.bitString_2), resolution, pixelWidth)
+                        drawBitString("base64_5", reverseString(results.bitString_1), resolution, pixelWidth, showOverlay)
+                        drawBitString("base64_6", reverseString(results.bitString_2), resolution, pixelWidth, showOverlay)
                         $("#sometext").html(results.text);
                     });
                 } else {
