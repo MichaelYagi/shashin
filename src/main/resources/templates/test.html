@@ -91,48 +91,42 @@
                 return query ? `${baseUrl}?${query}` : baseUrl;
             }
             const qpBuilder = {};
+
             if (urlParams.has('pixelWidth')) {
                 pixelWidth = parseInt(urlParams.get('pixelWidth'));
             }
             if (urlParams.has('showOverlay')) {
                 showOverlay = urlParams.get('showOverlay') === "true";
             }
+
             let algorithm = $("#algorithm").val();
-            if (urlParams.has('algorithm')) {
+            if (urlParams.has('algorithm') && urlParams.get('algorithm') !== null && urlParams.get('algorithm') !== "") {
                 algorithm = urlParams.get('algorithm');
                 $("#algorithm").val(algorithm);
-            } else if (algorithm !== null && algorithm !== "") {
-                qpBuilder["algorithm"] = algorithm;
             }
+
             let resolution = $("#resolution").val();
-            if (urlParams.has('resolution')) {
+            if (urlParams.has('resolution') && urlParams.get('resolution') !== null && urlParams.get('resolution') !== "") {
                 resolution = urlParams.get('resolution');
                 $("#resolution").val(resolution);
-            } else if (resolution !== null && resolution !== "") {
-                qpBuilder["resolution"] = resolution;
             }
+
             let threshold = $("#threshold").val();
-            if (urlParams.has('threshold')) {
+            if (urlParams.has('threshold') && urlParams.get('threshold') !== null && urlParams.get('threshold') !== "") {
                 threshold = urlParams.get('threshold');
                 $("#threshold").val(threshold);
-            } else if (threshold !== null && threshold !== "") {
-                qpBuilder["threshold"] = threshold;
             }
+
             let pathone = $("#pathone").val();
-            if (urlParams.has('pathone')) {
-                pathone = decodeURI(urlParams.get('pathone'));
+            if (urlParams.has('pathone') && urlParams.get('pathone') !== null && urlParams.get('pathone') !== "") {
+                pathone = urlParams.get('pathone');
                 $("#pathone").val(pathone);
-            } else if (pathone !== null && pathone !== "") {
-                pathone = decodeURI(urlParams.get('pathone'));
-                qpBuilder["pathone"] = pathone;
             }
+
             let pathtwo = $("#pathtwo").val();
-            if (urlParams.has('pathtwo')) {
-                pathtwo = decodeURI(urlParams.get('pathtwo'));
+            if (urlParams.has('pathtwo') && urlParams.get('pathtwo') !== null && urlParams.get('pathtwo') !== "") {
+                pathtwo = urlParams.get('pathtwo');
                 $("#pathtwo").val(pathtwo);
-            } else if (pathtwo !== null && pathtwo !== "") {
-                pathtwo = decodeURI(urlParams.get('pathtwo'));
-                qpBuilder["pathtwo"] = pathtwo;
             }
 
             $("#base64_5").css("margin-left", pixelWidth+"px");
@@ -383,9 +377,8 @@
                         threshold: $("#threshold").val(),
                         resolution: $("#resolution").val()
                     };
+                    console.log(json);
                     http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
-                        console.log(results.grayScaleArray_1)
-                        console.log(results.grayScaleArray_2)
                         $("#base64_1").attr("src", results.base64_1);
                         $("#base64_2").attr("src", results.base64_2);
                         // canvasImage("base64_3", results.base64_3, scale);
@@ -394,8 +387,10 @@
                         // canvasImageWithGrayscale("base64_3", results.base64_3, pixelWidth)
                         // canvasImageWithGrayscale("base64_4", results.base64_4, pixelWidth)
 
-                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay)
-                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay)
+                        if (algorithm !== "phash") {
+                            canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay)
+                            canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay)
+                        }
 
                         drawBitString("base64_5", reverseString(results.bitString_1), resolution, pixelWidth, showOverlay)
                         drawBitString("base64_6", reverseString(results.bitString_2), resolution, pixelWidth, showOverlay)
