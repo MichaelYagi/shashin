@@ -118,10 +118,10 @@ class TestController(
 //        println("jimagehash hammingDistance: $hammingDistance")
 //        println("jimagehash similarity: $similarity")
 
-        val i = DuplicateImageDetection()
-        i.setDebug(true)
-        var file = File("C:\\Users\\Michael\\Downloads\\testpics\\Japan 2018\\IMG_20181215_161431-edited.jpg")
-        i.debugDhash(file, 16)
+//        val i = DuplicateImageDetection()
+//        i.setDebug(true)
+//        var file = File("C:\\Users\\Michael\\Downloads\\testpics\\Japan 2018\\IMG_20181215_161431-edited.jpg")
+//        i.debugDhash(file, 16)
 
         model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
         model["defaultTZ"] = ZoneId.systemDefault()
