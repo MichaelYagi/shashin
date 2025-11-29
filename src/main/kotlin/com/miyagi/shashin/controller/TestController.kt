@@ -129,6 +129,7 @@ class TestController(
         return "test"
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/test"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
