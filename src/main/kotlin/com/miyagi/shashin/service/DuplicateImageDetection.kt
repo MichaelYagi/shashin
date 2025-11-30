@@ -42,6 +42,8 @@ class DuplicateImageDetection {
 
     private var resizedGreyscaleImage: BufferedImage? = null
 
+    private var ahashAvg: Double? = null
+
     // Average Hash
     fun ahash(imageFile: File?, resolution: Int = 64): BigInteger? {
         checkAndThrowIllegalArgumentException(imageFile, resolution)
@@ -103,6 +105,7 @@ class DuplicateImageDetection {
                 if (this.debug) {
                     this.ahashGrayScaleArray = grayScaleArray.reversed().toMutableList()
                     this.bitArray = bitArray.reversed().toMutableList()
+                    this.ahashAvg = avg
                 }
             } else {
                 logger.log(
@@ -335,6 +338,10 @@ class DuplicateImageDetection {
 
     fun getResolution(): Int {
         return this.resolution
+    }
+
+    fun getAhashAvg(): Double? {
+        return this.ahashAvg
     }
 
     private fun checkAndThrowIllegalArgumentException(imageFile: File?, resolution: Int) {
