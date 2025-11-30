@@ -75,70 +75,40 @@
             const locale = /*[[${locale}]]*/ 'en';
             /*]]>*/
 
-            let pixelWidth = 25;
-            let showOverlay = true;
-
             const urlParams = new URLSearchParams(window.location.search);
+            let pixelWidth = parseInt(urlParams.get('pixelWidth')) || 25;
+            let showOverlay = urlParams.get('showOverlay') === "true" || true;
 
-            // Get a specific parameter
-            function buildUrl(baseUrl, params = {}) {
-                const query = Object.entries(params)
-                    .map(([key, value]) =>
-                        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-                    )
-                    .join("&");
-
-                return query ? `${baseUrl}?${query}` : baseUrl;
-            }
-            const qpBuilder = {};
-
-            if (urlParams.has('pixelWidth')) {
-                pixelWidth = parseInt(urlParams.get('pixelWidth'));
-            }
-            if (urlParams.has('showOverlay')) {
-                showOverlay = urlParams.get('showOverlay') === "true";
+            // --- Helpers ---
+            function getParamOrDefault(paramName, $el) {
+                if (urlParams.has(paramName) && urlParams.get(paramName)) {
+                    const val = urlParams.get(paramName);
+                    $el.val(val);
+                    return val;
+                }
+                return $el.val();
             }
 
-            let algorithm = $("#algorithm").val();
-            if (urlParams.has('algorithm') && urlParams.get('algorithm') !== null && urlParams.get('algorithm') !== "") {
-                algorithm = urlParams.get('algorithm');
-                $("#algorithm").val(algorithm);
+            function clearCanvases(ids) {
+                ids.forEach(id => {
+                    const canvas = document.getElementById(id);
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                });
             }
 
-            let resolution = $("#resolution").val();
-            if (urlParams.has('resolution') && urlParams.get('resolution') !== null && urlParams.get('resolution') !== "") {
-                resolution = urlParams.get('resolution');
-                $("#resolution").val(resolution);
-            }
-
-            let threshold = $("#threshold").val();
-            if (urlParams.has('threshold') && urlParams.get('threshold') !== null && urlParams.get('threshold') !== "") {
-                threshold = urlParams.get('threshold');
-                $("#threshold").val(threshold);
-            }
-
-            let pathone = $("#pathone").val();
-            if (urlParams.has('pathone') && urlParams.get('pathone') !== null && urlParams.get('pathone') !== "") {
-                pathone = urlParams.get('pathone');
-                $("#pathone").val(pathone);
-            }
-
-            let pathtwo = $("#pathtwo").val();
-            if (urlParams.has('pathtwo') && urlParams.get('pathtwo') !== null && urlParams.get('pathtwo') !== "") {
-                pathtwo = urlParams.get('pathtwo');
-                $("#pathtwo").val(pathtwo);
+            function initFormValues() {
+                return {
+                    algorithm:  getParamOrDefault("algorithm", $("#algorithm")),
+                    resolution: getParamOrDefault("resolution", $("#resolution")),
+                    threshold:  getParamOrDefault("threshold", $("#threshold")),
+                    pathone:    getParamOrDefault("pathone", $("#pathone")),
+                    pathtwo:    getParamOrDefault("pathtwo", $("#pathtwo"))
+                };
             }
 
             $("#base64_5").css("margin-left", pixelWidth+"px");
             $("#base64_6").css("margin-left", pixelWidth+"px");
-
-            const size = Object.keys(qpBuilder).length;
-            if (size > 0) {
-                const baseUrl = window.location.origin;
-                const url = new URL(buildUrl(`${baseUrl}/test`, qpBuilder));
-
-                window.history.replaceState({}, "", url);
-            }
 
             function canvasImage(canvasEl, base64Image, scale) {
                 const img = new Image();
@@ -212,65 +182,6 @@
                 }
             }
 
-            function canvasImageWithGrayscale(canvasEl, base64Image, scale) {
-                const img = new Image();
-                img.src = base64Image;
-                img.onload = () => {
-                    const originalWidth = img.width;
-                    const originalHeight = img.height;
-                    const scaledWidth = originalWidth * scale;
-                    const scaledHeight = originalHeight * scale;
-
-                    const canvas = document.getElementById(canvasEl);
-                    canvas.width = scaledWidth;
-                    canvas.height = scaledHeight;
-                    const ctx = canvas.getContext("2d");
-                    ctx.imageSmoothingEnabled = false;
-
-                    // Draw the pixelated image
-                    ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
-
-                    // Get pixel data from the ORIGINAL image size
-                    const tempCanvas = document.createElement("canvas");
-                    tempCanvas.width = originalWidth;
-                    tempCanvas.height = originalHeight;
-                    const tempCtx = tempCanvas.getContext("2d");
-                    tempCtx.drawImage(img, 0, 0, originalWidth, originalHeight);
-                    const imageData = tempCtx.getImageData(0, 0, originalWidth, originalHeight);
-                    const data = imageData.data;
-
-                    const cellWidth = scale;
-                    const cellHeight = scale;
-
-                    if (showOverlay === true) {
-                        ctx.textAlign = "center";
-                        ctx.textBaseline = "middle";
-                        ctx.font = `${Math.min(cellWidth, cellHeight) * 0.4}px Arial`;
-
-                        // Loop through original pixels
-                        for (let y = 0; y < originalHeight; y++) {
-                            for (let x = 0; x < originalWidth; x++) {
-                                const idx = (y * originalWidth + x) * 4;
-                                const r = data[idx];
-                                const g = data[idx + 1];
-                                const b = data[idx + 2];
-
-                                // Compute grayscale value
-                                const gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
-
-                                // Overlay grayscale value text
-                                ctx.fillStyle = gray < 128 ? "#fff" : "#000";
-                                ctx.fillText(
-                                    gray,
-                                    x * cellWidth + cellWidth / 2,
-                                    y * cellHeight + cellHeight / 2
-                                );
-                            }
-                        }
-                    }
-                };
-            }
-
             function drawBitString(canvasEl, bitString, resolution, cellSize, showOverlay) {
                 const canvas = document.getElementById(canvasEl);
                 const ctx = canvas.getContext("2d");
@@ -308,7 +219,7 @@
                     }
                 }
 
-                if (showOverlay === true) {
+                //if (showOverlay === true) {
                     // Draw grid lines
                     ctx.strokeStyle = "#888";
                     ctx.lineWidth = 1;
@@ -330,7 +241,7 @@
                         ctx.lineTo(canvas.width, pos);
                         ctx.stroke();
                     }
-                }
+                //}
             }
 
             function reverseString(str) {
@@ -346,22 +257,22 @@
             $("#dupeSubmit").on("click", function (e) {
                 e.preventDefault();
 
-                $("#base64_1").attr("src","");
+                $("#base64_1").attr("src", "");
                 $("#base64_2").attr("src", "");
-                let canvas = document.getElementById('base64_3');
-                let ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                canvas = document.getElementById('base64_4');
-                ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                canvas = document.getElementById('base64_5');
-                ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                canvas = document.getElementById('base64_6');
-                ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+                clearCanvases(['base64_3','base64_4','base64_5','base64_6']);
+                const { algorithm, resolution, threshold, pathone, pathtwo } = initFormValues();
+                const urlParams = new URLSearchParams(window.location.search);
+                pixelWidth = (urlParams.has('pixelWidth') && parseInt(urlParams.get('pixelWidth'))) || 25;
+                showOverlay = urlParams.has('showOverlay') && urlParams.get('showOverlay') === "true";
                 $("#sometext").html("");
+
+                console.log("pixelWidth: " + pixelWidth);
+                console.log("showOverlay: " + showOverlay);
+                console.log("algorithm: " + algorithm);
+                console.log("resolution: " + resolution);
+                console.log("threshold: " + threshold);
+                console.log("pathone: " + pathone);
+                console.log("pathtwo: " + pathtwo);
 
                 if (algorithm !== "" &&
                     resolution !== "" &&
@@ -381,11 +292,6 @@
                     http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
                         $("#base64_1").attr("src", results.base64_1);
                         $("#base64_2").attr("src", results.base64_2);
-                        // canvasImage("base64_3", results.base64_3, scale);
-                        // canvasImage("base64_4", results.base64_4, scale);
-
-                        // canvasImageWithGrayscale("base64_3", results.base64_3, pixelWidth)
-                        // canvasImageWithGrayscale("base64_4", results.base64_4, pixelWidth)
 
                         if (algorithm !== "phash") {
                             canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay)
@@ -398,11 +304,12 @@
                     });
                 } else {
                     let html = "Inputs missing: " +
-                    (algorithm === "") ? "algorithm, " : "" +
-                    (resolution === "") ? "resolution, " : "" +
-                    (threshold === "") ? "threshold, " : "" +
-                    (pathone === "") ? "pathone, " : "" +
-                    (pathtwo === "") ? "pathtwo, " : "";
+                        ((algorithm === null || algorithm === "") ? "algorithm, " : "") +
+                        ((resolution === null || resolution === "") ? "resolution, " : "") +
+                        ((threshold === null || threshold === "") ? "threshold, " : "") +
+                        ((pathone === null || pathone === "") ? "pathone, " : "") +
+                        ((pathtwo === null || pathtwo === "") ? "pathtwo, " : "");
+                    html = html.slice(0, -2);
                     $("#sometext").html(html);
                 }
             });
