@@ -75,9 +75,9 @@
             const locale = /*[[${locale}]]*/ 'en';
             /*]]>*/
 
-            const urlParams = new URLSearchParams(window.location.search);
-            let pixelWidth = parseInt(urlParams.get('pixelWidth')) || 25;
-            let showOverlay = urlParams.get('showOverlay') === "true" || true;
+            let urlParams = new URLSearchParams(window.location.search);
+            let pixelWidth = (urlParams.has('pixelWidth') && parseInt(urlParams.get('pixelWidth'))) || 25;
+            let showOverlay = urlParams.has('showOverlay') === false || (urlParams.has('showOverlay') && urlParams.get('showOverlay') === "true");
 
             // --- Helpers ---
             function getParamOrDefault(paramName, $el) {
@@ -261,9 +261,9 @@
                 $("#base64_2").attr("src", "");
                 clearCanvases(['base64_3','base64_4','base64_5','base64_6']);
                 const { algorithm, resolution, threshold, pathone, pathtwo } = initFormValues();
-                const urlParams = new URLSearchParams(window.location.search);
+                urlParams = new URLSearchParams(window.location.search);
                 pixelWidth = (urlParams.has('pixelWidth') && parseInt(urlParams.get('pixelWidth'))) || 25;
-                showOverlay = urlParams.has('showOverlay') && urlParams.get('showOverlay') === "true";
+                showOverlay = urlParams.has('showOverlay') === false || (urlParams.has('showOverlay') && urlParams.get('showOverlay') === "true");
                 $("#sometext").html("");
 
                 console.log("pixelWidth: " + pixelWidth);
