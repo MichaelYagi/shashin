@@ -292,7 +292,8 @@
                     http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
                         $("#base64_1").attr("src", results.base64_1);
                         $("#base64_2").attr("src", results.base64_2);
-
+                        console.log(results.grayScaleArray_1)
+                        console.log(results.grayScaleArray_2)
                         if (algorithm !== "phash") {
                             canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay)
                             canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay)
