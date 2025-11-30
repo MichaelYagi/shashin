@@ -194,10 +194,12 @@ class TestController(
 
                 var hash1: BigInteger? = null
                 var bitArray1: MutableList<Int>? = null
+                var ahashAvg1: Double? = null
                 var grayScaleArray1: MutableList<Any>? = null
                 var bufferedImageResize1: BufferedImage? = null
                 var hash2: BigInteger? = null
                 var bitArray2: MutableList<Int>? = null
+                var ahashAvg2: Double? = null
                 var grayScaleArray2: MutableList<Any>? = null
                 var bufferedImageResize2: BufferedImage? = null
 
@@ -206,10 +208,12 @@ class TestController(
                     bitArray1 = i.getBitArray()
                     grayScaleArray1 = i.getAhashGrayScaleArray().toMutableList()
                     bufferedImageResize1 = i.getResizedGreyscaleImage()
+                    ahashAvg1 = i.getAhashAvg()
                     hash2 = i.ahash(file2, resolution)
                     bitArray2 = i.getBitArray()
                     grayScaleArray2 = i.getAhashGrayScaleArray().toMutableList()
                     bufferedImageResize2 = i.getResizedGreyscaleImage()
+                    ahashAvg2 = i.getAhashAvg()
                 } else if (algorithm == "phash") {
                     hash1 = i.phash(file1, resolution)
                     bitArray1 = i.getBitArray()
@@ -252,6 +256,7 @@ class TestController(
                         "<br>Resolution: " + i.getResolution() +
                         "<br>hash 1: " + hash1 +
                         "<br>hash 2: " + hash2 +
+                        (if (ahashAvg1 != null && ahashAvg2 != null) "<br>ahash average 1: $ahashAvg1<br>ahash average 2: $ahashAvg2" else "") +
                         "<br>bitString 1: <code>" + bitArray1.joinToString("") + "</code>" +
                         "<br>bitString 2: <code>" + html + "</code>" +
                         "<br>Is duplicate: " + isDuplicate +
