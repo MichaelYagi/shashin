@@ -303,7 +303,15 @@
                         drawBitString("base64_5", reverseString(results.bitString_1), resolution, pixelWidth, showOverlay)
                         drawBitString("base64_6", reverseString(results.bitString_2), resolution, pixelWidth, showOverlay)
 
-                        $("#sometext").html(results.text);
+                        let html = "algorith: "+$("#algorithm").val()+"<br>";
+                        html += "resolution: "+$("#resolution").val()+"<br>";
+                        html += "threshold: "+$("#threshold").val()+"<br>";
+                        html += "pathone: "+$("#pathone").val()+"<br>";
+                        html += "pathtwo: "+$("#pathtwo").val()+"<br>";
+                        html += "pixelWidth: "+pixelWidth+"<br>";
+                        html += "showOverlay: "+showOverlay+"<br>";
+                        html += "<br>"+results.text;
+                        $("#sometext").html(html);
 
                         $("#mediaScanSpinner").css("display", "none");
                     });
