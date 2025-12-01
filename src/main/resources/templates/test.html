@@ -56,7 +56,7 @@
             <button id="dupeSubmit">Is duplicate?</button><br><br>
 
             <span id="sometext"></span><br>
-            <img id="base64_1" src="" style="width: 200px;margin-right: 5px;"><img id="base64_2" src="" style="width: 200px"><br>
+            <img id="base64_1" src="" style="height: 140px;margin-right: 5px;"><img id="base64_2" src="" style="height: 140px;"><br>
             <canvas id="base64_3" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_4" style="margin-top: 5px;"></canvas><br>
             <canvas id="base64_5" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_6" style="margin-top: 5px;"></canvas><br>
 
@@ -256,6 +256,7 @@
 
             $("#dupeSubmit").on("click", function (e) {
                 e.preventDefault();
+                $("#mediaScanSpinner").css("display", "block");
 
                 $("#base64_1").attr("src", "");
                 $("#base64_2").attr("src", "");
@@ -303,6 +304,8 @@
                         drawBitString("base64_6", reverseString(results.bitString_2), resolution, pixelWidth, showOverlay)
 
                         $("#sometext").html(results.text);
+
+                        $("#mediaScanSpinner").css("display", "none");
                     });
                 } else {
                     let html = "Inputs missing: " +
@@ -313,6 +316,7 @@
                         ((pathtwo === null || pathtwo === "") ? "pathtwo, " : "");
                     html = html.slice(0, -2);
                     $("#sometext").html(html);
+                    $("#mediaScanSpinner").css("display", "none");
                 }
             });
         });
