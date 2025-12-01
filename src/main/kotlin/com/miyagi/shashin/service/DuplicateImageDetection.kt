@@ -42,6 +42,10 @@ class DuplicateImageDetection {
 
     private var ahashAvg: Double? = null
 
+    private var phashDctLowFreqArray = mutableListOf<List<Double>>()
+
+    private var phashMed: Double? = null
+
     // Average Hash
     fun ahash(imageFile: File?, resolution: Int = 64): BigInteger? {
         checkAndThrowIllegalArgumentException(imageFile, resolution)
@@ -255,12 +259,17 @@ class DuplicateImageDetection {
                 // dctLowFreq is Array<DoubleArray>
                 val flat: List<Double> = dctLowFreq.flatMap { row -> row.toList() }.sorted()
                 val med = flat[flat.size / 2]
+                if (this.debug) {
+                    this.phashMed = med
+                }
                 var bitArray = mutableListOf<Int>()
 
                 // Step 6: Build hash
                 result = BigInteger.ZERO
                 var bitIndex = 0
+                var dctLowFreqArray = mutableListOf<List<Double>>()
                 for (y in 0 until hashSize) {
+                    val row = mutableListOf<Double>()
                     for (x in 0 until hashSize) {
                         val bit = if (dctLowFreq[y][x] > med) 1 else 0
                         if (bit == 1) {
@@ -273,8 +282,18 @@ class DuplicateImageDetection {
                                 bitArray.add(0)
                             }
                         }
+                        if (this.debug) {
+                            row.add(dctLowFreq[y][x])
+                        }
                         bitIndex++
                     }
+                    if (this.debug) {
+                        dctLowFreqArray.add(row)
+                    }
+                }
+
+                if (this.debug) {
+                    this.phashDctLowFreqArray = dctLowFreqArray
                 }
 
                 if (this.debug) {
@@ -303,6 +322,14 @@ class DuplicateImageDetection {
 
     fun setDebug(debug: Boolean) {
         this.debug = debug
+    }
+
+    fun getPhashDctLowFreqArray(): MutableList<List<Double>> {
+        return this.phashDctLowFreqArray
+    }
+
+    fun getPhashMed(): Double? {
+        return this.phashMed
     }
 
     fun getResizedGreyscaleImage(): BufferedImage? {

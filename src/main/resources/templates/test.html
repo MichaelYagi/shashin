@@ -58,6 +58,7 @@
             <span id="sometext"></span><br>
             <img id="base64_1" src="" style="height: 140px;margin-right: 5px;"><img id="base64_2" src="" style="height: 140px;"><br>
             <canvas id="base64_3" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_4" style="margin-top: 5px;"></canvas><br>
+            <canvas id="base64_7" style="margin-right: 5px;margin-top: 5px;"></canvas><canvas id="base64_8" style="margin-top: 5px;"></canvas><br>
             <canvas id="base64_5" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_6" style="margin-top: 5px;"></canvas><br>
 
             <span id="photos"></span>
@@ -104,24 +105,6 @@
                     threshold:  getParamOrDefault("threshold", $("#threshold")),
                     pathone:    getParamOrDefault("pathone", $("#pathone")),
                     pathtwo:    getParamOrDefault("pathtwo", $("#pathtwo"))
-                };
-            }
-
-            function canvasImage(canvasEl, base64Image, scale) {
-                const img = new Image();
-                img.src = base64Image; // Replace with your image source
-                img.onload = () => {
-                    const originalWidth = img.width;
-                    const originalHeight = img.height;
-                    const scaledWidth = originalWidth * scale;
-                    const scaledHeight = originalHeight * scale;
-
-                    const canvas = document.getElementById(canvasEl);
-                    canvas.width = scaledWidth;
-                    canvas.height = scaledHeight;
-                    const ctx = canvas.getContext("2d");
-                    ctx.imageSmoothingEnabled = false;
-                    ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
                 };
             }
 
@@ -179,13 +162,64 @@
                 }
             }
 
-            function drawBitString(canvasEl, bitString, resolution, cellSize, showOverlay) {
+            function canvasImageWithDctLowFreqArray(canvasEl, grayArray, median, cellSize, showOverlay) {
+                const rows = grayArray.length;
+                const cols = grayArray[0].length;
+
+                const canvas = document.getElementById(canvasEl);
+                canvas.width = cols * cellSize;
+                canvas.height = rows * cellSize;
+
+                const ctx = canvas.getContext("2d");
+
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.font = `${cellSize * 0.3}px Arial`;
+
+                for (let y = 0; y < rows; y++) {
+                    for (let x = 0; x < cols; x++) {
+                        let lowFreq = grayArray[y][x];
+                        lowFreq = lowFreq.toFixed(1);
+                        ctx.fillStyle = lowFreq > median ? "#000" : "#fff";
+                        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+
+                        if (showOverlay === true) {
+                            // Text color opposite of background
+                            ctx.fillStyle = lowFreq > median ? "#fff" : "#000";
+                            ctx.fillText(
+                                lowFreq,
+                                x * cellSize + cellSize / 2,
+                                y * cellSize + cellSize / 2
+                            );
+                        }
+                    }
+                }
+
+                if (showOverlay === true) {
+                    // Optional: draw grid lines
+                    ctx.strokeStyle = "#888";
+                    ctx.lineWidth = 1;
+                    for (let c = 0; c <= cols; c++) {
+                        const pos = c * cellSize;
+                        ctx.beginPath();
+                        ctx.moveTo(pos, 0);
+                        ctx.lineTo(pos, canvas.height);
+                        ctx.stroke();
+                    }
+                    for (let r = 0; r <= rows; r++) {
+                        const pos = r * cellSize;
+                        ctx.beginPath();
+                        ctx.moveTo(0, pos);
+                        ctx.lineTo(canvas.width, pos);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            function drawBitString(canvasEl, bitString, cellSize, showOverlay) {
                 const canvas = document.getElementById(canvasEl);
                 const ctx = canvas.getContext("2d");
 
-                // resolution = hash parameter (16, 32, 64, 128...)
-                // bitString length = resolution / 2
-                // grid side length = sqrt(resolution / 2)
                 const gridSize = Math.sqrt(bitString.length);
 
                 // Set canvas dimensions based on gridSize × cellSize
@@ -257,7 +291,7 @@
 
                 $("#base64_1").attr("src", "");
                 $("#base64_2").attr("src", "");
-                clearCanvases(['base64_3','base64_4','base64_5','base64_6']);
+                clearCanvases(['base64_3','base64_4','base64_5','base64_6','base64_7','base64_8']);
                 const { algorithm, resolution, threshold, pathone, pathtwo } = initFormValues();
                 urlParams = new URLSearchParams(window.location.search);
                 pixelWidth = (urlParams.has('pixelWidth') && parseInt(urlParams.get('pixelWidth'))) || 25;
@@ -281,6 +315,8 @@
                     if (algorithm !== "ahash") {
                         $("#base64_5").css("margin-left", pixelWidth + "px");
                         $("#base64_6").css("margin-left", pixelWidth + "px");
+                        $("#base64_7").css("margin-left", pixelWidth + "px");
+                        $("#base64_8").css("margin-left", pixelWidth + "px");
                     } else {
                         $("#base64_5").css("margin-left", 0);
                         $("#base64_6").css("margin-left", pixelWidth + "px");
@@ -299,11 +335,19 @@
                         $("#base64_1").attr("src", results.base64_1);
                         $("#base64_2").attr("src", results.base64_2);
 
-                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay)
-                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay)
+                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay);
+                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay);
 
-                        drawBitString("base64_5", reverseString(results.bitString_1), resolution, pixelWidth, showOverlay)
-                        drawBitString("base64_6", reverseString(results.bitString_2), resolution, pixelWidth, showOverlay)
+                        drawBitString("base64_5", reverseString(results.bitString_1), pixelWidth, showOverlay);
+                        drawBitString("base64_6", reverseString(results.bitString_2), pixelWidth, showOverlay);
+
+                        if (results.phashDctLowFreqArray_1 != null && results.phashDctLowFreqArray_2 != null && results.phashMed_1 != null && results.phashMed_2 != null) {
+                            canvasImageWithDctLowFreqArray("base64_7", results.phashDctLowFreqArray_1, results.phashMed_1, pixelWidth, showOverlay);
+                            canvasImageWithDctLowFreqArray("base64_8", results.phashDctLowFreqArray_2, results.phashMed_2, pixelWidth, showOverlay);
+                        } else {
+                            $("#base64_7").css("display", "none");
+                            $("#base64_8").css("display", "none");
+                        }
 
                         let html = "algorithm: "+$("#algorithm").val()+"<br>";
                         html += "resolution: "+$("#resolution").val()+"<br>";
