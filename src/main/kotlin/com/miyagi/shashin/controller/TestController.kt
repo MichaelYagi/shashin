@@ -226,11 +226,11 @@ class TestController(
                 } else {
                     hash1 = i.dhash(file1, resolution)
                     bitArray1 = i.getBitArray()
-                    grayScaleArray1 = i.getHashGrayScaleArray() as MutableList<Any>
+                    grayScaleArray1 = i.getHashGrayScaleArray().toMutableList()
                     bufferedImageResize1 = i.getResizedGreyscaleImage()
                     hash2 = i.dhash(file2, resolution)
                     bitArray2 = i.getBitArray()
-                    grayScaleArray2 = i.getHashGrayScaleArray() as MutableList<Any>
+                    grayScaleArray2 = i.getHashGrayScaleArray().toMutableList()
                     bufferedImageResize2 = i.getResizedGreyscaleImage()
                 }
 
