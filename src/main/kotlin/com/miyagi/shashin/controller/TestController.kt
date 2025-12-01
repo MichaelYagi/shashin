@@ -254,8 +254,8 @@ class TestController(
 
                 response["text"] = "Algorithm: " + algorithm +
                         "<br>Resolution: " + i.getResolution() +
-                        "<br>hash 1: " + hash1 +
-                        "<br>hash 2: " + hash2 +
+                        "<br>hash 1: <code>" + hash1 + "</code>" +
+                        "<br>hash 2: <code>" + hash2 + "</code>" +
                         (if (ahashAvg1 != null && ahashAvg2 != null) "<br>ahash average 1: $ahashAvg1<br>ahash average 2: $ahashAvg2" else "") +
                         "<br>bitString 1: <code>" + bitArray1.joinToString("") + "</code>" +
                         "<br>bitString 2: <code>" + html + "</code>" +
