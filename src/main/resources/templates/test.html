@@ -107,9 +107,6 @@
                 };
             }
 
-            $("#base64_5").css("margin-left", pixelWidth+"px");
-            $("#base64_6").css("margin-left", pixelWidth+"px");
-
             function canvasImage(canvasEl, base64Image, scale) {
                 const img = new Image();
                 img.src = base64Image; // Replace with your image source
@@ -267,13 +264,13 @@
                 showOverlay = urlParams.has('showOverlay') === false || (urlParams.has('showOverlay') && urlParams.get('showOverlay') === "true");
                 $("#sometext").html("");
 
-                console.log("pixelWidth: " + pixelWidth);
-                console.log("showOverlay: " + showOverlay);
-                console.log("algorithm: " + algorithm);
-                console.log("resolution: " + resolution);
-                console.log("threshold: " + threshold);
-                console.log("pathone: " + pathone);
-                console.log("pathtwo: " + pathtwo);
+                // console.log("pixelWidth: " + pixelWidth);
+                // console.log("showOverlay: " + showOverlay);
+                // console.log("algorithm: " + algorithm);
+                // console.log("resolution: " + resolution);
+                // console.log("threshold: " + threshold);
+                // console.log("pathone: " + pathone);
+                // console.log("pathtwo: " + pathtwo);
 
                 if (algorithm !== "" &&
                     resolution !== "" &&
@@ -281,6 +278,14 @@
                     pathone !== "" &&
                     pathtwo !== ""
                 ) {
+                    if (algorithm !== "ahash") {
+                        $("#base64_5").css("margin-left", pixelWidth + "px");
+                        $("#base64_6").css("margin-left", pixelWidth + "px");
+                    } else {
+                        $("#base64_5").css("margin-left", 0);
+                        $("#base64_6").css("margin-left", pixelWidth + "px");
+                    }
+
                     const http = new Http("dupe detect");
                     const json = {
                         algorithm: $("#algorithm").val(),
@@ -293,17 +298,14 @@
                     http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
                         $("#base64_1").attr("src", results.base64_1);
                         $("#base64_2").attr("src", results.base64_2);
-                        console.log(results.grayScaleArray_1)
-                        console.log(results.grayScaleArray_2)
-                        if (algorithm !== "phash") {
-                            canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay)
-                            canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay)
-                        }
+
+                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay)
+                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay)
 
                         drawBitString("base64_5", reverseString(results.bitString_1), resolution, pixelWidth, showOverlay)
                         drawBitString("base64_6", reverseString(results.bitString_2), resolution, pixelWidth, showOverlay)
 
-                        let html = "algorith: "+$("#algorithm").val()+"<br>";
+                        let html = "algorithm: "+$("#algorithm").val()+"<br>";
                         html += "resolution: "+$("#resolution").val()+"<br>";
                         html += "threshold: "+$("#threshold").val()+"<br>";
                         html += "pathone: "+$("#pathone").val()+"<br>";

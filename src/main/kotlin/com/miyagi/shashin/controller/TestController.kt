@@ -206,31 +206,31 @@ class TestController(
                 if (algorithm == "ahash") {
                     hash1 = i.ahash(file1, resolution)
                     bitArray1 = i.getBitArray()
-                    grayScaleArray1 = i.getAhashGrayScaleArray().toMutableList()
+                    grayScaleArray1 = i.getHashGrayScaleArray().toMutableList()
                     bufferedImageResize1 = i.getResizedGreyscaleImage()
                     ahashAvg1 = i.getAhashAvg()
                     hash2 = i.ahash(file2, resolution)
                     bitArray2 = i.getBitArray()
-                    grayScaleArray2 = i.getAhashGrayScaleArray().toMutableList()
+                    grayScaleArray2 = i.getHashGrayScaleArray().toMutableList()
                     bufferedImageResize2 = i.getResizedGreyscaleImage()
                     ahashAvg2 = i.getAhashAvg()
                 } else if (algorithm == "phash") {
                     hash1 = i.phash(file1, resolution)
                     bitArray1 = i.getBitArray()
-                    grayScaleArray1 = null
+                    grayScaleArray1 = i.getHashGrayScaleArray().toMutableList()
                     bufferedImageResize1 = i.getResizedGreyscaleImage()
                     hash2 = i.phash(file2, resolution)
                     bitArray2 = i.getBitArray()
-                    grayScaleArray2 = null
+                    grayScaleArray2 = i.getHashGrayScaleArray().toMutableList()
                     bufferedImageResize2 = i.getResizedGreyscaleImage()
                 } else {
                     hash1 = i.dhash(file1, resolution)
                     bitArray1 = i.getBitArray()
-                    grayScaleArray1 = i.getDhashGrayScaleArray() as MutableList<Any>
+                    grayScaleArray1 = i.getHashGrayScaleArray() as MutableList<Any>
                     bufferedImageResize1 = i.getResizedGreyscaleImage()
                     hash2 = i.dhash(file2, resolution)
                     bitArray2 = i.getBitArray()
-                    grayScaleArray2 = i.getDhashGrayScaleArray() as MutableList<Any>
+                    grayScaleArray2 = i.getHashGrayScaleArray() as MutableList<Any>
                     bufferedImageResize2 = i.getResizedGreyscaleImage()
                 }
 

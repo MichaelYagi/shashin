@@ -34,9 +34,7 @@ class DuplicateImageDetection {
 
     private var bitArray: MutableList<Int> = mutableListOf()
 
-    private var dhashGrayScaleArray = mutableListOf<List<Int>>()
-
-    private var ahashGrayScaleArray = mutableListOf<Int>()
+    private var hashGrayScaleArray = mutableListOf<List<Int>>()
 
     private var debug: Boolean = false
 
@@ -82,28 +80,38 @@ class DuplicateImageDetection {
 
                 result = BigInteger.ZERO
                 var bitIndex = 0
-                var bitArray = mutableListOf<Int>()
-                var grayScaleArray = mutableListOf<Int>()
 
                 for (pixel in pixels) {
-                    if (this.debug) {
-                        grayScaleArray.add(pixel)
-                    }
                     if (pixel >= avg) {
                         result = result?.setBit(bitIndex)
-                        if (this.debug) {
-                            bitArray.add(1)
-                        }
-                    } else {
-                        if (this.debug) {
-                            bitArray.add(0)
-                        }
                     }
                     bitIndex++
                 }
 
                 if (this.debug) {
-                    this.ahashGrayScaleArray = grayScaleArray.reversed().toMutableList()
+                    var grayScaleArray = mutableListOf<List<Int>>()
+                    for (y in 0 until hashSize) {
+                        val row = mutableListOf<Int>()
+                        for (x in 0 until hashSize + 1) {
+                            val gray = resized.raster.getSample(x, y, 0)
+                            row.add(gray)
+                        }
+                        grayScaleArray.add(row)
+                    }
+
+                    var bitArray = mutableListOf<Int>()
+                    for (y in 0 until hashSize) {
+                        for (x in 0 until hashSize) {
+                            val gray = resized.raster.getSample(x, y, 0)
+                            if (gray >= avg) {
+                                bitArray.add(1)
+                            } else {
+                                bitArray.add(0)
+                            }
+                        }
+                    }
+
+                    this.hashGrayScaleArray = grayScaleArray
                     this.bitArray = bitArray.reversed().toMutableList()
                     this.ahashAvg = avg
                 }
@@ -121,39 +129,6 @@ class DuplicateImageDetection {
         }
 
         return result
-    }
-
-    fun debugDhash(imageFile: File?, resolution: Int = 64) {
-        val hashSize = resolution / 8
-        val resized = resizeAndGrayscale(ImageIO.read(imageFile), hashSize + 1, hashSize)
-
-        println("Grayscale matrix (${hashSize}x${hashSize + 1}):")
-        for (y in 0 until hashSize) {
-            for (x in 0 until hashSize + 1) {
-                val gray = resized.raster.getSample(x, y, 0)
-                print("${gray.toString().padStart(3)} ")
-            }
-            println()
-        }
-
-        println("\nBitstring (row-major, left-to-right comparisons):")
-        val bits = mutableListOf<Int>()
-        for (y in 0 until hashSize) {
-            for (x in 0 until hashSize) {
-                val left = resized.raster.getSample(x, y, 0)
-                val right = resized.raster.getSample(x + 1, y, 0)
-                val bit = if (left > right) 1 else 0
-                bits.add(bit)
-                print(bit)
-            }
-            println()
-        }
-
-        val bitString = bits.joinToString("")
-        val hash = BigInteger(bitString, 2)
-
-        println("\nBitstring: $bitString")
-        println("BigInteger hash: $hash")
     }
 
     // Difference Hash
@@ -183,7 +158,6 @@ class DuplicateImageDetection {
                 result = BigInteger.ZERO
                 var bitIndex = 0
                 var bitArray = mutableListOf<Int>()
-                var grayScaleArray = mutableListOf<List<Int>>()
 
                 for (y in 0 until hashSize) {
                     for (x in 0 until hashSize) {
@@ -208,6 +182,7 @@ class DuplicateImageDetection {
                 }
 
                 if (this.debug) {
+                    var grayScaleArray = mutableListOf<List<Int>>()
                     for (y in 0 until hashSize) {
                         val row = mutableListOf<Int>()
                         for (x in 0 until hashSize + 1) {
@@ -217,7 +192,7 @@ class DuplicateImageDetection {
                         grayScaleArray.add(row)
                     }
 
-                    this.dhashGrayScaleArray = grayScaleArray
+                    this.hashGrayScaleArray = grayScaleArray
                     this.bitArray = bitArray.reversed().toMutableList()
                 }
             } else {
@@ -303,6 +278,16 @@ class DuplicateImageDetection {
                 }
 
                 if (this.debug) {
+                    var grayScaleArray = mutableListOf<List<Int>>()
+                    for (y in 0 until hashSize) {
+                        val row = mutableListOf<Int>()
+                        for (x in 0 until hashSize + 1) {
+                            val gray = resized.raster.getSample(x, y, 0)
+                            row.add(gray)
+                        }
+                        grayScaleArray.add(row)
+                    }
+                    this.hashGrayScaleArray = grayScaleArray
                     this.bitArray = bitArray.reversed().toMutableList()
                 }
             }
@@ -328,12 +313,8 @@ class DuplicateImageDetection {
         return this.bitArray
     }
 
-    fun getAhashGrayScaleArray(): MutableList<Int> {
-        return this.ahashGrayScaleArray
-    }
-
-    fun getDhashGrayScaleArray(): MutableList<List<Int>> {
-        return this.dhashGrayScaleArray
+    fun getHashGrayScaleArray(): MutableList<List<Int>> {
+        return this.hashGrayScaleArray
     }
 
     fun getResolution(): Int {
