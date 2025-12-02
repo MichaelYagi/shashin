@@ -13,6 +13,7 @@ import java.math.BigInteger
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
+import kotlin.DoubleArray
 import kotlin.collections.reversed
 import kotlin.math.PI
 import kotlin.math.cos
@@ -372,7 +373,7 @@ class DuplicateImageDetection {
     }
 
     // BufferedImage of the DCT pattern at u, v for phash
-    private fun generateBasisPattern(u: Int, v: Int, size: Int): BufferedImage {
+    private fun generateBasisPatternBI(u: Int, v: Int, size: Int): BufferedImage {
         val img = BufferedImage(size, size, BufferedImage.TYPE_BYTE_GRAY)
 
         for (y in 0 until size) {
@@ -384,6 +385,26 @@ class DuplicateImageDetection {
                 // Normalize from [-1,1] → [0,255]
                 val gray = (((value + 1.0) / 2.0) * 255).toInt()
                 val rgb = (gray shl 16) or (gray shl 8) or gray
+                img.setRGB(x, y, rgb)
+            }
+        }
+
+        return img
+    }
+
+    // BufferedImage of the DCT pattern at u, v for phash
+    private fun generateImageFromPixelsBI(pixels: Array<DoubleArray>): BufferedImage {
+        val size = pixels.size
+        val img = BufferedImage(size, size, BufferedImage.TYPE_BYTE_GRAY)
+
+        // Normalize to [0,255]
+        val min = pixels.flatMap { it.asList() }.minOrNull() ?: 0.0
+        val max = pixels.flatMap { it.asList() }.maxOrNull() ?: 1.0
+
+        for (y in 0 until size) {
+            for (x in 0 until size) {
+                val value = ((pixels[x][y] - min) / (max - min) * 255).toInt()
+                val rgb = (value shl 16) or (value shl 8) or value
                 img.setRGB(x, y, rgb)
             }
         }
@@ -419,7 +440,7 @@ class DuplicateImageDetection {
                 for (x in 0 until n) {
                     for (y in 0 until m) {
 //                        if (this.debug) {
-//                            val basis = generateBasisPattern(u, v, blockSize)
+//                            val basis = generateBasisPatternBI(u, v, blockSize)
 //                            saveBufferedImageToFile(basis, "C:/Users/Michael/Downloads/dct/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}.jpg", "jpg")
 //                        }
 
@@ -448,6 +469,11 @@ class DuplicateImageDetection {
                 output[u][v] = alphaU * alphaV * sum
             }
         }
+
+//        if (this.debug) {
+//            val img = generateImageFromPixelsBI(output)
+//            saveBufferedImageToFile(img, "C:/Users/Michael/Downloads/dct/complete/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}.jpg", "jpg")
+//        }
 
         return output
     }
