@@ -58,8 +58,8 @@
             <span id="sometext"></span><br>
             <img id="base64_1" src="" style="height: 140px;margin-right: 5px;"><img id="base64_2" src="" style="height: 140px;"><br>
             <canvas id="base64_3" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_4" style="margin-top: 5px;"></canvas><br>
-            <canvas id="base64_7" style="margin-right: 5px;margin-top: 5px;"></canvas><canvas id="base64_8" style="margin-top: 5px;"></canvas><br>
             <canvas id="base64_5" style="margin-right: 5px;margin-top: 5px"></canvas><canvas id="base64_6" style="margin-top: 5px;"></canvas><br>
+            <canvas id="base64_7" style="margin-right: 5px;margin-top: 5px;"></canvas><canvas id="base64_8" style="margin-top: 5px;"></canvas><br>
 
             <span id="photos"></span>
 
@@ -179,7 +179,6 @@
                 for (let y = 0; y < rows; y++) {
                     for (let x = 0; x < cols; x++) {
                         let lowFreq = grayArray[y][x];
-                        lowFreq = lowFreq.toFixed(1);
                         ctx.fillStyle = lowFreq > median ? "#000" : "#fff";
                         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
 
@@ -187,7 +186,7 @@
                             // Text color opposite of background
                             ctx.fillStyle = lowFreq > median ? "#fff" : "#000";
                             ctx.fillText(
-                                lowFreq,
+                                lowFreq.toFixed(1),
                                 x * cellSize + cellSize / 2,
                                 y * cellSize + cellSize / 2
                             );
@@ -330,36 +329,41 @@
                         threshold: $("#threshold").val(),
                         resolution: $("#resolution").val()
                     };
-                    console.log(json);
+
                     http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
-                        $("#base64_1").attr("src", results.base64_1);
-                        $("#base64_2").attr("src", results.base64_2);
-
-                        canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay);
-                        canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay);
-
-                        drawBitString("base64_5", reverseString(results.bitString_1), pixelWidth, showOverlay);
-                        drawBitString("base64_6", reverseString(results.bitString_2), pixelWidth, showOverlay);
-
-                        if (results.phashDctLowFreqArray_1 != null && results.phashDctLowFreqArray_2 != null && results.phashMed_1 != null && results.phashMed_2 != null) {
-                            canvasImageWithDctLowFreqArray("base64_7", results.phashDctLowFreqArray_1, results.phashMed_1, pixelWidth, showOverlay);
-                            canvasImageWithDctLowFreqArray("base64_8", results.phashDctLowFreqArray_2, results.phashMed_2, pixelWidth, showOverlay);
+                        if (results.msg === "files not found") {
+                            $("#sometext").html("Check image files");
+                            $("#mediaScanSpinner").css("display", "none");
                         } else {
-                            $("#base64_7").css("display", "none");
-                            $("#base64_8").css("display", "none");
+                            $("#base64_1").attr("src", results.base64_1);
+                            $("#base64_2").attr("src", results.base64_2);
+
+                            canvasImageWithGrayscaleArray("base64_3", results.grayScaleArray_1, pixelWidth, showOverlay);
+                            canvasImageWithGrayscaleArray("base64_4", results.grayScaleArray_2, pixelWidth, showOverlay);
+
+                            drawBitString("base64_5", reverseString(results.bitString_1), pixelWidth, showOverlay);
+                            drawBitString("base64_6", reverseString(results.bitString_2), pixelWidth, showOverlay);
+
+                            if (results.phashDctLowFreqArray_1 != null && results.phashDctLowFreqArray_2 != null && results.phashMed_1 != null && results.phashMed_2 != null) {
+                                canvasImageWithDctLowFreqArray("base64_7", results.phashDctLowFreqArray_1, results.phashMed_1, pixelWidth, showOverlay);
+                                canvasImageWithDctLowFreqArray("base64_8", results.phashDctLowFreqArray_2, results.phashMed_2, pixelWidth, showOverlay);
+                            } else {
+                                $("#base64_7").css("display", "none");
+                                $("#base64_8").css("display", "none");
+                            }
+
+                            let html = "algorithm: " + $("#algorithm").val() + "<br>";
+                            html += "resolution: " + $("#resolution").val() + "<br>";
+                            html += "threshold: " + $("#threshold").val() + "<br>";
+                            html += "pathone: " + $("#pathone").val() + "<br>";
+                            html += "pathtwo: " + $("#pathtwo").val() + "<br>";
+                            html += "pixelWidth: " + pixelWidth + "<br>";
+                            html += "showOverlay: " + showOverlay + "<br>";
+                            html += "<br>" + results.text;
+                            $("#sometext").html(html);
+
+                            $("#mediaScanSpinner").css("display", "none");
                         }
-
-                        let html = "algorithm: "+$("#algorithm").val()+"<br>";
-                        html += "resolution: "+$("#resolution").val()+"<br>";
-                        html += "threshold: "+$("#threshold").val()+"<br>";
-                        html += "pathone: "+$("#pathone").val()+"<br>";
-                        html += "pathtwo: "+$("#pathtwo").val()+"<br>";
-                        html += "pixelWidth: "+pixelWidth+"<br>";
-                        html += "showOverlay: "+showOverlay+"<br>";
-                        html += "<br>"+results.text;
-                        $("#sometext").html(html);
-
-                        $("#mediaScanSpinner").css("display", "none");
                     });
                 } else {
                     let html = "Inputs missing: " +
