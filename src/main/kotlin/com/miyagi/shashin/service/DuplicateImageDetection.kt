@@ -3,6 +3,7 @@ package com.miyagi.shashin.service
 import com.miyagi.shashin.model.Duplicates
 import com.miyagi.shashin.repository.DuplicatesRepository
 import com.miyagi.shashin.util.BKTree
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
@@ -13,6 +14,8 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import kotlin.collections.reversed
+import kotlin.math.PI
+import kotlin.math.cos
 import kotlin.math.roundToInt
 
 // Example usage:
@@ -152,9 +155,10 @@ class DuplicateImageDetection {
                 // 1) Grayscale normalization and tiny resize
                 val resized = resizeAndGrayscale(image, hashSize + 1, hashSize)
 
-                // Download
-                // saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
+
                 if (this.debug) {
+                    // Download grayscale
+                    // saveBufferedImageToFile(resized, "C:/Users/Michael/Downloads/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}_${resolution}.jpg", "jpg")
                     this.resizedGreyscaleImage = resized
                 }
 
@@ -367,6 +371,26 @@ class DuplicateImageDetection {
         }
     }
 
+    // BufferedImage of the DCT pattern at u, v for phash
+    private fun generateBasisPattern(u: Int, v: Int, size: Int): BufferedImage {
+        val img = BufferedImage(size, size, BufferedImage.TYPE_BYTE_GRAY)
+
+        for (y in 0 until size) {
+            for (x in 0 until size) {
+                // Basis function value at (x,y)
+                val value = cos(((2 * x + 1) * u * PI) / (2 * size)) *
+                        cos(((2 * y + 1) * v * PI) / (2 * size))
+
+                // Normalize from [-1,1] → [0,255]
+                val gray = (((value + 1.0) / 2.0) * 255).toInt()
+                val rgb = (gray shl 16) or (gray shl 8) or gray
+                img.setRGB(x, y, rgb)
+            }
+        }
+
+        return img
+    }
+
     private fun dctFreq(input: Array<DoubleArray>, blockSize: Int): Array<DoubleArray> {
         // input: a 2D array of grayscale values (e.g., 32×32 if resolution=64 and highfreqFactor=4).
         // blockSize: the size of the low-frequency block you want (e.g., 8).
@@ -394,6 +418,11 @@ class DuplicateImageDetection {
                 var sum = 0.0
                 for (x in 0 until n) {
                     for (y in 0 until m) {
+//                        if (this.debug) {
+//                            val basis = generateBasisPattern(u, v, blockSize)
+//                            saveBufferedImageToFile(basis, "C:/Users/Michael/Downloads/dct/image_${TextUtils.getCurrentTimestampMS().replace(":","").replace("-","").replace(" ","")}.jpg", "jpg")
+//                        }
+
                         // defines a 2D cosine wave — like a checkerboard pattern — that the image is being projected onto
                         // It transforms spatial data into frequency space.
                         // Each pixel contributes to the frequency coefficient
