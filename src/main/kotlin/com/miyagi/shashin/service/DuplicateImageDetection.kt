@@ -244,8 +244,9 @@ class DuplicateImageDetection {
                     }
                 }
 
-                // Step 3: Apply 2D DCT
-                val dct = dctLowFreq(pixels, hashSize)
+                // Step 3: Apply 2d DCT - computes the full DCT matrix of the resized grayscale image
+                // We'll determine low-frequency coefficients next
+                val dct = dctFreq(pixels, hashSize)
 
                 // Step 4: Take top-left low-frequency coefficients
                 val dctLowFreq = Array(hashSize) { DoubleArray(hashSize) }
@@ -255,19 +256,23 @@ class DuplicateImageDetection {
                     }
                 }
 
-                // Step 5: Compute median
-                // dctLowFreq is Array<DoubleArray>
-                val flat: List<Double> = dctLowFreq.flatMap { row -> row.toList() }.sorted()
+                // Step 5: Compute median of DCT low frequencies
+                // Flatten but exclude the DC coefficient at (0,0)
+                val flat: List<Double> = dctLowFreq.flatMapIndexed { y, row ->
+                    row.mapIndexed { x, value ->
+                        if (x == 0 && y == 0) null else value
+                    }.filterNotNull()
+                }.sorted()
                 val med = flat[flat.size / 2]
                 if (this.debug) {
                     this.phashMed = med
                 }
-                var bitArray = mutableListOf<Int>()
 
                 // Step 6: Build hash
                 result = BigInteger.ZERO
                 var bitIndex = 0
                 var dctLowFreqArray = mutableListOf<List<Double>>()
+                var bitArray = mutableListOf<Int>()
                 for (y in 0 until hashSize) {
                     val row = mutableListOf<Double>()
                     for (x in 0 until hashSize) {
@@ -362,26 +367,59 @@ class DuplicateImageDetection {
         }
     }
 
-    private fun dctLowFreq(input: Array<DoubleArray>, blockSize: Int): Array<DoubleArray> {
+    private fun dctFreq(input: Array<DoubleArray>, blockSize: Int): Array<DoubleArray> {
+        // input: a 2D array of grayscale values (e.g., 32×32 if resolution=64 and highfreqFactor=4).
+        // blockSize: the size of the low-frequency block you want (e.g., 8).
+        // output: the resulting DCT matrix of size blockSize × blockSize.
         val n = input.size
         val m = input[0].size
         val output = Array(blockSize) { DoubleArray(blockSize) }
 
+        // This computes each DCT coefficient
+        // pixel intensity at position (x, y)
+
+        // u, v: frequency indices
+        // For each frequency coordinate (u, v) in blockSize:
+        // Initialize sum = 0.0
+        // For each spatial coordinate (x, y) in input image:
+        //     sum += input[x][y] *
+        //            cos( (2x + 1) * u * π / (2n) ) *
+        //            cos( (2y + 1) * v * π / (2m) )
+        // alphaU = if u == 0 then sqrt(1/n) else sqrt(2/n)
+        // alphaV = if v == 0 then sqrt(1/m) else sqrt(2/m)
+        // output[u][v] = alphaU * alphaV * sum
+        // The cosine terms project the image onto cosine basis functions — like decomposing sound into sine waves.
         for (u in 0 until blockSize) {
             for (v in 0 until blockSize) {
                 var sum = 0.0
                 for (x in 0 until n) {
                     for (y in 0 until m) {
-                        sum += input[x][y] *
-                                kotlin.math.cos(((2 * x + 1) * u * Math.PI) / (2 * n)) *
-                                kotlin.math.cos(((2 * y + 1) * v * Math.PI) / (2 * m))
+                        // defines a 2D cosine wave — like a checkerboard pattern — that the image is being projected onto
+                        // It transforms spatial data into frequency space.
+                        // Each pixel contributes to the frequency coefficient
+                        // Each coefficient F(u, v) tells you how much of a specific cosine pattern is present.
+                        // Low u, v = smooth gradients; high u, v = fine details.
+                        // sum = F(u, v) = represents how much of a specific cosine wave is present in the image
+                        // Think of it like tuning a radio: Each (u, v) is a frequency channel. We’re checking how strongly the image “resonates” with that channel.
+                        // The sum is the signal strength — the DCT coefficient.
+                        sum += input[x][y] * // This is the grayscale value at position (x, y). It’s the "weight" of the pixel’s contribution.
+                                // Each cosine term is a wave pattern that oscillates across the image
+                                kotlin.math.cos(((2 * x + 1) * u * Math.PI) / (2 * n)) * // horizontal frequency component
+                                kotlin.math.cos(((2 * y + 1) * v * Math.PI) / (2 * m))   // vertical frequency component
+                                // Why (2x + 1)? This centers the cosine wave over each pixel:
+                                // It avoids biasing toward edges and ensures symmetry and orthogonality of the basis functions.
                     }
                 }
+                // Normalization Factors
+                // These are scaling factors to ensure orthonormality
+                // The DC coefficient (u=0, v=0) gets a smaller weight.
+                // All other frequencies get a larger weight to balance energy distribution.
                 val alphaU = if (u == 0) kotlin.math.sqrt(1.0 / n) else kotlin.math.sqrt(2.0 / n)
                 val alphaV = if (v == 0) kotlin.math.sqrt(1.0 / m) else kotlin.math.sqrt(2.0 / m)
                 output[u][v] = alphaU * alphaV * sum
             }
         }
+
         return output
     }
 
