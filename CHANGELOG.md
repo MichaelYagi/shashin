@@ -17,6 +17,13 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 ### Security
 
+## [2.17.4] - 2025-12-06
+### Changed
+- License to CC
+
+### Security
+- Updates `org.apache.tika:tika-core` from 3.0.0 to 3.2.2
+
 ## [2.17.3] - 2025-11-21
 ### Changed
 - Rescan duplicates
