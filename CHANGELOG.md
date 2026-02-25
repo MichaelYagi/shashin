@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 ### Security
+- Bump the npm_and_yarn group across 1 directory with 1 update
 
 ## [2.17.4] - 2025-12-06
 ### Changed
