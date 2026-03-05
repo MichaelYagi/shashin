@@ -105,6 +105,13 @@ class SearchController(
         return module
     }
 
+    @GetMapping("/api/v1/search/{page}/term/{term}")
+    @ResponseBody
+    fun getApiPaginationSearch(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable term: String): String {
+        val response = buildSearchData(model,term,page)
+        return mapper.writeValueAsString(response)
+    }
+
     private fun buildSearchData(model: Model,term: String?, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["term"] = ""
