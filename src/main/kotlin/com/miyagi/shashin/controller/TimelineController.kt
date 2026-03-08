@@ -1896,6 +1896,72 @@ class TimelineController(
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/api/v1/update/metadata/keywords/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun updateKeywordsMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse, locale: Locale): String? {
+//        println(requestBody)
+        var metadata = Metadata()
+
+        resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
+        resp["status"] = ApiResponse.FAIL.status
+        resp["metadata"] = metadata
+
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("keywords")) {
+            val metadataObj = metadataRepository.findById(metadataId)
+            var keywords = metadataMap["keywords"].toString().trim()
+
+            if (metadataObj.isPresent && keywords.isNotBlank()) {
+                keywordPhotoRepository.deleteAllByMetadataId(metadataId)
+                if (keywords.isNotBlank()) {
+                    if (keywords.last() == ',') {
+                        keywords = keywords.dropLast(1)
+                    }
+                    val keywordList = keywords.split(",").map { it.trim() }
+                    processKeywords(keywordList, metadataId)
+                }
+                
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
+                resp["status"] = ApiResponse.SUCCESS.status
+                resp["metadata"] = metadata
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/api/v1/update/metadata/description/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun updateDescriptionMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse, locale: Locale): String? {
+//        println(requestBody)
+        var metadata = Metadata()
+
+        resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
+        resp["status"] = ApiResponse.FAIL.status
+        resp["metadata"] = metadata
+
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("description")) {
+            val metadataObj = metadataRepository.findById(metadataId)
+            val description = metadataMap["description"].toString()
+
+            if (metadataObj.isPresent && description.isNotBlank()) {
+                metadataObj.get().setDescription(description)
+                metadataRepository.save(metadata)
+
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
+                resp["status"] = ApiResponse.SUCCESS.status
+                resp["metadata"] = metadata
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/coordinates/{metadataId}","/api/v1/update/metadata/coordinates/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
