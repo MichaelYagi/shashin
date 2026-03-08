@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 - Search API endpoint
+- Description and keywords metadata update endpoints
 
 ### Changed
 ### Deprecated
