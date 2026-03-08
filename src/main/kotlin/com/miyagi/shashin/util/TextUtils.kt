@@ -1466,9 +1466,10 @@ class TextUtils {
 
             try {
                 val connection: HttpURLConnection = URL(urlString).openConnection() as HttpURLConnection
-                connection.connectTimeout = 1000
-                connection.readTimeout = 1000
+                connection.connectTimeout = 10000
+                connection.readTimeout = 15000
                 connection.requestMethod = "GET"
+                connection.setRequestProperty("User-Agent", "Shashin/1.0 (myagi.developer@gmail.com)")
 
 //                if (locale != null) {
 //                    connection.setRequestProperty("Accept-Language", locale)
