@@ -1900,11 +1900,10 @@ class TimelineController(
     @ResponseBody
     fun updateKeywordsMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse, locale: Locale): String? {
 //        println(requestBody)
-        var metadata = Metadata()
 
         resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
-        resp["metadata"] = metadata
+        resp["metadata"] = Metadata()
 
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -1926,7 +1925,7 @@ class TimelineController(
 
                 resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
-                resp["metadata"] = metadata
+                resp["metadata"] = metadataObj.get()
             }
         }
 
@@ -1938,11 +1937,10 @@ class TimelineController(
     @ResponseBody
     fun updateDescriptionMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse, locale: Locale): String? {
 //        println(requestBody)
-        var metadata = Metadata()
 
         resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
-        resp["metadata"] = metadata
+        resp["metadata"] = Metadata()
 
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -1957,7 +1955,7 @@ class TimelineController(
 
                 resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
-                resp["metadata"] = metadata
+                resp["metadata"] = metadataObj.get()
             }
         }
 
