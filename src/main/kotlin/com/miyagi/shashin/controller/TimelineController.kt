@@ -1920,8 +1920,9 @@ class TimelineController(
                     }
                     val keywordList = keywords.split(",").map { it.trim() }
                     processKeywords(keywordList, metadataId)
+                    metadataObj.get().setModifiedAt(getCurrentTimestamp())
                 }
-                
+
                 resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["metadata"] = metadata
@@ -1950,6 +1951,7 @@ class TimelineController(
 
             if (metadataObj.isPresent && description.isNotBlank()) {
                 metadataObj.get().setDescription(description)
+                metadataObj.get().setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadata)
 
                 resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
@@ -1984,6 +1986,7 @@ class TimelineController(
             if (coordArray.size == 2) {
                 metadata = setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1], model.getAttribute("locale").toString())
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
+                metadata.setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadata)
 
                 resp["metadata"] = metadata
