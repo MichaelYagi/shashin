@@ -1963,6 +1963,23 @@ class TimelineController(
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/api/v1/metadata/missing/description/{size}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getMissingDescriptionMetadata(model: Model, response: HttpServletResponse, @PathVariable(required = true) page: Int, @PathVariable(required = true) size: Int, locale: Locale): String? {
+//        println(requestBody)
+
+        resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
+        resp["status"] = ApiResponse.FAIL.status
+
+        var metadataList: MutableList<Metadata?>? = metadataRepository.findAllMissingDescriptionOffsetAndLimit(
+            page,
+            size
+        ).toMutableList()
+
+        return mapper.writeValueAsString(metadataList)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/coordinates/{metadataId}","/api/v1/update/metadata/coordinates/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
