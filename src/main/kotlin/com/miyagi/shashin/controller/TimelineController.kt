@@ -1963,15 +1963,16 @@ class TimelineController(
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
-    @RequestMapping(value = ["/api/v1/metadata/missing/description/{size}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/metadata/missing/description/{size}/{page}/{type}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMissingDescriptionMetadata(model: Model, response: HttpServletResponse, @PathVariable(required = true) page: Int, @PathVariable(required = true) size: Int, locale: Locale): String? {
+    fun getMissingDescriptionMetadata(model: Model, response: HttpServletResponse, @PathVariable(required = true) page: Int, @PathVariable(required = true) size: Int, @PathVariable(required = true) type: String, locale: Locale): String? {
 //        println(requestBody)
 
         resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
 
-        var metadataList: MutableList<Metadata?>? = metadataRepository.findAllMissingDescriptionOffsetAndLimit(
+        var metadataList: MutableList<Metadata?>? = metadataRepository.findAllMissingDescriptionByTypeOffsetAndLimit(
+            type,
             page,
             size
         ).toMutableList()
