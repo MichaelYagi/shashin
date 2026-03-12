@@ -14,7 +14,9 @@ import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.SearchHistoryTypes
+import com.miyagi.shashin.util.SearchQueryBuilder
 import com.miyagi.shashin.util.TextUtils
+import org.springframework.jdbc.core.JdbcTemplate
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.http.MediaType
@@ -41,6 +43,7 @@ class SearchController(
     private val searchHistoryRepository: SearchHistoryRepository? = null,
     private val keywordRepository: KeywordRepository? = null,
     private val favoriteRepository: FavoriteRepository? = null,
+    private val jdbcTemplate: JdbcTemplate,
     recognitionLabelRepository: RecognitionLabelRepository? = null,
     albumRepository: AlbumRepository? = null
 ): BaseController(
@@ -169,10 +172,11 @@ class SearchController(
                         queryLimit
                     )
                 } else {
-                    searchRepository?.findMetadataBySearchTerm(updatedTerm, pageValue, queryLimit)
+                    SearchQueryBuilder.findByTerm(jdbcTemplate, updatedTerm, pageValue, queryLimit).toMutableList()
                 }
+
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
-                response["totalPages"] = ceil((searchRepository?.countAllByHiddenIsFalse(updatedTerm)!!.toDouble()) / size.toDouble()).toInt()
+                response["totalPages"] = ceil((SearchQueryBuilder.countByTerm(jdbcTemplate, updatedTerm).toDouble()) / size.toDouble()).toInt()
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 if (currentUserObj != null) {
                     if (updatedTerm.lowercase() == "shashinedit" || updatedTerm.lowercase() == "shashinedited") {
@@ -196,16 +200,11 @@ class SearchController(
                             queryLimit
                         )
                     } else {
-                        metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
-                            updatedTerm,
-                            currentUserObj.getId(),
-                            pageValue,
-                            queryLimit
-                        )
+                        metadataList = SearchQueryBuilder.findByTermAndUserId(jdbcTemplate, updatedTerm, currentUserObj.getId(), pageValue, queryLimit).toMutableList()
                     }
 
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
-                    response["totalPages"] = ceil((searchRepository?.countAllByHiddenIsFalseAndUserId(updatedTerm, currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
+                    response["totalPages"] = ceil((SearchQueryBuilder.countByTermAndUserId(jdbcTemplate, updatedTerm, currentUserObj.getId()).toDouble()) / size.toDouble()).toInt()
                 }
             }
 
