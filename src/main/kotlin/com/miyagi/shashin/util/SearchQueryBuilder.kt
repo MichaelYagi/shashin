@@ -68,31 +68,69 @@ object SearchQueryBuilder {
         }
     }
 
+    // WHERE filter: token must match somewhere (permissive substring match)
     private fun buildTokenClause(token: String): String = """
         (k.keyword LIKE lower('%' || ? || '%')
-        OR m2.id LIKE lower('%' || ? || '%')
-        OR m2.path LIKE lower('%' || ? || '%')
-        OR m2.title LIKE lower('%' || ? || '%')
-        OR m2.description LIKE lower('%' || ? || '%')
-        OR m2.placeName LIKE lower('%' || ? || '%')
+        OR m.id LIKE lower('%' || ? || '%')
+        OR m.path LIKE lower('%' || ? || '%')
+        OR m.title LIKE lower('%' || ? || '%')
+        OR m.description LIKE lower('%' || ? || '%')
+        OR m.place_name LIKE lower('%' || ? || '%')
         OR rl.name LIKE lower('%' || ? || '%')
-        OR m2.camera LIKE lower('%' || ? || '%')
-        OR m2.lens LIKE lower('%' || ? || '%')
-        OR m2.takenAt LIKE lower('%' || ? || '%')
-        OR m2.type LIKE lower('%' || ? || '%')
-        OR m2.originalImageHeight = ?
-        OR m2.originalImageWidth = ?
-        OR m2.originalImageWidth || 'x' || m2.originalImageHeight = ?)
+        OR m.camera LIKE lower('%' || ? || '%')
+        OR m.lens LIKE lower('%' || ? || '%')
+        OR m.taken_at LIKE lower('%' || ? || '%')
+        OR m.type LIKE lower('%' || ? || '%')
+        OR m.original_image_height = ?
+        OR m.original_image_width = ?
+        OR m.original_image_width || 'x' || m.original_image_height = ?)
     """.trimIndent()
 
-    private val FIELDS_PER_TOKEN = 14 // number of ? placeholders per token
+    private val FIELDS_PER_TOKEN = 14
 
     private fun tokenParams(tokens: List<String>): List<Any> =
         tokens.flatMap { token -> List(FIELDS_PER_TOKEN) { token } }
 
     /**
+     * Relevance score for a single token using the already-joined k and rl tables.
+     * MAX() collapses the multiple rows produced by the join back to one per image.
+     *
+     * Score 2 = word-boundary or exact match on keyword or face-recognition label
+     * Score 1 = word-boundary or exact match on description or place name
+     * Score 0 = substring-only match
+     *
+     * Token is interpolated (not a ? param) because it appears in ORDER BY.
+     * Single quotes are escaped to prevent injection.
+     */
+    private fun buildRelevanceClause(token: String): String {
+        val t = token.trim().lowercase().replace("'", "''")
+        return """
+            MAX(CASE
+                WHEN lower(k.keyword) = '$t'
+                    OR lower(k.keyword) LIKE '$t %'
+                    OR lower(k.keyword) LIKE '% $t'
+                    OR lower(k.keyword) LIKE '% $t %'
+                    OR lower(rl.name) = '$t'
+                    OR lower(rl.name) LIKE '$t %'
+                    OR lower(rl.name) LIKE '% $t'
+                    OR lower(rl.name) LIKE '% $t %'
+                    THEN 2
+                WHEN lower(m.description) = '$t'
+                    OR lower(m.description) LIKE '$t %'
+                    OR lower(m.description) LIKE '% $t'
+                    OR lower(m.description) LIKE '% $t %'
+                    OR lower(m.place_name) = '$t'
+                    OR lower(m.place_name) LIKE '$t %'
+                    OR lower(m.place_name) LIKE '% $t'
+                    OR lower(m.place_name) LIKE '% $t %'
+                    THEN 1
+                ELSE 0
+            END)
+        """.trimIndent()
+    }
+
+    /**
      * Multi-token search for admin/super roles.
-     * Single token behaves identically to the existing @Query.
      */
     fun findByTerm(
         jdbcTemplate: JdbcTemplate,
@@ -102,18 +140,18 @@ object SearchQueryBuilder {
     ): List<Metadata> {
         val tokens = term.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
         val whereClauses = tokens.joinToString(" AND ") { buildTokenClause(it) }
+        val relevanceScore = tokens.joinToString(" + ") { buildRelevanceClause(it) }
         val sql = """
-            SELECT * FROM metadata m
+            SELECT m.*
+            FROM metadata m
+            LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id
+            LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id
+            LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id
+            LEFT JOIN keyword k ON kp.keyword_id = k.id
             WHERE m.hidden = false
-            AND m.id IN (
-                SELECT DISTINCT m2.id FROM metadata m2
-                LEFT JOIN recognitionlabelphoto rlp ON m2.id = rlp.metadata_id
-                LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id
-                LEFT JOIN keywordphoto kp ON kp.metadata_id = m2.id
-                LEFT JOIN keyword k ON kp.keyword_id = k.id
-                WHERE $whereClauses
-            )
-            ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC
+            AND ($whereClauses)
+            GROUP BY m.id
+            ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC
             LIMIT $limit OFFSET $offset
         """.trimIndent()
         return jdbcTemplate.query(sql, metadataRowMapper, *tokenParams(tokens).toTypedArray())
@@ -126,16 +164,14 @@ object SearchQueryBuilder {
         val tokens = term.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
         val whereClauses = tokens.joinToString(" AND ") { buildTokenClause(it) }
         val sql = """
-            SELECT COUNT(*) FROM metadata m
+            SELECT COUNT(DISTINCT m.id)
+            FROM metadata m
+            LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id
+            LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id
+            LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id
+            LEFT JOIN keyword k ON kp.keyword_id = k.id
             WHERE m.hidden = false
-            AND m.id IN (
-                SELECT DISTINCT m2.id FROM metadata m2
-                LEFT JOIN recognitionlabelphoto rlp ON m2.id = rlp.metadata_id
-                LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id
-                LEFT JOIN keywordphoto kp ON kp.metadata_id = m2.id
-                LEFT JOIN keyword k ON kp.keyword_id = k.id
-                WHERE $whereClauses
-            )
+            AND ($whereClauses)
         """.trimIndent()
         return jdbcTemplate.queryForObject(sql, Int::class.java, *tokenParams(tokens).toTypedArray()) ?: 0
     }
@@ -152,21 +188,21 @@ object SearchQueryBuilder {
     ): List<Metadata> {
         val tokens = term.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
         val whereClauses = tokens.joinToString(" AND ") { buildTokenClause(it) }
+        val relevanceScore = tokens.joinToString(" + ") { buildRelevanceClause(it) }
         val sql = """
-            SELECT * FROM metadata m
+            SELECT m.*
+            FROM metadata m
+            LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id
+            LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id
+            LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id
+            LEFT JOIN keyword k ON kp.keyword_id = k.id
+            LEFT JOIN albumphoto a ON m.id = a.metadata_id
+            LEFT JOIN useralbum ua ON ua.album_id = a.album_id
             WHERE m.hidden = false
-            AND m.id IN (
-                SELECT DISTINCT m2.id FROM metadata m2
-                LEFT JOIN recognitionlabelphoto rlp ON m2.id = rlp.metadata_id
-                LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id
-                LEFT JOIN albumphoto a ON m2.id = a.metadata_id
-                LEFT JOIN useralbum ua ON ua.album_id = a.album_id
-                LEFT JOIN keywordphoto kp ON kp.metadata_id = m2.id
-                LEFT JOIN keyword k ON kp.keyword_id = k.id
-                WHERE $whereClauses
-                AND ua.user_id = ?
-            )
-            ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC
+            AND ($whereClauses)
+            AND ua.user_id = ?
+            GROUP BY m.id
+            ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC
             LIMIT $limit OFFSET $offset
         """.trimIndent()
         val params = tokenParams(tokens) + userId
@@ -181,19 +217,17 @@ object SearchQueryBuilder {
         val tokens = term.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
         val whereClauses = tokens.joinToString(" AND ") { buildTokenClause(it) }
         val sql = """
-            SELECT COUNT(*) FROM metadata m
+            SELECT COUNT(DISTINCT m.id)
+            FROM metadata m
+            LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id
+            LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id
+            LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id
+            LEFT JOIN keyword k ON kp.keyword_id = k.id
+            LEFT JOIN albumphoto a ON m.id = a.metadata_id
+            LEFT JOIN useralbum ua ON ua.album_id = a.album_id
             WHERE m.hidden = false
-            AND m.id IN (
-                SELECT DISTINCT m2.id FROM metadata m2
-                LEFT JOIN recognitionlabelphoto rlp ON m2.id = rlp.metadata_id
-                LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id
-                LEFT JOIN albumphoto a ON m2.id = a.metadata_id
-                LEFT JOIN useralbum ua ON ua.album_id = a.album_id
-                LEFT JOIN keywordphoto kp ON kp.metadata_id = m2.id
-                LEFT JOIN keyword k ON kp.keyword_id = k.id
-                WHERE $whereClauses
-                AND ua.user_id = ?
-            )
+            AND ($whereClauses)
+            AND ua.user_id = ?
         """.trimIndent()
         val params = tokenParams(tokens) + userId
         return jdbcTemplate.queryForObject(sql, Int::class.java, *params.toTypedArray()) ?: 0
