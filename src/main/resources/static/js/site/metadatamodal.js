@@ -91,8 +91,16 @@ $("#saveMetadata").off("click").on("click", async function (e) {
     await saveMetadata(e);
 });
 
-$("#propMetadata").off("keydown").on("keydown", async function (e) {
-    if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
+$("#propMetadata")
+.off("keydown")
+.on("keydown", async function (e) {
+    const isEnter =
+        e.key === "Enter" ||
+        e.code === "Enter" ||
+        e.which === 13 ||
+        e.keyCode === 13;
+
+    if (isEnter && e.target.id !== "description") {
         await saveMetadata(e);
     }
 });
