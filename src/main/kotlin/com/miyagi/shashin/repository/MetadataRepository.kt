@@ -138,6 +138,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND (description IS NULL OR description = \"\") AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingDescriptionByTypeOffsetAndLimit(@Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT m.* FROM metadata m LEFT JOIN keywordphoto mk ON mk.metadata_id = m.id WHERE m.hidden = 0 AND type LIKE %:type% AND mk.keyword_id IS NULL ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findAllMissingKeywordsByTypeOffsetAndLimit(@Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingLocationByTypeOffsetAndLimit(@Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
