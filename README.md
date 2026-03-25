@@ -28,8 +28,9 @@ Creating and pushing tags will upload jar and exe artifacts to [RepoFlow](https:
 ## Release Process
 
 * Update version in `pom.xml` under `<project><version>{version}</version></project>`
-* Update `CHANGELOG.md` with the new version, and commit code - use `[skip ci]` in commit message
+* Update `CHANGELOG.md` with the new version
     * Adhere to [keep a change log](https://keepachangelog.com/) as capturing dev notes depends on this format
+* Commit and push - use `[skip ci]` in commit message
 * Create tag:
     * `git tag v<version>`
     * `git push origin v<version>`
