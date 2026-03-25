@@ -11,13 +11,17 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Search API endpoint
-- Description and keywords metadata update endpoints
-
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [2.18.0] - 2026-03-25
+### Added
+- Search API endpoints
+- Description and keywords metadata update endpoints
+
 ### Security
 - Bump the npm_and_yarn group across 1 directory with 1 update
 
