@@ -16,30 +16,16 @@ executors:
 
 orbs:
   maven: circleci/maven@2.0.0
-  node: circleci/node@7.1.0
   browser-tools: circleci/browser-tools@2.3.1
 
 workflows:
   shashin_workflow:
     jobs:
-      - node/test:
+      - run_node_tests:
           name: Run node tests
-          executor: node20
           filters: # job runs for all branches and all tags
             tags:
               only: /^v.*/
-          test-results-for: mocha
-          post-steps:
-            - run:
-                name: Save JS test results
-                command: |
-                  mkdir -p test-results/mocha/
-                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
-                when: always
-            - persist_to_workspace: # persist workspace across jobs
-                root: .
-                paths:
-                  - test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           executor: java17
           name: Run junit tests # and package to tar
@@ -183,6 +169,27 @@ workflows:
           name: Upload artifacts to repo
 
 jobs:
+  run_node_tests:
+    executor: node20
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Run JS tests
+          command: npm test
+      - run:
+          name: Save JS test results
+          command: |
+            mkdir -p test-results/mocha/
+            find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
+          when: always
+      - persist_to_workspace:
+          root: .
+          paths:
+            - test-results/mocha
+
   upload_to_repoflow:
     executor: java17
     steps:
