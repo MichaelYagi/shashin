@@ -10,6 +10,9 @@ executors:
   java17:
     docker:
       - image: 'cimg/openjdk:17.0'
+  node20:
+    docker:
+      - image: 'cimg/node:20.19'
 
 orbs:
   maven: circleci/maven@2.0.0
@@ -21,7 +24,7 @@ workflows:
     jobs:
       - node/test:
           name: Run node tests
-          node-version: '20.19.0'
+          executor: node20
           filters: # job runs for all branches and all tags
             tags:
               only: /^v.*/
