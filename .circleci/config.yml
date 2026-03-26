@@ -32,7 +32,7 @@ workflows:
           filters: # job runs for all branches and all tags
             tags:
               only: /^v.*/
-          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
+          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test -Dskip.js.tests=true clean install'
           #          #command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
           requires:
             - Run node tests
