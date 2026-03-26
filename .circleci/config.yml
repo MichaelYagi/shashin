@@ -21,10 +21,8 @@ workflows:
     jobs:
       - node/test:
           name: Run node tests
-          executor:
-            name: node/default
-            tag: '18.19'
-          filters:
+          node-version: '20.19.0'
+          filters: # job runs for all branches and all tags
             tags:
               only: /^v.*/
           test-results-for: mocha
