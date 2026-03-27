@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 ### Security
+- Bump org.codehaus.plexus:plexus-utils
 
 ## [2.18.0] - 2026-03-25
 ### Added
