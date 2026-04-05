@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 ### Security
 - Bump org.codehaus.plexus:plexus-utils
+- Bump the npm_and_yarn group across 1 directory with 1 update
 
 ## [2.18.0] - 2026-03-25
 ### Added
