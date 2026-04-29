@@ -678,8 +678,8 @@
                             let sectionHeight = 0;
 
                             if (numberOfPhotos !== null && numberOfPhotos > 0) {
-                                // sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
-                                sectionHeight = 11705;
+                                sectionHeight = Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5);
+                                //sectionHeight = 11705;
                             }
 
                             let action = "below";
