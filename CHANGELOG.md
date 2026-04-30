@@ -12,12 +12,15 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
+- Updated drewnoakes/metadata-extractor to 2.20.0
+
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
 - Bump org.codehaus.plexus:plexus-utils
 - Bump the npm_and_yarn group across 1 directory with 1 update
+- Bump @tootallnate/once in the npm_and_yarn group across 1 directory
 
 ## [2.18.0] - 2026-03-25
 ### Added
