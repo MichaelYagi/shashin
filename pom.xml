@@ -613,7 +613,7 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v15.14.0</nodeVersion>
+                            <nodeVersion>v20.19.0</nodeVersion>
                         </configuration>
                     </execution>
                     <execution>
