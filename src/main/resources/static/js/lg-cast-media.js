@@ -175,7 +175,7 @@
 
                             if (metadata.videoUrl !== null) {
                                 try {
-                                    cjsMetadata["poster"] = baseUrl + ((metadata.thumbnailUrlOriginal !== undefined && metadata.thumbnailUrlOriginal !== null) ? "/api/v1/thumbnails/original/"+metadata.id : "/api/v1/thumbnails/225/"+metadata.id);
+                                    cjsMetadata["poster"] = baseUrl + ((metadata.thumbnailUrlOriginal !== undefined && metadata.thumbnailUrlOriginal !== null) ? "/api/v1/image/original/"+metadata.id : "/api/v1/thumbnails/225/"+metadata.id);
                                     cjs.src = baseUrl + metadata.videoUrl;
 
                                     cjs.cast(baseUrl + metadata.videoUrl, cjsMetadata);
@@ -195,12 +195,12 @@
                                 }
                             } else if (metadata.thumbnailUrlOriginal !== null) {
                                 try {
-                                    cjs.src = baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg";
+                                    cjs.src = baseUrl + "/api/v1/image/original/"+metadata.id+".jpg";
 
-                                    cjs.cast(baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg", cjsMetadata);
+                                    cjs.cast(baseUrl + "/api/v1/image/original/"+metadata.id+".jpg", cjsMetadata);
 
                                     if (shashin) {
-                                        shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg", {
+                                        shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/image/original/"+metadata.id+".jpg", {
                                             tag: "cast"
                                         });
                                     }
