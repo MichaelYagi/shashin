@@ -23,7 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ### Fixed
 - RSS/ATOM formatting
-- Fixed casting issues
+- Fixed casting URL issues
 
 ### Security
 - Bump org.codehaus.plexus:plexus-utils
