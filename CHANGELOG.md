@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
-- Cast module on every page
+- Cast module on all pages
 
 ### Security
 
