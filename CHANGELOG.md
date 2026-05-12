@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Cast module on every page
+
 ### Security
 
 ## [2.18.1] - 2026-05-11
