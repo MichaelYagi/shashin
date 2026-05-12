@@ -92,7 +92,7 @@ class AtomFeedView(
         val logger: Logger = Logger.getLogger(AtomFeedView::class.simpleName)
 
         val orientationStr = request.getParameter("orientation")
-        val allowedOrientations = setOf(0, 1)
+        val allowedOrientations = setOf(0, 1, 2)
         val orientation = orientationStr?.toIntOrNull()?.takeIf { it in allowedOrientations } ?: 3
 
         val atomList = mutableListOf<Entry>()
@@ -181,9 +181,9 @@ class AtomFeedView(
                         place = (if (taken != null) " - " else "") + placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = (if (place != "") " • " else "") + metadata.getDescription()!!.trim()
+                        metadataDescription = (if (place != "" || taken != null) " • " else "") + metadata.getDescription()!!.trim()
                     }
-                    val descVal = "$taken$place$metadataDescription"
+                    val descVal = "${taken ?: ""}$place$metadataDescription"
 
                     val content = Content()
                     content.type = "text/html"
@@ -208,7 +208,7 @@ class AtomFeedView(
                     author.name = metadata.getId()
                     entry.authors = listOf(author)
                     entry.alternateLinks = listOf(link)
-                    val pattern = "yyyy-mm-dd HH:mm:ss"
+                    val pattern = "yyyy-MM-dd HH:mm:ss"
                     val simpleDateFormat = SimpleDateFormat(pattern)
                     entry.updated = simpleDateFormat.parse(metadata.getCreatedAt()!!)
 

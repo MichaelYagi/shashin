@@ -171,9 +171,9 @@ class RssFeedView(
                         place = (if (taken != null) " - " else "") + placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = (if (place != "") " • " else "") + metadata.getDescription()!!.trim()
+                        metadataDescription = (if (place != "" || taken != null) " • " else "") + metadata.getDescription()!!.trim()
                     }
-                    val descVal = "$taken$place$metadataDescription"
+                    val descVal = "${taken ?: ""}$place$metadataDescription"
 
                     description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}' title='${descVal}'><br>${descVal}"
                     entry.description = description
