@@ -569,13 +569,15 @@
 
     shashin.createAutocomplete = function(inputEl, source, commaDelimited, resultLimit, functionOnSelect) {
 
+        const autoHighlightIds = ["albumNameInput", "tagBatchDataInput", "tagpeople", "albumnames"];
+        const elId = $(inputEl).attr("id");
+        const shouldAutoHighlight = autoHighlightIds.includes(elId);
+
         $(inputEl).autocomplete({
             minLength: 0,
             source: function (request, response) {
-                // delegate back to autocomplete, but extract the last term
                 const inputValues = request.term.split(",");
                 $.each(inputValues, function(index, keywordItem) {
-                    // do something with `item` (or `this` is also `item` if you like)
                     const keywordIndex = source.indexOf(keywordItem.trim());
                     if (keywordIndex !== -1) {
                         source.splice(keywordIndex, 1);
@@ -593,8 +595,12 @@
 
                 response(filter);
             },
+            open: function () {
+                if (shouldAutoHighlight) {
+                    $(this).autocomplete("instance").menu.focus(null, $(this).autocomplete("instance").menu.element.children().first());
+                }
+            },
             focus: function () {
-                // prevent value inserted on focus
                 return false;
             },
             select: function (event, ui) {
@@ -603,20 +609,16 @@
 
                 const inputValues = this.value.split(",");
                 $.each(inputValues, function(index, keywordItem) {
-                    // do something with `item` (or `this` is also `item` if you like)
                     const keywordIndex = source.indexOf(keywordItem.trim());
                     if (keywordIndex !== -1) {
                         source.splice(keywordIndex, 1);
                     }
                 });
                 const terms = shashin.autocompleteSplit(this.value.trim());
-                // remove the current input
                 terms.pop();
-                // add the selected item
                 terms.push(ui.item.value.trim());
 
                 if (true === commaDelimited) {
-                    // add placeholder to get the comma-and-space at the end
                     terms.push("");
                     this.value = terms.join(",");
                     this.value = this.value.replace(/,\s*$/, "");
@@ -631,7 +633,6 @@
                 return false;
             }
         }).focus(function () {
-            // Show dropdown on focus
             $(this).autocomplete("search");
         });
     };
