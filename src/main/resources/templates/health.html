@@ -62,6 +62,7 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'JVM CPU usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
 <th:block th:text="${'Available cores: '+system.availableCores}"></th:block><br>
 <th:block th:text="${'OS: '+system.os}"></th:block><br>
+<img src="https://camo.githubusercontent.com/00edf38003e58323eca467bc91efd4c364f3564a3c11c1547e6a8d6c6441d401/68747470733a2f2f636972636c6563692e636f6d2f67682f4d69636861656c596167692f7368617368696e2f747265652f6d61696e2e7376673f7374796c653d736869656c6426636972636c652d746f6b656e3d61376637353035663864303335376662616533636135626537613431666638646562656431643164" alt="CircleCI" data-canonical-src="https://circleci.com/gh/MichaelYagi/shashin/tree/main.svg?style=shield&amp;circle-token=a7f7505f8d0357fbae3ca5be7a41ff8debed1d1d" style="max-width: 100%;"><br>
 <th:block th:text="${'Build version: '+buildVersion}"></th:block><br>
 UTC timestamp: <span th:title="${localServerTime}"><th:block th:text="${system.utcTimestampMS}"></th:block></span><br>
 Local server time:&nbsp;<span id="serverTime" th:text="${localServerTime}"></span><br>
