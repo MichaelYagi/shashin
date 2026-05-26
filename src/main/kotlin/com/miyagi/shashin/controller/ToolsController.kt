@@ -46,8 +46,6 @@ class ToolsController(
     private var geocodeUrl: String,
     @Value("\${app.circleci.key}")
     private var circleCiKey: String? = null,
-    @Value("\${app.github.key}")
-    private var githubKey: String? = null,
     @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
     private var shashinServerStartUnixMS: String,
     var messageSource: MessageSource? = null
@@ -73,8 +71,8 @@ class ToolsController(
         response["msg"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && githubKey != null && githubKey != "" && currentUserObj.getAuthority()!! == "ROLE_SUPER") {
-            val array = TextUtils.getReleases(githubKey!!)
+        if (currentUserObj != null && currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+            val array = TextUtils.getReleases()
             if (array != null && array.isNotEmpty()) {
                 response["releases"] = array
                 response["status"] = ApiResponse.SUCCESS.status
@@ -99,19 +97,15 @@ class ToolsController(
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
-        if (githubKey != null && githubKey != "") {
-            val array = TextUtils.getReleases(githubKey!!)
-            if (array != null && array.isNotEmpty() && array[0].containsKey("name") && array[0].containsKey("tag_name")) {
-                var latestReleaseName = array[0]["name"]
-                if (latestReleaseName == null) {
-                    latestReleaseName = array[0]["tag_name"]
-                }
-                response["releaseVersion"] = if (latestReleaseName == null) latestReleaseName else latestReleaseName.toString().drop(1)
-                response["releaseVersionName"] = latestReleaseName
-                response["status"] = ApiResponse.SUCCESS.status
+        val array = TextUtils.getReleases()
+        if (array != null && array.isNotEmpty() && array[0].containsKey("name") && array[0].containsKey("tag_name")) {
+            var latestReleaseName = array[0]["name"]
+            if (latestReleaseName == null) {
+                latestReleaseName = array[0]["tag_name"]
             }
-        } else {
-            response["msg"] = messageSource?.getMessage("main.fail", null, locale)
+            response["releaseVersion"] = if (latestReleaseName == null) latestReleaseName else latestReleaseName.toString().drop(1)
+            response["releaseVersionName"] = latestReleaseName
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
         val json = mapper.writeValueAsString(response)
@@ -155,23 +149,19 @@ class ToolsController(
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
-        if (githubKey != null && githubKey != "") {
-            val array = TextUtils.getReleases(githubKey!!)
-            if (array != null && array.isNotEmpty()) {
-                val tags = mutableListOf<Map<String, Any>>()
-                for (item in array) {
-                    if (item.containsKey("tag_name") && item.containsKey("body")) {
-                        val tag = mutableMapOf<String, Any>()
-                        tag["tag_name"] = item.getValue("tag_name")
-                        tag["body"] = item.getValue("body")
-                        tags.add(tag)
-                    }
+        val array = TextUtils.getReleases()
+        if (array != null && array.isNotEmpty()) {
+            val tags = mutableListOf<Map<String, Any>>()
+            for (item in array) {
+                if (item.containsKey("tag_name") && item.containsKey("body")) {
+                    val tag = mutableMapOf<String, Any>()
+                    tag["tag_name"] = item.getValue("tag_name")
+                    tag["body"] = item.getValue("body")
+                    tags.add(tag)
                 }
-                response["tags"] = tags
-                response["status"] = ApiResponse.SUCCESS.status
             }
-        } else {
-            response["msg"] = messageSource?.getMessage("main.fail", null, locale)
+            response["tags"] = tags
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
         val json = mapper.writeValueAsString(response)
