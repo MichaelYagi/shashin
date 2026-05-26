@@ -44,8 +44,6 @@ class ToolsController(
     private var healthEndpoint: HealthEndpoint? = null,
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String,
-    @Value("\${app.circleci.key}")
-    private var circleCiKey: String? = null,
     @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
     private var shashinServerStartUnixMS: String,
     var messageSource: MessageSource? = null
