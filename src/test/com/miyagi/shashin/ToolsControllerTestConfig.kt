@@ -19,10 +19,6 @@ class ToolsControllerTestConfig {
         healthEndpoint: HealthEndpoint? = null,
         @Value("\${app.endpoint.url.geocode}")
         geocodeUrl: String,
-        @Value("\${app.circleci.key}")
-        circleCiKey: String? = null,
-        @Value("\${app.github.key}")
-        githubKey: String? = null,
         @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS'] ?: '0'}")
         shashinServerStartUnixMS: String,
         messageSource: MessageSource? = null
@@ -33,8 +29,6 @@ class ToolsControllerTestConfig {
             buildProperties = buildProperties,
             healthEndpoint = healthEndpoint,
             geocodeUrl = geocodeUrl,
-            circleCiKey = circleCiKey,
-            githubKey = githubKey,
             messageSource = messageSource
         )
     }

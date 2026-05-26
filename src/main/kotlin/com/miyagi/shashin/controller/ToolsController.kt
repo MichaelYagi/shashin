@@ -368,26 +368,26 @@ class ToolsController(
 
         response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 
-        response["circleCIBuild"] = "N/A"
-        if (ignoreBuildCheck == false) {
-            metricsUtil.start("circleci endpoint")
-            val circleciTimingStart = Date()
-            val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
-            if (passing) {
-                response["circleCIBuild"] = "OK"
-            } else {
-                response["circleCIBuild"] = "FAIL"
-                // Don't include as part of status, credits might run out resulting in fail
-                // status = "FAIL"
-            }
-            val circleciTimingEnd = Date()
-            val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
-            logger.log(
-                Level.INFO,
-                "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}"
-            )
-            metricsUtil.end()
-        }
+//        response["circleCIBuild"] = "N/A"
+//        if (ignoreBuildCheck == false) {
+//            metricsUtil.start("circleci endpoint")
+//            val circleciTimingStart = Date()
+//            val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
+//            if (passing) {
+//                response["circleCIBuild"] = "OK"
+//            } else {
+//                response["circleCIBuild"] = "FAIL"
+//                // Don't include as part of status, credits might run out resulting in fail
+//                // status = "FAIL"
+//            }
+//            val circleciTimingEnd = Date()
+//            val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
+//            logger.log(
+//                Level.INFO,
+//                "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}"
+//            )
+//            metricsUtil.end()
+//        }
 
         metricsUtil.start("system check")
         val systemMap = mutableMapOf<String, Any?>()
