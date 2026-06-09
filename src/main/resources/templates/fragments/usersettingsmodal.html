@@ -68,10 +68,8 @@
                 /*<![CDATA[*/
                 $("#unhidepassword[[${user.id}]]").on("click", function (e) {
                     e.preventDefault();
-                    changeTypes($("#password[[${user.id}]]"), $("#unhidepasswordicon[[${user.id}]]"));
-                });
-
-                function changeTypes(elem, icon) {
+                    const elem = $("#password[[${user.id}]]");
+                    const icon = $("#unhidepasswordicon[[${user.id}]]");
                     if (elem.attr("type") === "password") {
                         elem.prop("type", "text");
                         icon.removeClass("bi-eye").addClass("bi-eye-slash");
@@ -79,27 +77,16 @@
                         elem.prop("type", "password");
                         icon.removeClass("bi-eye-slash").addClass("bi-eye");
                     }
-                }
+                });
 
                 $("#propresetpassworduser[[${user.id}]]").on("hide.bs.modal", function (e) {
                     $("#unhidepasswordicon[[${user.id}]]").removeClass("bi-eye-slash").addClass("bi-eye");
                     $("#password[[${user.id}]]").prop("type", "password");
                 });
 
-                $("#resetPasswordUser[[${user.id}]]").on("keydown", async function (e) {
-                    if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
-                        e.preventDefault();
-
-                        await resetPassword(/*[[${user.username}]]*/ '', /*[[${user.id}]]*/ 0);
-                    }
-                });
-                $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
-                    e.preventDefault();
-
-                    await resetPassword(/*[[${user.username}]]*/ '', /*[[${user.id}]]*/ 0);
-                });
-
-                async function resetPassword(username, userId) {
+                const resetPassword = async () => {
+                    const userId = /*[[${user.id}]]*/ 0;
+                    const username = /*[[${user.username}]]*/ '';
                     const passwordLength = $("#password"+userId).val().length;
 
                     if (passwordLength > 5) {
@@ -157,7 +144,18 @@
                             borderColor: "danger"
                         });
                     }
-                }
+                };
+
+                $("#resetPasswordUser[[${user.id}]]").on("keydown", async function (e) {
+                    if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
+                        e.preventDefault();
+                        await resetPassword();
+                    }
+                });
+                $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
+                    e.preventDefault();
+                    await resetPassword();
+                });
 
                 $('#propresetpassworduser[[${user.id}]]').on('hide.bs.modal', function () {
                     $("#resetPasswordUserStatus[[${user.id}]]").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');

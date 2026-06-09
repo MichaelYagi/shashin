@@ -53,3 +53,4 @@ build/
 /src/main/resources/static/css/site/min/
 /src/main/resources/static/js/site/min/
 /process.yml
+/cc_prompt.txt
