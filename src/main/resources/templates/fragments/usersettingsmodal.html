@@ -90,28 +90,26 @@
                     if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
                         e.preventDefault();
 
-                        await resetPassword([[${user.id}]]);
+                        await resetPassword(/*[[${user.username}]]*/ '', /*[[${user.id}]]*/ 0);
                     }
                 });
                 $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
-                    await resetPassword([[${user.id}]]);
+                    await resetPassword(/*[[${user.username}]]*/ '', /*[[${user.id}]]*/ 0);
                 });
 
-                async function resetPassword(userId) {
+                async function resetPassword(username, userId) {
                     const passwordLength = $("#password"+userId).val().length;
 
                     if (passwordLength > 5) {
-                        let username = /*[[${user.username}]]*/ '';
-
                         $("#resetPasswordUserStatus"+userId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
                         $("#resetPasswordUserStatus"+userId).visible();
                         $("#resetPasswordUserStatus"+userId).attr("title", "");
                         $("#resetPasswordUserCancel"+userId).prop('disabled', true);
 
                         const http = new Http("marking notification saving user");
-                        let json = {userId: userId, password: $("#password[[${user.id}]]").val()}
+                        let json = {userId: userId, password: $("#password"+userId).val()}
                         const data = await http.ajax("post", "/user/update/password", JSON.stringify(json), function () {
                             $("#resetPasswordUserStatus"+userId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                             $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
