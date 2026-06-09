@@ -66,61 +66,68 @@
             </div>
             <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#unhidepassword[[${user.id}]]").on("click", function (e) {
-                    e.preventDefault();
-                    const elem = $("#password[[${user.id}]]");
-                    const icon = $("#unhidepasswordicon[[${user.id}]]");
-                    if (elem.attr("type") === "password") {
-                        elem.prop("type", "text");
-                        icon.removeClass("bi-eye").addClass("bi-eye-slash");
-                    } else {
-                        elem.prop("type", "password");
-                        icon.removeClass("bi-eye-slash").addClass("bi-eye");
-                    }
-                });
-
-                $("#propresetpassworduser[[${user.id}]]").on("hide.bs.modal", function (e) {
-                    $("#unhidepasswordicon[[${user.id}]]").removeClass("bi-eye-slash").addClass("bi-eye");
-                    $("#password[[${user.id}]]").prop("type", "password");
-                });
-
-                const resetPassword = async () => {
+                (function () {
                     const userId = /*[[${user.id}]]*/ 0;
                     const username = /*[[${user.username}]]*/ '';
-                    const passwordLength = $("#password"+userId).val().length;
 
-                    if (passwordLength > 5) {
-                        $("#resetPasswordUserStatus"+userId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                        $("#resetPasswordUserStatus"+userId).visible();
-                        $("#resetPasswordUserStatus"+userId).attr("title", "");
-                        $("#resetPasswordUserCancel"+userId).prop('disabled', true);
+                    $("#unhidepassword"+userId).on("click", function (e) {
+                        e.preventDefault();
+                        const elem = $("#password"+userId);
+                        const icon = $("#unhidepasswordicon"+userId);
+                        if (elem.attr("type") === "password") {
+                            elem.prop("type", "text");
+                            icon.removeClass("bi-eye").addClass("bi-eye-slash");
+                        } else {
+                            elem.prop("type", "password");
+                            icon.removeClass("bi-eye-slash").addClass("bi-eye");
+                        }
+                    });
 
-                        const http = new Http("marking notification saving user");
-                        let json = {userId: userId, password: $("#password"+userId).val()}
-                        const data = await http.ajax("post", "/user/update/password", JSON.stringify(json), function () {
-                            $("#resetPasswordUserStatus"+userId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                            $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
-                            $("#resetPasswordUserCancel"+userId).prop('disabled', false);
-                        });
+                    $("#propresetpassworduser"+userId).on("hide.bs.modal", function (e) {
+                        $("#unhidepasswordicon"+userId).removeClass("bi-eye-slash").addClass("bi-eye");
+                        $("#password"+userId).prop("type", "password");
+                    });
 
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            if (data["status"] === "success") {
-                                $("#resetPasswordUserStatus"+userId).addClass('bi-check-circle').removeClass('spinner-grow');
+                    const resetPassword = async () => {
+                        const passwordLength = $("#password"+userId).val().length;
+
+                        if (passwordLength > 5) {
+                            $("#resetPasswordUserStatus"+userId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+                            $("#resetPasswordUserStatus"+userId).visible();
+                            $("#resetPasswordUserStatus"+userId).attr("title", "");
+                            $("#resetPasswordUserCancel"+userId).prop('disabled', true);
+
+                            const http = new Http("marking notification saving user");
+                            let json = {userId: userId, password: $("#password"+userId).val()}
+                            const data = await http.ajax("post", "/user/update/password", JSON.stringify(json), function () {
+                                $("#resetPasswordUserStatus"+userId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                                $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
                                 $("#resetPasswordUserCancel"+userId).prop('disabled', false);
-                                $("#unhidepasswordicon"+userId).removeClass("bi-eye-slash").addClass("bi-eye");
-                                $("#password"+userId).prop("type", "password");
-                                $("#propresetpassworduser"+userId).modal('hide');
-                                let userGenerated = true;
-                                if (data.hasOwnProperty("password")) {
-                                    userGenerated = false;
+                            });
+
+                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                                if (data["status"] === "success") {
+                                    $("#resetPasswordUserStatus"+userId).addClass('bi-check-circle').removeClass('spinner-grow');
+                                    $("#resetPasswordUserCancel"+userId).prop('disabled', false);
+                                    $("#unhidepasswordicon"+userId).removeClass("bi-eye-slash").addClass("bi-eye");
+                                    $("#password"+userId).prop("type", "password");
+                                    $("#propresetpassworduser"+userId).modal('hide');
+                                    let userGenerated = true;
+                                    if (data.hasOwnProperty("password")) {
+                                        userGenerated = false;
+                                    }
+                                    shashin.closeToastMessages({tag: "resetpass"});
+                                    shashin.showToastMessage(shashin.getTranslatedValue("main.user.reset.title"), shashin.getTranslatedValue("main.user.reset.body", username) + ". " + ((userGenerated === false) ? shashin.getTranslatedValue("main.user.reset.generated.body", data.password) : ""), {
+                                        icon: "bi-info-circle",
+                                        iconColor: "#777777",
+                                        tag: "resetpass",
+                                        autohide: false
+                                    });
+                                } else {
+                                    $("#resetPasswordUserStatus"+userId).addClass('bi-x-circle').removeClass('spinner-grow');
+                                    $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
+                                    $("#resetPasswordUserCancel"+userId).prop('disabled', false);
                                 }
-                                shashin.closeToastMessages({tag: "resetpass"});
-                                shashin.showToastMessage(shashin.getTranslatedValue("main.user.reset.title"), shashin.getTranslatedValue("main.user.reset.body", username) + ". " + ((userGenerated === false) ? shashin.getTranslatedValue("main.user.reset.generated.body", data.password) : ""), {
-                                    icon: "bi-info-circle",
-                                    iconColor: "#777777",
-                                    tag: "resetpass",
-                                    autohide: false
-                                });
                             } else {
                                 $("#resetPasswordUserStatus"+userId).addClass('bi-x-circle').removeClass('spinner-grow');
                                 $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
@@ -130,38 +137,34 @@
                             $("#resetPasswordUserStatus"+userId).addClass('bi-x-circle').removeClass('spinner-grow');
                             $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
                             $("#resetPasswordUserCancel"+userId).prop('disabled', false);
+                            shashin.closeToastMessages({tag: "resetpass"});
+                            shashin.showToastMessage(shashin.getTranslatedValue("main.user.reset.title"), shashin.getTranslatedValue("main.user.reset.min"), {
+                                icon: "bi-exclamation-triangle",
+                                iconColor: "#FF0000",
+                                tag: "resetpass",
+                                autohide: false,
+                                borderColor: "danger"
+                            });
                         }
-                    } else {
-                        $("#resetPasswordUserStatus"+userId).addClass('bi-x-circle').removeClass('spinner-grow');
-                        $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
-                        $("#resetPasswordUserCancel"+userId).prop('disabled', false);
-                        shashin.closeToastMessages({tag: "resetpass"});
-                        shashin.showToastMessage(shashin.getTranslatedValue("main.user.reset.title"), shashin.getTranslatedValue("main.user.reset.min"), {
-                            icon: "bi-exclamation-triangle",
-                            iconColor: "#FF0000",
-                            tag: "resetpass",
-                            autohide: false,
-                            borderColor: "danger"
-                        });
-                    }
-                };
+                    };
 
-                $("#resetPasswordUser[[${user.id}]]").on("keydown", async function (e) {
-                    if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
+                    $("#resetPasswordUser"+userId).on("keydown", async function (e) {
+                        if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
+                            e.preventDefault();
+                            await resetPassword();
+                        }
+                    });
+                    $("#resetPasswordUser"+userId).on("click", async function (e) {
                         e.preventDefault();
                         await resetPassword();
-                    }
-                });
-                $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
-                    e.preventDefault();
-                    await resetPassword();
-                });
+                    });
 
-                $('#propresetpassworduser[[${user.id}]]').on('hide.bs.modal', function () {
-                    $("#resetPasswordUserStatus[[${user.id}]]").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
-                    $("#resetPasswordUserStatus[[${user.id}]]").invisible();
-                    $("#password[[${user.id}]]").val("");
-                });
+                    $("#propresetpassworduser"+userId).on('hide.bs.modal', function () {
+                        $("#resetPasswordUserStatus"+userId).addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
+                        $("#resetPasswordUserStatus"+userId).invisible();
+                        $("#password"+userId).val("");
+                    });
+                })();
                 /*]]>*/
             </script>
         </div>
