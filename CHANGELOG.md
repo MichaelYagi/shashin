@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 - Cast module on all pages
+- Reset password for super admins fixed
 
 ### Security
 

@@ -90,42 +90,41 @@
                     if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
                         e.preventDefault();
 
-                        await resetPassword();
+                        await resetPassword([[${user.id}]]);
                     }
                 });
                 $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
-                    await resetPassword();
+                    await resetPassword([[${user.id}]]);
                 });
 
-                async function resetPassword() {
-                    const passwordLength = $("#password[[${user.id}]]").val().length;
+                async function resetPassword(userId) {
+                    const passwordLength = $("#password"+userId).val().length;
 
                     if (passwordLength > 5) {
-                        let userId = "[[${user.id}]]";
                         let username = /*[[${user.username}]]*/ '';
 
-                        $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                        $("#resetPasswordUserStatus[[${user.id}]]").visible();
-                        $("#resetPasswordUserStatus[[${user.id}]]").attr("title", "");
-                        $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', true);
+                        $("#resetPasswordUserStatus"+userId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+                        $("#resetPasswordUserStatus"+userId).visible();
+                        $("#resetPasswordUserStatus"+userId).attr("title", "");
+                        $("#resetPasswordUserCancel"+userId).prop('disabled', true);
 
                         const http = new Http("marking notification saving user");
                         let json = {userId: userId, password: $("#password[[${user.id}]]").val()}
                         const data = await http.ajax("post", "/user/update/password", JSON.stringify(json), function () {
-                            $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                            $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
-                            $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
+                            $("#resetPasswordUserStatus"+userId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                            $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
+                            $("#resetPasswordUserCancel"+userId).prop('disabled', false);
                         });
 
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             if (data["status"] === "success") {
-                                $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-check-circle').removeClass('spinner-grow');
-                                $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
-                                $("#unhidepasswordicon[[${user.id}]]").removeClass("bi-eye-slash").addClass("bi-eye");
-                                $("#password[[${user.id}]]").prop("type", "password");
-                                $("#propresetpassworduser[[${user.id}]]").modal('hide');
+                                $("#resetPasswordUserStatus"+userId).addClass('bi-check-circle').removeClass('spinner-grow');
+                                $("#resetPasswordUserCancel"+userId).prop('disabled', false);
+                                $("#unhidepasswordicon"+userId).removeClass("bi-eye-slash").addClass("bi-eye");
+                                $("#password"+userId).prop("type", "password");
+                                $("#propresetpassworduser"+userId).modal('hide');
                                 let userGenerated = true;
                                 if (data.hasOwnProperty("password")) {
                                     userGenerated = false;
@@ -138,19 +137,19 @@
                                     autohide: false
                                 });
                             } else {
-                                $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
-                                $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
-                                $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
+                                $("#resetPasswordUserStatus"+userId).addClass('bi-x-circle').removeClass('spinner-grow');
+                                $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
+                                $("#resetPasswordUserCancel"+userId).prop('disabled', false);
                             }
                         } else {
-                            $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
-                            $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
-                            $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
+                            $("#resetPasswordUserStatus"+userId).addClass('bi-x-circle').removeClass('spinner-grow');
+                            $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
+                            $("#resetPasswordUserCancel"+userId).prop('disabled', false);
                         }
                     } else {
-                        $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
-                        $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
-                        $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
+                        $("#resetPasswordUserStatus"+userId).addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#resetPasswordUserStatus"+userId).attr("title", shashin.modalStatusFailMessage());
+                        $("#resetPasswordUserCancel"+userId).prop('disabled', false);
                         shashin.closeToastMessages({tag: "resetpass"});
                         shashin.showToastMessage(shashin.getTranslatedValue("main.user.reset.title"), shashin.getTranslatedValue("main.user.reset.min"), {
                             icon: "bi-exclamation-triangle",
