@@ -108,7 +108,7 @@ class SearchController(
         return module
     }
 
-    @GetMapping("/api/v1/search/{page}/term/{term}")
+    @RequestMapping(value = ["/api/v1/search/{page}/term/{term}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getApiPaginationSearch(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable term: String): String {
         val response = buildSearchData(model,term,page)
