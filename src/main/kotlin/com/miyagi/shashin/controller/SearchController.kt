@@ -208,8 +208,10 @@ class SearchController(
                 }
             }
 
+            val metadataIdList = mutableListOf<String>()
             if (metadataList != null) {
                 for (metadata in metadataList) {
+                    metadataIdList.add(metadata.getId())
                     val favorites = favoriteRepository!!.findAllByMetadataId(metadata.getId())
                     if (favorites != null) {
                         for (favorite in favorites) {
@@ -230,8 +232,8 @@ class SearchController(
                 }
             }
 
-            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
             val keywordMap = mutableMapOf<String, String>()
+            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataIds(metadataIdList)
             for (keywordGroup in keywordList) {
                 keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
             }
