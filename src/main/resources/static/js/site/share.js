@@ -9,7 +9,8 @@ class ShareAlbum {
         this.albumId = albumId;
         this.albumMetadataList = albumMetadataList;
         this.eol = false;
-        this.lastDate = lastDate;
+        this.lastSectionDate = lastDate;
+        this.lastSectionId = lastDate;
         this.locale = locale;
         this.clearMultiSelectListener = clearMultiSelectListener;
         this.lastLgIndex = lastLgIndex;
@@ -76,28 +77,14 @@ class ShareAlbum {
                         const metadata = albumMetadataList[index];
 
                         if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
-                            let dateHeadingObj = null;
                             const overlayFlags = {};
                             overlayFlags.renderTopRight = true;
                             overlayFlags.renderTopLeft = true;
                             overlayFlags.renderBottomLeft = false;
                             overlayFlags.renderCenter = true;
 
-                            let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1].year+ "-" + albumMetadataList[index-1].month + "-" + albumMetadataList[index-1].day : "";
-                            if (this.lastDate !== "") {
-                                lastDate = this.lastDate;
-                                this.lastDate = "";
-                            }
                             const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
-                            const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1].year + "-" + albumMetadataList[index+1].month + "-" + albumMetadataList[index+1].day : "";
                             const displayCurrentDate = Util.getDateString(metadata.year, metadata.month, metadata.day, this.locale);
-
-                            if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
-                                dateHeadingObj = {
-                                    heading: currentDate,
-                                    display: displayCurrentDate
-                                };
-                            }
 
                             const overlayData = shashin.getOverlayData(metadata, {
                                 cOnClickFunction: "shashin.openGallery",
@@ -111,9 +98,19 @@ class ShareAlbum {
                             const appendClass = "appendAlbumPhotos";
                             const uuid = uuidv4();
 
-                            if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                                const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                            // Always append new sections at the end of the gallery (never insert into an
+                            // earlier date section) so that mediaContentList order matches DOM order, which
+                            // is required for lightGallery's index-based next/prev navigation.
+                            let sectionId = this.lastSectionId;
+
+                            if (this.lastSectionDate !== currentDate) {
+                                sectionId = currentDate + ($("#"+currentDate).length > 0 ? "-" + uuid : "");
+                                const headerAndBody = '<section class="dateSection" id="' + sectionId + '"><div class="mb-3" id="dateHeader' + sectionId + '"><strong>' + displayCurrentDate + '</strong></div><div id="dateBody' + sectionId + '" class="row" style="margin-left:-2px;"></div></section>';
                                 $(headerAndBody).insertBefore($("." + appendClass).last());
+                                $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+sectionId));
+
+                                this.lastSectionDate = currentDate;
+                                this.lastSectionId = sectionId;
                             }
 
                             const html = $(GalleryTemplates.PhotoGalleryItem({
@@ -125,13 +122,7 @@ class ShareAlbum {
                                 isMobile: Util.isMobile()
                             }));
 
-                            if ($("#dateBody"+currentDate).length > 0) {
-                                $(html).appendTo($("#dateBody" + currentDate));
-                            }
-
-                            if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
-                                $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
-                            }
+                            $(html).appendTo($("#dateBody" + sectionId));
 
                             lastLgIndex += 1;
                         }

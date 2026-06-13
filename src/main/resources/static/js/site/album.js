@@ -3,7 +3,8 @@
     albumSettings.page = 1;
     albumSettings.http = null;
     albumSettings.eol = false;
-    albumSettings.lastDate = "";
+    albumSettings.lastSectionDate = "";
+    albumSettings.lastSectionId = "";
     albumSettings.thumbnailType = "225";
     albumSettings.thumbnailHeight = Util.thumbnailHeight();;
     albumSettings.locale = "en";
@@ -14,7 +15,8 @@
 
     albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate, lastLgIndex, locale) {
         albumSettings.http = new Http(activePage);
-        albumSettings.lastDate = lastDate;
+        albumSettings.lastSectionDate = lastDate;
+        albumSettings.lastSectionId = lastDate;
         albumSettings.locale = locale;
         albumSettings.lastLgIndex = lastLgIndex;
 
@@ -147,7 +149,6 @@
 
                             if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
 
-                                let dateHeadingObj = null;
                                 const overlayFlags = {};
                                 overlayFlags.renderTopRight = true;
                                 overlayFlags.renderTopLeft = true;
@@ -158,20 +159,7 @@
                                 const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].favorite === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                 const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
-                                let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1].year+ "-" + albumMetadataList[index-1].month + "-" + albumMetadataList[index-1].day : "";
-                                if (albumSettings.lastDate !== "") {
-                                    lastDate = albumSettings.lastDate;
-                                    albumSettings.lastDate = "";
-                                }
-                                const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1].year + "-" + albumMetadataList[index+1].month + "-" + albumMetadataList[index+1].day : "";
                                 const displayCurrentDate = Util.getDateString(metadata.year, metadata.month, metadata.day, albumSettings.locale);
-
-                                if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
-                                    dateHeadingObj = {
-                                        heading: currentDate,
-                                        display: displayCurrentDate
-                                    };
-                                }
 
                                 let overlayData;
 
@@ -203,9 +191,19 @@
                                 // Append HTML
                                 const uuid = uuidv4();
 
-                                if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="dateHeader" id="dateHeader'+dateHeadingObj.heading+'"><span id="select'+metadata.year+'-'+metadata.month+'-'+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong>'+dateHeadingObj.display+'</strong></div><div id="dateBody'+dateHeadingObj.heading+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
+                                // Always append new sections at the end of the gallery (never insert into an
+                                // earlier date section) so that mediaContentList order matches DOM order, which
+                                // is required for lightGallery's index-based next/prev navigation.
+                                let sectionId = albumSettings.lastSectionId;
+
+                                if (albumSettings.lastSectionDate !== currentDate) {
+                                    sectionId = currentDate + ($("#"+currentDate).length > 0 ? "-" + uuid : "");
+                                    const headerAndBody = '<section class="dateSection" id="'+sectionId+'"><div class="dateHeader" id="dateHeader'+sectionId+'"><span id="select'+sectionId+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong>'+displayCurrentDate+'</strong></div><div id="dateBody'+sectionId+'" class="row" style="margin-left:-2px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
+                                    $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+sectionId));
+
+                                    albumSettings.lastSectionDate = currentDate;
+                                    albumSettings.lastSectionId = sectionId;
                                 }
 
                                 const html = $(GalleryTemplates.PhotoGalleryItem({
@@ -217,22 +215,16 @@
                                     isMobile: Util.isMobile()
                                 }));
 
-                                if ($("#dateBody"+currentDate).length > 0) {
-                                    $(html).appendTo($("#dateBody" + currentDate)).ready(function () {
-                                        // Call JS and modal
-                                        albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap, canEdit);
-                                        albumSettings.activateAlbumListeners(metadata, albumData);
-                                    });
-                                }
+                                $(html).appendTo($("#dateBody" + sectionId)).ready(function () {
+                                    // Call JS and modal
+                                    albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap, canEdit);
+                                    albumSettings.activateAlbumListeners(metadata, albumData);
+                                });
 
-                                if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
-                                    $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
-                                }
+                                shashin.dayHeadingListener(sectionId, activePage, mediaTypeFilter);
 
                                 lastLgIndex += 1;
                             }
-
-                            shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
                         }
 
                         albumSettings.lastLgIndex = lastLgIndex;

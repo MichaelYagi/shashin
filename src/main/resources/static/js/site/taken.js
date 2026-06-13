@@ -7,7 +7,8 @@ class Taken {
         this.mediaTypeFilter = mediaTypeFilter;
         this.metadataList = metadataList;
         this.activePage = activePage;
-        this.lastDate = lastDate;
+        this.lastSectionDate = lastDate;
+        this.lastSectionId = lastDate;
         this.eol = false;
         this.locale = locale;
         this.lastLgIndex = lastLgIndex;
@@ -87,7 +88,6 @@ class Taken {
                     const currentMediaLinkIndex = (mediaLinkLength + index);
                     const metadata = metadataList[index];
 
-                    let dateHeadingObj = null;
                     const overlayFlags = {};
                     overlayFlags.renderTopRight = true;
                     overlayFlags.renderTopLeft = true;
@@ -98,13 +98,7 @@ class Taken {
                     const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].favorite === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                     const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
-                    let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1].year+ "-" + metadataList[index-1].month + "-" + metadataList[index-1].day : "";
-                    if (this.lastDate !== "") {
-                        lastDate = this.lastDate;
-                        this.lastDate = "";
-                    }
                     const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
-                    const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1].year + "-" + metadataList[index+1].month + "-" + metadataList[index+1].day : "";
                     const displayCurrentDate = Util.getDateString(metadata.year, metadata.month, metadata.day, this.locale);
 
                     let placename = "";
@@ -126,14 +120,6 @@ class Taken {
                         }
                     }
 
-                    if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
-                        dateHeadingObj = {
-                            heading: currentDate,
-                            display: displayCurrentDate,
-                            placename: placename
-                        };
-                    }
-
                     const overlayData = shashin.getOverlayData(metadata, {
                         editControls: true,
                         editIcon: ((metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle"),
@@ -148,9 +134,19 @@ class Taken {
 
                     const uuid = uuidv4();
 
-                    if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                        const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="dateHeader" id="dateHeader' + currentDate + '"><span id="select'+metadata.year+"-"+metadata.month+"-"+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">'+shashin.getTranslatedValue('main.pages.browse.header.taken')+' </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                    // Always append new sections at the end of the gallery (never insert into an
+                    // earlier date section) so that mediaContentList order matches DOM order, which
+                    // is required for lightGallery's index-based next/prev navigation.
+                    let sectionId = this.lastSectionId;
+
+                    if (this.lastSectionDate !== currentDate) {
+                        sectionId = currentDate + ($("#"+currentDate).length > 0 ? "-" + uuid : "");
+                        const headerAndBody = '<section class="dateSection" id="' + sectionId + '"><div class="dateHeader" id="dateHeader' + sectionId + '"><span id="select'+sectionId+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">'+shashin.getTranslatedValue('main.pages.browse.header.taken')+' </span><strong>' + displayCurrentDate + '</strong>&nbsp;' + placename + '</div><div id="dateBody' + sectionId + '" class="row" style="margin-left:-2px;"></div></section>';
                         $(headerAndBody).insertBefore($("." + appendClass).last());
+                        $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+sectionId));
+
+                        this.lastSectionDate = currentDate;
+                        this.lastSectionId = sectionId;
                     }
 
                     const html = $(GalleryTemplates.PhotoGalleryItem({
@@ -162,16 +158,10 @@ class Taken {
                         isMobile: Util.isMobile()
                     }));
 
-                    if ($("#dateBody"+currentDate).length > 0) {
-                        $(html).appendTo($("#dateBody" + currentDate));
-                        shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
-                    }
+                    $(html).appendTo($("#dateBody" + sectionId));
+                    shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
 
-                    if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
-                        $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
-                    }
-
-                    shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
+                    shashin.dayHeadingListener(sectionId, activePage, mediaTypeFilter);
 
                     lastLgIndex += 1;
                 }

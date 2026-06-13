@@ -7,7 +7,8 @@ class Search {
         this.term = term;
         this.activePage = activePage;
         this.metadataSearchList = metadataSearchList;
-        this.lastDate = lastDate;
+        this.lastSectionDate = lastDate;
+        this.lastSectionId = lastDate;
         this.eol = false;
         this.lastLgIndex = lastLgIndex;
 
@@ -90,7 +91,6 @@ class Search {
                     const metadata = metadataList[index];
 
                     if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
-                        let dateHeadingObj = null;
                         const overlayFlags = {};
                         overlayFlags.renderTopRight = true;
                         overlayFlags.renderTopLeft = true;
@@ -101,21 +101,8 @@ class Search {
                         const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].favorite === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                         const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
-                        let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1].year+ "-" + metadataList[index-1].month + "-" + metadataList[index-1].day : "";
-                        if (this.lastDate !== "") {
-                            lastDate = this.lastDate;
-                            this.lastDate = "";
-                        }
                         const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
-                        const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1].year + "-" + metadataList[index+1].month + "-" + metadataList[index+1].day : "";
                         const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
-
-                        if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
-                            dateHeadingObj = {
-                                heading: currentDate,
-                                display: displayCurrentDate
-                            };
-                        }
 
                         const overlayData = shashin.getOverlayData(metadata, {
                             cOnClickFunction: "shashin.openGallery",
@@ -130,9 +117,19 @@ class Search {
 
                         const uuid = uuidv4();
 
-                        if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                            const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                        // Always append new sections at the end of the gallery (never insert into an
+                        // earlier date section) so that mediaContentList order matches DOM order, which
+                        // is required for lightGallery's index-based next/prev navigation.
+                        let sectionId = this.lastSectionId;
+
+                        if (this.lastSectionDate !== currentDate) {
+                            sectionId = currentDate + ($("#"+currentDate).length > 0 ? "-" + uuid : "");
+                            const headerAndBody = '<section class="dateSection" id="' + sectionId + '"><div class="mb-3" id="dateHeader' + sectionId + '"><strong>' + displayCurrentDate + '</strong></div><div id="dateBody' + sectionId + '" class="row" style="margin-left:-2px;"></div></section>';
                             $(headerAndBody).insertBefore($("." + appendClass).last());
+                            $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+sectionId));
+
+                            this.lastSectionDate = currentDate;
+                            this.lastSectionId = sectionId;
                         }
 
                         const html = $(GalleryTemplates.PhotoGalleryItem({
@@ -144,14 +141,8 @@ class Search {
                             isMobile: Util.isMobile()
                         }));
 
-                        if ($("#dateBody"+currentDate).length > 0) {
-                            $(html).appendTo($("#dateBody" + currentDate));
-                            shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
-                        }
-
-                        if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
-                            $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
-                        }
+                        $(html).appendTo($("#dateBody" + sectionId));
+                        shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
 
                         lastLgIndex += 1;
                     }
