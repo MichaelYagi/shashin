@@ -71,10 +71,11 @@ class Duplicates {
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
+                let appendedCount = 0;
                 const appendClass = "appendDuplicatePhotos";
 
                 for (const index in metadataList) {
-                    const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                    const currentMediaLinkIndex = (mediaLinkLength + appendedCount);
                     const metadata = metadataList[index];
                     if ($("#photoThumbnailContainer" + metadata.id).length === 0) {
                         const overlayFlags = {};
@@ -91,6 +92,7 @@ class Duplicates {
                         });
 
                         mediaContentList.push(shashin.getMediaContent(metadata));
+                        appendedCount += 1;
 
                         const uuid = uuidv4();
                         $(GalleryTemplates.PhotoGalleryItem({

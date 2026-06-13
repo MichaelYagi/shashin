@@ -68,10 +68,11 @@ class ShareAlbum {
                 if (data.hasOwnProperty("albumMetadataList")) {
                     const albumMetadataList = data.albumMetadataList;
                     const mediaLinkLength = $(".mediaLink").length;
+                    let appendedCount = 0;
 
                     for (let index in albumMetadataList) {
                         index = parseInt(index);
-                        const currentMediaLinkIndex = (mediaLinkLength + index);
+                        const currentMediaLinkIndex = (mediaLinkLength + appendedCount);
                         const metadata = albumMetadataList[index];
 
                         if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
@@ -105,6 +106,7 @@ class ShareAlbum {
                             });
 
                             mediaContentList.push(shashin.getMediaContent(metadata));
+                            appendedCount += 1;
 
                             const appendClass = "appendAlbumPhotos";
                             const uuid = uuidv4();

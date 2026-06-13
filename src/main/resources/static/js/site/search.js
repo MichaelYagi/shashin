@@ -81,11 +81,12 @@ class Search {
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
+                let appendedCount = 0;
                 const appendClass = "appendSearchPhotos";
 
                 for (let index in metadataList) {
                     index = parseInt(index);
-                    const currentMediaLinkIndex = (mediaLinkLength + index);
+                    const currentMediaLinkIndex = (mediaLinkLength + appendedCount);
                     const metadata = metadataList[index];
 
                     if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
@@ -125,6 +126,7 @@ class Search {
                         });
 
                         mediaContentList.push(shashin.getMediaContent(metadata));
+                        appendedCount += 1;
 
                         const uuid = uuidv4();
 

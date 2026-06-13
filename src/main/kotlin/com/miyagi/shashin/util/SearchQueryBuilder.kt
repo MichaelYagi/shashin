@@ -151,7 +151,7 @@ object SearchQueryBuilder {
             WHERE m.hidden = false
             AND ($whereClauses)
             GROUP BY m.id
-            ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC
+            ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC
             LIMIT $limit OFFSET $offset
         """.trimIndent()
         return jdbcTemplate.query(sql, metadataRowMapper, *tokenParams(tokens).toTypedArray())
@@ -202,7 +202,7 @@ object SearchQueryBuilder {
             AND ($whereClauses)
             AND ua.user_id = ?
             GROUP BY m.id
-            ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC
+            ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC
             LIMIT $limit OFFSET $offset
         """.trimIndent()
         val params = tokenParams(tokens) + userId

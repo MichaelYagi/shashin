@@ -136,11 +136,12 @@
 
                     if (albumMetadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
+                        let appendedCount = 0;
                         const appendClass = "appendAlbumPhotos";
 
                         for (let index in albumMetadataList) {
                             index = parseInt(index);
-                            const currentMediaLinkIndex = (mediaLinkLength + index);
+                            const currentMediaLinkIndex = (mediaLinkLength + appendedCount);
                             const metadata = albumMetadataList[index];
                             const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
 
@@ -197,6 +198,7 @@
                                 }
 
                                 mediaContentList.push(shashin.getMediaContent(metadata));
+                                appendedCount += 1;
 
                                 // Append HTML
                                 const uuid = uuidv4();
