@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Cast module on all pages
 - Reset password for super admins fixed
 - Page indexing
+- Multi select
 
 ### Security
 
