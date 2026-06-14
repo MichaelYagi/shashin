@@ -261,10 +261,12 @@ $("#appToolsAddAlbum").on("click", function(e) {
 $("#albumAppToolsRemoveAlbum").on("click", async function (e) {
     e.preventDefault();
 
-    let metadataIdList = [];
-    $(".thumbnail-tl .bi-circle-fill").each(function (i, obj) {
-        metadataIdList.push(obj.id.substring(6, obj.id.length));
-    });
+    let metadataIdList = shashin.getMetadataIdList();
+    if (metadataIdList.length === 0) {
+        $(".thumbnail-tl .bi-circle-fill").each(function (i, obj) {
+            metadataIdList.push(obj.id.substring(6, obj.id.length));
+        });
+    }
 
     let albumId = $('#albumId').val();
     if (metadataIdList.length > 0 && albumId.length > 0) {
@@ -292,10 +294,12 @@ $("#albumAppToolsRemoveAlbum").on("click", async function (e) {
 $("#albumAppToolsRemoveFavorites").on("click", async function (e) {
     e.preventDefault();
 
-    let metadataIdList = [];
-    $('.thumbnail-tl .bi-circle-fill').each(function (i, obj) {
-        metadataIdList.push(obj.id.substring(6, obj.id.length));
-    });
+    let metadataIdList = shashin.getMetadataIdList();
+    if (metadataIdList.length === 0) {
+        $('.thumbnail-tl .bi-circle-fill').each(function (i, obj) {
+            metadataIdList.push(obj.id.substring(6, obj.id.length));
+        });
+    }
 
     if (metadataIdList.length > 0) {
         const http = new Http("album remove favorites");
@@ -327,10 +331,12 @@ $("#albumAppToolsRestore").on("click", async function (e) {
         "font-size": ""
     });
 
-    let metadataIdList = [];
-    $('.thumbnail-tl .bi-circle-fill').each(function (i, obj) {
-        metadataIdList.push(obj.id.substring(6, obj.id.length));
-    });
+    let metadataIdList = shashin.getMetadataIdList();
+    if (metadataIdList.length === 0) {
+        $('.thumbnail-tl .bi-circle-fill').each(function (i, obj) {
+            metadataIdList.push(obj.id.substring(6, obj.id.length));
+        });
+    }
 
     if (metadataIdList.length > 0) {
         const http = new Http("archive restore");

@@ -1,4 +1,11 @@
 (function( shashin, $, undefined ) {
+    // A dateSection's sectionId is normally just its date (e.g. "2024-6-13"), but may have a
+    // "-<uuid>" suffix when a date reappears in a non-contiguous section. API endpoints expect
+    // just the date, so strip any such suffix before building URLs.
+    shashin.getDateFromSectionId = function(sectionId) {
+        return sectionId.split("-").slice(0, 3).join("-");
+    };
+
     shashin.batchSelect = function(metadataId, view, addBorder = true, opaque = 0.3, transparent = 1.0) {
         if (view === "undefined") {
             view = $("#activePage").val();
@@ -418,14 +425,15 @@
                 view === "favorites" ||
                 view === "recent"
             ) {
-                let date = "";
+                let sectionId = "";
                 if (view === "matches" || view === "person") {
-                    date = $("#dateTaken"+metadataId).val();
+                    sectionId = $("#dateTaken"+metadataId).val();
                 } else {
                     const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
-                    date = rowId.replace("row", "").replace("dateBody", "");
+                    sectionId = rowId.replace("row", "").replace("dateBody", "");
                 }
 
+                const date = shashin.getDateFromSectionId(sectionId);
                 const selectedMetadata = shashin.getMetadataIdList();
 
                 let url = "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata";
@@ -454,9 +462,9 @@
                         }
 
                         if (dateAllSelected) {
-                            $("#select" + date).addClass("bi-circle-fill").removeClass("bi-circle");
+                            $("#select" + sectionId).addClass("bi-circle-fill").removeClass("bi-circle");
                         } else {
-                            $("#select" + date).removeClass("bi-circle-fill").addClass("bi-circle");
+                            $("#select" + sectionId).removeClass("bi-circle-fill").addClass("bi-circle");
                         }
                     }
                 });
@@ -528,13 +536,14 @@
             if ($("#" + date).length > 0 && $("#select" + date).css("display") === "inline-block") {
                 setTimeout(function () {
                     const http = new Http("get month data");
+                    const queryDate = shashin.getDateFromSectionId(date);
 
-                    let url = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata";
+                    let url = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/metadata";
                     if (activePage === "album") {
                         const albumId = $("#albumId").val();
-                        url = "/album/mediatype/" + mediaTypeFilter + "/date/" + date + "/" + albumId;
+                        url = "/album/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/" + albumId;
                     } else if (activePage === "accessed" || activePage === "modified" || activePage === "recent" || activePage === "taken") {
-                        url = "/browse/mediatype/" + mediaTypeFilter + "/date/" + date + "/" + activePage;
+                        url = "/browse/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/" + activePage;
                     }
 
                     http.ajax("get", url).then(function (data) {
