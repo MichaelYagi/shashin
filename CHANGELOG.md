@@ -12,17 +12,19 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 ### Changed
-- Repo now public
-
 ### Deprecated
 ### Removed
+### Fixed
+
+## [2.18.2] - 2026-06-13
+### Changed
+- Repo now public
+
 ### Fixed
 - Cast module on all pages
 - Reset password for super admins fixed
 - Page indexing
 - Multi select
-
-### Security
 
 ## [2.18.1] - 2026-05-11
 ### Changed
