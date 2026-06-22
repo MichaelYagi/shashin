@@ -217,6 +217,19 @@ private val relativeSidecarDir: String? = null
                     )
                 }
 
+                if (settings.getObjectDetection() == true) {
+                    ImageProcessing.Companion.scanObjects(
+                        metadataRepository,
+                        keywordRepository,
+                        keywordPhotoRepository,
+                        settings,
+                        threadFile,
+                        shouldStop,
+                        messageSource,
+                        locale
+                    )
+                }
+
                 val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
 
                 if (adminSupers != null && (recognitionCount > 0 || duplicateCount > 0)) {

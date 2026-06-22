@@ -117,15 +117,17 @@
                             </div>
                             <th:block th:if="${faceRecogServicesAvailable}">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="objectDetection" name="objectDetection" th:checked="${settings.objectDetection}">
-                                <label class="form-check-label" for="objectDetection">
-                                    <strong><th:block th:text="#{main.pages.settings.enableobject}"></th:block></strong>&nbsp;<span id="objectDetectionInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableobject.tooltip}"></span>
+                                <input class="form-check-input" type="checkbox" id="facialDetection" name="facialDetection" th:checked="${settings.facialDetection}" th:disabled="${!faceModelAvailable}">
+                                <label class="form-check-label" for="facialDetection">
+                                    <strong><th:block th:text="#{main.pages.settings.enableface}"></th:block></strong>&nbsp;<span id="objectFacialInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableface.tooltip}"></span>
+                                    <th:block th:unless="${faceModelAvailable}"><br><small class="text-muted">No face model installed in Argus</small></th:block>
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="facialDetection" name="facialDetection" th:checked="${settings.facialDetection}">
-                                <label class="form-check-label" for="facialDetection">
-                                    <strong><th:block th:text="#{main.pages.settings.enableface}"></th:block></strong>&nbsp;<span id="objectFacialInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableface.tooltip}"></span>
+                                <input class="form-check-input" type="checkbox" id="objectDetection" name="objectDetection" th:checked="${settings.objectDetection}" th:disabled="${!objectModelAvailable}">
+                                <label class="form-check-label" for="objectDetection">
+                                    <strong><th:block th:text="#{main.pages.settings.enableobject}"></th:block></strong>&nbsp;<span id="objectDetectionInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableobject.tooltip}"></span>
+                                    <th:block th:unless="${objectModelAvailable}"><br><small class="text-muted">No object model installed in Argus</small></th:block>
                                 </label>
                             </div>
                             </th:block>

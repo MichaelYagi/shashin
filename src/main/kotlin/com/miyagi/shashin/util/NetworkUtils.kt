@@ -89,6 +89,34 @@ class NetworkUtils {
             return available
         }
 
+        // Returns which Argus models are installed and active by reading /api/health.
+        // Map keys: "connected" (server reachable), "face" (face model active), "object" (object model active).
+        fun checkArgusModels(argusServer: String?, argusKey: String?): Map<String, Boolean> {
+            val result = mutableMapOf("connected" to false, "face" to false, "object" to false)
+            if (argusKey.isNullOrBlank() || argusServer.isNullOrBlank()) return result
+
+            try {
+                val response = WebClient.create(argusServer)
+                    .get()
+                    .uri("api/health")
+                    .header("X-API-Key", argusKey)
+                    .retrieve()
+                    .bodyToMono(String::class.java)
+                    .block()
+
+                if (!response.isNullOrBlank()) {
+                    val json = ObjectMapper().readTree(response)
+                    result["connected"] = true
+                    result["face"] = json.has("face_model") && !json["face_model"].isNull
+                    result["object"] = json.has("object_model") && !json["object_model"].isNull
+                }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "checkArgusModels - exception: ${e.message}")
+            }
+
+            return result
+        }
+
         fun checkCircleCiStatus(apiKey: String?): Boolean {
             var passing = false
 

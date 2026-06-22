@@ -1324,98 +1324,94 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
-        fun objectRecognizer(metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, threshold: Double? = null, threadFile: File? = null, shouldStop: Boolean? = null, messageSource: MessageSource? = null, locale: Locale = Locale("en")): MutableMap<String, Double> {
-            val keywordMap = mutableMapOf<String, Double>()
-            val unidentifiedStr = "unidentified objects"
+        // Detect objects in one photo via Argus and store the class names as keywords.
+        // The "person" class is skipped (faces handle people). If nothing else is found,
+        // an "unidentified objects" sentinel keyword is stored so the photo isn't rescanned.
+        fun detectAndStoreObjects(
+            metadataObj: Metadata,
+            settings: Settings,
+            keywordRepository: KeywordRepository?,
+            keywordPhotoRepository: KeywordPhotoRepository?,
+            metadataRepository: MetadataRepository?,
+            threadFile: File? = null,
+            messageSource: MessageSource? = null,
+            locale: Locale = Locale("en")
+        ): Boolean {
+            if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return false
+            if (keywordRepository == null || keywordPhotoRepository == null || metadataRepository == null) return false
 
             try {
-                val file = if (metadataObj.getType() != null && metadataObj.getType()?.contains("video", ignoreCase = true)!! && File(metadataObj.getThumbnailPathSmall()!!).exists()) {
-                    File(metadataObj.getThumbnailPathSmall()!!)
-                } else {
-                    File(metadataObj.getPath()!!)
-                }
+                val mapper = ObjectMapper()
+                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val builder = MultipartBodyBuilder()
+                builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
 
-                // Object recognition
-                val img = ImageFactory.getInstance().fromFile(file.toPath())
+                val response = webClient.post()
+                    .uri("api/detect/objects")
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                    .header("X-API-Key", settings.getArgusKey())
+                    .body(BodyInserters.fromMultipartData(builder.build()))
+                    .retrieve()
+                    .bodyToMono(String::class.java)
+                    .block()
 
-                ModelZoo.loadModel(criteria).use { objmodel ->
-                    objmodel.newPredictor().use { predictor ->
-                        try {
-                            val detection = predictor.predict(img)
-                            val numOfObjects = detection.numberOfObjects
-                            if (numOfObjects > 0) {
-                                for (i in 0 until numOfObjects) {
-                                    if (shouldStop != null && shouldStop) {
-                                        break
-                                    }
+                val jsonObj = mapper.readTree(response)
+                val objectsNode = if (jsonObj.has("objects")) jsonObj["objects"] else null
 
-                                    val objProbability =
-                                        detection.item<Classifications.Classification?>(i).probability
-                                    val objSubject =
-                                        detection.item<Classifications.Classification?>(i).className
-
-                                    if (threshold != null) {
-                                        if (objSubject.trim() != "person" && objProbability >= threshold
-                                        ) {
-                                            keywordMap[objSubject] = objProbability
-
-                                            if (threadFile != null) {
-                                                FileUtils.Companion.writeToThreadFileAndLogMessage(
-                                                    if (messageSource == null) "Objects identified for " + metadataObj.getPath() else messageSource.getMessage("main.pages.matching.identified", arrayOf(metadataObj.getPath()), locale).toString() + ": S-" + objSubject + " P-" + objProbability,
-                                                    threadFile
-                                                )
-                                            }
-
-                                            logger.log(
-                                                Level.INFO,
-                                                "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability
-                                            )
-                                        } else {
-                                            if (threadFile != null) {
-                                                FileUtils.Companion.writeToThreadFileAndLogMessage(
-                                                    if (messageSource == null) "Objects identified for " + metadataObj.getPath() else messageSource.getMessage("main.pages.matching.identified", arrayOf(metadataObj.getPath()), locale).toString() + ": S-" + objSubject + " P-" + objProbability,
-                                                    threadFile
-                                                )
-                                            }
-
-                                            logger.log(
-                                                Level.INFO,
-                                                "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability
-                                            )
-                                        }
-                                    } else {
-                                        keywordMap[objSubject] = objProbability
-                                    }
-                                }
-
-                                if (keywordMap.isEmpty() && !keywordMap.keys.toTypedArray().contains(unidentifiedStr)) {
-                                    keywordMap[unidentifiedStr] = -1.0
-                                }
-                            } else {
-                                if (!keywordMap.keys.toTypedArray().contains(unidentifiedStr)) {
-                                    keywordMap[unidentifiedStr] = -1.0
-                                }
-                            }
-                        } catch (_: Exception) {
-                            if (keywordMap.isEmpty() && !keywordMap.keys.toTypedArray().contains(unidentifiedStr)) {
-                                keywordMap[unidentifiedStr] = -1.0
-                            }
-
-                            logger.log(
-                                Level.INFO,
-                                "Could not identify objects for " + metadataObj.getPath()
-                            )
-                        }
+                val classNames = mutableListOf<String>()
+                if (objectsNode != null) {
+                    for (obj in objectsNode) {
+                        if (!obj.has("class_name") || obj["class_name"].isNull) continue
+                        val className = obj["class_name"].textValue()
+                        if (className.equals("person", ignoreCase = true)) continue
+                        if (!classNames.contains(className)) classNames.add(className)
                     }
                 }
-            } catch (e: Exception) {
-                logger.log(
-                    Level.WARNING,
-                    "Object recognition could not process file for " + metadataObj.getPath()!! + " error " + e.message
-                )
-            }
 
-            return keywordMap
+                // Sentinel so a photo with no detectable objects isn't rescanned forever
+                if (classNames.isEmpty()) classNames.add("unidentified objects")
+
+                processObjects(classNames, metadataObj, keywordRepository, keywordPhotoRepository, metadataRepository)
+
+                if (threadFile != null) {
+                    FileUtils.Companion.writeToThreadFileAndLogMessage(
+                        messageSource?.getMessage("main.pages.matching.identified", arrayOf(metadataObj.getPath()), locale)?.toString()
+                            ?: "Objects identified for ${metadataObj.getPath()}",
+                        threadFile
+                    )
+                }
+                logger.log(Level.INFO, "Objects for ${metadataObj.getId()}: $classNames")
+                return true
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error detecting objects for ${metadataObj.getId()}: ${e.localizedMessage}")
+                return false
+            }
+        }
+
+        // Batch object scan over photos that have no keywords yet.
+        fun scanObjects(
+            metadataRepository: MetadataRepository?,
+            keywordRepository: KeywordRepository?,
+            keywordPhotoRepository: KeywordPhotoRepository?,
+            settings: Settings,
+            threadFile: File? = null,
+            shouldStop: AtomicBoolean? = null,
+            messageSource: MessageSource? = null,
+            locale: Locale = Locale("en")
+        ): Int {
+            if (settings.getObjectDetection() != true) return 0
+            if (!NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) return 0
+
+            val photos = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!) ?: return 0
+            var count = 0
+            for (photo in photos) {
+                if (shouldStop != null && shouldStop.get()) break
+                val metadataObj = metadataRepository.findById(photo.getId()).orElse(null) ?: continue
+                if (detectAndStoreObjects(metadataObj, settings, keywordRepository, keywordPhotoRepository, metadataRepository, threadFile, messageSource, locale)) {
+                    count++
+                }
+            }
+            return count
         }
 
         fun processObjects(keywordArray: List<String>, metadataObj: Metadata, keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository) {

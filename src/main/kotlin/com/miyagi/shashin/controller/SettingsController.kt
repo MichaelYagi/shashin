@@ -271,11 +271,11 @@ class SettingsController(
             model.addAttribute("settings", settings)
         }
 
-        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
-            settings.getArgusServer(),
-            settings.getArgusKey()
-        )
+        val argusModels = NetworkUtils.checkArgusModels(settings.getArgusServer(), settings.getArgusKey())
+        val faceRecogServicesAvailable = argusModels["connected"] == true
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+        model["faceModelAvailable"] = argusModels["face"] == true
+        model["objectModelAvailable"] = argusModels["object"] == true
 
         model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
         model["faceRecogAvailableStatusColor"] = "red"
@@ -538,13 +538,16 @@ class SettingsController(
             settingsRepository?.save(settings)
             model["settings"] = settings
 
-            val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())
+            val argusModels = NetworkUtils.checkArgusModels(settings.getArgusServer(), settings.getArgusKey())
+            val faceRecogServicesAvailable = argusModels["connected"] == true
 
             model["timeScheduleList"] = TextUtils.timeSchedules()
             model["currentTimezone"] = ZoneId.systemDefault()
             model["scheduledTime"] = scheduledTime as String
 
             model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+            model["faceModelAvailable"] = argusModels["face"] == true
+            model["objectModelAvailable"] = argusModels["object"] == true
 
             model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
             model["faceRecogAvailableStatusColor"] = "red"
@@ -2179,6 +2182,13 @@ class SettingsController(
                                 }
 
                             }
+                        }
+
+                        // Detect objects during index scan
+                        if (settings != null && settings.getObjectDetection() == true && compreFaceServerConnected) {
+                            ImageProcessing.Companion.detectAndStoreObjects(
+                                metadataObj, settings, keywordRepository, keywordPhotoRepository, metadataRepository, threadFile, messageSource, locale
+                            )
                         }
 
                         threadText = messageSource?.getMessage("main.pages.scan.pathindexed", arrayOf(metadataObj.getPath()), locale).toString()

@@ -197,6 +197,18 @@ class ScheduledTasks(
                     messageSource
                 )
             }
+
+            if (settings.getObjectDetection() == true) {
+                ImageProcessing.scanObjects(
+                    metadataRepository,
+                    keywordRepository,
+                    keywordPhotoRepository,
+                    settings,
+                    null,
+                    null,
+                    messageSource
+                )
+            }
             if (superAdmins != null && recognitionCount > 0) {
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
