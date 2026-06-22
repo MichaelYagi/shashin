@@ -1324,6 +1324,61 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
+        // Detect faces in one photo via Argus (no label) and store detection_id placeholders,
+        // mirroring the batch scan. When replace=true, Argus clears the image's existing face
+        // detections first, making re-detection idempotent (used by rescan).
+        fun detectAndStoreFaces(
+            metadataObj: Metadata,
+            settings: Settings,
+            recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?,
+            replace: Boolean = false
+        ): Boolean {
+            if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return false
+            if (recognitionLabelPhotoRepository == null) return false
+
+            try {
+                val mapper = ObjectMapper()
+                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val builder = MultipartBodyBuilder()
+                builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
+                if (replace) builder.part("replace", "true")
+
+                val response = webClient.post()
+                    .uri("api/detect/faces")
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                    .header("X-API-Key", settings.getArgusKey())
+                    .body(BodyInserters.fromMultipartData(builder.build()))
+                    .retrieve()
+                    .bodyToMono(String::class.java)
+                    .block()
+
+                val jsonObj = mapper.readTree(response)
+
+                val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
+                if (facesNode != null && facesNode.size() > 0) {
+                    for (faceNode in facesNode) {
+                        val detectionId = faceNode["detection_id"].asInt().toString()
+                        val placeholder = RecognitionLabelPhoto()
+                        placeholder.setMetadataId(metadataObj.getId())
+                        placeholder.setCompreFaceImageId(detectionId)
+                        placeholder.setConfidence("0.0")
+                        placeholder.setAutoTagged(true)
+                        try { recognitionLabelPhotoRepository.save(placeholder) } catch (_: Exception) {}
+                    }
+                } else {
+                    val noFaceRecord = RecognitionLabelPhoto()
+                    noFaceRecord.setMetadataId(metadataObj.getId())
+                    noFaceRecord.setConfidence("-0.1")
+                    noFaceRecord.setAutoTagged(true)
+                    try { recognitionLabelPhotoRepository.save(noFaceRecord) } catch (_: Exception) {}
+                }
+                return true
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error detecting faces for ${metadataObj.getId()}: ${e.localizedMessage}")
+                return false
+            }
+        }
+
         // Detect objects in one photo via Argus and store the class names as keywords.
         // The "person" class is skipped (faces handle people). If nothing else is found,
         // an "unidentified objects" sentinel keyword is stored so the photo isn't rescanned.
@@ -1335,7 +1390,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             metadataRepository: MetadataRepository?,
             threadFile: File? = null,
             messageSource: MessageSource? = null,
-            locale: Locale = Locale("en")
+            locale: Locale = Locale("en"),
+            replace: Boolean = false
         ): Boolean {
             if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return false
             if (keywordRepository == null || keywordPhotoRepository == null || metadataRepository == null) return false
@@ -1345,6 +1401,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val webClient = WebClient.create(settings.getArgusServer()!!)
                 val builder = MultipartBodyBuilder()
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
+                if (replace) builder.part("replace", "true")
 
                 val response = webClient.post()
                     .uri("api/detect/objects")

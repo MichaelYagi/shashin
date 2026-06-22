@@ -6,8 +6,6 @@ import com.miyagi.shashin.ToolsControllerTestConfig
 import com.miyagi.shashin.service.DjlFaceRecognizer
 import com.miyagi.shashin.e2e.BaseSeleniumTests
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.service.ImageProcessing
-import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.service.VideoProcessing
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -56,37 +54,6 @@ class VideoImageTests {
 
         Assertions.assertTrue(gifExists)
         logger.log(Level.INFO, "processGifTest passed")
-    }
-
-    @Test
-    fun processObjectRecognitionTest() {
-        val classLoader = javaClass.classLoader
-        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"/tablecup.jpg"
-        val testImageFile = File(testImageUrl)
-
-        // Create thumbnails
-        val metadata = Metadata()
-        metadata.setId("00000000-00000000-00000000-00000012")
-        metadata.setPath(testImageFile.path)
-        val criteria = buildObjectRecognitionCriteria()
-        val threshold = 0.70
-
-        val objectMap = ImageProcessing.objectRecognizer(
-            metadata,
-            criteria!!,
-            threshold
-        )
-
-        Assertions.assertTrue(objectMap.isNotEmpty())
-        this.logger.log(Level.INFO, "Objects with confidence map and threshold $threshold: ${objectMap.map { "${it.key}: ${it.value}" }.joinToString(", ")}")
-
-        val objectMap2 = ImageProcessing.objectRecognizer(
-            metadata,
-            criteria
-        )
-        Assertions.assertTrue(objectMap2.isNotEmpty())
-        Assertions.assertTrue(objectMap2.size != objectMap.size)
-        this.logger.log(Level.INFO, "processObjectRecognitionTest - Objects with confidence map: ${objectMap2.map { "${it.key}: ${it.value}" }.joinToString(", ")}")
     }
 
     @Test

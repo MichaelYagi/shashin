@@ -1245,6 +1245,19 @@ class TimelineController(
                                         }
                                     }
 
+                                    // Re-run Argus recognition clean-slate on the rescanned photo.
+                                    // replace=true makes Argus drop the image's prior detections of that type;
+                                    // we clear Shashin's local face mirror so old detection_id rows don't linger.
+                                    if (settings != null && NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
+                                        if (settings.getFacialDetection() == true) {
+                                            recognitionLabelPhotoRepository?.deleteByMetadataId(metadataCopy.getId())
+                                            ImageProcessing.Companion.detectAndStoreFaces(metadataCopy, settings, recognitionLabelPhotoRepository, true)
+                                        }
+                                        if (settings.getObjectDetection() == true) {
+                                            ImageProcessing.Companion.detectAndStoreObjects(metadataCopy, settings, keywordRepository, keywordPhotoRepository, metadataRepository, replace = true)
+                                        }
+                                    }
+
                                     retMap[metadataCopy.getId()] = metadataCopy
                                 } else {
                                     logger.log(
