@@ -95,8 +95,8 @@ CREATE TABLE `settings` (
                             `objectDetection` BOOLEAN DEFAULT FALSE,
                             `facialDetection` BOOLEAN DEFAULT FALSE,
                             `duplicateDetection` BOOLEAN DEFAULT FALSE,
-                            `compreFaceKey` VARCHAR(36),
-                            `compreFaceServer` VARCHAR(150),
+                            `argusKey` VARCHAR(36),
+                            `argusServer` VARCHAR(150),
                             `uploadMediaDirectory` VARCHAR(255) DEFAULT NULL,
                             `sidecarSizeK` REAL DEFAULT 0,
                             `createdAt` DATETIME DEFAULT NULL,
@@ -135,6 +135,7 @@ CREATE TABLE `recognitionlabel` (
                                     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                                     `name` VARCHAR(50) NOT NULL,
                                     `coverUrl` VARCHAR(255) DEFAULT NULL,
+                                    `argusIdentityId` INTEGER DEFAULT NULL,
                                     `createdAt` DATETIME DEFAULT NULL,
                                     `modifiedAt` DATETIME DEFAULT NULL,
                                     CHECK(`name` <> '')

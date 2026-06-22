@@ -7,7 +7,6 @@ import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.ImageProcessing.Companion.subjectRecognizer
 import com.miyagi.shashin.service.ImageProcessing
-import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Value
@@ -100,10 +99,10 @@ class ScheduledTasks(
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
         if (settings != null && superAdmins != null && settings.getFacialDetection() == true &&
-            !settings.getCompreFaceServer().isNullOrBlank() &&
-            !settings.getCompreFaceKey().isNullOrBlank()
+            !settings.getArgusServer().isNullOrBlank() &&
+            !settings.getArgusKey().isNullOrBlank()
         ) {
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
+            val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())
             if (!faceRecogServicesAvailable) {
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -158,14 +157,7 @@ class ScheduledTasks(
                 "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
             )
 
-            val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-            val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
-            val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
-
-            if ((!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
-                    settings.getCompreFaceServer(),
-                    settings.getCompreFaceKey()
-                )) {
+            if (!NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
                 if (superAdmins != null) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -229,35 +221,6 @@ class ScheduledTasks(
                 }
             }
 
-            // Start object recognition
-            if (settings.getObjectDetection() == true) {
-                logger.log(
-                    Level.INFO,
-                    "Scheduled scanning for object recognition started at " + TextUtils.getCurrentTimestamp()
-                )
-
-                val threshold = settings.getObjectRecognitionConfidenceThreshold()
-                val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
-
-                if (withoutKeywords != null) {
-                    val criteria = buildObjectRecognitionCriteria()
-
-                    if (criteria != null) {
-                        for (withoutKeyword in withoutKeywords) {
-                            val metadataWithoutKeywordsObj =
-                                metadataRepository?.findById(withoutKeyword.getId())?.get()
-
-                            val keywordMap = ImageProcessing.objectRecognizer(
-                                metadataWithoutKeywordsObj!!,
-                                criteria,
-                                threshold.toString().toDouble()
-                            )
-
-                            ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
-                        }
-                    }
-                }
-            }
 
             logger.log(
                 Level.INFO,

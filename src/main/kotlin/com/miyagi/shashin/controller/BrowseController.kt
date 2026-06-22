@@ -846,7 +846,7 @@ class BrowseController(
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
                             if (recognitionLabelPhoto.getRecognitionLabelId() != null) {
                                 val recognitionLabelObj =
-                                    recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                                    recognitionLabelPhoto.getRecognitionLabelId()?.let { recognitionLabelRepository?.findById(it) }
                                 if (recognitionLabelObj != null) {
                                     labelString += recognitionLabelObj.get().getName() + ","
                                 }
@@ -1603,7 +1603,7 @@ class BrowseController(
                     var labelString = ""
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                            val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                            val recognitionLabelObj = recognitionLabelPhoto.getRecognitionLabelId()?.let { recognitionLabelRepository?.findById(it) }
                             if (recognitionLabelObj != null) {
                                 labelString += recognitionLabelObj.get().getName() + ","
                             }

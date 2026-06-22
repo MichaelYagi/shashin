@@ -14,6 +14,7 @@ class RecognitionLabel {
     @NotBlank
     private var name: String? = null
     private var coverUrl: String? = null
+    private var argusIdentityId: Int? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -41,6 +42,14 @@ class RecognitionLabel {
 
     fun setCoverUrl(coverUrl: String?) {
         this.coverUrl = coverUrl
+    }
+
+    fun getArgusIdentityId(): Int? {
+        return this.argusIdentityId
+    }
+
+    fun setArgusIdentityId(argusIdentityId: Int?) {
+        this.argusIdentityId = argusIdentityId
     }
 
     fun getCreatedAt(): String? {

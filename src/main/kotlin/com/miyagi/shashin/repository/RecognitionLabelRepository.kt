@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param
 
 interface RecognitionLabelRepository : CrudRepository<RecognitionLabel?, Int?> {
     fun findByNameIgnoreCase(name: String): RecognitionLabel?
+    fun findByArgusIdentityId(argusIdentityId: Int): RecognitionLabel?
     @Query("SELECT DISTINCT * FROM recognitionlabel WHERE name != :name ORDER BY name COLLATE NOCASE ASC", nativeQuery = true)
     fun findAllByNameNotContaining(@Param("name") name: String): MutableIterable<RecognitionLabel>?
 }

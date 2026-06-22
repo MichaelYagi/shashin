@@ -203,7 +203,6 @@ async function saveMetadata(e) {
             removeDuplicateHash: $("#ignoreduplicates").prop("checked")
         };
 
-        let compreFaceImageId = "";
         const peopleArray = people.split(",").map(function (item) {
             return item.trim();
         });
@@ -211,25 +210,6 @@ async function saveMetadata(e) {
         const albumsArray = albums.split(",").map(function (item) {
             return item.trim();
         });
-
-        if (Util.arraysEqual(prevPeopleArray, peopleArray) === false) {
-            $.each(peopleArray, async function (index, person) {
-                person = person.trim();
-
-                if (person !== '' && $.inArray(person, prevPeopleArray) === -1) {
-                    const personJson = {
-                        personName: person,
-                        metadataId: metadataId
-                    };
-                    const http = new Http("upload faces");
-                    let persondata = await http.ajax("post", "/person/recognition/faces", JSON.stringify(personJson));
-
-                    if (persondata.hasOwnProperty("responseDataUpload") && persondata.responseDataUpload.hasOwnProperty("image_id")) {
-                        compreFaceImageId = persondata.responseDataUpload.image_id;
-                    }
-                }
-            });
-        }
 
         const http = new Http("save timeline");
         let data;

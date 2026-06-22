@@ -29,6 +29,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.reactive.function.client.WebClient
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -1317,7 +1318,7 @@ class TimelineController(
                     metadataObj.get().setHidden(true)
                     duplicatesRepository.deleteByImageIdOneOrImageIdTwo(metadataObj.get().getId(), metadataObj.get().getId())
                     metadataObj.get().setModifiedAt(getCurrentTimestamp())
-                    removeMetadata(metadataId, locale)
+                    removeMetadata(metadataId, locale, model.getAttribute("settings") as? Settings)
                 }
 
                 // Update record
@@ -1640,7 +1641,7 @@ class TimelineController(
                     false
                 )
 
-                cleanupOrphanedSubjects()
+                cleanupOrphanedSubjects(model.getAttribute("settings") as Settings)
                 metricsUtil.end()
 
                 metricsUtil.start("Metadata Update - attributes")
@@ -2191,7 +2192,7 @@ class TimelineController(
 
         val headers = HttpHeaders()
         headers.contentType = MediaType.MULTIPART_FORM_DATA
-        headers.add("x-api-key", settings.getCompreFaceKey())
+        headers.add("X-API-Key", settings.getArgusKey())
 
         var idArray: Array<String>? = null
         var isHidden = false
@@ -2418,7 +2419,7 @@ class TimelineController(
             val settings = model.getAttribute("settings") as Settings
 
             val headers = HttpHeaders()
-            headers.add("x-api-key", settings.getCompreFaceKey())
+            headers.add("X-API-Key", settings.getArgusKey())
 
             val firstAvailableMetadataId = StringEscapeUtils.escapeHtml4(idArray[0])
             val metadataCoverAlbumObj = metadataRepository.findById(firstAvailableMetadataId)
@@ -2646,7 +2647,7 @@ class TimelineController(
     }
 
     @Transactional
-    fun removeMetadata(metadataId: String, locale: Locale) {
+    fun removeMetadata(metadataId: String, locale: Locale, settings: Settings? = null) {
         recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
         albumPhotoRepository.deleteByMetadataId(metadataId)
         favoriteRepository.deleteByMetadataId(metadataId)
@@ -2659,7 +2660,7 @@ class TimelineController(
         cleanupAlbumCover(metadataId)
 
         // Find people
-        cleanupOrphanedSubjects()
+        cleanupOrphanedSubjects(settings)
 
         // Find person cover
         cleanupPersonCover(metadataId)
@@ -2768,15 +2769,31 @@ class TimelineController(
         }
     }
 
-    fun cleanupOrphanedSubjects() {
+    fun cleanupOrphanedSubjects(settings: Settings? = null) {
         val allPeople = recognitionLabelRepository?.findAll()
         if (allPeople != null) {
             for (person in allPeople) {
-                val peronLabelId = person?.getId()
-                if (peronLabelId != null && peronLabelId > 0) {
-                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelId(peronLabelId)
+                val personLabelId = person?.getId()
+                if (personLabelId != null && personLabelId > 0) {
+                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelId(personLabelId)
                     if (recognitionLabelPhotoCount == 0) {
-                        recognitionLabelRepository?.deleteById(peronLabelId)
+                        val argusIdentityId = person.getArgusIdentityId()
+                        if (argusIdentityId != null && settings != null &&
+                            !settings.getArgusServer().isNullOrBlank() &&
+                            !settings.getArgusKey().isNullOrBlank()
+                        ) {
+                            try {
+                                WebClient.create(settings.getArgusServer()!!).delete()
+                                    .uri("api/identities/$argusIdentityId")
+                                    .header("X-API-Key", settings.getArgusKey())
+                                    .retrieve()
+                                    .bodyToMono(String::class.java)
+                                    .block()
+                            } catch (e: Exception) {
+                                logger.log(Level.WARNING, "Error deleting Argus identity $argusIdentityId: ${e.localizedMessage}")
+                            }
+                        }
+                        recognitionLabelRepository?.deleteById(personLabelId)
                     }
                 }
             }
@@ -3112,7 +3129,8 @@ class TimelineController(
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
             if (recognitionLabelPhotos != null) {
                 for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                    val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                    val labelId = recognitionLabelPhoto.getRecognitionLabelId() ?: continue
+                    val recognitionLabelObj = recognitionLabelRepository?.findById(labelId)
                     if (recognitionLabelObj != null) {
                         labelArray.add(recognitionLabelObj.get().getName()!!)
                     }
@@ -3891,7 +3909,8 @@ class TimelineController(
                 settings,
                 recognitionLabel,
                 metadataObj,
-                compreFaceImageIdMap
+                compreFaceImageIdMap,
+                recognitionLabelRepository
             )
         }.start()
     }

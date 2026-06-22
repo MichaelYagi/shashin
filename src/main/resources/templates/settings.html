@@ -107,14 +107,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <label for="compreFaceServer" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefaceurl}"></th:block></strong> (<th:block th:text="#{main.pages.settings.comprefaceurl.example}"></th:block> http://127.0.0.1:8000/)&nbsp;<span id="compreFaceInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.comprefaceurl.tooltip}"></span></label>
-                                    <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
+                                    <label for="argusServer" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefaceurl}"></th:block></strong> (<th:block th:text="#{main.pages.settings.comprefaceurl.example}"></th:block> http://127.0.0.1:8100/)&nbsp;<span id="argusInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.comprefaceurl.tooltip}"></span></label>
+                                    <input class="form-control" id="argusServer" name="argusServer" th:value="${settings.argusServer}">
                                 </div>
                                 <div class="col-6">
-                                    <label for="compreFaceKey" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefacekey}"></th:block></strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
-                                    <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
+                                    <label for="argusKey" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefacekey}"></th:block></strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
+                                    <input class="form-control" id="argusKey" name="argusKey" th:value="${settings.argusKey}">
                                 </div>
                             </div>
+                            <th:block th:if="${faceRecogServicesAvailable}">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="objectDetection" name="objectDetection" th:checked="${settings.objectDetection}">
                                 <label class="form-check-label" for="objectDetection">
@@ -127,6 +128,7 @@
                                     <strong><th:block th:text="#{main.pages.settings.enableface}"></th:block></strong>&nbsp;<span id="objectFacialInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableface.tooltip}"></span>
                                 </label>
                             </div>
+                            </th:block>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="duplicateDetection" name="duplicateDetection" th:checked="${settings.duplicateDetection}">
                                 <label class="form-check-label" for="duplicateDetection">

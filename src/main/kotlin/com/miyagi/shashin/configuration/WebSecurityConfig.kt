@@ -57,7 +57,7 @@ class MultiSecurityConfig {
             "folders",
             "folder\\/(.*)",
             "people",
-            "person\\/compreface\\/(\\d+)",
+            "person\\/argus\\/(\\d+)",
             "person\\/(\\d+)",
             "matches\\/(\\d+)",
             "favorites",

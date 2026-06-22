@@ -71,20 +71,20 @@ class NetworkUtils {
             }
         }
 
-        fun checkCompreFaceConnection(compreFaceServer: String?, compreFaceKey: String?): Boolean {
+        fun checkArgusConnection(argusServer: String?, argusKey: String?): Boolean {
             val timingStart = Date()
             var available = false
 
-            if (!compreFaceKey.isNullOrBlank() && !compreFaceServer.isNullOrBlank()) {
-                val requestProperties: Map<String, String> = mapOf("x-api-key" to compreFaceKey)
-                available = pingURL(compreFaceServer + "api/v1/recognition/faces?page=0&size=1&subject=0", requestProperties, 1000)
+            if (!argusKey.isNullOrBlank() && !argusServer.isNullOrBlank()) {
+                val requestProperties: Map<String, String> = mapOf("X-API-Key" to argusKey)
+                available = pingURL(argusServer + "api/health", requestProperties, 1000)
             }
 
             val timingEnd = Date()
             val diff: Long = timingEnd.time - timingStart.time
 
             val processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
-            logger.log(Level.INFO, "checkCompreFaceConnection - processing time: $processingTime")
+            logger.log(Level.INFO, "checkArgusConnection - processing time: $processingTime")
 
             return available
         }

@@ -19,48 +19,56 @@
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
             <input type="hidden" id="personId" name="personId" th:value="${parameter}">
 
-<!--            <h1 th:inline="text">[[${personInfo.name}]]</h1>-->
             <div class="mt-2" id="matchesMessage"></div>
 
-            <div id="infinite-scroll-gallery">
-            <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">
-                <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
-                    <th:block th:each="metadata, iterStat: ${lowMatchResults}">
-                        <div th:id="${'photoThumbnailContainer'+metadata.id}" th:data-lg-index="${iterStat.index}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
-                            <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
-
-                            <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},null,${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
-                            <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
-                            <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
-
-                            <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
-
-                            <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
-                            <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)}"></div>
+            <th:block th:if="${not #lists.isEmpty(reviewItems)}">
+                <div class="row g-3 p-2">
+                    <th:block th:each="item : ${reviewItems}">
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                            <div class="card h-100 shadow-sm" th:id="${'matchCard'+item.detectionId}">
+                                <div class="row g-0">
+                                    <div class="col-5">
+                                        <img th:src="${item.cropUrl}" class="img-fluid rounded-start" style="height:140px;object-fit:cover;width:100%;" alt="Face crop">
+                                        <div class="text-center" style="font-size:0.7rem;color:#888;">Detected face</div>
+                                    </div>
+                                    <div class="col-7">
+                                        <th:block th:if="${item.hasPhoto}">
+                                            <a th:href="${'/timeline#'+item.year+'-'+item.month+'-'+item.day}" target="_blank">
+                                                <img th:src="${item.thumbnailUrl}" class="img-fluid" style="height:140px;object-fit:cover;width:100%;" alt="Photo">
+                                            </a>
+                                        </th:block>
+                                        <th:block th:unless="${item.hasPhoto}">
+                                            <div class="d-flex align-items-center justify-content-center h-100 text-muted" style="height:140px;font-size:0.8rem;">No photo</div>
+                                        </th:block>
+                                        <div class="text-center" style="font-size:0.7rem;color:#888;">Shashin photo</div>
+                                    </div>
+                                </div>
+                                <div class="card-body p-2">
+                                    <p class="card-text mb-1" style="font-size:0.85rem;">
+                                        <strong th:text="${item.suggestedLabel}"></strong>
+                                        &nbsp;<span class="badge bg-secondary" th:text="${#numbers.formatDecimal(item.similarity * 100, 1, 0) + '%'}"></span>
+                                    </p>
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-success btn-sm flex-grow-1 confirm-btn"
+                                                th:data-detection-id="${item.detectionId}"
+                                                th:data-person-id="${parameter}">
+                                            <span class="bi-check-lg"></span>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm flex-grow-1 reject-btn"
+                                                th:data-detection-id="${item.detectionId}">
+                                            <span class="bi-x-lg"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-                        <span th:id="'matchesmodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
-
-                        <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                            /*<![CDATA[*/
-                            shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'matches');
-
-                            $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
-                            $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").off("click").on("click", function(e) {
-                                e.preventDefault();
-                                shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
-                            });
-                            /*]]>*/
-                        </script>
-
-                        <span class="appendPersonPhotos" style="width:0;height:0;padding:0"></span>
                     </th:block>
-
-                    <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
                 </div>
-
             </th:block>
-            </div>
+
+            <th:block th:if="${#lists.isEmpty(reviewItems)}">
+                <div class="mt-3 text-muted">No pending matches for this person.</div>
+            </th:block>
 
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
@@ -82,17 +90,28 @@
 
         shashin.updateSearchInput(personName);
 
-        const $infiniteScrollGallery = document.getElementById(
-            'infinite-scroll-gallery',
-        );
-        const lightGalleryConfigs = shashin.getLightGalleryConfigs();
-        lightGalleryConfigs["selector"] = '.mediaLink';
-        const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-        // $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-        //     shashin.jumpToLightGalleryIndex(e.detail.index);
-        // })
+        $(document).on('click', '.confirm-btn', async function () {
+            const detectionId = $(this).data('detection-id');
+            const personId = $(this).data('person-id');
+            const card = $('#matchCard' + detectionId);
+            const http = new Http('confirm match');
+            const data = await http.ajax('post', '/person/matches/confirm',
+                JSON.stringify({ detectionId: String(detectionId), action: 'confirm', personId: personId }));
+            if (data && data.status === shashin.apiResponse.SUCCESS) {
+                card.fadeOut(300, function() { $(this).remove(); });
+            }
+        });
 
-        // Util.checkErrorImage();
+        $(document).on('click', '.reject-btn', async function () {
+            const detectionId = $(this).data('detection-id');
+            const card = $('#matchCard' + detectionId);
+            const http = new Http('reject match');
+            const data = await http.ajax('post', '/person/matches/confirm',
+                JSON.stringify({ detectionId: String(detectionId), action: 'reject' }));
+            if (data && data.status === shashin.apiResponse.SUCCESS) {
+                card.fadeOut(300, function() { $(this).remove(); });
+            }
+        });
     });
 </script>
 </body>

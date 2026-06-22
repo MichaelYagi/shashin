@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.ShashinApplication
-import com.miyagi.shashin.service.DjlFaceRecognizer
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
@@ -20,7 +19,6 @@ import com.miyagi.shashin.service.DuplicateImageDetection
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
-import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.iakovlev.timeshape.TimeZoneEngine
@@ -273,32 +271,32 @@ class SettingsController(
             model.addAttribute("settings", settings)
         }
 
-        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
+        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+            settings.getArgusServer(),
+            settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
 
         model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
         model["faceRecogAvailableStatusColor"] = "red"
-        model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
+        model["faceRecogAvailableStatusText"] = "Could not connect to Argus server"
 
-        if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+        if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
             model["faceRecogAvailableStatusIcon"] = "bi-info-circle"
             model["faceRecogAvailableStatusColor"] = "gray"
-            model["faceRecogAvailableStatusText"] = "CompreFace not setup"
-        } else if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && settings.getCompreFaceServer() != "") {
+            model["faceRecogAvailableStatusText"] = "Argus not setup"
+        } else if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && settings.getArgusServer() != "") {
             model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
             model["faceRecogAvailableStatusColor"] = "orange"
-            model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace key"
-        } else if (settings.getCompreFaceKey() != "" && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+            model["faceRecogAvailableStatusText"] = "Enter a valid Argus key"
+        } else if (settings.getArgusKey() != "" && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
             model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
             model["faceRecogAvailableStatusColor"] = "orange"
-            model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace server endpoint"
+            model["faceRecogAvailableStatusText"] = "Enter a valid Argus server endpoint"
         } else if (faceRecogServicesAvailable) {
             model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
             model["faceRecogAvailableStatusColor"] = "green"
-            model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
+            model["faceRecogAvailableStatusText"] = "Connected to Argus server"
         }
 
         model["timeScheduleList"] = TextUtils.timeSchedules()
@@ -329,8 +327,8 @@ class SettingsController(
         @RequestHeader headers: HttpHeaders,
         @RequestParam("mediaDirList") mediaDirList: String,
         @RequestParam("mediaExcludeDirList") mediaExcludeDirList: String,
-        @RequestParam("compreFaceServer") compreFaceServer: String,
-        @RequestParam("compreFaceKey") compreFaceKey: String,
+        @RequestParam("argusServer") argusServer: String,
+        @RequestParam("argusKey") argusKey: String,
         @RequestParam("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,
         @RequestParam("queryLimit") queryLimit: Int,
         @RequestParam("matchScanLimit") matchScanLimit: Int,
@@ -473,8 +471,8 @@ class SettingsController(
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc() //model.getAttribute("settings") as Settings?
 
-        settings?.setCompreFaceServer(compreFaceServer)
-        settings?.setCompreFaceKey(compreFaceKey)
+        settings?.setArgusServer(argusServer)
+        settings?.setArgusKey(argusKey)
 
         if (uploadDirDneString == "" && uploadMediaDirectory != null && uploadMediaDirectory.isNotBlank()) {
             settings?.setUploadMediaDirectory(uploadMediaDirectory)
@@ -540,7 +538,7 @@ class SettingsController(
             settingsRepository?.save(settings)
             model["settings"] = settings
 
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
+            val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())
 
             model["timeScheduleList"] = TextUtils.timeSchedules()
             model["currentTimezone"] = ZoneId.systemDefault()
@@ -550,24 +548,24 @@ class SettingsController(
 
             model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
             model["faceRecogAvailableStatusColor"] = "red"
-            model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
+            model["faceRecogAvailableStatusText"] = "Could not connect to Argus server"
 
-            if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+            if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
                 model["faceRecogAvailableStatusIcon"] = "bi-info-circle"
                 model["faceRecogAvailableStatusColor"] = "gray"
-                model["faceRecogAvailableStatusText"] = "CompreFace not setup"
-            } else if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && settings.getCompreFaceServer() != "") {
+                model["faceRecogAvailableStatusText"] = "Argus not setup"
+            } else if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && settings.getArgusServer() != "") {
                 model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
                 model["faceRecogAvailableStatusColor"] = "orange"
-                model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace key"
-            } else if (settings.getCompreFaceKey() != "" && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+                model["faceRecogAvailableStatusText"] = "Enter a valid Argus key"
+            } else if (settings.getArgusKey() != "" && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
                 model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
                 model["faceRecogAvailableStatusColor"] = "orange"
-                model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace server endpoint"
+                model["faceRecogAvailableStatusText"] = "Enter a valid Argus server endpoint"
             } else if (faceRecogServicesAvailable) {
                 model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
                 model["faceRecogAvailableStatusColor"] = "green"
-                model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
+                model["faceRecogAvailableStatusText"] = "Connected to Argus server"
             }
 
             model["objectRecogEnabled"] = settings.getObjectDetection()!!
@@ -636,9 +634,9 @@ class SettingsController(
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
         model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
-        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
+        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+            settings.getArgusServer(),
+            settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
 
@@ -677,22 +675,40 @@ class SettingsController(
                 slideshowAlbumRepository?.deleteAll()
                 duplicatesRepository?.deleteAll()
 
-                // Cleanup CompreFace subjects
+                // Cleanup Argus identities
                 val settings = model.getAttribute("settings") as Settings
-                val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                    settings.getCompreFaceServer(),
-                    settings.getCompreFaceKey()
+                val argusAvailable = NetworkUtils.checkArgusConnection(
+                    settings.getArgusServer(),
+                    settings.getArgusKey()
                 )
 
-                if (faceRecogServicesAvailable) {
-                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
-                    webClient.delete()
-                        .uri("api/v1/recognition/subjects")
-                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                        .header("x-api-key", settings.getCompreFaceKey())
-                        .retrieve()
-                        .bodyToMono(String::class.java)
-                        .block()
+                if (argusAvailable) {
+                    val webClient = WebClient.create(settings.getArgusServer()!!)
+                    try {
+                        val listJson = webClient.get()
+                            .uri("api/identities?type=face")
+                            .header("X-API-Key", settings.getArgusKey())
+                            .retrieve()
+                            .bodyToMono(String::class.java)
+                            .block()
+                        if (listJson != null) {
+                            val mapper = ObjectMapper()
+                            val identities = mapper.readTree(listJson)
+                            if (identities.isArray) {
+                                for (identity in identities) {
+                                    val identityId = identity["id"].asInt()
+                                    webClient.delete()
+                                        .uri("api/identities/$identityId")
+                                        .header("X-API-Key", settings.getArgusKey())
+                                        .retrieve()
+                                        .bodyToMono(String::class.java)
+                                        .block()
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        logger.log(Level.WARNING, "Error cleaning up Argus identities: ${e.localizedMessage}")
+                    }
                 }
 
                 // Clean up thread files
@@ -783,9 +799,9 @@ class SettingsController(
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
         model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
-        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
+        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+            settings.getArgusServer(),
+            settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
 
@@ -873,9 +889,9 @@ class SettingsController(
             model["message"] = messageSource?.getMessage("main.pages.scan.scan.identify", null, locale)
         }
 
-        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
+        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+            settings.getArgusServer(),
+            settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
 
@@ -890,9 +906,9 @@ class SettingsController(
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
         model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
-        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
+        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+            settings.getArgusServer(),
+            settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
 
@@ -948,9 +964,9 @@ class SettingsController(
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
         model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
-        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
+        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+            settings.getArgusServer(),
+            settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
 
@@ -1512,9 +1528,9 @@ class SettingsController(
         var threadFileContent = FileUtils.readThreadFile("shashinscan")
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
-        val compreFaceServerConnected = NetworkUtils.checkCompreFaceConnection(
-            settings?.getCompreFaceServer(),
-            settings?.getCompreFaceKey()
+        val compreFaceServerConnected = NetworkUtils.checkArgusConnection(
+            settings?.getArgusServer(),
+            settings?.getArgusKey()
         )
 
 //        var msg: String
@@ -1834,18 +1850,15 @@ class SettingsController(
                                     val recognitionLabelPhotos =
                                         recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                                     if (settings != null && compreFaceServerConnected) {
-                                        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                                        val webClient = WebClient.create(settings.getArgusServer()!!)
                                         if (recognitionLabelPhotos != null) {
                                             for (recognitionLabelPhoto in recognitionLabelPhotos) {
                                                 if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
                                                         .isNotBlank()
                                                 ) {
                                                     webClient.delete()
-                                                        .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
-                                                        .header(
-                                                            "x-api-key",
-                                                            settings.getCompreFaceKey()
-                                                        )
+                                                        .uri("api/face_embeddings/${recognitionLabelPhoto.getCompreFaceImageId()}")
+                                                        .header("X-API-Key", settings.getArgusKey())
                                                         .retrieve()
                                                         .bodyToMono(String::class.java)
                                                         .block()
@@ -1908,16 +1921,11 @@ class SettingsController(
                 if (!shouldStop.get()) {
                     var webClient: WebClient? = null
                     if (settings != null && compreFaceServerConnected) {
-                        webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                        webClient = WebClient.create(settings.getArgusServer()!!)
                     }
 
                     val recognitionLabelPhotoLabels =
                         recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
-
-                    var criteria: Criteria<Image, DetectedObjects>? = null
-                    if (settings?.getObjectDetection() == true) {
-                        criteria = buildObjectRecognitionCriteria()
-                    }
 
                     if (mediaDirs != null) {
                         for (mediaDir in mediaDirs) {
@@ -1929,7 +1937,7 @@ class SettingsController(
                                     mediaDir.getDirectory().toString(),
                                     mediaExcludeDirs,
                                     settings,
-                                    criteria,
+                                    null,
                                     webClient,
                                     recognitionLabelPhotoLabels,
                                     compreFaceServerConnected,
@@ -2020,7 +2028,7 @@ class SettingsController(
         Thread {
             var webClient: WebClient? = null
             if (settings != null && compreFaceServerConnected) {
-                webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                webClient = WebClient.create(settings.getArgusServer()!!)
             }
             val recognitionLabelPhotoLabels =
                 recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
@@ -2029,10 +2037,6 @@ class SettingsController(
 
             var threadText: String
 
-            var criteria: Criteria<Image, DetectedObjects>? = null
-            if (settings?.getObjectDetection() == true) {
-                criteria = buildObjectRecognitionCriteria()
-            }
 
             for ((index, metadataId) in metadataIdArray.withIndex()) {
                 val metadataObj = metadataRepository?.findByMetadataId(metadataId)
@@ -2088,24 +2092,15 @@ class SettingsController(
 
                                         try {
                                             response = webClient!!.post()
-                                                .uri("api/v1/recognition/recognize")
-                                                .header(
-                                                    HttpHeaders.CONTENT_TYPE,
-                                                    MediaType.MULTIPART_FORM_DATA.toString()
-                                                )
-                                                .header(
-                                                    "x-api-key",
-                                                    settings.getCompreFaceKey()
-                                                )
+                                                .uri("api/detect/faces")
+                                                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                                                .header("X-API-Key", settings.getArgusKey())
                                                 .body(BodyInserters.fromMultipartData(builder.build()))
                                                 .retrieve()
                                                 .bodyToMono(String::class.java)
                                                 .block()
 
-                                            logger.log(
-                                                Level.INFO,
-                                                "Recognizing face for " + metadataObj.getPath() + ": " + response
-                                            )
+                                            logger.log(Level.INFO, "Detected faces for " + metadataObj.getPath() + ": " + response)
                                         } catch (e: Exception) {
                                             val recognitionLabelRecord =
                                                 recognitionLabelRepository?.findByNameIgnoreCase(
@@ -2145,137 +2140,30 @@ class SettingsController(
                                         }
 
                                         if (response != null) {
-                                            var jsonObj = mapper.readTree(response)
-                                            val resultMap = mapper.convertValue(
-                                                jsonObj,
-                                                object :
-                                                    TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
-                                            val resultList =
-                                                resultMap["result"] as ArrayList<Map<String, Any>>
-                                            if (resultList.isNotEmpty() && resultList[0].containsKey(
-                                                    "subjects"
-                                                )
-                                            ) {
-                                                for (singleResult in resultList) {
-                                                    val subjects =
-                                                        singleResult["subjects"] as ArrayList<Map<String, Any>>
+                                            val jsonObj = mapper.readTree(response)
+                                            val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
 
-                                                    for (subjectObj in subjects) {
-                                                        var subject = ""
-                                                        var similarity = 0.0
-
-                                                        if (subjectObj.isNotEmpty()) {
-                                                            subject =
-                                                                subjectObj["subject"].toString()
-                                                            similarity =
-                                                                subjectObj["similarity"].toString()
-                                                                    .toDouble()
-                                                        }
-
-                                                        if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold()
-                                                                .toString().toDouble())
-                                                        ) {
-
-                                                            builder = MultipartBodyBuilder()
-                                                            builder.part(
-                                                                "file",
-                                                                FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
-                                                            )
-
-                                                            response = null
-
-                                                            try {
-                                                                response = webClient!!.post()
-                                                                    .uri("api/v1/recognition/faces?subject=${subject}")
-                                                                    .header(
-                                                                        HttpHeaders.CONTENT_TYPE,
-                                                                        MediaType.MULTIPART_FORM_DATA.toString()
-                                                                    )
-                                                                    .header(
-                                                                        "x-api-key",
-                                                                        settings.getCompreFaceKey()
-                                                                    )
-                                                                    .body(
-                                                                        BodyInserters.fromMultipartData(
-                                                                            builder.build()
-                                                                        )
-                                                                    )
-                                                                    .retrieve()
-                                                                    .bodyToMono(String::class.java)
-                                                                    .block()
-                                                            } catch (e: Exception) {
-                                                                logger.log(
-                                                                    Level.WARNING,
-                                                                    "Error uploading face for " + subject + ": " + e.localizedMessage
-                                                                )
-                                                            }
-
-                                                            var compreFaceImageId: String? =
-                                                                null
-                                                            if (response != null) {
-                                                                jsonObj =
-                                                                    mapper.readTree(response)
-                                                                if (jsonObj.has("image_id")) {
-                                                                    compreFaceImageId =
-                                                                        jsonObj["image_id"].toString()
-                                                                    compreFaceImageId =
-                                                                        compreFaceImageId.drop(1)
-                                                                            .dropLast(1)
-                                                                }
-                                                            }
-
-                                                            logger.log(
-                                                                Level.INFO,
-                                                                "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
-                                                            )
-
-                                                            val recognitionLabelObj =
-                                                                recognitionLabelRepository?.findByNameIgnoreCase(
-                                                                    subject
-                                                                )
-
-                                                            if (recognitionLabelObj != null) {
-                                                                val recognitionLabelPhoto =
-                                                                    recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                                                                        recognitionLabelObj.getId(),
-                                                                        metadataObj.getId()
-                                                                    )
-
-                                                                if (recognitionLabelPhoto == 0) {
-                                                                    val recognitionLabelPhotoObj =
-                                                                        RecognitionLabelPhoto()
-                                                                    recognitionLabelPhotoObj.setMetadataId(
-                                                                        metadataObj.getId()
-                                                                    )
-                                                                    recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                                        recognitionLabelObj.getId()
-                                                                    )
-                                                                    recognitionLabelPhotoObj.setConfidence(
-                                                                        similarity.toString()
-                                                                    )
-                                                                    if (compreFaceImageId != null) {
-                                                                        recognitionLabelPhotoObj.setCompreFaceImageId(
-                                                                            compreFaceImageId
-                                                                        )
-                                                                    }
-                                                                    recognitionLabelPhotoRepository?.save(
-                                                                        recognitionLabelPhotoObj
-                                                                    )
-
-                                                                    metadataObj.setModifiedAt(
-                                                                        getCurrentTimestamp()
-                                                                    )
-                                                                    metadataRepository?.save(
-                                                                        metadataObj
-                                                                    )
-
-                                                                    recognitionCount++
-                                                                }
-                                                            }
-                                                        }
-                                                    }
+                                            if (facesNode != null && facesNode.size() > 0) {
+                                                for (faceNode in facesNode) {
+                                                    val detectionId = faceNode["detection_id"].asInt().toString()
+                                                    val placeholder = RecognitionLabelPhoto()
+                                                    placeholder.setMetadataId(metadataObj.getId())
+                                                    placeholder.setCompreFaceImageId(detectionId)
+                                                    placeholder.setConfidence("0.0")
+                                                    placeholder.setAutoTagged(true)
+                                                    try { recognitionLabelPhotoRepository?.save(placeholder) } catch (_: Exception) {}
+                                                    recognitionCount++
                                                 }
+                                            } else {
+                                                val noFaceRecord = RecognitionLabelPhoto()
+                                                noFaceRecord.setMetadataId(metadataObj.getId())
+                                                noFaceRecord.setConfidence("-0.1")
+                                                noFaceRecord.setAutoTagged(true)
+                                                try { recognitionLabelPhotoRepository?.save(noFaceRecord) } catch (_: Exception) {}
                                             }
+
+                                            metadataObj.setModifiedAt(getCurrentTimestamp())
+                                            metadataRepository?.save(metadataObj)
                                         }
                                     } else {
                                         logger.log(
@@ -2289,86 +2177,8 @@ class SettingsController(
                                         "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
                                     )
                                 }
-                                // ...or DJL
-                            } else {
-                                val classLoader: ClassLoader =
-                                    ShashinApplication::class.java.classLoader
-                                val vggfaceFileExists =
-                                    classLoader.getResource("lib/vggface2.pt") != null
-                                val retinafaceFileExists =
-                                    classLoader.getResource("lib/retinaface.pt") != null
-                                if (vggfaceFileExists && retinafaceFileExists) {
-                                    val testImage = mutableListOf<Metadata>()
-                                    testImage.add(metadataObj)
-                                    val trainingData = metadataRepository.findTrainingData(
-                                        settings.getRecognitionConfidenceThreshold()!!,
-                                        settings.getTrainingDataLimit()!!
-                                    )
 
-                                    val faceRecognizer = DjlFaceRecognizer(
-                                        testImage,
-                                        trainingData,
-                                        recognitionLabelPhotoRepository,
-                                        recognitionLabelRepository,
-                                        settings,
-                                        relativeSidecarDir!!,
-                                        threadFile,
-                                        shouldStop
-                                    )
-                                    recognitionCount += faceRecognizer.startPredict(messageSource,locale)
-                                } else {
-                                    logger.log(
-                                        Level.WARNING,
-                                        "Missing lib files for DJL face scan"
-                                    )
-                                    FileUtils.writeToThreadFileAndLogMessage(
-                                        messageSource?.getMessage("main.notification.people.missing", null, locale).toString(),
-                                        threadFile
-                                    )
-
-                                    if (superAdminsUsers != null && index < 1) {
-                                        val notificationObjList = mutableListOf<Notification>()
-                                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                                        sdtf.timeZone =
-                                            TimeZone.getTimeZone(ZoneId.systemDefault())
-                                        for (admin in superAdminsUsers) {
-                                            var language = admin.getLanguage()
-                                            if (language == null) {
-                                                language = "en"
-                                            }
-
-                                            var locale = Locale(language)
-                                            val notificationObj = Notification()
-                                            notificationObj.setUserId(admin.getId())
-                                            notificationObj.setCreatedAt(getCurrentTimestamp())
-                                            notificationObj.setModifiedAt(getCurrentTimestamp())
-                                            notificationObj.setRead(false)
-                                            notificationObj.setMessage(messageSource?.getMessage("main.notification.people.missing", null, locale))
-                                            notificationObjList.add(notificationObj)
-                                        }
-                                        if (notificationObjList.isNotEmpty()) {
-                                            notificationRepository?.saveAll(notificationObjList)
-                                        }
-                                    }
-                                }
                             }
-                        }
-
-                        // Detect objects
-                        if (settings?.getObjectDetection() == true && criteria != null) {
-                            val threshold = settings.getObjectRecognitionConfidenceThreshold()
-
-                            val keywordMap = ImageProcessing.Companion.objectRecognizer(
-                                metadataObj,
-                                criteria,
-                                threshold.toString().toDouble(),
-                                threadFile,
-                                shouldStop.get(),
-                                messageSource,
-                                locale
-                            )
-
-                            ImageProcessing.Companion.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
                         }
 
                         threadText = messageSource?.getMessage("main.pages.scan.pathindexed", arrayOf(metadataObj.getPath()), locale).toString()

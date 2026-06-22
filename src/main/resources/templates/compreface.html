@@ -23,40 +23,43 @@
 
             <div id="infinite-scroll-gallery" class="row">
                 <th:block th:if="${not #lists.isEmpty(resultList)}">
-                    <span>Deleting Training images only deletes images from the CompreFace server.</span><br><br>
+                    <span>Deleting Training images only deletes images from the Argus server.</span><br><br>
 
                     <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
-                        function setPhotoOverlays(compreFaceImageId) {
-                            if (compreFaceImageId !== "") {
+                        /*<![CDATA[*/
+                        const argusServer = /*[[${argusServer}]]*/ '';
+                        /*]]>*/
+                        function setPhotoOverlays(embeddingId) {
+                            if (embeddingId !== "") {
                                 const opaque = 0.3
                                 const transparent = 1.0
 
-                                $("#tntr" + compreFaceImageId).off("click").on("click", function (e) {
+                                $("#tntr" + embeddingId).off("click").on("click", function (e) {
                                     e.preventDefault();
 
-                                    const link = document.getElementById("mediaLink" + compreFaceImageId);
+                                    const link = document.getElementById("mediaLink" + embeddingId);
                                     if (link && $('.thumbnail-tl .bi-circle-fill').length === 0) {
                                         link.click();
                                     }
                                 });
 
-                                $("#select" + compreFaceImageId).on("click", function (e) {
+                                $("#select" + embeddingId).on("click", function (e) {
                                     e.preventDefault();
 
-                                    if ($("#tlicon" + compreFaceImageId).attr("class") === "bi-circle") {
-                                        $("#tntl" + compreFaceImageId).show();
-                                        $("#tlicon" + compreFaceImageId).addClass('bi-circle-fill').removeClass('bi-circle');
-                                        $("#tncentered" + compreFaceImageId).hide();
-                                        $("#image" + compreFaceImageId).css("opacity", opaque);
+                                    if ($("#tlicon" + embeddingId).attr("class") === "bi-circle") {
+                                        $("#tntl" + embeddingId).show();
+                                        $("#tlicon" + embeddingId).addClass('bi-circle-fill').removeClass('bi-circle');
+                                        $("#tncentered" + embeddingId).hide();
+                                        $("#image" + embeddingId).css("opacity", opaque);
                                         // List of selected media
-                                        shashin.addToMetadataIdList(compreFaceImageId);
+                                        shashin.addToMetadataIdList(embeddingId);
                                     } else {
-                                        $("#tntl" + compreFaceImageId).show();
-                                        $("#tlicon" + compreFaceImageId).addClass('bi-circle').removeClass('bi-circle-fill');
-                                        $("#tncentered" + compreFaceImageId).show();
-                                        $("#tntr" + compreFaceImageId).show();
-                                        $("#image" + compreFaceImageId).css("opacity", opaque);
-                                        shashin.removeFromMetadataIdList(compreFaceImageId);
+                                        $("#tntl" + embeddingId).show();
+                                        $("#tlicon" + embeddingId).addClass('bi-circle').removeClass('bi-circle-fill');
+                                        $("#tncentered" + embeddingId).show();
+                                        $("#tntr" + embeddingId).show();
+                                        $("#image" + embeddingId).css("opacity", opaque);
+                                        shashin.removeFromMetadataIdList(embeddingId);
                                     }
 
                                     if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill") {
@@ -75,24 +78,24 @@
                                     $("#comprefaceNumberSelected").text($('.thumbnail-tl .bi-circle-fill').length + " Selected");
                                 });
 
-                                $("#image" + compreFaceImageId).on("click", function (e) {
+                                $("#image" + embeddingId).on("click", function (e) {
                                     e.preventDefault();
 
                                     // Fill top left icon when clicking anywhere on thumbnail
                                     if ($('.thumbnail-tl .bi-circle-fill').length > 0) {
-                                        if ($("#tlicon" + compreFaceImageId).attr("class") === "bi-circle") {
-                                            $("#tntl" + compreFaceImageId).show();
-                                            $("#tlicon" + compreFaceImageId).addClass('bi-circle-fill').removeClass('bi-circle');
-                                            $("#tncentered" + compreFaceImageId).hide();
-                                            $("#image" + compreFaceImageId).css("opacity", opaque);
+                                        if ($("#tlicon" + embeddingId).attr("class") === "bi-circle") {
+                                            $("#tntl" + embeddingId).show();
+                                            $("#tlicon" + embeddingId).addClass('bi-circle-fill').removeClass('bi-circle');
+                                            $("#tncentered" + embeddingId).hide();
+                                            $("#image" + embeddingId).css("opacity", opaque);
                                             // List of selected media
-                                            shashin.addToMetadataIdList(compreFaceImageId);
+                                            shashin.addToMetadataIdList(embeddingId);
                                         } else {
-                                            $("#tntl" + compreFaceImageId).show();
-                                            $("#tlicon" + compreFaceImageId).addClass('bi-circle').removeClass('bi-circle-fill');
-                                            $("#tncentered" + compreFaceImageId).show();
-                                            $("#image" + compreFaceImageId).css("opacity", opaque);
-                                            shashin.removeFromMetadataIdList(compreFaceImageId);
+                                            $("#tntl" + embeddingId).show();
+                                            $("#tlicon" + embeddingId).addClass('bi-circle').removeClass('bi-circle-fill');
+                                            $("#tncentered" + embeddingId).show();
+                                            $("#image" + embeddingId).css("opacity", opaque);
+                                            shashin.removeFromMetadataIdList(embeddingId);
                                         }
                                     }
 
@@ -112,19 +115,19 @@
                                     $("#comprefaceNumberSelected").text($('.thumbnail-tl .bi-circle-fill').length + " Selected");
                                 });
 
-                                $("#image" + compreFaceImageId).hover(function () {
+                                $("#image" + embeddingId).hover(function () {
                                     $(this).css("opacity", 0.3);
                                     $(this).siblings(".thumbnail-tl").show();
                                     $(this).siblings(".thumbnail-centered").show();
 
-                                    if ($("#tlicon" + compreFaceImageId).attr("class") === "bi-circle-fill") {
-                                        $("#tncentered" + compreFaceImageId).hide();
+                                    if ($("#tlicon" + embeddingId).attr("class") === "bi-circle-fill") {
+                                        $("#tncentered" + embeddingId).hide();
                                     }
                                     if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill") {
                                         $('.thumbnail-centered').hide();
                                     }
                                 }, function () {
-                                    if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
+                                    if ($("#tlicon" + embeddingId).attr("class") !== "bi-circle-fill") {
                                         $(this).css("opacity", 1.0);
                                         $(this).siblings(".thumbnail-tl").hide();
                                         $(this).siblings(".thumbnail-centered").hide();
@@ -132,11 +135,11 @@
                                         if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill") {
                                             $('.thumbnail-centered').hide();
                                         }
-                                        $("#tncentered" + compreFaceImageId).hide();
+                                        $("#tncentered" + embeddingId).hide();
                                     }
                                 });
 
-                                $("#tncentered" + compreFaceImageId).hover(function () {
+                                $("#tncentered" + embeddingId).hover(function () {
                                     let hoverColor = "white";
                                     if (shashin.darkMode === true) {
                                         hoverColor = "slategray";
@@ -157,8 +160,8 @@
                                     $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
                                 });
 
-                                $("#tntl" + compreFaceImageId).hover(function () {
-                                    if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
+                                $("#tntl" + embeddingId).hover(function () {
+                                    if ($("#tlicon" + embeddingId).attr("class") !== "bi-circle-fill") {
                                         $(this).show();
                                         $(this).siblings(".thumbnail-centered").show();
                                         $(this).siblings(".thumbnail-tr").show();
@@ -168,7 +171,7 @@
                                         }
                                     }
                                 }, function () {
-                                    if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
+                                    if ($("#tlicon" + embeddingId).attr("class") !== "bi-circle-fill") {
                                         $(this).hide();
                                         $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
                                     } else {
@@ -177,7 +180,7 @@
                                     $(this).siblings(".thumbnail-centered").hide();
                                 });
 
-                                $("#tntr" + compreFaceImageId).hover(function () {
+                                $("#tntr" + embeddingId).hover(function () {
                                     $(this).show();
                                     $(this).siblings(".thumbnail-tl").show();
                                     $(this).siblings(".thumbnail-centered").show();
@@ -197,25 +200,25 @@
                     </script>
                     <div class="col-12">
                         <th:block th:each="faceObj, iterStat: ${resultList}">
-                            <div th:id="${'photoThumbnailContainer'+faceObj.image_id}" th:data-lg-index="${iterStat.index}" class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
+                            <div th:id="${'photoThumbnailContainer'+faceObj.id}" th:data-lg-index="${iterStat.index}" class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                                <img loading="lazy" draggable="false" th:src="'data:image/png;base64,'+${faceObj.image_base64}" style="height:225px;" class="photo-thumbnail-image" th:id="'image'+${faceObj.image_id}">
+                                <img loading="lazy" draggable="false" th:src="${argusServer}+${faceObj.crop_url}" style="height:225px;" class="photo-thumbnail-image" th:id="'image'+${faceObj.id}">
 
-                                <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${faceObj.image_id})}"></div>
+                                <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${faceObj.id})}"></div>
                                 <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
-                                    <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.image_id}">
+                                    <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.id}">
                                         <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span></a>
                                     </div>
-                                    <div class="thumbnail-tr" th:id="${'tntr'+faceObj.image_id}">
-                                        <span th:id="${'timelineviewable'+faceObj.image_id}" class="bi-calendar overlayIcon overlayIconBackground"></span>
+                                    <div class="thumbnail-tr" th:id="${'tntr'+faceObj.id}">
+                                        <span th:id="${'timelineviewable'+faceObj.id}" class="bi-calendar overlayIcon overlayIconBackground"></span>
                                         <br>
                                     </div>
                                 </th:block>
 
                                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                     /*<![CDATA[*/
-                                    setPhotoOverlays(/*[[${faceObj.image_id}]]*/ "")
+                                    setPhotoOverlays(/*[[${faceObj.id}]]*/ "")
                                     /*]]>*/
                                 </script>
                             </div>
@@ -259,11 +262,11 @@
                 $("#deleteUser").on("click", async function (e) {
                     e.preventDefault();
 
-                    let compreFaceImageIds = shashin.getMetadataIdList();
+                    let embeddingIds = shashin.getMetadataIdList();
 
                     const http = new Http("marking notification saving album");
-                    let json = {imageIds: compreFaceImageIds}
-                    const data = await http.ajax("post", "/person/compreface/delete", JSON.stringify(json));
+                    let json = {imageIds: embeddingIds}
+                    const data = await http.ajax("post", "/person/argus/delete", JSON.stringify(json));
 
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         //console.log(data)

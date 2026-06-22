@@ -35,7 +35,7 @@ class Compreface {
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/person/compreface/"+personId+"/"+nextPage);
+            data = await this.http.ajax("get", "/person/argus/"+personId+"/"+nextPage);
         }
 
         if (data !== null && data.hasOwnProperty("resultList")) {
@@ -44,30 +44,32 @@ class Compreface {
             if (resultList !== null && resultList.length > 0) {
                 for (const index in resultList) {
                     const resultObj = resultList[index];
+                    const embeddingId = resultObj.id;
+                    const imgSrc = argusServer + resultObj.crop_url;
 
-                    let html = '<div id="photoThumbnailContainer'+resultObj.image_id+'" class="photo-thumbnail-container photo-thumbnail" ';
+                    let html = '<div id="photoThumbnailContainer'+embeddingId+'" class="photo-thumbnail-container photo-thumbnail" ';
                     html += 'style="float: left; padding-left:0;padding-right:0;">';
                     html += '<a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+index+'"></a>';
-                    html += '<img loading="lazy" src="data:image/png;base64,'+resultObj.image_base64+'" ';
-                    html += 'style="height:225px;" class="photo-thumbnail-image" id="image'+resultObj.image_id+'" draggable="false">';
-                    html += '<div class="thumbnail-tl" id="tntl'+resultObj.image_id+'">';
-                    html += '<a href="#" id="select'+resultObj.image_id+'">';
-                    html += '<span id="tlicon'+resultObj.image_id+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>';
+                    html += '<img loading="lazy" src="'+imgSrc+'" ';
+                    html += 'style="height:225px;" class="photo-thumbnail-image" id="image'+embeddingId+'" draggable="false">';
+                    html += '<div class="thumbnail-tl" id="tntl'+embeddingId+'">';
+                    html += '<a href="#" id="select'+embeddingId+'">';
+                    html += '<span id="tlicon'+embeddingId+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>';
                     html += '</a></div>';
                     if (resultObj.metadata_date != null && resultObj.metadata_date !== '') {
-                        html += '<div class="thumbnail-centered" id="tncentered' + resultObj.image_id +'">';
+                        html += '<div class="thumbnail-centered" id="tncentered' + embeddingId +'">';
                         html += '<a href="/timeline#' + resultObj.metadata_date + '" target="_blank">';
                         html += '<span class="bi-play-btn" style="font-size: 4rem;color: lightgray;">';
                         html += '</span></a></div>';
-                        html += '<div class="thumbnail-tr" id="tntr' + resultObj.image_id +'">';
-                        html += '<span id=timelineviewable' + resultObj.image_id + '" class="bi-calendar overlayIcon overlayIconBackground">';
+                        html += '<div class="thumbnail-tr" id="tntr' + embeddingId +'">';
+                        html += '<span id="timelineviewable' + embeddingId + '" class="bi-calendar overlayIcon overlayIconBackground">';
                         html += '</span><br></div>';
                     }
                     html += '</div>';
 
                     $(html).insertBefore($(".appendCompreFacePhotos").last());
 
-                    setPhotoOverlays(resultObj.image_id);
+                    setPhotoOverlays(embeddingId);
                 }
 
                 this.rendering = false;

@@ -11,7 +11,6 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.DuplicateImageDetection
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.*
-import com.miyagi.shashin.service.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Value
@@ -171,31 +170,20 @@ private val relativeSidecarDir: String? = null
     fun doPrediction(settings: Settings, superAdmins: MutableIterable<User>?, locale: Locale) {
         Thread {
             val threadFile = FileUtils.createThreadFile(threadExtensionName)
-            val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-            val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
-            val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
-
-            if ((!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
-                    settings.getCompreFaceServer(),
-                    settings.getCompreFaceKey()
-                )) {
+            if (!NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
                 if (superAdmins != null) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                     for (admin in superAdmins) {
                         var language = admin.getLanguage()
-                        if (language == null) {
-                            language = "en"
-                        }
-
-                        var locale = Locale(language)
+                        if (language == null) { language = "en" }
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage(messageSource?.getMessage("main.notification.people.missing", null, locale))
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.compreface.notconnected", null, Locale(language)))
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
@@ -265,37 +253,6 @@ private val relativeSidecarDir: String? = null
                     }
                 }
 
-                if (settings.getObjectDetection() == true) {
-                    val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
-
-                    if (withoutKeywords != null) {
-                        val criteria = buildObjectRecognitionCriteria()
-                        val threshold = settings.getObjectRecognitionConfidenceThreshold()
-
-                        if (criteria != null) {
-                            for (withoutKeyword in withoutKeywords) {
-                                if (shouldStop.get()) {
-                                    break
-                                }
-
-                                val metadataWithoutKeywordsObj =
-                                    metadataRepository?.findById(withoutKeyword.getId())?.get()
-
-                                val keywordMap = ImageProcessing.Companion.objectRecognizer(
-                                    metadataWithoutKeywordsObj!!,
-                                    criteria,
-                                    threshold.toString().toDouble(),
-                                    threadFile,
-                                    shouldStop.get(),
-                                    messageSource,
-                                    locale
-                                )
-
-                                ImageProcessing.Companion.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
-                            }
-                        }
-                    }
-                }
             }
 
             shouldStop.set(false)
@@ -309,7 +266,7 @@ private val relativeSidecarDir: String? = null
     fun getPredictions(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
         val module = "matches"
         model["message"] = messageSource?.getMessage("main.nothing", null, locale)
-        model["lowMatchResults"] = mutableListOf<Metadata>()
+        model["reviewItems"] = mutableListOf<MutableMap<String, Any>>()
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
         model["allAlbumList"] = mutableListOf<Album>()
         model["labelPhotoMap"] = mutableMapOf<String, Any>()
@@ -353,61 +310,79 @@ private val relativeSidecarDir: String? = null
             }
         }
 
-        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
+        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+            settings.getArgusServer(),
+            settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
-        val subject = recognitionLabel?.get()?.getName()
-        val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, faceRecogServicesAvailable, subject, 0, 9999)
-        if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
-            val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
-            val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
-            val resultList: ArrayList<MutableMap<String, String>>?
-
-            if (resultMap.containsKey("faces")) {
-                resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
-                counts["compreface"] = resultList.size
-            }
+        val argusIdentityId = recognitionLabel?.get()?.getArgusIdentityId()
+        val argusGalleryJsonStr = getArgusGalleryForIdentity(settings, argusIdentityId)
+        if (!argusGalleryJsonStr.isNullOrBlank()) {
+            val galleryJson = mapper.readTree(argusGalleryJsonStr)
+            if (galleryJson.has("items")) counts["compreface"] = galleryJson["items"].size()
         }
 
-        // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
-        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId, settings.getRecognitionConfidenceThreshold()!!)
+        // Pull pending review items from Argus, filtered to this person's argusIdentityId
+        val reviewItems = mutableListOf<MutableMap<String, Any>>()
+        model["reviewItems"] = reviewItems
+        model["argusServer"] = (settings.getArgusServer() ?: "").trimEnd('/')
 
-        if (lowMatchResults != null && lowMatchResults.count() > 0) {
-            counts["matches"] = lowMatchResults.count()
-            model["lowMatchResults"] = lowMatchResults
-            model["message"] = ""
+        if (faceRecogServicesAvailable && argusIdentityId != null) {
+            try {
+                val argusServer = (settings.getArgusServer() ?: "").trimEnd('/')
+                val webClient = WebClient.create(settings.getArgusServer()!!)
+                var cursor: String? = null
 
-            val labelPhotoMap = mutableMapOf<String, String>()
-            for (metadata in lowMatchResults) {
-                val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                do {
+                    val uri = if (cursor != null) "api/review?limit=100&cursor=$cursor" else "api/review?limit=100"
+                    val reviewJson = webClient.get().uri(uri)
+                        .header("X-API-Key", settings.getArgusKey())
+                        .retrieve().bodyToMono(String::class.java).block() ?: break
 
-                var labelString = ""
+                    val reviewObj = mapper.readTree(reviewJson)
+                    val items = reviewObj["items"] ?: break
+                    val hasMore = reviewObj["has_more"]?.asBoolean() ?: false
+                    cursor = if (hasMore) reviewObj["next_cursor"]?.textValue() else null
 
-                if (recognitionLabelPhotos != null) {
-                    for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                        val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                        if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != TextUtils.getObjectName()) {
-                            labelString += recognitionLabelObj.get().getName() + ","
+                    for (item in items) {
+                        val suggestedMatches = item["suggested_matches"]
+                        if (suggestedMatches == null || suggestedMatches.size() == 0) continue
+                        val topMatch = suggestedMatches[0]
+                        if (topMatch["identity_id"].asInt() != argusIdentityId) continue
+
+                        val detectionId = item["detection_id"].asInt().toString()
+                        val cropUrl = item["crop_url"]?.textValue() ?: ""
+                        val similarity = topMatch["similarity"]?.asDouble() ?: 0.0
+                        val suggestedLabel = topMatch["label"]?.textValue() ?: ""
+
+                        val rlp = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                        val metadataObj = if (rlp?.getMetadataId() != null)
+                            metadataRepository?.findByMetadataId(rlp.getMetadataId()!!) else null
+
+                        val itemMap = mutableMapOf<String, Any>()
+                        itemMap["detectionId"] = detectionId
+                        itemMap["cropUrl"] = argusServer + cropUrl
+                        itemMap["similarity"] = similarity
+                        itemMap["suggestedLabel"] = suggestedLabel
+                        itemMap["hasPhoto"] = metadataObj != null
+                        if (metadataObj != null) {
+                            itemMap["metadataId"] = metadataObj.getId() ?: ""
+                            itemMap["thumbnailUrl"] = "/api/v1/thumbnails/225/${metadataObj.getId()}"
+                            itemMap["year"] = metadataObj.getYear() ?: ""
+                            itemMap["month"] = metadataObj.getMonth() ?: ""
+                            itemMap["day"] = metadataObj.getDay() ?: ""
                         }
+                        reviewItems.add(itemMap)
                     }
-                }
-                if (labelString.isNotBlank()) {
-                    labelString = labelString.dropLast(1)
-                    labelPhotoMap[metadata.getId()] = labelString
-                }
-            }
-            model["labelPhotoMap"] = labelPhotoMap
+                } while (cursor != null)
 
-            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
-
-            val keywordMap = mutableMapOf<String, String>()
-            for (keywordGroup in keywordList) {
-                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                if (reviewItems.isNotEmpty()) model["message"] = ""
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error fetching Argus review queue for person $personId: ${e.localizedMessage}")
             }
-            model["keywordMap"] = keywordMap
         }
+
+        counts["matches"] = reviewItems.size
 
         getAllAttributeData(model)
 
@@ -424,10 +399,10 @@ private val relativeSidecarDir: String? = null
         return module
     }
 
-    @RequestMapping(value = ["/person/compreface/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/person/argus/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @Secured("ROLE_ADMIN", "ROLE_SUPER")
     @ResponseBody
-    fun deleteCompreFaceGetImages(model: Model, @RequestBody requestBody: JsonNode, request: HttpServletRequest, locale: Locale): String {
+    fun deleteArgusEmbeddings(model: Model, @RequestBody requestBody: JsonNode, request: HttpServletRequest, locale: Locale): String {
         val imageMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         resp["responseData"] = mutableMapOf<String, Any?>()
@@ -439,61 +414,58 @@ private val relativeSidecarDir: String? = null
             val imageIdsString = imageMap["imageIds"].toString()
 
             val settings = model.getAttribute("settings") as Settings
-            val compreFaceConnection = NetworkUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
+            val argusConnection = NetworkUtils.checkArgusConnection(
+                settings.getArgusServer(),
+                settings.getArgusKey()
             )
 
-            if (imageIdsString.isNotBlank() && compreFaceConnection) {
-                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+            if (imageIdsString.isNotBlank() && argusConnection) {
+                val webClient = WebClient.create(settings.getArgusServer()!!)
 
                 try {
-                    val response = webClient.post()
-                        .uri("api/v1/recognition/faces/delete")
-                        .header("x-api-key", settings.getCompreFaceKey())
-                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                        .body(BodyInserters.fromValue(imageIdsString))
-                        .retrieve()
-                        .bodyToMono(String::class.java)
-                        .block()
-
-                    resp["msg"] = response
-                    resp["status"] = ApiResponse.SUCCESS.status
-
                     val idArray: Array<String>? = mapper.readValue(imageIdsString, object : TypeReference<Array<String>>() {})
 
                     if (!idArray.isNullOrEmpty()) {
-                        for (imageId in idArray) {
-                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(imageId)
+                        for (detectionId in idArray) {
+                            webClient.delete()
+                                .uri("api/detections/$detectionId")
+                                .header("X-API-Key", settings.getArgusKey())
+                                .retrieve()
+                                .bodyToMono(String::class.java)
+                                .block()
+
+                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
                             if (recognitionLabelPhotoObj != null) {
                                 recognitionLabelPhotoObj.setCompreFaceImageId("")
                                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                             }
                         }
                     }
+
+                    resp["msg"] = ""
+                    resp["status"] = ApiResponse.SUCCESS.status
                 } catch (e: Exception) {
                     resp["msg"] = messageSource?.getMessage("main.compreface.error.msg", null, locale)
 
                     logger.log(
                         Level.WARNING,
-                        "Error could not delete faces from CompreFace: ${e.localizedMessage}"
+                        "Error could not delete embeddings from Argus: ${e.localizedMessage}"
                     )
 
                     return mapper.writeValueAsString(resp)
                 }
-
-                resp["responseData"]
             }
         }
 
         return mapper.writeValueAsString(resp)
     }
 
-    @GetMapping("/person/compreface/{personId}")
+    @GetMapping("/person/argus/{personId}")
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
         val module = "compreface"
         val page = 0
+        syncArgusConfirmedToShashin(personId, model.getAttribute("settings") as Settings)
         val response = buildCompreFace(model,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
         val counts = HashMap<String,Int>()
         counts["compreface"] = 0
@@ -513,21 +485,16 @@ private val relativeSidecarDir: String? = null
             response["personInfo"] = recognitionLabel.get()
             subject = recognitionLabel.get().getName()
         }
-        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
+        val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+            settings.getArgusServer(),
+            settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
-        val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, faceRecogServicesAvailable, subject, 0, 9999)
-        if (!allSubjectCompreFaceJsonStr.isNullOrBlank()) {
-            val jsonObj = mapper.readTree(allSubjectCompreFaceJsonStr)
-            val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
-            val resultList: ArrayList<MutableMap<String, String>>?
-
-            if (resultMap.containsKey("faces")) {
-                resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
-                counts["compreface"] = resultList.size
-            }
+        val argusIdentityId2 = recognitionLabel?.get()?.getArgusIdentityId()
+        val allArgusGalleryJsonStr = getArgusGalleryForIdentity(settings, argusIdentityId2)
+        if (!allArgusGalleryJsonStr.isNullOrBlank()) {
+            val galleryJson = mapper.readTree(allArgusGalleryJsonStr)
+            if (galleryJson.has("items")) counts["compreface"] = galleryJson["items"].size()
         }
 
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -567,7 +534,7 @@ private val relativeSidecarDir: String? = null
         return module
     }
 
-    @RequestMapping(value = ["/person/compreface/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/person/argus/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedComprefaceList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int, locale: Locale): String {
         var response = mutableMapOf<String, Any?>()
@@ -593,54 +560,43 @@ private val relativeSidecarDir: String? = null
 
         response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["parameter"] = personId
-        response["resultList"] = mutableListOf<MutableMap<String, String>>()
+        response["resultList"] = mutableListOf<MutableMap<String, Any>>()
 
         val settings = model.getAttribute("settings") as Settings
-        response["compreFaceServer"] = settings.getCompreFaceServer()!!
-        response["compreFaceApiKey"] = settings.getCompreFaceKey()!!
+        response["argusServer"] = (settings.getArgusServer() ?: "").trimEnd('/')
 
-        // Get the recognition label
         val recognitionLabel = recognitionLabelRepository?.findById(personId)
 
         if (recognitionLabel != null && recognitionLabel.isPresent) {
             response["personInfo"] = recognitionLabel.get()
-            val subject = recognitionLabel.get().getName()
+            val argusIdentityId = recognitionLabel.get().getArgusIdentityId()
 
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
-            )
-            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, faceRecogServicesAvailable, subject, page, size)
-            if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
-                val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
-                val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
-                val resultList: ArrayList<MutableMap<String, String>>?
+            val galleryJsonStr = getArgusGalleryForIdentity(settings, argusIdentityId)
+            if (!galleryJsonStr.isNullOrBlank()) {
+                val galleryJson = mapper.readTree(galleryJsonStr)
+                if (galleryJson.has("items")) {
+                    val items = galleryJson["items"]
+                    val pageStart = page * size
+                    val pageEnd = minOf(pageStart + size, items.size())
+                    val resultList = mutableListOf<MutableMap<String, Any>>()
 
-                if (resultMap.containsKey("faces")) {
-                    resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
+                    if (pageStart < items.size()) {
+                        for (i in pageStart until pageEnd) {
+                            val item = items[i]
+                            val itemMap = mutableMapOf<String, Any>()
+                            itemMap["id"] = item["detection_id"].asInt()
+                            itemMap["crop_url"] = if (item.has("crop_url") && !item["crop_url"].isNull) item["crop_url"].textValue() else ""
 
-                    for (facesResult in resultList) {
-                        val compreFaceImageId: String? = facesResult["image_id"]
-                        val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(compreFaceImageId!!)
-                        facesResult["metadata_date"] = ""
-                        facesResult["image_base64"] = ""
-                        val compreFaceImageUrl = "${settings.getCompreFaceServer()}api/v1/static/${settings.getCompreFaceKey()!!}/images/${compreFaceImageId}"
-                        val base64String = getByteArrayFromImageURL(compreFaceImageUrl)
-                        if (!base64String.isNullOrBlank()) {
-                            facesResult["image_base64"] = base64String
-                        }
-                        if (recognitionLabelPhotoObj != null) {
-                            if (metadataRepository != null && metadataRepository!!.count() > 0) {
-                                val metadataObj = metadataRepository?.findByMetadataId(
-                                    recognitionLabelPhotoObj.getMetadataId().toString()
-                                )
-
+                            val detectionId = item["detection_id"].asInt().toString()
+                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                            itemMap["metadata_date"] = ""
+                            if (recognitionLabelPhotoObj != null && metadataRepository != null && metadataRepository!!.count() > 0) {
+                                val metadataObj = metadataRepository?.findByMetadataId(recognitionLabelPhotoObj.getMetadataId().toString())
                                 if (metadataObj != null) {
-                                    val metadataDate =
-                                        "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
-                                    facesResult["metadata_date"] = metadataDate
+                                    itemMap["metadata_date"] = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
                                 }
                             }
+                            resultList.add(itemMap)
                         }
                     }
 
@@ -656,33 +612,44 @@ private val relativeSidecarDir: String? = null
         return response
     }
 
-    private fun getCompreFaceJsonForSubject(model: Model, faceRecogServicesAvailable: Boolean, subject: String?, page: Int, queryLimit: Int): String? {
-        var subjectCompreFaceJsonStr: String? = null
-        val settings = model.getAttribute("settings") as Settings
+    private fun syncArgusConfirmedToShashin(personId: Int, settings: Settings) {
+        val recognitionLabel = recognitionLabelRepository?.findById(personId)
+        val argusIdentityId = recognitionLabel?.takeIf { it.isPresent }?.get()?.getArgusIdentityId() ?: return
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return
 
-        if (faceRecogServicesAvailable) {
-            val webClient = WebClient.create(settings.getCompreFaceServer()!!)
-            try {
-                subjectCompreFaceJsonStr = webClient.get()
-                    .uri("api/v1/recognition/faces?subject=${subject}&page=${page}&size=${queryLimit}")
-                    .header(
-                        "x-api-key",
-                        settings.getCompreFaceKey()
-                    )
-                    .retrieve()
-                    .bodyToMono(String::class.java)
-                    .block()
-            } catch (e: Exception) {
-                subjectCompreFaceJsonStr = "{\"error\" : \"Error getting CompreFace results for $subject\"}"
+        try {
+            val galleryJson = getArgusGalleryForIdentity(settings, argusIdentityId) ?: return
+            val galleryObj = mapper.readTree(galleryJson)
+            val items = galleryObj["items"] ?: return
 
-                logger.log(
-                    Level.WARNING,
-                    "Error getting CompreFace results for ${subject}: ${e.localizedMessage}"
-                )
+            for (item in items) {
+                val detectionId = item["detection_id"].asInt().toString()
+                val rlp = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId) ?: continue
+                if (rlp.getRecognitionLabelId() == null) {
+                    rlp.setRecognitionLabelId(personId)
+                    rlp.setConfidence("0.0")
+                    try { recognitionLabelPhotoRepository?.save(rlp) } catch (_: Exception) {}
+                }
             }
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error syncing Argus confirmed detections for person $personId: ${e.localizedMessage}")
         }
+    }
 
-        return subjectCompreFaceJsonStr
+    private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999): String? {
+        if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return null
+        return try {
+            WebClient.create(settings.getArgusServer()!!)
+                .get()
+                .uri("api/identities/$argusIdentityId/gallery?limit=$limit")
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block()
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error getting Argus gallery for identity $argusIdentityId: ${e.localizedMessage}")
+            null
+        }
     }
 
     private fun getByteArrayFromImageURL(url: String): String? {
@@ -781,6 +748,9 @@ private val relativeSidecarDir: String? = null
     fun getPerson(model: Model, @PathVariable personId: Int,request: HttpServletRequest, locale: Locale): String {
         val module = "person"
         val page = 0
+
+        syncArgusConfirmedToShashin(personId, model.getAttribute("settings") as Settings)
+
         val response = buildPersonAlbum(model,module,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
         for ((k, v) in response) {
             model[k] = v!!
@@ -959,22 +929,16 @@ private val relativeSidecarDir: String? = null
                     counts["person"] = 0
                 }
 
-                val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                    settings.getCompreFaceServer(),
-                    settings.getCompreFaceKey()
+                val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+                    settings.getArgusServer(),
+                    settings.getArgusKey()
                 )
                 response["faceRecogServicesAvailable"] = faceRecogServicesAvailable
-                val subject = recognitionLabel?.get()?.getName()
-                val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, faceRecogServicesAvailable, subject, 0, 9999)
-                if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
-                    val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
-                    val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
-                    val resultList: ArrayList<MutableMap<String, String>>?
-
-                    if (resultMap.containsKey("faces")) {
-                        resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
-                        counts["compreface"] = resultList.size
-                    }
+                val argusId = recognitionLabel?.get()?.getArgusIdentityId()
+                val galleryJson2 = getArgusGalleryForIdentity(settings, argusId)
+                if (!galleryJson2.isNullOrBlank()) {
+                    val gJson = mapper.readTree(galleryJson2)
+                    if (gJson.has("items")) counts["compreface"] = gJson["items"].size()
                 }
 
                 response["message"] = ""
@@ -1004,7 +968,7 @@ private val relativeSidecarDir: String? = null
                     val nameTaggedMap = mutableMapOf<String,Any>()
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                            val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                            val recognitionLabelObj = recognitionLabelPhoto.getRecognitionLabelId()?.let { recognitionLabelRepository?.findById(it) }
                             if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != TextUtils.getObjectName()) {
                                 labelString += recognitionLabelObj.get().getName() + ","
                             }
@@ -1116,25 +1080,22 @@ private val relativeSidecarDir: String? = null
                                     model.getAttribute("settings") as Settings,
                                     recognitionLabelString.trim(),
                                     metadata?.get(),
-                                    compreFaceImageIdMap
+                                    compreFaceImageIdMap,
+                                    recognitionLabelRepository
                                 )
                             )
                             val jsonRespObj = mapper.readTree(uploadResp)
 
-                            var compreFaceImageId: String? = null
-                            if (jsonRespObj.has("responseDataUpload") && jsonRespObj["responseDataUpload"].has("image_id")) {
-                                compreFaceImageId = jsonRespObj["responseDataUpload"]["image_id"].toString()
-                                compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
-                            } else if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("image_id")) {
-                                compreFaceImageId = jsonRespObj["responseData"]["image_id"].toString()
-                                compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                            var detectionId: String? = null
+                            if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("detection_id")) {
+                                detectionId = jsonRespObj["responseData"]["detection_id"].toString()
                             }
 
                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                             recognitionLabelPhotoObj.setMetadataId(metadataId)
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             recognitionLabelPhotoObj.setConfidence("0.0")
-                            recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
+                            recognitionLabelPhotoObj.setCompreFaceImageId(detectionId)
                             recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                         }
                     }
@@ -1230,6 +1191,83 @@ private val relativeSidecarDir: String? = null
         return mapper.writeValueAsString(resp)
     }
 
+    @RequestMapping(value = ["/person/matches/confirm"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @ResponseBody
+    fun confirmMatch(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
+        val bodyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        resp["msg"] = ""
+        resp["status"] = ApiResponse.FAIL.status
+
+        val detectionId = bodyMap["detectionId"]?.toString()
+        val action = bodyMap["action"]?.toString() ?: "confirm"
+        val identityId = bodyMap["identityId"]?.toString()?.toIntOrNull()
+
+        if (!detectionId.isNullOrBlank()) {
+            val settings = model.getAttribute("settings") as Settings
+
+            try {
+                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val argusServer = (settings.getArgusServer() ?: "").trimEnd('/')
+
+                when (action) {
+                    "confirm" -> {
+                        webClient.post()
+                            .uri("api/review/$detectionId/confirm")
+                            .header("X-API-Key", settings.getArgusKey())
+                            .retrieve().bodyToMono(String::class.java).block()
+
+                        // Link the detection to this person in Shashin's DB
+                        val personIdParam = bodyMap["personId"]?.toString()?.toIntOrNull()
+                        val record = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                        if (record != null && personIdParam != null) {
+                            record.setRecognitionLabelId(personIdParam)
+                            record.setConfidence("0.0")
+                            try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+                        }
+                    }
+                    "reject" -> {
+                        webClient.post()
+                            .uri("api/review/$detectionId/reject")
+                            .header("X-API-Key", settings.getArgusKey())
+                            .retrieve().bodyToMono(String::class.java).block()
+
+                        recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                            ?.let { recognitionLabelPhotoRepository?.delete(it) }
+                    }
+                    "reassign" -> {
+                        if (identityId != null) {
+                            val body = mapper.writeValueAsString(mapOf("identity_id" to identityId))
+                            webClient.post()
+                                .uri("api/review/$detectionId/reassign")
+                                .header("X-API-Key", settings.getArgusKey())
+                                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                                .body(BodyInserters.fromValue(body))
+                                .retrieve().bodyToMono(String::class.java).block()
+
+                            val record = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                            if (record != null) {
+                                val label = recognitionLabelRepository?.findByArgusIdentityId(identityId)
+                                if (label != null) {
+                                    record.setRecognitionLabelId(label.getId())
+                                    record.setConfidence("0.0")
+                                    try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+                                }
+                            }
+                        }
+                    }
+                }
+                resp["msg"] = ""
+                resp["status"] = ApiResponse.SUCCESS.status
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error processing match action $action for detection $detectionId: ${e.localizedMessage}")
+                resp["msg"] = e.localizedMessage
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
     @RequestMapping(value = ["/person/recognition/faces"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
@@ -1267,7 +1305,8 @@ private val relativeSidecarDir: String? = null
                 settings,
                 personName,
                 metadata,
-                compreFaceImageIdMap
+                compreFaceImageIdMap,
+                recognitionLabelRepository
             )
         }.start()
     }

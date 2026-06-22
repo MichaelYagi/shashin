@@ -205,14 +205,14 @@ class DashboardController(
 
             response["compreFaceAvailable"] = null
             if (settings?.getFacialDetection() == true &&
-                settings.getCompreFaceKey() != null &&
-                settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != null &&
-                settings.getCompreFaceServer() != ""
+                settings.getArgusKey() != null &&
+                settings.getArgusKey() != "" && settings.getArgusServer() != null &&
+                settings.getArgusServer() != ""
             ) {
-                metricsUtil.start("compreFace check")
-                val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                    settings.getCompreFaceServer(),
-                    settings.getCompreFaceKey()
+                metricsUtil.start("argus check")
+                val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+                    settings.getArgusServer(),
+                    settings.getArgusKey()
                 )
                 response["compreFaceAvailable"] = faceRecogServicesAvailable
                 metricsUtil.end()

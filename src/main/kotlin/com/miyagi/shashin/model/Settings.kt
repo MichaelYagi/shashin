@@ -16,9 +16,9 @@ class Settings {
     @NotBlank
     private var objectRecognitionConfidenceThreshold: String? = null
     @NotBlank
-    private var compreFaceServer: String? = null
+    private var argusServer: String? = null
     @NotBlank
-    private var compreFaceKey: String? = null
+    private var argusKey: String? = null
     @NotBlank
     private var queryLimit: Int? = null
     @NotBlank
@@ -79,20 +79,20 @@ class Settings {
         this.objectRecognitionConfidenceThreshold = objectRecognitionConfidenceThreshold
     }
 
-    fun getCompreFaceKey(): String? {
-        return this.compreFaceKey
+    fun getArgusKey(): String? {
+        return this.argusKey
     }
 
-    fun setCompreFaceKey(compreFaceKey: String?) {
-        this.compreFaceKey = compreFaceKey
+    fun setArgusKey(argusKey: String?) {
+        this.argusKey = argusKey
     }
 
-    fun getCompreFaceServer(): String? {
-        return this.compreFaceServer
+    fun getArgusServer(): String? {
+        return this.argusServer
     }
 
-    fun setCompreFaceServer(compreFaceServer: String?) {
-        this.compreFaceServer = compreFaceServer
+    fun setArgusServer(argusServer: String?) {
+        this.argusServer = argusServer
     }
 
     fun getMatchScanLimit(): Int? {
@@ -219,8 +219,8 @@ class Settings {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["port"] = this.port
-        map["compreFaceServer"] = this.compreFaceServer
-        map["compreFaceKey"] = this.compreFaceKey
+        map["argusServer"] = this.argusServer
+        map["argusKey"] = this.argusKey
         map["objectDetection"] = this.objectDetection
         map["facialDetection"] = this.facialDetection
         map["recognitionConfidenceThreshold"] = this.recognitionConfidenceThreshold

@@ -203,7 +203,7 @@ class ToolsController(
 
     @RequestMapping(value = ["/status/compreface"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun checkComprefacestatus(model: Model, locale: Locale): String {
+    fun checkArgusStatus(model: Model, locale: Locale): String {
         val settings = model.getAttribute("settings") as Settings?
         val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -216,16 +216,16 @@ class ToolsController(
             currentUserObj.getAuthority() != null &&
             (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER")
         ) {
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
+            val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+                settings.getArgusServer(),
+                settings.getArgusKey()
             )
 
-            status = if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+            status = if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
                 true
-            } else if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && settings.getCompreFaceServer() != "") {
+            } else if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && settings.getArgusServer() != "") {
                 false
-            } else if (settings.getCompreFaceKey() != "" && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+            } else if (settings.getArgusKey() != "" && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
                 false
             } else {
                 faceRecogServicesAvailable
@@ -304,19 +304,19 @@ class ToolsController(
         logger.log(Level.INFO, "HealthEP - Nominatim connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))}")
         metricsUtil.end()
 
-        metricsUtil.start("compreface endpoint")
+        metricsUtil.start("argus endpoint")
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
         if (settings?.getFacialDetection() == true &&
-            settings.getCompreFaceKey() != null &&
-            settings.getCompreFaceKey() != "" &&
-            settings.getCompreFaceServer() != null &&
-            settings.getCompreFaceServer() != "")
+            settings.getArgusKey() != null &&
+            settings.getArgusKey() != "" &&
+            settings.getArgusServer() != null &&
+            settings.getArgusServer() != "")
         {
-            val compreFaceTimingStart = Date()
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
+            val argusTimingStart = Date()
+            val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+                settings.getArgusServer(),
+                settings.getArgusKey()
             )
             if (faceRecogServicesAvailable) {
                 response["compreFaceAvailable"] = "OK"
@@ -324,10 +324,9 @@ class ToolsController(
                 response["compreFaceAvailable"] = "FAIL"
                 status = "FAIL"
             }
-            val compreFaceTimingEnd = Date()
-            val compreFaceTimingDiff: Long = compreFaceTimingEnd.time - compreFaceTimingStart.time
-//            response["compreFaceTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))
-            logger.log(Level.INFO, "HealthEP - CompreFace connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))}")
+            val argusTimingEnd = Date()
+            val argusTimingDiff: Long = argusTimingEnd.time - argusTimingStart.time
+            logger.log(Level.INFO, "HealthEP - Argus connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(argusTimingDiff))}")
         }
         metricsUtil.end()
 

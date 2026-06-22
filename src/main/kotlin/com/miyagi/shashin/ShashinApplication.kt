@@ -55,16 +55,17 @@ class ShashinApplication {
 				text.margin = Insets(10, 10, 10, 10)
 
 				try {
-					val iconimg = ImageIcon(this.javaClass.getResource("/static/images/favicon-32x32.png"))
-					frame.iconImage = iconimg.image
-					var taskbarimg = ImageIcon(this.javaClass.getResource("/static/images/favicon-256x256.png"))
-					val taskbar = Taskbar.getTaskbar()
-					// set icon for mac os (and other systems which do support this method)
-					taskbar.iconImage = taskbarimg.image
-				} catch (e: UnsupportedOperationException) {
-					println("The os does not support: 'taskbar.setIconImage'." + e.message)
-				} catch (e: SecurityException) {
-					println("There was a security exception for: 'taskbar.setIconImage'." + e.message)
+					val icon32 = this.javaClass.getResource("/static/images/favicon-32x32.png")
+					val icon256 = this.javaClass.getResource("/static/images/favicon-256x256.png")
+					if (icon32 != null) {
+						frame.iconImage = ImageIcon(icon32).image
+					}
+					if (icon256 != null) {
+						val taskbar = Taskbar.getTaskbar()
+						taskbar.iconImage = ImageIcon(icon256).image
+					}
+				} catch (e: Exception) {
+					println("Icon loading skipped: " + e.message)
 				}
 
 				frame.setResizable(false)
