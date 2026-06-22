@@ -1324,12 +1324,46 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
-        // Detect faces in one photo via Argus (no label) and store detection_id placeholders,
-        // mirroring the batch scan. When replace=true, Argus clears the image's existing face
-        // detections first, making re-detection idempotent (used by rescan).
+        // Store a single face detection from an Argus detect response. Argus returns the match
+        // inline: if it assigned an identity, link the RecognitionLabelPhoto to the Shashin person
+        // (via argusIdentityId) with the real confidence — auto-tagging it. Otherwise store an
+        // unlabeled placeholder, which surfaces in the Matches review tab.
+        fun storeFaceDetection(
+            faceNode: JsonNode,
+            metadataObj: Metadata,
+            recognitionLabelRepository: RecognitionLabelRepository?,
+            recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?
+        ) {
+            val detectionId = faceNode["detection_id"].asInt().toString()
+            val rlp = RecognitionLabelPhoto()
+            rlp.setMetadataId(metadataObj.getId())
+            rlp.setCompreFaceImageId(detectionId)
+            rlp.setAutoTagged(true)
+
+            val identityIdNode = faceNode.get("identity_id")
+            if (identityIdNode != null && !identityIdNode.isNull) {
+                val recognitionLabelObj = recognitionLabelRepository?.findByArgusIdentityId(identityIdNode.asInt())
+                if (recognitionLabelObj != null) {
+                    // Argus assigned an identity inline = confident auto-confirm. Store as confirmed
+                    // (confidence 0.0) so it shows in the person's gallery rather than the review tab.
+                    rlp.setRecognitionLabelId(recognitionLabelObj.getId())
+                    rlp.setConfidence("0.0")
+                    try { recognitionLabelPhotoRepository?.save(rlp) } catch (_: Exception) {}
+                    return
+                }
+            }
+            // No identity assigned (pending review) or unknown person → unlabeled placeholder
+            rlp.setConfidence("0.0")
+            try { recognitionLabelPhotoRepository?.save(rlp) } catch (_: Exception) {}
+        }
+
+        // Detect faces in one photo via Argus and store the results. Argus returns matches inline,
+        // so known people are auto-tagged. When replace=true, Argus clears the image's existing
+        // face detections first, making re-detection idempotent (used by rescan).
         fun detectAndStoreFaces(
             metadataObj: Metadata,
             settings: Settings,
+            recognitionLabelRepository: RecognitionLabelRepository?,
             recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?,
             replace: Boolean = false
         ): Boolean {
@@ -1357,13 +1391,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
                 if (facesNode != null && facesNode.size() > 0) {
                     for (faceNode in facesNode) {
-                        val detectionId = faceNode["detection_id"].asInt().toString()
-                        val placeholder = RecognitionLabelPhoto()
-                        placeholder.setMetadataId(metadataObj.getId())
-                        placeholder.setCompreFaceImageId(detectionId)
-                        placeholder.setConfidence("0.0")
-                        placeholder.setAutoTagged(true)
-                        try { recognitionLabelPhotoRepository.save(placeholder) } catch (_: Exception) {}
+                        storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository)
                     }
                 } else {
                     val noFaceRecord = RecognitionLabelPhoto()
@@ -1675,13 +1703,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                             if (facesNode != null && facesNode.size() > 0) {
                                 for (faceNode in facesNode) {
-                                    val detectionId = faceNode["detection_id"].asInt().toString()
-                                    val placeholder = RecognitionLabelPhoto()
-                                    placeholder.setMetadataId(metadataObj.getId())
-                                    placeholder.setCompreFaceImageId(detectionId)
-                                    placeholder.setConfidence("0.0")
-                                    placeholder.setAutoTagged(true)
-                                    try { recognitionLabelPhotoRepository.save(placeholder) } catch (_: Exception) {}
+                                    storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository)
                                     recognitionCount++
                                 }
                             } else {
