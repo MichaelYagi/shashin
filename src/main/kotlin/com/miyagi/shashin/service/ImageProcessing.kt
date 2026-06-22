@@ -1342,12 +1342,47 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             val identityIdNode = faceNode.get("identity_id")
             if (identityIdNode != null && !identityIdNode.isNull) {
-                val recognitionLabelObj = recognitionLabelRepository?.findByArgusIdentityId(identityIdNode.asInt())
+                val argusId = identityIdNode.asInt()
+                var recognitionLabelObj = recognitionLabelRepository?.findByArgusIdentityId(argusId)
+
+                // The identity may have been created directly in Argus, with no local person yet.
+                // Create or link one from the returned label so it tags without re-labeling in Shashin.
+                if (recognitionLabelObj == null && recognitionLabelRepository != null) {
+                    val labelNode = faceNode.get("label")
+                    val name = if (labelNode != null && !labelNode.isNull) labelNode.textValue()?.trim() else null
+                    if (!name.isNullOrBlank()) {
+                        val existingByName = recognitionLabelRepository.findByNameIgnoreCase(name)
+                        if (existingByName != null) {
+                            // A same-named local person exists — link it to this Argus identity.
+                            if (existingByName.getArgusIdentityId() == null) {
+                                existingByName.setArgusIdentityId(argusId)
+                                existingByName.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
+                                try { recognitionLabelRepository.save(existingByName) } catch (_: Exception) {}
+                            }
+                            recognitionLabelObj = existingByName
+                        } else {
+                            val newLabel = RecognitionLabel()
+                            newLabel.setName(name)
+                            newLabel.setArgusIdentityId(argusId)
+                            newLabel.setCreatedAt(TextUtils.Companion.getCurrentTimestamp())
+                            newLabel.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
+                            recognitionLabelObj = try {
+                                recognitionLabelRepository.save(newLabel)
+                            } catch (_: Exception) {
+                                recognitionLabelRepository.findByArgusIdentityId(argusId)
+                            }
+                        }
+                    }
+                }
+
                 if (recognitionLabelObj != null) {
-                    // Argus assigned an identity inline = confident auto-confirm. Store as confirmed
-                    // (confidence 0.0) so it shows in the person's gallery rather than the review tab.
+                    // Argus assigned an identity inline = confident match. Store as confirmed so it
+                    // shows in the person's gallery rather than the review tab.
                     rlp.setRecognitionLabelId(recognitionLabelObj.getId())
-                    rlp.setConfidence("0.0")
+                    rlp.setConfidence(
+                        if (faceNode.has("similarity") && !faceNode["similarity"].isNull)
+                            faceNode["similarity"].asText() else "0.0"
+                    )
                     try { recognitionLabelPhotoRepository?.save(rlp) } catch (_: Exception) {}
                     return
                 }
