@@ -1432,6 +1432,19 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
+        // Argus needs a full-resolution image to detect faces that aren't frame-filling.
+        // The 225px thumbnail shrinks small/distant faces below the detection threshold.
+        // Use the original file for images; videos must use the poster thumbnail since the
+        // original is not a decodable still image.
+        fun argusImagePath(metadata: Metadata): String? {
+            val type = metadata.getType() ?: ""
+            return if (type.contains("video")) {
+                metadata.getThumbnailPathSmall()
+            } else {
+                metadata.getPath()
+            }
+        }
+
         fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>, recognitionLabelRepository: RecognitionLabelRepository? = null): MutableMap<String, Any?> {
             val mapper = ObjectMapper()
             val uploadResponse = mutableMapOf<String, Any?>()
@@ -1446,7 +1459,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     try {
                         val webClient = WebClient.create(settings.getArgusServer()!!)
                         val builder = MultipartBodyBuilder()
-                        builder.part("file", FileSystemResource(metadata?.getThumbnailPathSmall()!!))
+                        builder.part("file", FileSystemResource(argusImagePath(metadata!!)!!))
                         builder.part("label", personName)
 
                         val response = webClient.post()
@@ -1509,7 +1522,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         val webClient = WebClient.create(settings.getArgusServer()!!)
 
                         val builder = MultipartBodyBuilder()
-                        builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+                        builder.part("file", FileSystemResource(argusImagePath(metadata)!!))
 
                         response = webClient.post()
                             .uri("api/detect/faces")
@@ -1574,7 +1587,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         val metadataObj = metadataRepository.findById(testImage.getId()).get()
 
                         // Facial recognition — send to Argus, save detection_id placeholder
-                        val faceFsr = FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
+                        val faceFsr = FileSystemResource(argusImagePath(metadataObj)!!)
                         val builder = MultipartBodyBuilder()
                         builder.part("file", faceFsr)
 

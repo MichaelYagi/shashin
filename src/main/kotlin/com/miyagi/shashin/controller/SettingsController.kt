@@ -2085,7 +2085,7 @@ class SettingsController(
                                         var builder = MultipartBodyBuilder()
                                         builder.part(
                                             "file",
-                                            FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
+                                            FileSystemResource(ImageProcessing.Companion.argusImagePath(metadataObj)!!)
                                         )
 
                                         var response: String? = null
