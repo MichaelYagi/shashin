@@ -1251,7 +1251,7 @@ class TimelineController(
                                     if (settings != null && NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
                                         if (settings.getFacialDetection() == true) {
                                             recognitionLabelPhotoRepository?.deleteByMetadataId(metadataCopy.getId())
-                                            ImageProcessing.Companion.detectAndStoreFaces(metadataCopy, settings, recognitionLabelPhotoRepository, true)
+                                            ImageProcessing.Companion.detectAndStoreFaces(metadataCopy, settings, recognitionLabelRepository, recognitionLabelPhotoRepository, true)
                                         }
                                         if (settings.getObjectDetection() == true) {
                                             ImageProcessing.Companion.detectAndStoreObjects(metadataCopy, settings, keywordRepository, keywordPhotoRepository, metadataRepository, replace = true)

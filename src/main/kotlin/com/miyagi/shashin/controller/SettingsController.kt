@@ -2148,13 +2148,7 @@ class SettingsController(
 
                                             if (facesNode != null && facesNode.size() > 0) {
                                                 for (faceNode in facesNode) {
-                                                    val detectionId = faceNode["detection_id"].asInt().toString()
-                                                    val placeholder = RecognitionLabelPhoto()
-                                                    placeholder.setMetadataId(metadataObj.getId())
-                                                    placeholder.setCompreFaceImageId(detectionId)
-                                                    placeholder.setConfidence("0.0")
-                                                    placeholder.setAutoTagged(true)
-                                                    try { recognitionLabelPhotoRepository?.save(placeholder) } catch (_: Exception) {}
+                                                    ImageProcessing.Companion.storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository)
                                                     recognitionCount++
                                                 }
                                             } else {
