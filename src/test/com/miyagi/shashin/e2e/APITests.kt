@@ -136,10 +136,15 @@ class APITests: BaseSeleniumTests() {
 //        println("mediaExcludeDirTextArea textarea text: $mediaExcludeDirTextAreaText")
 //        println("mediaExcludeDirTextArea value: ${mediaExcludeDirTextArea.getDomAttribute("value")}")
 
-        var objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
-        objectDetectionCheck.sendKeys(Keys.SPACE)
-        if (!objectDetectionCheck.isSelected) {
-            objectDetectionCheck.click()
+        // Object/face detection toggles only render when Argus is reachable.
+        // In CI Argus isn't running, so the checkbox is absent — skip it.
+        val objectDetectionChecks = this.driver!!.findElements(By.id("objectDetection"))
+        if (objectDetectionChecks.isNotEmpty()) {
+            val objectDetectionCheck = objectDetectionChecks[0]
+            objectDetectionCheck.sendKeys(Keys.SPACE)
+            if (!objectDetectionCheck.isSelected) {
+                objectDetectionCheck.click()
+            }
         }
 
         var saveSettings = this.driver!!.findElement(By.id("saveSettings"))
