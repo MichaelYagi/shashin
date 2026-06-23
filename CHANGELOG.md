@@ -16,6 +16,23 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 
+## [2.19.0] - 2026-06-23
+### Added
+- Argus integration for face and object recognition (self-hosted, replaces CompreFace)
+- Object detection results surfaced as searchable keywords
+- Matches workflow backed by the Argus review queue (confirm/reject suggested matches)
+- Face and object detection settings are gated by the models active in Argus
+
+### Changed
+- Manual labeling now enrolls the person as an identity in Argus
+- Argus connection check validates the API key against an authenticated endpoint instead of only checking server reachability
+
+### Removed
+- Native CompreFace and Deep Java Library (DJL) recognition code paths
+
+### Fixed
+- Orphaned-subject cleanup no longer deletes Argus identities, preventing loss of enrolled faces
+
 ## [2.18.2] - 2026-06-13
 ### Changed
 - Repo now public

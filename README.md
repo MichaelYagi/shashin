@@ -66,7 +66,7 @@ Tech Stack
 * [OpenLayers](https://openlayers.org/) - Display map tiles, vector data and markers loaded from multiple map sources, like [OpenStreetMap](https://www.openstreetmap.org/), [ArcGIS](https://www.arcgis.com/index.html) and [MapTiler](https://www.maptiler.com/)
 * [Nominatim](https://nominatim.org/) - Open-source geocoding with OpenStreetMap data
 * [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
-* [CompreFace](https://github.com/exadel-inc/CompreFace) - Self hosted REST API for face recognition
-* [Deep Java Library](https://djl.ai/) - Face and object recognition library
+* [Argus](https://github.com/MichaelYagi/argus) - Self hosted REST API for face and object recognition
+* [Deep Java Library](https://djl.ai/) - Bundled face/object recognition library (legacy; recognition is now handled by Argus)
 * [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin
 * [Chart.js](https://www.chartjs.org/) - Javascript charting library
