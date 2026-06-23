@@ -89,24 +89,37 @@ class NetworkUtils {
             return available
         }
 
-        // Returns which Argus models are installed and active by reading /api/health.
-        // Map keys: "connected" (server reachable), "face" (face model active), "object" (object model active).
+        // Returns connectivity + which Argus models are active.
+        // Map keys: "connected" (server reachable AND key valid), "face"/"object" (models active).
+        // NOTE: /api/health is unauthenticated, so it returns 200 for any key (even a fake one).
+        // To actually validate the key we first hit an authenticated endpoint (/api/review/count);
+        // a bad key returns 401/403 there and throws, leaving "connected" false.
         fun checkArgusModels(argusServer: String?, argusKey: String?): Map<String, Boolean> {
             val result = mutableMapOf("connected" to false, "face" to false, "object" to false)
             if (argusKey.isNullOrBlank() || argusServer.isNullOrBlank()) return result
 
             try {
-                val response = WebClient.create(argusServer)
-                    .get()
+                val webClient = WebClient.create(argusServer)
+
+                // Validate the key against an authenticated endpoint (throws on 401/403/bad key)
+                webClient.get()
+                    .uri("api/review/count")
+                    .header("X-API-Key", argusKey)
+                    .retrieve()
+                    .bodyToMono(String::class.java)
+                    .block()
+
+                // Key is valid + server reachable; read models from the (public) health endpoint
+                val response = webClient.get()
                     .uri("api/health")
                     .header("X-API-Key", argusKey)
                     .retrieve()
                     .bodyToMono(String::class.java)
                     .block()
 
+                result["connected"] = true
                 if (!response.isNullOrBlank()) {
                     val json = ObjectMapper().readTree(response)
-                    result["connected"] = true
                     result["face"] = json.has("face_model") && !json["face_model"].isNull
                     result["object"] = json.has("object_model") && !json["object_model"].isNull
                 }
