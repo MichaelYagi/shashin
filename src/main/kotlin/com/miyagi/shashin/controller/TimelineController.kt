@@ -2783,6 +2783,11 @@ class TimelineController(
     }
 
     fun cleanupOrphanedSubjects(settings: Settings? = null) {
+        // NOTE: deliberately does NOT delete the Argus identity. This runs on every metadata
+        // update and a Shashin label with zero tagged photos does NOT mean the Argus identity
+        // is empty — Argus may own many enrolled faces (especially before photos are tagged in
+        // Shashin). Deleting here destroyed Argus-owned identities. Only the local orphaned
+        // label is removed; Argus identities are managed explicitly elsewhere.
         val allPeople = recognitionLabelRepository?.findAll()
         if (allPeople != null) {
             for (person in allPeople) {
@@ -2790,22 +2795,6 @@ class TimelineController(
                 if (personLabelId != null && personLabelId > 0) {
                     val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelId(personLabelId)
                     if (recognitionLabelPhotoCount == 0) {
-                        val argusIdentityId = person.getArgusIdentityId()
-                        if (argusIdentityId != null && settings != null &&
-                            !settings.getArgusServer().isNullOrBlank() &&
-                            !settings.getArgusKey().isNullOrBlank()
-                        ) {
-                            try {
-                                WebClient.create(settings.getArgusServer()!!).delete()
-                                    .uri("api/identities/$argusIdentityId")
-                                    .header("X-API-Key", settings.getArgusKey())
-                                    .retrieve()
-                                    .bodyToMono(String::class.java)
-                                    .block()
-                            } catch (e: Exception) {
-                                logger.log(Level.WARNING, "Error deleting Argus identity $argusIdentityId: ${e.localizedMessage}")
-                            }
-                        }
                         recognitionLabelRepository?.deleteById(personLabelId)
                     }
                 }
