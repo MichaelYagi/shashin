@@ -54,3 +54,6 @@ build/
 /src/main/resources/static/js/site/min/
 /process.yml
 /cc_prompt.txt
+/test
+/sidecar
+/login_timeout.png
