@@ -341,6 +341,11 @@
             <artifactId>ffmpeg</artifactId>
             <version>6.0-1.5.9</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.11.0</version>
+        </dependency>
         <!-- JS minifier -->
         <dependency>
             <groupId>com.google.javascript</groupId>
