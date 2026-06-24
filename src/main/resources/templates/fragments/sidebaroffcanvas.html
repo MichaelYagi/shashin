@@ -36,7 +36,7 @@
                 </li>
             </th:block>
             <li class="nav-item">
-                <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='people' or activeSidebar=='person' or activeSidebar=='matches' or activeSidebar=='compreface' ? ' active' : ''}" href="/people">
+                <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='people' or activeSidebar=='person' or activeSidebar=='matches' or activeSidebar=='training' ? ' active' : ''}" href="/people">
                     <span id="sidebarPeople" class="bi-person-square position-relative" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.people}"></th:block>
                 </a>
             </li>

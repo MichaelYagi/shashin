@@ -50,8 +50,8 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <!--<th:block th:text="${'SQLite lookup for '+sqlLiteQueryCount+' metadata record'+(sqlLiteQueryCount != 1 ? 's' : '')+' elapsed time: '+sqlLiteQueryTiming}"></th:block><br>-->
 <th:block th:utext="${'Nominatim connection: '+(nominatimAvailable == 'OK' ? nominatimAvailable : '<span style=&quot;color: red;&quot;>'+nominatimAvailable+'</span>')}"></th:block><br>
 <!--<th:block th:text="${'Nominatim elapsed time: '+nominatimTiming}"></th:block><br>-->
-<th:block th:if="${compreFaceAvailable != null}">
-<th:block th:utext="${'CompreFace connection: '+(compreFaceAvailable == 'OK' ? compreFaceAvailable : '<span style=&quot;color: red;&quot;>'+compreFaceAvailable+'</span>')}"></th:block><br>
+<th:block th:if="${argusAvailable != null}">
+<th:block th:utext="${'Argus connection: '+(argusAvailable == 'OK' ? argusAvailable : '<span style=&quot;color: red;&quot;>'+argusAvailable+'</span>')}"></th:block><br>
 <!--<th:block th:text="${'CompreFace elapsed time: '+compreFaceTiming}"></th:block><br>-->
 </th:block>
 <!--<th:block th:text="${'CircleCI elapsed time: '+circleCIBuildTiming}"></th:block><br>-->

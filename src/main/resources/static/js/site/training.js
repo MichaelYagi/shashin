@@ -1,4 +1,4 @@
-class Compreface {
+class Training {
 
     constructor(resultList, personId, activePage) {
         this.http = new Http(activePage);
@@ -12,7 +12,7 @@ class Compreface {
 
     async init() {
         setTimeout(async () => {
-            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendCompreFacePhotos", this.resultList);
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendTrainingPhotos", this.resultList);
         }, 0);
 
         $("#resyncArgusBtn").on("click", async (e) => {
@@ -33,7 +33,7 @@ class Compreface {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateCompreface(this.page, this.personId).then(function (additionalMediaContentList) {
+            this.updateTraining(this.page, this.personId).then(function (additionalMediaContentList) {
                 // console.log(additionalMediaContentList)
                 this.page++;
             }.bind(this));
@@ -42,7 +42,7 @@ class Compreface {
         return this.eol;
     }
 
-    async updateCompreface(nextPage,personId) {
+    async updateTraining(nextPage,personId) {
         this.rendering = true;
 
         let data = null;
@@ -81,7 +81,7 @@ class Compreface {
                     }
                     html += '</div>';
 
-                    $(html).insertBefore($(".appendCompreFacePhotos").last());
+                    $(html).insertBefore($(".appendTrainingPhotos").last());
 
                     setPhotoOverlays(embeddingId);
                 }
@@ -89,14 +89,14 @@ class Compreface {
                 this.rendering = false;
                 $("#spinner").css("display", "none");
             } else {
-                $(".appendCompreFacePhotos").last().text("EOL").css("display","none");
+                $(".appendTrainingPhotos").last().text("EOL").css("display","none");
                 this.rendering = false;
                 this.eol = true;
             }
         } else {
             this.rendering = false;
             this.eol = true;
-            $(".appendCompreFacePhotos").last().text("EOL").css("display","none");
+            $(".appendTrainingPhotos").last().text("EOL").css("display","none");
         }
 
         $("#spinner").css("display","none");

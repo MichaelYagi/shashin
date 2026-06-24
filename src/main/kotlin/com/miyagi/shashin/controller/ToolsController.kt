@@ -201,7 +201,7 @@ class ToolsController(
         return "bcrypt"
     }
 
-    @RequestMapping(value = ["/status/compreface"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/status/argus"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun checkArgusStatus(model: Model, locale: Locale): String {
         val settings = model.getAttribute("settings") as Settings?
@@ -239,7 +239,7 @@ class ToolsController(
             }
         }
 
-        return "{\"comprefaceStatus\":$status,\"status\":\"${ApiResponse.SUCCESS.status}\",\"msg\":\"\",\"message\":\"$message\"}"
+        return "{\"argusStatus\":$status,\"status\":\"${ApiResponse.SUCCESS.status}\",\"msg\":\"\",\"message\":\"$message\"}"
     }
 
     @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -319,9 +319,9 @@ class ToolsController(
                 settings.getArgusKey()
             )
             if (faceRecogServicesAvailable) {
-                response["compreFaceAvailable"] = "OK"
+                response["argusAvailable"] = "OK"
             } else {
-                response["compreFaceAvailable"] = "FAIL"
+                response["argusAvailable"] = "FAIL"
                 status = "FAIL"
             }
             val argusTimingEnd = Date()

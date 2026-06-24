@@ -287,7 +287,7 @@ private val relativeSidecarDir: String? = null
         val counts = HashMap<String,Int>()
         counts["person"] = 0
         counts["matches"] = 0
-        counts["compreface"] = 0
+        counts["training"] = 0
         model["counts"] = counts
         model["parameter"] = personId
 
@@ -329,7 +329,7 @@ private val relativeSidecarDir: String? = null
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId = recognitionLabel?.get()?.getArgusIdentityId()
-        counts["compreface"] = getEnrolledGalleryItems(settings, argusIdentityId).size
+        counts["training"] = getEnrolledGalleryItems(settings, argusIdentityId).size
 
         // Pull pending review items from Argus, filtered to this person's argusIdentityId
         val reviewItems = mutableListOf<MutableMap<String, Any>>()
@@ -364,7 +364,7 @@ private val relativeSidecarDir: String? = null
                         val similarity = topMatch["similarity"]?.asDouble() ?: 0.0
                         val suggestedLabel = topMatch["label"]?.textValue() ?: ""
 
-                        val rlp = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                        val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
                         val metadataObj = if (rlp?.getMetadataId() != null)
                             metadataRepository?.findByMetadataId(rlp.getMetadataId()!!) else null
 
@@ -443,9 +443,9 @@ private val relativeSidecarDir: String? = null
                                 .bodyToMono(String::class.java)
                                 .block()
 
-                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
                             if (recognitionLabelPhotoObj != null) {
-                                recognitionLabelPhotoObj.setCompreFaceImageId("")
+                                recognitionLabelPhotoObj.setArgusDetectionId("")
                                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                             }
                         }
@@ -472,12 +472,12 @@ private val relativeSidecarDir: String? = null
     @GetMapping("/person/argus/{personId}")
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
-        val module = "compreface"
+        val module = "training"
         val page = 0
         syncArgusConfirmedToShashin(personId, model.getAttribute("settings") as Settings)
         val response = buildCompreFace(model,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
         val counts = HashMap<String,Int>()
-        counts["compreface"] = 0
+        counts["training"] = 0
         counts["person"] = 0
         counts["matches"] = 0
         response["counts"] = counts
@@ -500,7 +500,7 @@ private val relativeSidecarDir: String? = null
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId2 = recognitionLabel?.takeIf { it.isPresent }?.get()?.getArgusIdentityId()
-        counts["compreface"] = getEnrolledGalleryItems(settings, argusIdentityId2).size
+        counts["training"] = getEnrolledGalleryItems(settings, argusIdentityId2).size
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -647,7 +647,7 @@ private val relativeSidecarDir: String? = null
                         itemMap["id"] = detectionId
                         itemMap["crop_url"] = if (item.has("crop_url") && !item["crop_url"].isNull) item["crop_url"].textValue() else ""
                         itemMap["metadata_date"] = ""
-                        val rlp = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                        val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
                         if (rlp?.getMetadataId() != null) {
                             val metadataObj = metadataRepository?.findByMetadataId(rlp.getMetadataId()!!)
                             if (metadataObj != null) {
@@ -684,7 +684,7 @@ private val relativeSidecarDir: String? = null
 
             for (item in items) {
                 val detectionId = item["detection_id"].asInt().toString()
-                val rlp = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId) ?: continue
+                val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
                 if (rlp.getRecognitionLabelId() == null) {
                     rlp.setRecognitionLabelId(personId)
                     rlp.setConfidence("0.0")
@@ -964,7 +964,7 @@ private val relativeSidecarDir: String? = null
         response["favorites"] = HashMap<String, HashMap<String, Any>>()
         counts["person"] = 0
         counts["matches"] = 0
-        counts["compreface"] = 0
+        counts["training"] = 0
         response["counts"] = counts
         response["canEdit"] = model.getAttribute("authority") == adminRole || model.getAttribute("authority") == superRole
         response["faceRecogServicesAvailable"] = false
@@ -1058,7 +1058,7 @@ private val relativeSidecarDir: String? = null
                 val galleryJson2 = getArgusGalleryForIdentity(settings, argusId)
                 if (!galleryJson2.isNullOrBlank()) {
                     val gJson = mapper.readTree(galleryJson2)
-                    if (gJson.has("items")) counts["compreface"] = gJson["items"].size()
+                    if (gJson.has("items")) counts["training"] = gJson["items"].size()
                 }
 
                 response["message"] = ""
@@ -1142,7 +1142,7 @@ private val relativeSidecarDir: String? = null
 
             if (personMap.containsKey("currentPerson") && personMap["currentPerson"].toString() != "") {
                 val recognitionLabel = personMap["currentPerson"].toString()
-                val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+                val argusDetectionIdMap = mutableMapOf<String, Any?>()
 
                 if (recognitionLabel.trim().isNotBlank()) {
                     val recognitionLabelRecord =
@@ -1153,11 +1153,11 @@ private val relativeSidecarDir: String? = null
                                 recognitionLabelRecord.getId(),
                                 metadataId
                             )
-                        if (recognitionLabelPhoto != null && !recognitionLabelPhoto.getCompreFaceImageId()
+                        if (recognitionLabelPhoto != null && !recognitionLabelPhoto.getArgusDetectionId()
                                 .isNullOrEmpty()
                         ) {
-                            compreFaceImageIdMap["${recognitionLabel.replace("\\s".toRegex(), "")}-$metadataId"] =
-                                recognitionLabelPhoto.getCompreFaceImageId()!!
+                            argusDetectionIdMap["${recognitionLabel.replace("\\s".toRegex(), "")}-$metadataId"] =
+                                recognitionLabelPhoto.getArgusDetectionId()!!
                         }
                     }
                 }
@@ -1200,7 +1200,7 @@ private val relativeSidecarDir: String? = null
                                     model.getAttribute("settings") as Settings,
                                     recognitionLabelString.trim(),
                                     metadata?.get(),
-                                    compreFaceImageIdMap,
+                                    argusDetectionIdMap,
                                     recognitionLabelRepository
                                 )
                             )
@@ -1215,7 +1215,7 @@ private val relativeSidecarDir: String? = null
                             recognitionLabelPhotoObj.setMetadataId(metadataId)
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             recognitionLabelPhotoObj.setConfidence("0.0")
-                            recognitionLabelPhotoObj.setCompreFaceImageId(detectionId)
+                            recognitionLabelPhotoObj.setArgusDetectionId(detectionId)
                             recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                         }
                     }
@@ -1339,7 +1339,7 @@ private val relativeSidecarDir: String? = null
 
                         // Link the detection to this person in Shashin's DB
                         val personIdParam = bodyMap["personId"]?.toString()?.toIntOrNull()
-                        val record = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                        val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
                         if (record != null && personIdParam != null) {
                             record.setRecognitionLabelId(personIdParam)
                             record.setConfidence("0.0")
@@ -1352,7 +1352,7 @@ private val relativeSidecarDir: String? = null
                             .header("X-API-Key", settings.getArgusKey())
                             .retrieve().bodyToMono(String::class.java).block()
 
-                        recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                        recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
                             ?.let { recognitionLabelPhotoRepository?.delete(it) }
                     }
                     "reassign" -> {
@@ -1365,7 +1365,7 @@ private val relativeSidecarDir: String? = null
                                 .body(BodyInserters.fromValue(body))
                                 .retrieve().bodyToMono(String::class.java).block()
 
-                            val record = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                            val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
                             if (record != null) {
                                 val label = recognitionLabelRepository?.findByArgusIdentityId(identityId)
                                 if (label != null) {
@@ -1404,10 +1404,10 @@ private val relativeSidecarDir: String? = null
             val personName = personMap["personName"].toString()
             val metadataId = personMap["metadataId"].toString()
             val metadata = metadataRepository?.findById(metadataId)
-            val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+            val argusDetectionIdMap = mutableMapOf<String, Any?>()
             val settings = model.getAttribute("settings") as Settings
 
-            personUpload(settings, personName, metadata?.get(), compreFaceImageIdMap)
+            personUpload(settings, personName, metadata?.get(), argusDetectionIdMap)
 
             resp["responseData"] = mutableMapOf<String, Any?>()
             resp["msg"] = ""
@@ -1419,13 +1419,13 @@ private val relativeSidecarDir: String? = null
         return mapper.writeValueAsString(resp)
     }
 
-    fun personUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) {
+    fun personUpload(settings: Settings, personName: String?, metadata: Metadata?, argusDetectionIdMap: MutableMap<String, Any?>) {
         Thread {
             ImageProcessing.Companion.buildPersonUpload(
                 settings,
                 personName,
                 metadata,
-                compreFaceImageIdMap,
+                argusDetectionIdMap,
                 recognitionLabelRepository
             )
         }.start()

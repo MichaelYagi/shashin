@@ -26,8 +26,8 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
 
     setTimeout(function () {
         const http = new Http("check compreface status");
-        http.ajax("get", "/status/compreface").then(function (data) {
-            if (data.hasOwnProperty("comprefaceStatus") && data.comprefaceStatus === false) {
+        http.ajax("get", "/status/argus").then(function (data) {
+            if (data.hasOwnProperty("argusStatus") && data.argusStatus === false) {
                 shashin.showToastMessage(shashin.getTranslatedValue("main.pages.dashboard.compreface"), data.message, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",

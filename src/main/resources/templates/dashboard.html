@@ -33,8 +33,8 @@
                                         <h1 class="display-6"><th:block th:text="#{main.pages.dashboard.nominatim}"></th:block>&nbsp;<span id="nominatimStatus"></span></h1>
                                     </div>
 
-                                    <div class="col-sm text-center" id="compreFaceStatusContainer" style="display: none">
-                                        <h1 class="display-6"><span id="compreFaceText"></span></strong>&nbsp;<span id="compreFaceStatus"></h1>
+                                    <div class="col-sm text-center" id="argusStatusContainer" style="display: none">
+                                        <h1 class="display-6"><span id="argusText"></span></strong>&nbsp;<span id="argusStatus"></h1>
                                     </div>
                                 </div>
                                 <div class="row pb-5">
@@ -292,18 +292,18 @@
                         $("#nominatimStatus").addClass((data["nominatimAvailable"] ? "bi-check-circle" : "bi-x-circle"));
                         $("#nominatimStatus").attr("title", "Nominatim is " + (data["nominatimAvailable"] ? "" : "not " ) + "available");
                     }
-                    if (data["compreFaceAvailable"] !== null) {
-                        $("#compreFaceStatusContainer").css("display", "block");
-                        $("#compreFaceStatus").css({
-                            "color": (data["compreFaceAvailable"] ? "green" : "red"),
+                    if (data["argusAvailable"] !== null) {
+                        $("#argusStatusContainer").css("display", "block");
+                        $("#argusStatus").css({
+                            "color": (data["argusAvailable"] ? "green" : "red"),
                             "font-size": "2rem"
                         });
-                        $("#compreFaceStatus").attr("title", "CompreFace is " + (data["compreFaceAvailable"] ? "" : "not " ) + "available");
-                        $("#compreFaceStatus").addClass((data["compreFaceAvailable"] ? "bi-check-circle" : "bi-x-circle"));
-                        if (data["compreFaceAvailable"]) {
-                            $("#compreFaceText").text(shashin.getTranslatedValue("main.pages.dashboard.compreface"));
+                        $("#argusStatus").attr("title", "Argus is " + (data["argusAvailable"] ? "" : "not " ) + "available");
+                        $("#argusStatus").addClass((data["argusAvailable"] ? "bi-check-circle" : "bi-x-circle"));
+                        if (data["argusAvailable"]) {
+                            $("#argusText").text(shashin.getTranslatedValue("main.pages.dashboard.compreface"));
                         } else {
-                            $("#compreFaceText").html('<a href="/settings" target="_blank">'+shashin.getTranslatedValue("main.pages.dashboard.compreface")+'</a>');
+                            $("#argusText").html('<a href="/settings" target="_blank">'+shashin.getTranslatedValue("main.pages.dashboard.compreface")+'</a>');
                         }
                     }
                     $("#endpointProcessingTimeMS").text("0 ms");

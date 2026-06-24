@@ -59,7 +59,7 @@
                     </th:block>
                 </span>
             </th:block>
-            <th:block th:if="${activePage == 'timeline' || activePage == 'folder' || activePage == 'person' || activePage == 'matches' || activePage == 'compreface'}">
+            <th:block th:if="${activePage == 'timeline' || activePage == 'folder' || activePage == 'person' || activePage == 'matches' || activePage == 'training'}">
                 <span id="timelineTools">
                     <th:block th:if="${activePage == 'timeline'}">
                         &nbsp;
@@ -73,7 +73,7 @@
                             <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
                         </a>
                     </th:block>
-                    <th:block th:if="${activePage == 'person' || activePage == 'matches' || activePage == 'compreface'}">
+                    <th:block th:if="${activePage == 'person' || activePage == 'matches' || activePage == 'training'}">
                         &nbsp;
                         <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/people" aria-controls="back" th:title="#{main.pages.tooltip.topnav.msg.back}">
                             <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
@@ -157,11 +157,11 @@
                     &nbsp;&nbsp;<span id="albumNumberSelected"></span>
                 </div>
             </th:block>
-            <th:block th:if="${activePage == 'compreface'}">
-                <div id="comprefaceAppTools">
-                    <a href="#" id="comprefaceBatchDelete" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.removecf}"><span th:class="'bi-trash placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="comprefaceDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.clearselect}"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
-                    &nbsp;&nbsp;<span id="comprefaceNumberSelected"></span>
+            <th:block th:if="${activePage == 'training'}">
+                <div id="argusTrainingAppTools">
+                    <a href="#" id="argusTrainingBatchDelete" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.removecf}"><span th:class="'bi-trash placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="argusTrainingDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.clearselect}"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
+                    &nbsp;&nbsp;<span id="argusTrainingNumberSelected"></span>
                 </div>
             </th:block>
             <div id="mediaScanSpinner" style="height: 37px; width: 37px;margin-left: 10px;margin-right: -48px;display: none;">

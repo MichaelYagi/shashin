@@ -11,7 +11,7 @@
         </li>
         <th:block th:if="${faceRecogServicesAvailable==true}">
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activePage=='compreface' ? ' active' : ''}" th:href="${'/person/argus/'+parameter}"><th:block th:text="#{main.pages.people.tabs.training}"></th:block> <span class="badge bg-secondary" th:text="${counts.get('compreface')}"></span></a>
+                <a th:attr="class='nav-link' + ${activePage=='training' ? ' active' : ''}" th:href="${'/person/argus/'+parameter}"><th:block th:text="#{main.pages.people.tabs.training}"></th:block> <span class="badge bg-secondary" th:text="${counts.get('training')}"></span></a>
             </li>
         </th:block>
     </th:block>

@@ -19,7 +19,7 @@
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
 <!--            <h1 th:inline="text">[[${personInfo.name}]]</h1>-->
-            <div class="mt-2" id="comprefaceMessage"></div>
+            <div class="mt-2" id="argusTrainingMessage"></div>
 
             <div id="infinite-scroll-gallery" class="row">
                 <th:block th:if="${not #lists.isEmpty(resultList)}">
@@ -65,17 +65,17 @@
                                     if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill") {
                                         $("#appSearch").hide();
                                         $("#timelineTools").hide();
-                                        $("#comprefaceAppTools").show();
+                                        $("#argusTrainingAppTools").show();
                                     } else {
                                         $("#appSearch").show();
                                         $("#timelineTools").show();
                                         $("#timelineAppTools").hide();
                                         $("#albumAppTools").hide();
                                         $("#matchesAppTools").hide();
-                                        $("#comprefaceAppTools").hide();
+                                        $("#argusTrainingAppTools").hide();
                                     }
 
-                                    $("#comprefaceNumberSelected").text($('.thumbnail-tl .bi-circle-fill').length + " Selected");
+                                    $("#argusTrainingNumberSelected").text($('.thumbnail-tl .bi-circle-fill').length + " Selected");
                                 });
 
                                 $("#image" + embeddingId).on("click", function (e) {
@@ -102,17 +102,17 @@
                                     if ($('.thumbnail-tl .bi-circle-fill').length > 0 || $(this).attr("class") === "bi-circle-fill") {
                                         $("#appSearch").hide();
                                         $("#timelineTools").hide();
-                                        $("#comprefaceAppTools").show();
+                                        $("#argusTrainingAppTools").show();
                                     } else {
                                         $("#appSearch").show();
                                         $("#timelineTools").show();
                                         $("#timelineAppTools").hide();
                                         $("#albumAppTools").hide();
                                         $("#matchesAppTools").hide();
-                                        $("#comprefaceAppTools").hide();
+                                        $("#argusTrainingAppTools").hide();
                                     }
                                     
-                                    $("#comprefaceNumberSelected").text($('.thumbnail-tl .bi-circle-fill').length + " Selected");
+                                    $("#argusTrainingNumberSelected").text($('.thumbnail-tl .bi-circle-fill').length + " Selected");
                                 });
 
                                 $("#image" + embeddingId).hover(function () {
@@ -223,7 +223,7 @@
                                 </script>
                             </div>
 
-                            <span class="appendCompreFacePhotos" style="width:0;height:0;padding:0"></span>
+                            <span class="appendTrainingPhotos" style="width:0;height:0;padding:0"></span>
                         </th:block>
                     </div>
 
@@ -251,7 +251,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="comprefaceModal" tabindex="-1" role="dialog" aria-labelledby="labeltrash">
+<div class="modal fade" id="argusTrainingModal" tabindex="-1" role="dialog" aria-labelledby="labeltrash">
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -303,17 +303,17 @@
 
         shashin.updateSearchInput(personName);
 
-        $("#comprefaceBatchDelete").on("click", function(e) {
+        $("#argusTrainingBatchDelete").on("click", function(e) {
             e.preventDefault();
 
-            $("#comprefaceModal").modal('show');
+            $("#argusTrainingModal").modal('show');
         });
 
-        $('#comprefaceModal').on('hide.bs.modal', function () {
+        $('#argusTrainingModal').on('hide.bs.modal', function () {
             shashin.removeAllMetadataIdList();
         });
 
-        const comprefaceInstance = new Compreface(resultList, personId, activePage);
+        const trainingInstance = new Training(resultList, personId, activePage);
         comprefaceInstance.init();
         // Util.checkErrorImage();
     });

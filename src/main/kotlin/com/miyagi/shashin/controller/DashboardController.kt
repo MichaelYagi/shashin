@@ -203,7 +203,7 @@ class DashboardController(
             response["nominatimAvailable"] = reachable
             metricsUtil.end()
 
-            response["compreFaceAvailable"] = null
+            response["argusAvailable"] = null
             if (settings?.getFacialDetection() == true &&
                 settings.getArgusKey() != null &&
                 settings.getArgusKey() != "" && settings.getArgusServer() != null &&
@@ -214,7 +214,7 @@ class DashboardController(
                     settings.getArgusServer(),
                     settings.getArgusKey()
                 )
-                response["compreFaceAvailable"] = faceRecogServicesAvailable
+                response["argusAvailable"] = faceRecogServicesAvailable
                 metricsUtil.end()
             }
 

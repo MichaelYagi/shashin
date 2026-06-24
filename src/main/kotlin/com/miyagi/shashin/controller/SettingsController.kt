@@ -1856,11 +1856,11 @@ class SettingsController(
                                         val webClient = WebClient.create(settings.getArgusServer()!!)
                                         if (recognitionLabelPhotos != null) {
                                             for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                                if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
+                                                if (recognitionLabelPhoto.getArgusDetectionId() != null && recognitionLabelPhoto.getArgusDetectionId()!!
                                                         .isNotBlank()
                                                 ) {
                                                     webClient.delete()
-                                                        .uri("api/face_embeddings/${recognitionLabelPhoto.getCompreFaceImageId()}")
+                                                        .uri("api/face_embeddings/${recognitionLabelPhoto.getArgusDetectionId()}")
                                                         .header("X-API-Key", settings.getArgusKey())
                                                         .retrieve()
                                                         .bodyToMono(String::class.java)

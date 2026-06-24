@@ -31,7 +31,7 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
 
     fun findByMetadataId(metadataId: String): MutableIterable<RecognitionLabelPhoto>
 
-    fun findByCompreFaceImageId(compreFaceImageId: String): RecognitionLabelPhoto?
+    fun findByArgusDetectionId(argusDetectionId: String): RecognitionLabelPhoto?
 
     fun findByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): RecognitionLabelPhoto?
 

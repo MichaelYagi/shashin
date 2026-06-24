@@ -16,7 +16,8 @@ class RecognitionLabelPhoto {
     @NotBlank
     private var metadataId: String? = null
     @NotBlank
-    private var compreFaceImageId: String? = null
+    @Column(name = "compreFaceImageId")
+    private var argusDetectionId: String? = null
     @NotBlank
     private var confidence: String? = null
     @NotBlank
@@ -44,12 +45,12 @@ class RecognitionLabelPhoto {
         return this.metadataId
     }
 
-    fun setCompreFaceImageId(compreFaceImageId: String?) {
-        this.compreFaceImageId = compreFaceImageId
+    fun setArgusDetectionId(argusDetectionId: String?) {
+        this.argusDetectionId = argusDetectionId
     }
 
-    fun getCompreFaceImageId(): String? {
-        return this.compreFaceImageId
+    fun getArgusDetectionId(): String? {
+        return this.argusDetectionId
     }
 
     fun setMetadataId(metadataId: String?) {

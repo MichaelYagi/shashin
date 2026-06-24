@@ -183,7 +183,7 @@ $("#albumAppToolsDeselectAll").on("click", function(e) {
     shashin.clearSelection($("#activePage").val());
 });
 
-$("#comprefaceDeselectAll").on("click", function(e) {
+$("#argusTrainingDeselectAll").on("click", function(e) {
     e.preventDefault();
 
     shashin.stopRendering = true;

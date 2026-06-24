@@ -422,7 +422,7 @@
         $("#timelineAppTools").hide();
         $("#albumAppTools").hide();
         $("#matchesAppTools").hide();
-        $("#comprefaceAppTools").hide();
+        $("#argusTrainingAppTools").hide();
 
         // Toggle specific tool panel based on viewType
         if (viewType === 'timeline') {

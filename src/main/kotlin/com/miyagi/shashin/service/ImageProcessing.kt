@@ -1337,7 +1337,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val detectionId = faceNode["detection_id"].asInt().toString()
             val rlp = RecognitionLabelPhoto()
             rlp.setMetadataId(metadataObj.getId())
-            rlp.setCompreFaceImageId(detectionId)
+            rlp.setArgusDetectionId(detectionId)
             rlp.setAutoTagged(true)
 
             val identityIdNode = faceNode.get("identity_id")
@@ -1561,7 +1561,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
-        fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>, recognitionLabelRepository: RecognitionLabelRepository? = null): MutableMap<String, Any?> {
+        fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, argusDetectionIdMap: MutableMap<String, Any?>, recognitionLabelRepository: RecognitionLabelRepository? = null): MutableMap<String, Any?> {
             val mapper = ObjectMapper()
             val uploadResponse = mutableMapOf<String, Any?>()
             uploadResponse["responseData"] = mutableMapOf<String, Any?>()

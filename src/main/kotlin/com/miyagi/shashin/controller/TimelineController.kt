@@ -3846,7 +3846,7 @@ class TimelineController(
             } else if (taggedPeople != null && taggedPeople.trim() != "") {
                 val recognitionLabelArray = taggedPeople.split(",")
 
-                val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+                val argusDetectionIdMap = mutableMapOf<String, Any?>()
 //                    val recognitionLabelList = mutableListOf<RecognitionLabel>()
                 val recognitionLabelPhotoList = mutableListOf<RecognitionLabelPhoto>()
 
@@ -3884,14 +3884,14 @@ class TimelineController(
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             // 0.0 confirmed recognition by user
                             recognitionLabelPhotoObj.setConfidence("0.0")
-                            //recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
+                            //recognitionLabelPhotoObj.setArgusDetectionId(compreFaceImageId)
                             recognitionLabelPhotoList.add(recognitionLabelPhotoObj)
 
                             buildPersonUpload(
                                 settings,
                                 recognitionLabel,
                                 metadataObj,
-                                compreFaceImageIdMap
+                                argusDetectionIdMap
                             )
                         }
                     }
@@ -3905,13 +3905,13 @@ class TimelineController(
         }
     }
 
-    fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) {
+    fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, argusDetectionIdMap: MutableMap<String, Any?>) {
         Thread {
             ImageProcessing.Companion.buildPersonUpload(
                 settings,
                 recognitionLabel,
                 metadataObj,
-                compreFaceImageIdMap,
+                argusDetectionIdMap,
                 recognitionLabelRepository
             )
         }.start()
