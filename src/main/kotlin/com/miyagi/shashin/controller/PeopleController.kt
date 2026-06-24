@@ -329,11 +329,8 @@ private val relativeSidecarDir: String? = null
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId = recognitionLabel?.get()?.getArgusIdentityId()
-        val argusGalleryJsonStr = getArgusGalleryForIdentity(settings, argusIdentityId)
-        if (!argusGalleryJsonStr.isNullOrBlank()) {
-            val galleryJson = mapper.readTree(argusGalleryJsonStr)
-            if (galleryJson.has("items")) counts["compreface"] = galleryJson["items"].size()
-        }
+        // Training images count = enrolled reference faces only
+        counts["compreface"] = getEnrolledGalleryItems(settings, argusIdentityId).size
 
         // Pull pending review items from Argus, filtered to this person's argusIdentityId
         val reviewItems = mutableListOf<MutableMap<String, Any>>()
@@ -504,11 +501,8 @@ private val relativeSidecarDir: String? = null
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId2 = recognitionLabel?.get()?.getArgusIdentityId()
-        val allArgusGalleryJsonStr = getArgusGalleryForIdentity(settings, argusIdentityId2)
-        if (!allArgusGalleryJsonStr.isNullOrBlank()) {
-            val galleryJson = mapper.readTree(allArgusGalleryJsonStr)
-            if (galleryJson.has("items")) counts["compreface"] = galleryJson["items"].size()
-        }
+        // Training images count = enrolled reference faces only
+        counts["compreface"] = getEnrolledGalleryItems(settings, argusIdentityId2).size
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -580,16 +574,15 @@ private val relativeSidecarDir: String? = null
             response["personInfo"] = recognitionLabel.get()
             val argusIdentityId = recognitionLabel.get().getArgusIdentityId()
 
-            val galleryJsonStr = getArgusGalleryForIdentity(settings, argusIdentityId)
-            if (!galleryJsonStr.isNullOrBlank()) {
-                val galleryJson = mapper.readTree(galleryJsonStr)
-                if (galleryJson.has("items")) {
-                    val items = galleryJson["items"]
+            // Training images = enrolled reference faces only (not pending matches / unenrolled detections)
+            val items = getEnrolledGalleryItems(settings, argusIdentityId)
+            if (items.isNotEmpty()) {
+                run {
                     val pageStart = page * size
-                    val pageEnd = minOf(pageStart + size, items.size())
+                    val pageEnd = minOf(pageStart + size, items.size)
                     val resultList = mutableListOf<MutableMap<String, Any>>()
 
-                    if (pageStart < items.size()) {
+                    if (pageStart < items.size) {
                         for (i in pageStart until pageEnd) {
                             val item = items[i]
                             val itemMap = mutableMapOf<String, Any>()
@@ -627,9 +620,12 @@ private val relativeSidecarDir: String? = null
         if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return
 
         try {
-            val galleryJson = getArgusGalleryForIdentity(settings, argusIdentityId) ?: return
-            val galleryObj = mapper.readTree(galleryJson)
-            val items = galleryObj["items"] ?: return
+            // Only sync detections affirmatively assigned to this person (confirmed or reassigned to
+            // this identity) — NOT pending matches, which must not be promoted to confirmed
+            // (confidence 0.0); they belong in the Matches review queue, not the Person tab.
+            val confirmedStatuses = setOf("confirmed", "reassigned")
+            val items = getGalleryItems(settings, argusIdentityId)
+                .filter { it.has("review_status") && it["review_status"].asText() in confirmedStatuses }
 
             for (item in items) {
                 val detectionId = item["detection_id"].asInt().toString()
@@ -683,6 +679,26 @@ private val relativeSidecarDir: String? = null
         if (argusIdentityId == null) return 0
         return countArgusReviewMatchesByIdentity(settings)[argusIdentityId] ?: 0
     }
+
+    // All items the Argus identity gallery returns. NOTE: the gallery includes EVERY detection
+    // attributed to the identity (enrolled references, confirmed appearances, and pending matches
+    // awaiting review) — each item carries "enrolled" (bool) and "review_status" so callers can
+    // narrow to what they actually mean.
+    private fun getGalleryItems(settings: Settings, argusIdentityId: Int?): List<com.fasterxml.jackson.databind.JsonNode> {
+        val json = getArgusGalleryForIdentity(settings, argusIdentityId) ?: return emptyList()
+        return try {
+            val galleryJson = mapper.readTree(json)
+            if (galleryJson.has("items")) galleryJson["items"].toList() else emptyList()
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error parsing Argus gallery for identity $argusIdentityId: ${e.localizedMessage}")
+            emptyList()
+        }
+    }
+
+    // Training images are only the enrolled reference faces (manually taught or auto-enrolled over
+    // Argus's threshold), i.e. enrolled == true — not every detection in the gallery.
+    private fun getEnrolledGalleryItems(settings: Settings, argusIdentityId: Int?): List<com.fasterxml.jackson.databind.JsonNode> =
+        getGalleryItems(settings, argusIdentityId).filter { it.has("enrolled") && it["enrolled"].asBoolean() }
 
     private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999): String? {
         if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return null
