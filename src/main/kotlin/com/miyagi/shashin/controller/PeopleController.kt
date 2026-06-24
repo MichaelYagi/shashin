@@ -1313,6 +1313,92 @@ private val relativeSidecarDir: String? = null
         return mapper.writeValueAsString(resp)
     }
 
+    @RequestMapping(value = ["/person/argus/reconcile"], method = [RequestMethod.POST], produces = ["application/json"])
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @ResponseBody
+    fun reconcileArgus(model: Model, locale: Locale): String {
+        val response = mutableMapOf<String, Any?>()
+        val settings = model.getAttribute("settings") as Settings
+
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) {
+            response["status"] = ApiResponse.FAIL.status
+            response["msg"] = "Argus is not configured."
+            return mapper.writeValueAsString(response)
+        }
+
+        var identitiesProcessed = 0
+        var recordsUpdated = 0
+
+        try {
+            val webClient = WebClient.create(settings.getArgusServer()!!)
+            val argusServer = settings.getArgusServer()!!.trimEnd('/')
+
+            val summaryJson = webClient.get()
+                .uri("api/identities/summary?type=face")
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve().bodyToMono(String::class.java).block()
+
+            val identities = mapper.readTree(summaryJson ?: "[]")
+
+            for (identity in identities) {
+                val argusIdentityId = identity["identity_id"]?.asInt() ?: continue
+                val argusName = identity["name"]?.asText() ?: continue
+
+                val person = recognitionLabelRepository?.findByNameIgnoreCase(argusName) ?: continue
+                identitiesProcessed++
+
+                // Sync identity ID if wrong
+                if (person.getArgusIdentityId() != argusIdentityId) {
+                    person.setArgusIdentityId(argusIdentityId)
+                    recognitionLabelRepository?.save(person)
+                }
+
+                // Pull full gallery for this identity
+                val galleryJson = webClient.get()
+                    .uri("api/identities/$argusIdentityId/gallery?limit=9999")
+                    .header("X-API-Key", settings.getArgusKey())
+                    .retrieve().bodyToMono(String::class.java).block() ?: continue
+
+                val galleryObj = mapper.readTree(galleryJson)
+                val items = galleryObj["items"] ?: continue
+
+                for (item in items) {
+                    val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
+                    val enrolled = item["enrolled"]?.asBoolean() ?: false
+
+                    val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
+
+                    var changed = false
+                    if (record.getRecognitionLabelId() != person.getId()) {
+                        record.setRecognitionLabelId(person.getId())
+                        changed = true
+                    }
+                    // enrolled=true means explicitly labeled → Training Image (auto_tagged=false)
+                    val expectedAutoTagged = !enrolled
+                    if (record.getAutoTagged() != expectedAutoTagged) {
+                        record.setAutoTagged(expectedAutoTagged)
+                        changed = true
+                    }
+                    if (changed) {
+                        try {
+                            recognitionLabelPhotoRepository?.save(record)
+                            recordsUpdated++
+                        } catch (_: Exception) {}
+                    }
+                }
+            }
+
+            response["status"] = ApiResponse.SUCCESS.status
+            response["msg"] = "Reconciled $identitiesProcessed identities, updated $recordsUpdated records."
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Argus reconciliation error: ${e.localizedMessage}")
+            response["status"] = ApiResponse.FAIL.status
+            response["msg"] = "Error: ${e.localizedMessage}"
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/person/matches/confirm"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
