@@ -695,10 +695,15 @@ private val relativeSidecarDir: String? = null
         }
     }
 
-    // Training images are only the enrolled reference faces (manually taught or auto-enrolled over
-    // Argus's threshold), i.e. enrolled == true — not every detection in the gallery.
+    // Training images are gallery items that have been confirmed as this person (review_status is
+    // absent or not "pending"). Items with review_status == "pending" are still in the Matches
+    // review queue and should not also appear as Training. The Argus gallery's "enrolled" flag is
+    // always false regardless of how the face was added, so it cannot be used to filter here.
     private fun getEnrolledGalleryItems(settings: Settings, argusIdentityId: Int?): List<com.fasterxml.jackson.databind.JsonNode> =
-        getGalleryItems(settings, argusIdentityId).filter { it.has("enrolled") && it["enrolled"].asBoolean() }
+        getGalleryItems(settings, argusIdentityId).filter {
+            val status = it["review_status"]?.asText()
+            status != "pending"
+        }
 
     private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999): String? {
         if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return null

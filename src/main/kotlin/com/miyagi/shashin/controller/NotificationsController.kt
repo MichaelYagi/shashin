@@ -32,22 +32,30 @@ class NotificationsController(
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    // Total pending review items in Argus (its review queue), used as the global "unchecked matches"
-    // indicator. Returns 0 if Argus isn't configured or is unreachable.
+    // Count pending review items in Argus that have at least one suggested identity match.
+    // Items with no suggestions are unrecognized faces that can't be attributed to any person —
+    // they don't appear in any person's Matches tab, so counting them inflates the badge.
     private fun getArgusReviewCount(settings: Settings): Int {
         if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return 0
         return try {
-            val response = WebClient.create(settings.getArgusServer()!!)
-                .get()
-                .uri("api/review/count")
-                .header("X-API-Key", settings.getArgusKey())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
-            if (!response.isNullOrBlank()) {
+            val webClient = WebClient.create(settings.getArgusServer()!!)
+            var cursor: String? = null
+            var count = 0
+            do {
+                val uri = if (cursor != null) "api/review?limit=100&cursor=$cursor" else "api/review?limit=100"
+                val response = webClient.get().uri(uri)
+                    .header("X-API-Key", settings.getArgusKey())
+                    .retrieve().bodyToMono(String::class.java).block() ?: break
                 val json = mapper.readTree(response)
-                if (json.has("count")) json["count"].asInt() else 0
-            } else 0
+                val items = json["items"] ?: break
+                for (item in items) {
+                    val sm = item["suggested_matches"]
+                    if (sm != null && sm.size() > 0) count++
+                }
+                val hasMore = json["has_more"]?.asBoolean() ?: false
+                cursor = if (hasMore) json["next_cursor"]?.textValue() else null
+            } while (cursor != null)
+            count
         } catch (e: Exception) {
             0
         }
