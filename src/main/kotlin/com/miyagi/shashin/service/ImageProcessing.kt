@@ -1694,8 +1694,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
                 if (replace) builder.part("replace", "true")
 
+                val uri = if (doFaces && doObjects) "api/detect/all"
+                          else if (doFaces) "api/detect/faces"
+                          else "api/detect/objects"
                 val response = webClient.post()
-                    .uri("api/detect/all")
+                    .uri(uri)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
                     .header("X-API-Key", settings.getArgusKey())
                     .body(BodyInserters.fromMultipartData(builder.build()))
