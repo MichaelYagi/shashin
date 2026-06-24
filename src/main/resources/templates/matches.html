@@ -51,7 +51,8 @@
                                     <div class="d-flex gap-1">
                                         <button class="btn btn-success btn-sm flex-grow-1 confirm-btn"
                                                 th:data-detection-id="${item.detectionId}"
-                                                th:data-person-id="${parameter}">
+                                                th:data-person-id="${parameter}"
+                                                th:data-crop-url="${item.cropUrl}">
                                             <span class="bi-check-lg"></span>
                                         </button>
                                         <button class="btn btn-danger btn-sm flex-grow-1 reject-btn"
@@ -90,26 +91,39 @@
 
         shashin.updateSearchInput(personName);
 
+        function adjustBadge(id, delta) {
+            const el = $('#' + id);
+            const n = parseInt(el.text(), 10) || 0;
+            el.text(Math.max(0, n + delta));
+        }
+
+        function removeCard(detectionId) {
+            $('#matchCard' + detectionId).parent().fadeOut(300, function() { $(this).remove(); });
+        }
+
         $(document).on('click', '.confirm-btn', async function () {
             const detectionId = $(this).data('detection-id');
             const personId = $(this).data('person-id');
-            const card = $('#matchCard' + detectionId);
+            const cropUrl = $(this).data('crop-url');
             const http = new Http('confirm match');
             const data = await http.ajax('post', '/person/matches/confirm',
-                JSON.stringify({ detectionId: String(detectionId), action: 'confirm', personId: personId }));
+                JSON.stringify({ detectionId: String(detectionId), action: 'confirm', personId: personId, cropUrl: cropUrl }));
             if (data && data.status === shashin.apiResponse.SUCCESS) {
-                card.fadeOut(300, function() { $(this).remove(); });
+                removeCard(detectionId);
+                adjustBadge('matchesCountBadge', -1);
+                adjustBadge('personCountBadge', 1);
+                adjustBadge('trainingCountBadge', 1);
             }
         });
 
         $(document).on('click', '.reject-btn', async function () {
             const detectionId = $(this).data('detection-id');
-            const card = $('#matchCard' + detectionId);
             const http = new Http('reject match');
             const data = await http.ajax('post', '/person/matches/confirm',
                 JSON.stringify({ detectionId: String(detectionId), action: 'reject' }));
             if (data && data.status === shashin.apiResponse.SUCCESS) {
-                card.fadeOut(300, function() { $(this).remove(); });
+                removeCard(detectionId);
+                adjustBadge('matchesCountBadge', -1);
             }
         });
     });
