@@ -229,7 +229,12 @@
 
                 </th:block>
                 <th:block th:unless="${not #lists.isEmpty(resultList)}">
-                    <span>There are no Training Images.</span><br><br>
+                    <p class="text-muted mb-1">There are no Training Images for this person yet.</p>
+                    <p class="text-muted small">To add one: open a photo in the gallery, click the face crop in the detail panel, and label it with this person's name. Each labeled face becomes a Training Image used by Argus for recognition. Enroll through Shashin so IDs are captured at the source — if a face is enrolled directly in Argus instead, Shashin can still pick it up by re-syncing names and re-pulling galleries.</p>
+                    <th:block th:if="${faceRecogServicesAvailable}">
+                        <button id="resyncArgusBtn" class="btn btn-outline-secondary btn-sm mt-1">Re-sync from Argus</button>
+                        <span id="resyncArgusStatus" class="ms-2 small text-muted" style="display:none;"></span>
+                    </th:block>
                 </th:block>
             </div>
 

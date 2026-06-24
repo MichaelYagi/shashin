@@ -14,6 +14,20 @@ class Compreface {
         setTimeout(async () => {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendCompreFacePhotos", this.resultList);
         }, 0);
+
+        $("#resyncArgusBtn").on("click", async (e) => {
+            e.preventDefault();
+            $("#resyncArgusBtn").prop("disabled", true);
+            $("#resyncArgusStatus").text("Syncing…").show();
+            const data = await this.http.ajax("get", "/person/argus/" + this.personId + "/resync");
+            if (data && data.status === shashin.apiResponse.SUCCESS) {
+                $("#resyncArgusStatus").text(data.msg);
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                $("#resyncArgusStatus").text((data && data.msg) ? data.msg : "Sync failed.");
+                $("#resyncArgusBtn").prop("disabled", false);
+            }
+        });
     }
 
     async loadNextPage() {

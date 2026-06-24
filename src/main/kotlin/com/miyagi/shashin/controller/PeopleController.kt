@@ -556,6 +556,67 @@ private val relativeSidecarDir: String? = null
         return mapper.writeValueAsString(response)
     }
 
+    @RequestMapping(value = ["/person/argus/{personId}/resync"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun resyncArgusIdentity(model: Model, @PathVariable personId: Int, locale: Locale): String {
+        val response = mutableMapOf<String, Any?>()
+        val settings = model.getAttribute("settings") as Settings
+
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) {
+            response["status"] = ApiResponse.FAIL.status
+            response["msg"] = "Argus is not configured."
+            return mapper.writeValueAsString(response)
+        }
+
+        val label = recognitionLabelRepository?.findById(personId)
+        if (label == null || !label.isPresent) {
+            response["status"] = ApiResponse.FAIL.status
+            response["msg"] = "Person not found."
+            return mapper.writeValueAsString(response)
+        }
+        val person = label.get()
+        val personName = person.getName() ?: run {
+            response["status"] = ApiResponse.FAIL.status
+            response["msg"] = "Person has no name."
+            return mapper.writeValueAsString(response)
+        }
+
+        return try {
+            val summaryJson = WebClient.create(settings.getArgusServer()!!)
+                .get()
+                .uri("api/identities/summary?type=face")
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block()
+
+            val identities = mapper.readTree(summaryJson ?: "[]")
+            val match = identities.firstOrNull { it["name"]?.asText()?.equals(personName, ignoreCase = true) == true }
+
+            if (match == null) {
+                response["status"] = ApiResponse.FAIL.status
+                response["msg"] = "No Argus identity found matching \"$personName\"."
+            } else {
+                val argusId = match["identity_id"].asInt()
+                if (person.getArgusIdentityId() != argusId) {
+                    person.setArgusIdentityId(argusId)
+                    recognitionLabelRepository?.save(person)
+                    response["status"] = ApiResponse.SUCCESS.status
+                    response["msg"] = "Re-synced: Argus identity ID updated to $argusId."
+                } else {
+                    response["status"] = ApiResponse.SUCCESS.status
+                    response["msg"] = "Already in sync (identity ID $argusId)."
+                }
+            }
+            mapper.writeValueAsString(response)
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error resyncing Argus identity for person $personId: ${e.localizedMessage}")
+            response["status"] = ApiResponse.FAIL.status
+            response["msg"] = "Error contacting Argus: ${e.localizedMessage}"
+            mapper.writeValueAsString(response)
+        }
+    }
+
     private fun buildCompreFace(model: Model, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 

@@ -31,11 +31,19 @@ C:\Users\Michael\Videos</code></pre>
                 <div>Face Recognition<a class="anchorjs-link " href="#facerecognition" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
             </h2>
 
-            <p>You can use <a href="https://github.com/exadel-inc/CompreFace#getting-started-with-compreface">CompreFace</a> using <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a> as an alternative to the built-in face recognition module.</p>
+            <p>Shashin uses <strong>Argus</strong> for face recognition. Configure the Argus server URL and API key in <a href="/settings">Settings</a> under <strong>Face Recognition</strong>.</p>
 
-            <p>After setting up CompreFace, visit <a href="http://127.0.0.1:8000">http://127.0.0.1:8000/</a> and click on <strong>Create Application</strong>. In the Application, click <strong>Create New</strong>.</p>
+            <h3>Tagging people</h3>
+            <ol>
+                <li>Open any photo in the gallery that shows a person's face clearly.</li>
+                <li>Click the face crop in the photo detail panel to open the labeling UI.</li>
+                <li>Type the person's name and confirm — this enrolls the face with Argus and creates a Training Image.</li>
+                <li>Repeat for a few more photos of the same person to improve recognition accuracy.</li>
+                <li>Run a <strong>Face Scan</strong> from the <a href="/settings/scan">Media Indexing</a> tab. Argus detects faces in all photos and queues candidates for review.</li>
+                <li>Open <strong>People</strong> in the sidebar, select a person, and check the <strong>Matches</strong> tab to confirm or reject suggested identities.</li>
+            </ol>
 
-            <p>Copy the <strong>API key</strong> and configure it in the Shashin <a href="/settings">settings</a> under <strong>CompreFace API key</strong>. If CompreFace is hosted on the same network as Shashin, you should configure the <strong>CompreFace Endpoint</strong> to be a private or public IP.</p>
+            <p><strong>Tip:</strong> enroll through Shashin so IDs are captured at the source. If a face does get enrolled directly in Argus, it is not broken — Shashin can re-sync by matching names via <code>/api/identities/summary</code> and re-pulling galleries via <code>/api/identities/{id}/gallery</code> to pick up the IDs it missed.</p>
 
 <!--            <h2 id="resetpass">-->
 <!--                <div>Reset Password as an Admin<a class="resetpass-link" href="#resetpass" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>-->
