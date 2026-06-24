@@ -2025,10 +2025,6 @@ class SettingsController(
 
     fun objectAndFacialRecognition(settings: Settings?, compreFaceServerConnected: Boolean, threadFile: File, metadataArrayCount: Int, locale: Locale) {
         Thread {
-            var webClient: WebClient? = null
-            if (settings != null && compreFaceServerConnected) {
-                webClient = WebClient.create(settings.getArgusServer()!!)
-            }
             val recognitionLabelPhotoLabels =
                 recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
@@ -2072,113 +2068,21 @@ class SettingsController(
                         }
                     }
 
-                    // Recognize face during index scan
+                    // Detect faces and objects during index scan
                     try {
-                        if (settings != null && settings.getFacialDetection() == true) {
-                            // Using CompreFace
-                            if (webClient != null && compreFaceServerConnected) {
-                                try {
-                                    // Have at least 1 people tagged
-                                    val compreFaceTagAllow = 1
-                                    if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
-                                        var builder = MultipartBodyBuilder()
-                                        builder.part(
-                                            "file",
-                                            FileSystemResource(ImageProcessing.Companion.argusImagePath(metadataObj)!!)
-                                        )
-
-                                        var response: String? = null
-
-                                        try {
-                                            response = webClient!!.post()
-                                                .uri("api/detect/faces")
-                                                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
-                                                .header("X-API-Key", settings.getArgusKey())
-                                                .body(BodyInserters.fromMultipartData(builder.build()))
-                                                .retrieve()
-                                                .bodyToMono(String::class.java)
-                                                .block()
-
-                                            logger.log(Level.INFO, "Detected faces for " + metadataObj.getPath() + ": " + response)
-                                        } catch (e: Exception) {
-                                            val recognitionLabelRecord =
-                                                recognitionLabelRepository?.findByNameIgnoreCase(
-                                                    TextUtils.getObjectName()
-                                                )
-                                            var recognitionLabelObj = RecognitionLabel()
-                                            if (recognitionLabelRecord == null) {
-                                                recognitionLabelObj.setName(TextUtils.getObjectName())
-                                                recognitionLabelObj.setCreatedAt(
-                                                    getCurrentTimestamp()
-                                                )
-                                                recognitionLabelObj.setModifiedAt(
-                                                    getCurrentTimestamp()
-                                                )
-                                                recognitionLabelRepository?.save(
-                                                    recognitionLabelObj
-                                                )
-                                            } else {
-                                                recognitionLabelObj = recognitionLabelRecord
-                                            }
-
-                                            val recognitionLabelPhotoObj =
-                                                RecognitionLabelPhoto()
-                                            recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
-                                            recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                recognitionLabelObj.getId()
-                                            )
-                                            recognitionLabelPhotoObj.setConfidence("-0.1")
-                                            recognitionLabelPhotoRepository?.save(
-                                                recognitionLabelPhotoObj
-                                            )
-
-                                            logger.log(
-                                                Level.WARNING,
-                                                "Error recognizing face for " + metadataObj.getPath() + ": " + e.localizedMessage
-                                            )
-                                        }
-
-                                        if (response != null) {
-                                            val jsonObj = mapper.readTree(response)
-                                            val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
-
-                                            if (facesNode != null && facesNode.size() > 0) {
-                                                for (faceNode in facesNode) {
-                                                    ImageProcessing.Companion.storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository)
-                                                    recognitionCount++
-                                                }
-                                            } else {
-                                                val noFaceRecord = RecognitionLabelPhoto()
-                                                noFaceRecord.setMetadataId(metadataObj.getId())
-                                                noFaceRecord.setConfidence("-0.1")
-                                                noFaceRecord.setAutoTagged(true)
-                                                try { recognitionLabelPhotoRepository?.save(noFaceRecord) } catch (_: Exception) {}
-                                            }
-
-                                            metadataObj.setModifiedAt(getCurrentTimestamp())
-                                            metadataRepository?.save(metadataObj)
-                                        }
-                                    } else {
-                                        logger.log(
-                                            Level.INFO,
-                                            "You need to manually tag at least $compreFaceTagAllow different people to use face recognition service"
-                                        )
-                                    }
-                                } catch (e: Exception) {
-                                    logger.log(
-                                        Level.INFO,
-                                        "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
-                                    )
-                                }
-
+                        if (settings != null && compreFaceServerConnected) {
+                            val doFaces = settings.getFacialDetection() == true &&
+                                (recognitionLabelPhotoLabels?.count() ?: 0) >= 1
+                            val doObjects = settings.getObjectDetection() == true
+                            if (doFaces || doObjects) {
+                                recognitionCount += ImageProcessing.Companion.detectAndStoreAll(
+                                    metadataObj, settings,
+                                    recognitionLabelRepository, recognitionLabelPhotoRepository,
+                                    keywordRepository, keywordPhotoRepository, metadataRepository,
+                                    doFaces = doFaces, doObjects = doObjects,
+                                    threadFile = threadFile, messageSource = messageSource, locale = locale
+                                )
                             }
-                        }
-
-                        // Detect objects during index scan
-                        if (settings != null && settings.getObjectDetection() == true && compreFaceServerConnected) {
-                            ImageProcessing.Companion.detectAndStoreObjects(
-                                metadataObj, settings, keywordRepository, keywordPhotoRepository, metadataRepository, threadFile, messageSource, locale
-                            )
                         }
 
                         threadText = messageSource?.getMessage("main.pages.scan.pathindexed", arrayOf(metadataObj.getPath()), locale).toString()

@@ -5,7 +5,6 @@ import com.miyagi.shashin.controller.TimelineController
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.service.ImageProcessing.Companion.subjectRecognizer
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
@@ -184,31 +183,17 @@ class ScheduledTasks(
                 }
             }
 
-            var recognitionCount = 0
-            if (settings.getFacialDetection() == true) {
-                recognitionCount = subjectRecognizer(
-                    metadataRepository,
-                    recognitionLabelRepository,
-                    recognitionLabelPhotoRepository,
-                    relativeSidecarDir!!,
-                    settings,
-                    null,
-                    null,
-                    messageSource
-                )
-            }
-
-            if (settings.getObjectDetection() == true) {
-                ImageProcessing.scanObjects(
-                    metadataRepository,
-                    keywordRepository,
-                    keywordPhotoRepository,
-                    settings,
-                    null,
-                    null,
-                    messageSource
-                )
-            }
+            val recognitionCount = ImageProcessing.scanAll(
+                metadataRepository,
+                recognitionLabelRepository,
+                recognitionLabelPhotoRepository,
+                keywordRepository,
+                keywordPhotoRepository,
+                settings,
+                null,
+                null,
+                messageSource
+            )
             if (superAdmins != null && recognitionCount > 0) {
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")

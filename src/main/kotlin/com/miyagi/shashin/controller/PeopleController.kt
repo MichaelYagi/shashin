@@ -203,34 +203,18 @@ private val relativeSidecarDir: String? = null
                     duplicateCount = DuplicateImageDetection.findAndStoreDuplicates(duplicatesRepository!!)
                 }
 
-                // Find faces
-                var recognitionCount = 0
-                if (settings.getFacialDetection() == true) {
-                    recognitionCount = ImageProcessing.Companion.subjectRecognizer(
-                        metadataRepository,
-                        recognitionLabelRepository,
-                        recognitionLabelPhotoRepository,
-                        relativeSidecarDir!!,
-                        settings,
-                        threadFile,
-                        shouldStop,
-                        messageSource,
-                        locale
-                    )
-                }
-
-                if (settings.getObjectDetection() == true) {
-                    ImageProcessing.Companion.scanObjects(
-                        metadataRepository,
-                        keywordRepository,
-                        keywordPhotoRepository,
-                        settings,
-                        threadFile,
-                        shouldStop,
-                        messageSource,
-                        locale
-                    )
-                }
+                val recognitionCount = ImageProcessing.Companion.scanAll(
+                    metadataRepository,
+                    recognitionLabelRepository,
+                    recognitionLabelPhotoRepository,
+                    keywordRepository,
+                    keywordPhotoRepository,
+                    settings,
+                    threadFile,
+                    shouldStop,
+                    messageSource,
+                    locale
+                )
 
                 val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
 

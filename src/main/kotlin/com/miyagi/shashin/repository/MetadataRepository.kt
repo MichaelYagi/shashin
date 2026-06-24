@@ -411,6 +411,8 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    fun findAllLowMatches(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String): Int
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id WHERE kp.metadata_id IS NULL AND m.hidden = 0 ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findWithoutKeywords(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id WHERE m.hidden = 0 AND (kp.metadata_id IS NULL OR rlp.metadata_id IS NULL) ORDER BY RANDOM() LIMIT 0, :matchScanLimit", nativeQuery = true)
+   fun findWithoutFacesOrKeywords(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id WHERE rlp.metadata_id IS NULL AND m.hidden = 0 ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
 

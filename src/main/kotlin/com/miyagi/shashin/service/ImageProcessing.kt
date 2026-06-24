@@ -1669,92 +1669,133 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return recognitionResponse
         }
 
-        fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, relativeSidecarDir: String, settings: Settings, threadFile: File?, shouldStop: AtomicBoolean?, messageSource: MessageSource?, locale: Locale = Locale("en")): Int {
-            // Scan records of photos that haven't been scanned in a separate thread
-            val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
-            val distinctLabelRecords = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+        fun detectAndStoreAll(
+            metadataObj: Metadata,
+            settings: Settings,
+            recognitionLabelRepository: RecognitionLabelRepository?,
+            recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?,
+            keywordRepository: KeywordRepository?,
+            keywordPhotoRepository: KeywordPhotoRepository?,
+            metadataRepository: MetadataRepository?,
+            doFaces: Boolean = true,
+            doObjects: Boolean = true,
+            replace: Boolean = false,
+            threadFile: File? = null,
+            messageSource: MessageSource? = null,
+            locale: Locale = Locale("en")
+        ): Int {
+            if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return 0
+            if (!doFaces && !doObjects) return 0
             var recognitionCount = 0
+            try {
+                val mapper = ObjectMapper()
+                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val builder = MultipartBodyBuilder()
+                builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
+                if (replace) builder.part("replace", "true")
 
-            if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
-                if (settings.getFacialDetection() == true &&
-                    NetworkUtils.Companion.checkArgusConnection(
-                        settings.getArgusServer(),
-                        settings.getArgusKey()
-                    )
-                ) {
-                    val mapper = ObjectMapper()
-                    val webClient = WebClient.create(settings.getArgusServer()!!)
+                val response = webClient.post()
+                    .uri("api/detect/all")
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                    .header("X-API-Key", settings.getArgusKey())
+                    .body(BodyInserters.fromMultipartData(builder.build()))
+                    .retrieve()
+                    .bodyToMono(String::class.java)
+                    .block()
 
-                    for (testImage in testImages) {
+                val jsonObj = mapper.readTree(response)
 
-                        if (shouldStop != null && shouldStop.get()) {
-                            break
+                if (doFaces && recognitionLabelPhotoRepository != null) {
+                    val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
+                    if (facesNode != null && facesNode.size() > 0) {
+                        for (faceNode in facesNode) {
+                            storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository)
+                            recognitionCount++
                         }
+                    } else {
+                        val noFaceRecord = RecognitionLabelPhoto()
+                        noFaceRecord.setMetadataId(metadataObj.getId())
+                        noFaceRecord.setConfidence("-0.1")
+                        noFaceRecord.setAutoTagged(true)
+                        try { recognitionLabelPhotoRepository.save(noFaceRecord) } catch (_: Exception) {}
+                    }
+                }
 
-                        val metadataObj = metadataRepository.findById(testImage.getId()).get()
-
-                        // Facial recognition — send to Argus, save detection_id placeholder
-                        val faceFsr = FileSystemResource(argusImagePath(metadataObj)!!)
-                        val builder = MultipartBodyBuilder()
-                        builder.part("file", faceFsr)
-
-                        var response: String? = null
-
-                        try {
-                            response = webClient.post()
-                                .uri("api/detect/faces")
-                                .header(
-                                    HttpHeaders.CONTENT_TYPE,
-                                    MediaType.MULTIPART_FORM_DATA.toString()
-                                )
-                                .header("X-API-Key", settings.getArgusKey())
-                                .body(BodyInserters.fromMultipartData(builder.build()))
-                                .retrieve()
-                                .bodyToMono(String::class.java)
-                                .block()
-
-                            logger.log(Level.INFO, "Detected faces for " + metadataObj.getId() + ": " + response)
-                        } catch (e: Exception) {
-                            val errorRecord = RecognitionLabelPhoto()
-                            errorRecord.setMetadataId(metadataObj.getId())
-                            errorRecord.setConfidence("-0.1")
-                            errorRecord.setAutoTagged(true)
-                            try { recognitionLabelPhotoRepository.save(errorRecord) } catch (_: Exception) {}
-                            logger.log(Level.WARNING, "Error detecting faces for " + metadataObj.getId() + ": " + e.localizedMessage)
-                        }
-
-                        if (response != null) {
-                            val jsonObj = mapper.readTree(response)
-                            val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
-
-                            if (facesNode != null && facesNode.size() > 0) {
-                                for (faceNode in facesNode) {
-                                    storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository)
-                                    recognitionCount++
-                                }
-                            } else {
-                                val noFaceRecord = RecognitionLabelPhoto()
-                                noFaceRecord.setMetadataId(metadataObj.getId())
-                                noFaceRecord.setConfidence("-0.1")
-                                noFaceRecord.setAutoTagged(true)
-                                try { recognitionLabelPhotoRepository.save(noFaceRecord) } catch (_: Exception) {}
-                            }
-
-                            metadataObj.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
-                            metadataRepository?.save(metadataObj)
-
-                            if (threadFile != null) {
-                                FileUtils.Companion.writeToThreadFileAndLogMessage(
-                                    messageSource?.getMessage("main.pages.matching.analyzing", arrayOf("", metadataObj.getPath()), locale).toString(),
-                                    threadFile
-                                )
-                            }
+                if (doObjects && keywordRepository != null && keywordPhotoRepository != null && metadataRepository != null) {
+                    val objectsNode = if (jsonObj.has("objects")) jsonObj["objects"] else null
+                    val classNames = mutableListOf<String>()
+                    if (objectsNode != null) {
+                        for (obj in objectsNode) {
+                            if (!obj.has("class_name") || obj["class_name"].isNull) continue
+                            val className = obj["class_name"].textValue()
+                            if (className.equals("person", ignoreCase = true)) continue
+                            if (!classNames.contains(className)) classNames.add(className)
                         }
                     }
-
+                    if (classNames.isEmpty()) classNames.add("unidentified objects")
+                    processObjects(classNames, metadataObj, keywordRepository, keywordPhotoRepository, metadataRepository)
                 }
-            }
 
+                if (threadFile != null) {
+                    FileUtils.Companion.writeToThreadFileAndLogMessage(
+                        messageSource?.getMessage("main.pages.matching.analyzing", arrayOf("", metadataObj.getPath()), locale).toString(),
+                        threadFile
+                    )
+                }
+                logger.log(Level.INFO, "detectAndStoreAll ${metadataObj.getId()}: faces=$recognitionCount")
+                return recognitionCount
+            } catch (e: Exception) {
+                if (doFaces && recognitionLabelPhotoRepository != null) {
+                    val errorRecord = RecognitionLabelPhoto()
+                    errorRecord.setMetadataId(metadataObj.getId())
+                    errorRecord.setConfidence("-0.1")
+                    errorRecord.setAutoTagged(true)
+                    try { recognitionLabelPhotoRepository.save(errorRecord) } catch (_: Exception) {}
+                }
+                logger.log(Level.WARNING, "Error in detectAndStoreAll for ${metadataObj.getId()}: ${e.localizedMessage}")
+                return 0
+            }
+        }
+
+        fun scanAll(
+            metadataRepository: MetadataRepository?,
+            recognitionLabelRepository: RecognitionLabelRepository?,
+            recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?,
+            keywordRepository: KeywordRepository?,
+            keywordPhotoRepository: KeywordPhotoRepository?,
+            settings: Settings,
+            threadFile: File? = null,
+            shouldStop: AtomicBoolean? = null,
+            messageSource: MessageSource? = null,
+            locale: Locale = Locale("en")
+        ): Int {
+            val facesEnabled = settings.getFacialDetection() == true
+            val objectsEnabled = settings.getObjectDetection() == true
+            if (!facesEnabled && !objectsEnabled) return 0
+            if (!NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) return 0
+
+            val hasPeopleEnrolled = facesEnabled &&
+                (recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()?.count() ?: 0) > 0
+
+            val photos = metadataRepository?.findWithoutFacesOrKeywords(settings.getMatchScanLimit()!!) ?: return 0
+            var recognitionCount = 0
+
+            for (photo in photos) {
+                if (shouldStop != null && shouldStop.get()) break
+                val metadataObj = metadataRepository.findById(photo.getId()).orElse(null) ?: continue
+                val needsFaces = facesEnabled && hasPeopleEnrolled &&
+                    (recognitionLabelPhotoRepository?.countByMetadataId(metadataObj.getId()) ?: 1) == 0
+                val needsObjects = objectsEnabled &&
+                    (keywordPhotoRepository?.countByMetadataId(metadataObj.getId()) ?: 1) == 0
+                if (!needsFaces && !needsObjects) continue
+                recognitionCount += detectAndStoreAll(
+                    metadataObj, settings,
+                    recognitionLabelRepository, recognitionLabelPhotoRepository,
+                    keywordRepository, keywordPhotoRepository, metadataRepository,
+                    doFaces = needsFaces, doObjects = needsObjects,
+                    threadFile = threadFile, messageSource = messageSource, locale = locale
+                )
+            }
             return recognitionCount
         }
 
