@@ -645,12 +645,13 @@ private val relativeSidecarDir: String? = null
         }
     }
 
-    // Counts pending Argus review items whose top suggested match is this identity. This is the
-    // SAME source the Matches tab (getPredictions) renders from, so the tab badge stays consistent
-    // with the tab contents — a stale local low-match row no longer shows a count with no photos.
-    private fun countArgusReviewMatches(settings: Settings, argusIdentityId: Int?): Int {
-        if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return 0
-        var count = 0
+    // One pass over the Argus review queue, returning identity_id -> pending review count, bucketed
+    // by each item's top suggested match. This is the SAME source the Matches tab (getPredictions)
+    // renders from, so badges stay consistent with the tab contents — a stale local low-match row no
+    // longer shows a count with no photos. Fetching once and bucketing avoids an Argus call per person.
+    private fun countArgusReviewMatchesByIdentity(settings: Settings): Map<Int, Int> {
+        val counts = mutableMapOf<Int, Int>()
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return counts
         try {
             val webClient = WebClient.create(settings.getArgusServer()!!)
             var cursor: String? = null
@@ -668,13 +669,19 @@ private val relativeSidecarDir: String? = null
                 for (item in items) {
                     val suggestedMatches = item["suggested_matches"]
                     if (suggestedMatches == null || suggestedMatches.size() == 0) continue
-                    if (suggestedMatches[0]["identity_id"].asInt() == argusIdentityId) count++
+                    val identityId = suggestedMatches[0]["identity_id"].asInt()
+                    counts[identityId] = (counts[identityId] ?: 0) + 1
                 }
             } while (cursor != null)
         } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error counting Argus review matches for identity $argusIdentityId: ${e.localizedMessage}")
+            logger.log(Level.WARNING, "Error counting Argus review matches: ${e.localizedMessage}")
         }
-        return count
+        return counts
+    }
+
+    private fun countArgusReviewMatches(settings: Settings, argusIdentityId: Int?): Int {
+        if (argusIdentityId == null) return 0
+        return countArgusReviewMatchesByIdentity(settings)[argusIdentityId] ?: 0
     }
 
     private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999): String? {
@@ -747,6 +754,12 @@ private val relativeSidecarDir: String? = null
             }
 
             if (peopleList != null && peopleList.count() > 0) {
+                // Matches badges reflect the Argus review queue (same source the Matches tab renders).
+                // Fetch the queue once and bucket by identity, and map each person to its argusIdentityId.
+                val reviewCountsByIdentity = countArgusReviewMatchesByIdentity(settings)
+                val argusIdByLabelId = recognitionLabelRepository?.findAll()
+                    ?.filterNotNull()?.associate { it.getId() to it.getArgusIdentityId() } ?: emptyMap()
+
                 for (person in peopleList) {
                     var coverUrl = ""
                     if (person.getCoverUrl() != null) {
@@ -757,13 +770,10 @@ private val relativeSidecarDir: String? = null
                     }
                     coverUrls[person.getId() as Int] = coverUrl
 
-                    val lowMatchResults = metadataRepository?.findLowMatchesByPerson(
-                        person.getId()!!,
-                        settings.getRecognitionConfidenceThreshold()!!
-                    )
-
-                    if (lowMatchResults != null && lowMatchResults.count() > 0) {
-                        counts[person.getId()!!] = lowMatchResults.count()
+                    val argusIdentityId = argusIdByLabelId[person.getId()]
+                    val matchCount = if (argusIdentityId != null) (reviewCountsByIdentity[argusIdentityId] ?: 0) else 0
+                    if (matchCount > 0) {
+                        counts[person.getId()!!] = matchCount
                     }
                 }
                 model["coverUrls"] = coverUrls

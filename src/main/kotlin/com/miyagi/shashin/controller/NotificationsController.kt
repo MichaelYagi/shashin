@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
 import jakarta.transaction.Transactional
 import org.springframework.context.MessageSource
@@ -30,6 +31,27 @@ class NotificationsController(
 ) {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
+
+    // Total pending review items in Argus (its review queue), used as the global "unchecked matches"
+    // indicator. Returns 0 if Argus isn't configured or is unreachable.
+    private fun getArgusReviewCount(settings: Settings): Int {
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return 0
+        return try {
+            val response = WebClient.create(settings.getArgusServer()!!)
+                .get()
+                .uri("api/review/count")
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block()
+            if (!response.isNullOrBlank()) {
+                val json = mapper.readTree(response)
+                if (json.has("count")) json["count"].asInt() else 0
+            } else 0
+        } catch (e: Exception) {
+            0
+        }
+    }
 
     @GetMapping("/notifications")
     @Transactional
@@ -286,9 +308,9 @@ class NotificationsController(
                 count = unreadNotifications.count()
             }
             response["hasNotifications"] = count > 0
-            response["uncheckedPersonMatches"] = metadataRepository?.findAllLowMatches(
-                settings.getRecognitionConfidenceThreshold()!!
-            )
+            // Unchecked matches now come from the Argus review queue (its global pending count),
+            // consistent with the per-person Matches badges, rather than stale local low-match rows.
+            response["uncheckedPersonMatches"] = getArgusReviewCount(settings)
             response["facialDetection"] = settings.getFacialDetection()
         }
 
