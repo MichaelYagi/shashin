@@ -329,7 +329,7 @@ private val relativeSidecarDir: String? = null
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId = recognitionLabel?.get()?.getArgusIdentityId()
-        counts["compreface"] = getTrainingLabelPhotos(personId).size
+        counts["compreface"] = getEnrolledGalleryItems(settings, argusIdentityId).size
 
         // Pull pending review items from Argus, filtered to this person's argusIdentityId
         val reviewItems = mutableListOf<MutableMap<String, Any>>()
@@ -499,7 +499,8 @@ private val relativeSidecarDir: String? = null
             settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
-        counts["compreface"] = getTrainingLabelPhotos(personId).size
+        val argusIdentityId2 = recognitionLabel?.takeIf { it.isPresent }?.get()?.getArgusIdentityId()
+        counts["compreface"] = getEnrolledGalleryItems(settings, argusIdentityId2).size
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -518,7 +519,6 @@ private val relativeSidecarDir: String? = null
 
         // Matches badge reflects the Argus review queue (same source the Matches tab renders),
         // so the count never disagrees with the tab contents.
-        val argusIdentityId2 = recognitionLabel?.takeIf { it.isPresent }?.get()?.getArgusIdentityId()
         counts["matches"] = if (faceRecogServicesAvailable) countArgusReviewMatches(settings, argusIdentityId2) else 0
 
         response["counts"] = counts
@@ -570,34 +570,28 @@ private val relativeSidecarDir: String? = null
 
         if (recognitionLabel != null && recognitionLabel.isPresent) {
             response["personInfo"] = recognitionLabel.get()
+            val argusIdentityId = recognitionLabel.get().getArgusIdentityId()
 
-            // Training images are manually labeled records in Shashin's DB (auto_tagged = false).
-            // Build a detection_id → crop_url map from the Argus gallery in one call, then page.
-            val trainingPhotos = getTrainingLabelPhotos(personId)
-            if (trainingPhotos.isNotEmpty()) {
-                val argusIdentityId = recognitionLabel.get().getArgusIdentityId()
-                val cropByDetectionId = mutableMapOf<String, String>()
-                getGalleryItems(settings, argusIdentityId).forEach { item ->
-                    val did = item["detection_id"]?.asInt()?.toString() ?: return@forEach
-                    val crop = if (item.has("crop_url") && !item["crop_url"].isNull) item["crop_url"].textValue() else ""
-                    cropByDetectionId[did] = crop
-                }
-
+            val items = getEnrolledGalleryItems(settings, argusIdentityId)
+            if (items.isNotEmpty()) {
                 val pageStart = page * size
-                val pageEnd = minOf(pageStart + size, trainingPhotos.size)
+                val pageEnd = minOf(pageStart + size, items.size)
                 val resultList = mutableListOf<MutableMap<String, Any>>()
 
-                if (pageStart < trainingPhotos.size) {
+                if (pageStart < items.size) {
                     for (i in pageStart until pageEnd) {
-                        val rlp = trainingPhotos[i]
-                        val detectionId = rlp.getCompreFaceImageId()!!
+                        val item = items[i]
+                        val detectionId = item["detection_id"].asInt().toString()
                         val itemMap = mutableMapOf<String, Any>()
                         itemMap["id"] = detectionId
-                        itemMap["crop_url"] = cropByDetectionId[detectionId] ?: ""
+                        itemMap["crop_url"] = if (item.has("crop_url") && !item["crop_url"].isNull) item["crop_url"].textValue() else ""
                         itemMap["metadata_date"] = ""
-                        val metadataObj = if (rlp.getMetadataId() != null) metadataRepository?.findByMetadataId(rlp.getMetadataId()!!) else null
-                        if (metadataObj != null) {
-                            itemMap["metadata_date"] = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
+                        val rlp = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
+                        if (rlp?.getMetadataId() != null) {
+                            val metadataObj = metadataRepository?.findByMetadataId(rlp.getMetadataId()!!)
+                            if (metadataObj != null) {
+                                itemMap["metadata_date"] = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
+                            }
                         }
                         resultList.add(itemMap)
                     }
@@ -695,15 +689,11 @@ private val relativeSidecarDir: String? = null
         }
     }
 
-    // Training images are the faces a user explicitly labeled in Shashin (auto_tagged = false,
-    // compre_face_image_id set). Argus's gallery flags (enrolled, review_status) don't reliably
-    // distinguish enrolled references from pending detections, so we use Shashin's own DB.
-    private fun getTrainingLabelPhotos(personId: Int): List<RecognitionLabelPhoto> =
-        recognitionLabelPhotoRepository
-            ?.findAllByRecognitionLabelId(personId)
-            ?.filterNotNull()
-            ?.filter { it.getAutoTagged() != true && !it.getCompreFaceImageId().isNullOrBlank() }
-            ?: emptyList()
+    // Training images are gallery items where Argus set enrolled=true — faces that were explicitly
+    // labeled with a person's name via api/detect/faces?label=. Argus 0.1.0-alpha.3+ sets this
+    // flag reliably on enrollment; pending auto-detected faces have enrolled=false.
+    private fun getEnrolledGalleryItems(settings: Settings, argusIdentityId: Int?): List<JsonNode> =
+        getGalleryItems(settings, argusIdentityId).filter { it["enrolled"]?.asBoolean() == true }
 
     private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999): String? {
         if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return null
