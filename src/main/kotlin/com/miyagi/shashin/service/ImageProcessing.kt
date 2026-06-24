@@ -1479,6 +1479,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     }
                 }
 
+                // Sentinel so a photo with no detectable objects isn't rescanned forever
+                if (classNames.isEmpty()) classNames.add("unidentified objects")
+
                 processObjects(classNames, metadataObj, keywordRepository, keywordPhotoRepository, metadataRepository)
 
                 if (threadFile != null) {
@@ -1496,6 +1499,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
+        // Batch object scan over photos that have no keywords yet.
         fun scanObjects(
             metadataRepository: MetadataRepository?,
             keywordRepository: KeywordRepository?,
@@ -1509,7 +1513,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             if (settings.getObjectDetection() != true) return 0
             if (!NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) return 0
 
-            val photos = metadataRepository?.findAllVisible(settings.getMatchScanLimit()!!) ?: return 0
+            val photos = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!) ?: return 0
             var count = 0
             for (photo in photos) {
                 if (shouldStop != null && shouldStop.get()) break
