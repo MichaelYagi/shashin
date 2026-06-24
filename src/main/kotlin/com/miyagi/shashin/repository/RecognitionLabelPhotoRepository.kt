@@ -35,4 +35,6 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
 
     fun findByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): RecognitionLabelPhoto?
 
+    fun findAllByRecognitionLabelId(recognitionLabelId: Int): List<RecognitionLabelPhoto?>
+
 }

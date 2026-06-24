@@ -329,8 +329,7 @@ private val relativeSidecarDir: String? = null
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId = recognitionLabel?.get()?.getArgusIdentityId()
-        // Training images count = enrolled reference faces only
-        counts["compreface"] = getEnrolledGalleryItems(settings, argusIdentityId).size
+        counts["compreface"] = getTrainingLabelPhotos(personId).size
 
         // Pull pending review items from Argus, filtered to this person's argusIdentityId
         val reviewItems = mutableListOf<MutableMap<String, Any>>()
@@ -500,9 +499,7 @@ private val relativeSidecarDir: String? = null
             settings.getArgusKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
-        val argusIdentityId2 = recognitionLabel?.get()?.getArgusIdentityId()
-        // Training images count = enrolled reference faces only
-        counts["compreface"] = getEnrolledGalleryItems(settings, argusIdentityId2).size
+        counts["compreface"] = getTrainingLabelPhotos(personId).size
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -521,6 +518,7 @@ private val relativeSidecarDir: String? = null
 
         // Matches badge reflects the Argus review queue (same source the Matches tab renders),
         // so the count never disagrees with the tab contents.
+        val argusIdentityId2 = recognitionLabel?.takeIf { it.isPresent }?.get()?.getArgusIdentityId()
         counts["matches"] = if (faceRecogServicesAvailable) countArgusReviewMatches(settings, argusIdentityId2) else 0
 
         response["counts"] = counts
@@ -572,39 +570,41 @@ private val relativeSidecarDir: String? = null
 
         if (recognitionLabel != null && recognitionLabel.isPresent) {
             response["personInfo"] = recognitionLabel.get()
-            val argusIdentityId = recognitionLabel.get().getArgusIdentityId()
 
-            // Training images = enrolled reference faces only (not pending matches / unenrolled detections)
-            val items = getEnrolledGalleryItems(settings, argusIdentityId)
-            if (items.isNotEmpty()) {
-                run {
-                    val pageStart = page * size
-                    val pageEnd = minOf(pageStart + size, items.size)
-                    val resultList = mutableListOf<MutableMap<String, Any>>()
-
-                    if (pageStart < items.size) {
-                        for (i in pageStart until pageEnd) {
-                            val item = items[i]
-                            val itemMap = mutableMapOf<String, Any>()
-                            itemMap["id"] = item["detection_id"].asInt()
-                            itemMap["crop_url"] = if (item.has("crop_url") && !item["crop_url"].isNull) item["crop_url"].textValue() else ""
-
-                            val detectionId = item["detection_id"].asInt().toString()
-                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(detectionId)
-                            itemMap["metadata_date"] = ""
-                            if (recognitionLabelPhotoObj != null && metadataRepository != null && metadataRepository!!.count() > 0) {
-                                val metadataObj = metadataRepository?.findByMetadataId(recognitionLabelPhotoObj.getMetadataId().toString())
-                                if (metadataObj != null) {
-                                    itemMap["metadata_date"] = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
-                                }
-                            }
-                            resultList.add(itemMap)
-                        }
-                    }
-
-                    response["resultList"] = resultList
-                    response["message"] = ""
+            // Training images are manually labeled records in Shashin's DB (auto_tagged = false).
+            // Build a detection_id → crop_url map from the Argus gallery in one call, then page.
+            val trainingPhotos = getTrainingLabelPhotos(personId)
+            if (trainingPhotos.isNotEmpty()) {
+                val argusIdentityId = recognitionLabel.get().getArgusIdentityId()
+                val cropByDetectionId = mutableMapOf<String, String>()
+                getGalleryItems(settings, argusIdentityId).forEach { item ->
+                    val did = item["detection_id"]?.asInt()?.toString() ?: return@forEach
+                    val crop = if (item.has("crop_url") && !item["crop_url"].isNull) item["crop_url"].textValue() else ""
+                    cropByDetectionId[did] = crop
                 }
+
+                val pageStart = page * size
+                val pageEnd = minOf(pageStart + size, trainingPhotos.size)
+                val resultList = mutableListOf<MutableMap<String, Any>>()
+
+                if (pageStart < trainingPhotos.size) {
+                    for (i in pageStart until pageEnd) {
+                        val rlp = trainingPhotos[i]
+                        val detectionId = rlp.getCompreFaceImageId()!!
+                        val itemMap = mutableMapOf<String, Any>()
+                        itemMap["id"] = detectionId
+                        itemMap["crop_url"] = cropByDetectionId[detectionId] ?: ""
+                        itemMap["metadata_date"] = ""
+                        val metadataObj = if (rlp.getMetadataId() != null) metadataRepository?.findByMetadataId(rlp.getMetadataId()!!) else null
+                        if (metadataObj != null) {
+                            itemMap["metadata_date"] = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
+                        }
+                        resultList.add(itemMap)
+                    }
+                }
+
+                response["resultList"] = resultList
+                response["message"] = ""
             }
         }
 
@@ -695,15 +695,15 @@ private val relativeSidecarDir: String? = null
         }
     }
 
-    // Training images are gallery items that have been confirmed as this person (review_status is
-    // absent or not "pending"). Items with review_status == "pending" are still in the Matches
-    // review queue and should not also appear as Training. The Argus gallery's "enrolled" flag is
-    // always false regardless of how the face was added, so it cannot be used to filter here.
-    private fun getEnrolledGalleryItems(settings: Settings, argusIdentityId: Int?): List<com.fasterxml.jackson.databind.JsonNode> =
-        getGalleryItems(settings, argusIdentityId).filter {
-            val status = it["review_status"]?.asText()
-            status != "pending"
-        }
+    // Training images are the faces a user explicitly labeled in Shashin (auto_tagged = false,
+    // compre_face_image_id set). Argus's gallery flags (enrolled, review_status) don't reliably
+    // distinguish enrolled references from pending detections, so we use Shashin's own DB.
+    private fun getTrainingLabelPhotos(personId: Int): List<RecognitionLabelPhoto> =
+        recognitionLabelPhotoRepository
+            ?.findAllByRecognitionLabelId(personId)
+            ?.filterNotNull()
+            ?.filter { it.getAutoTagged() != true && !it.getCompreFaceImageId().isNullOrBlank() }
+            ?: emptyList()
 
     private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999): String? {
         if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return null

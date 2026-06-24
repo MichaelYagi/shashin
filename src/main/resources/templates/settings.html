@@ -116,6 +116,11 @@
                                 </div>
                             </div>
                             <th:block th:if="${faceRecogServicesAvailable}">
+                            <div class="mb-2 mt-1">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="syncArgusBtn">Sync Argus Identities</button>
+                                <small class="text-muted ms-2">Match Argus identities to Shashin people by name. Use this if you enrolled people directly in Argus.</small>
+                                <span id="syncArgusResult" class="ms-2"></span>
+                            </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="facialDetection" name="facialDetection" th:checked="${settings.facialDetection}" th:disabled="${!faceModelAvailable}">
                                 <label class="form-check-label" for="facialDetection">

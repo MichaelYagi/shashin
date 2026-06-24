@@ -185,5 +185,30 @@ class Settings {
                 $("#deleteConfirm").val("");
             }
         });
+
+        if ($("#syncArgusBtn").length) {
+            $("#syncArgusBtn").on("click", function() {
+                $("#syncArgusBtn").prop("disabled", true);
+                $("#syncArgusResult").text("Syncing...");
+                $.ajax({
+                    type: "POST",
+                    url: "/settings/argus/sync",
+                    headers: { "X-CSRF-TOKEN": $("meta[name='_csrf']").attr("content") },
+                    success: function(data) {
+                        if (data.status === "success") {
+                            $("#syncArgusResult").text(data.msg);
+                        } else {
+                            $("#syncArgusResult").text("Error: " + data.msg);
+                        }
+                    },
+                    error: function() {
+                        $("#syncArgusResult").text("Sync failed");
+                    },
+                    complete: function() {
+                        $("#syncArgusBtn").prop("disabled", false);
+                    }
+                });
+            });
+        }
     }
 }
