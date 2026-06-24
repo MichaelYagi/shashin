@@ -1182,66 +1182,6 @@ class SettingsController(
         return mapper.writeValueAsString(dirs)
     }
 
-    // Sync Argus identity IDs into Shashin's recognitionlabel table by matching on label name.
-    // Use this after enrolling people directly in Argus (instead of via Shashin's manual labeling).
-    @PostMapping("/settings/argus/sync", produces = ["application/json"])
-    @ResponseBody
-    @Secured("ROLE_SUPER")
-    fun syncArgusIdentities(model: Model): String {
-        val response = mutableMapOf<String, Any?>()
-        response["status"] = ApiResponse.FAIL.status
-        response["synced"] = 0
-        response["msg"] = ""
-
-        val settings = model.getAttribute("settings") as Settings
-        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) {
-            response["msg"] = "Argus not configured"
-            return mapper.writeValueAsString(response)
-        }
-
-        try {
-            val webClient = WebClient.create(settings.getArgusServer()!!)
-            var cursor: String? = null
-            var synced = 0
-
-            do {
-                val uri = if (cursor != null) "api/identities?limit=100&cursor=$cursor" else "api/identities?limit=100"
-                val json = webClient.get().uri(uri)
-                    .header("X-API-Key", settings.getArgusKey())
-                    .retrieve().bodyToMono(String::class.java).block() ?: break
-
-                val obj = mapper.readTree(json)
-                val items = obj["items"] ?: break
-                val hasMore = obj["has_more"]?.asBoolean() ?: false
-                cursor = if (hasMore) obj["next_cursor"]?.textValue() else null
-
-                for (identity in items) {
-                    val argusId = identity["id"]?.asInt() ?: continue
-                    val label = identity["label"]?.textValue()?.trim() ?: continue
-
-                    val recognitionLabel = recognitionLabelRepository?.findByNameIgnoreCase(label) ?: continue
-                    if (recognitionLabel.getArgusIdentityId() != argusId) {
-                        recognitionLabel.setArgusIdentityId(argusId)
-                        recognitionLabel.setModifiedAt(getCurrentTimestamp())
-                        try {
-                            recognitionLabelRepository?.save(recognitionLabel)
-                            synced++
-                        } catch (_: Exception) {}
-                    }
-                }
-            } while (cursor != null)
-
-            response["status"] = ApiResponse.SUCCESS.status
-            response["synced"] = synced
-            response["msg"] = "Synced $synced identities from Argus"
-        } catch (e: Exception) {
-            response["msg"] = "Error syncing from Argus: ${e.localizedMessage}"
-            logger.log(Level.WARNING, "Error syncing Argus identities: ${e.localizedMessage}")
-        }
-
-        return mapper.writeValueAsString(response)
-    }
-
     @RequestMapping(value = ["/api/v1/system/settings"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")

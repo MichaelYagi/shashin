@@ -1598,7 +1598,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             if (face.has("identity_id") && !face["identity_id"].isNull) {
                                 val identityId = face["identity_id"].asInt()
                                 val recognitionLabelObj = recognitionLabelRepository?.findByNameIgnoreCase(personName)
-                                if (recognitionLabelObj != null && recognitionLabelObj.getArgusIdentityId() == null) {
+                                if (recognitionLabelObj != null && recognitionLabelObj.getArgusIdentityId() != identityId) {
                                     recognitionLabelObj.setArgusIdentityId(identityId)
                                     recognitionLabelRepository?.save(recognitionLabelObj)
                                 }
