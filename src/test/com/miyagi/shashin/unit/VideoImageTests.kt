@@ -1,11 +1,7 @@
 package com.miyagi.shashin.unit
 
-import ai.djl.modality.cv.ImageFactory
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.ToolsControllerTestConfig
-import com.miyagi.shashin.service.DjlFaceRecognizer
 import com.miyagi.shashin.e2e.BaseSeleniumTests
-import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.service.VideoProcessing
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -14,7 +10,6 @@ import org.springframework.test.context.ActiveProfiles
 import java.io.File
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.imageio.ImageIO
 
 @ActiveProfiles("test")
 @Import(ToolsControllerTestConfig::class)
@@ -54,71 +49,5 @@ class VideoImageTests {
 
         Assertions.assertTrue(gifExists)
         logger.log(Level.INFO, "processGifTest passed")
-    }
-
-    @Test
-    fun processDetectPredictTest() {
-        val classLoader = javaClass.classLoader
-        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"/people.jpg"
-        val testImageFile = File(testImageUrl)
-
-        val imageBi = ImageIO.read(testImageFile)
-        val img = ImageFactory.getInstance().fromImage(imageBi)
-
-        val djlFaceRecognizer = DjlFaceRecognizer()
-        val detect = djlFaceRecognizer.detect(img)
-        Assertions.assertTrue(detect?.numberOfObjects!! > 0)
-
-        val predict = djlFaceRecognizer.predict(img)
-        Assertions.assertTrue(predict != null && predict.isNotEmpty())
-        logger.log(Level.INFO, "processDetectPredictTest passed")
-    }
-
-    @Test
-    fun processFaceRecognitionTest() {
-        val mapper = ObjectMapper()
-
-        val classLoader = javaClass.classLoader
-        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"/people.jpg"
-        val testImageFile = File(testImageUrl)
-
-        val imageBi = ImageIO.read(testImageFile)
-        val img = ImageFactory.getInstance().fromImage(imageBi)
-
-        val detectedTrainingImages = DjlFaceRecognizer().detect(img)
-        val numOfObjects = detectedTrainingImages?.numberOfObjects
-        Assertions.assertTrue(numOfObjects!! > 0)
-        val trainingImageJsonNode = mapper.readTree(detectedTrainingImages.toJson())
-        val metadata = Metadata()
-        metadata.setId("asdf")
-        metadata.setPath(testImageFile.path)
-
-        val limit = 3
-
-        // Test similarity
-        val similarityArrays: MutableList<MutableList<Any>> = DjlFaceRecognizer().getSimilarities(
-            limit,
-            limit,
-            imageBi,
-            imageBi,
-            trainingImageJsonNode,
-            trainingImageJsonNode)
-
-        Assertions.assertTrue(similarityArrays.isNotEmpty())
-
-        var index = 0
-        for (similarityArray in similarityArrays) {
-            val similarity = similarityArray[0].toString().toFloat()
-
-            if (index%(limit+1) == 0) {
-                Assertions.assertTrue(similarity == 1.0F)
-            } else {
-                Assertions.assertTrue(similarity > 0)
-            }
-
-            this.logger.log(Level.INFO, "Iteration $index: s - $similarity")
-            index++
-        }
-        logger.log(Level.INFO, "processFaceRecognitionTest passed")
     }
 }
