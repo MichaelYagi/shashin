@@ -1,8 +1,5 @@
 package com.miyagi.shashin.controller
 
-import ai.djl.modality.cv.Image
-import ai.djl.modality.cv.output.DetectedObjects
-import ai.djl.repository.zoo.Criteria
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
@@ -1940,7 +1937,6 @@ class SettingsController(
                                     mediaDir.getDirectory().toString(),
                                     mediaExcludeDirs,
                                     settings,
-                                    null,
                                     webClient,
                                     recognitionLabelPhotoLabels,
                                     compreFaceServerConnected,
@@ -2266,7 +2262,7 @@ class SettingsController(
         logger.log(Level.INFO, "shashinscan thread file deleted")
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0, locale: Locale) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0, locale: Locale) {
         val f = File(dirPath)
         val files = f.listFiles()
 
@@ -2390,7 +2386,7 @@ class SettingsController(
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected, addToAlbum, uploadUserId, locale)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected, addToAlbum, uploadUserId, locale)
                 }
             }
         }

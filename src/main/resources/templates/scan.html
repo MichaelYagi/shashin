@@ -20,26 +20,7 @@
             <input type="checkbox" id="reindexFiles" name="reindexFiles">
             <label for="reindexFiles"><th:block th:text="#{main.pages.scan.recheck}"></th:block></label>
 
-            <th:block th:if="${faceRecogServicesAvailable}">
-                <hr class="mt-3">
-                <button class="btn btn-outline-secondary" id="reconcileArgusBtn">Reconcile with Argus</button>
-                <span id="reconcileArgusStatus" class="ms-2 small text-muted"></span>
-            </th:block>
-
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
-
-            <script type="text/javascript" th:nonce="${cspNonce}">
-                $(document).ready(function () {
-                    $("#reconcileArgusBtn").on("click", async function () {
-                        $(this).prop("disabled", true);
-                        $("#reconcileArgusStatus").text("Reconciling…");
-                        const http = new Http("reconcile argus");
-                        const data = await http.ajax("post", "/person/argus/reconcile", "{}");
-                        $("#reconcileArgusStatus").text(data && data.msg ? data.msg : "Done.");
-                        $(this).prop("disabled", false);
-                    });
-                });
-            </script>
         </main>
     </div>
 </div>
