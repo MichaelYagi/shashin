@@ -525,13 +525,9 @@ private val relativeSidecarDir: String? = null
             }
         }
 
-        // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
-        val lowMatchCount = metadataRepository?.countLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
-        if (lowMatchCount != null && lowMatchCount > 0) {
-            counts["matches"] = lowMatchCount
-        } else {
-            counts["matches"] = 0
-        }
+        // Matches badge reflects the Argus review queue (same source the Matches tab renders),
+        // so the count never disagrees with the tab contents.
+        counts["matches"] = if (faceRecogServicesAvailable) countArgusReviewMatches(settings, argusIdentityId2) else 0
 
         response["counts"] = counts
 
@@ -647,6 +643,38 @@ private val relativeSidecarDir: String? = null
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Error syncing Argus confirmed detections for person $personId: ${e.localizedMessage}")
         }
+    }
+
+    // Counts pending Argus review items whose top suggested match is this identity. This is the
+    // SAME source the Matches tab (getPredictions) renders from, so the tab badge stays consistent
+    // with the tab contents — a stale local low-match row no longer shows a count with no photos.
+    private fun countArgusReviewMatches(settings: Settings, argusIdentityId: Int?): Int {
+        if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return 0
+        var count = 0
+        try {
+            val webClient = WebClient.create(settings.getArgusServer()!!)
+            var cursor: String? = null
+            do {
+                val uri = if (cursor != null) "api/review?limit=100&cursor=$cursor" else "api/review?limit=100"
+                val reviewJson = webClient.get().uri(uri)
+                    .header("X-API-Key", settings.getArgusKey())
+                    .retrieve().bodyToMono(String::class.java).block() ?: break
+
+                val reviewObj = mapper.readTree(reviewJson)
+                val items = reviewObj["items"] ?: break
+                val hasMore = reviewObj["has_more"]?.asBoolean() ?: false
+                cursor = if (hasMore) reviewObj["next_cursor"]?.textValue() else null
+
+                for (item in items) {
+                    val suggestedMatches = item["suggested_matches"]
+                    if (suggestedMatches == null || suggestedMatches.size() == 0) continue
+                    if (suggestedMatches[0]["identity_id"].asInt() == argusIdentityId) count++
+                }
+            } while (cursor != null)
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error counting Argus review matches for identity $argusIdentityId: ${e.localizedMessage}")
+        }
+        return count
     }
 
     private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999): String? {
@@ -875,13 +903,10 @@ private val relativeSidecarDir: String? = null
                 response["personInfo"] = recognitionLabel.get()
             }
 
-            // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
-            val lowMatchCount = metadataRepository?.countLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
-            if (lowMatchCount != null && lowMatchCount > 0) {
-                counts["matches"] = lowMatchCount
-            } else {
-                counts["matches"] = 0
-            }
+            // Matches badge reflects the Argus review queue (same source the Matches tab renders),
+            // so the count never disagrees with the tab contents.
+            val argusIdentityId = if (recognitionLabel != null && recognitionLabel.isPresent) recognitionLabel.get().getArgusIdentityId() else null
+            counts["matches"] = countArgusReviewMatches(settings, argusIdentityId)
 
             var metadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
