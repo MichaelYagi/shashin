@@ -1546,7 +1546,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         fun argusImagePath(metadata: Metadata): String? {
             val type = metadata.getType() ?: ""
             return if (type.contains("video")) {
-                metadata.getThumbnailPathOriginal() ?: metadata.getThumbnailPathSmall()
+                val smallPath = metadata.getThumbnailPathSmall()
+                val originalPath = smallPath?.replace("_${FileUtils.Companion.thumbnailHeight()}.", "_original.")
+                if (originalPath != null && File(originalPath).exists()) originalPath else smallPath
             } else {
                 metadata.getPath()
             }
