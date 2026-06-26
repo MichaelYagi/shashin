@@ -525,10 +525,12 @@ class MediaServiceController(
 
     fun updateLastAccessed(model: Model, request: HttpServletRequest, metadata: Metadata, userId: Int? = null) {
         Thread {
-            metadata.setLastAccessedAt(getCurrentTimestamp())
-            metadata.setLastAccessedBy(userId)
-            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
-            metadataRepository.save(metadata)
+            try {
+                metadata.setLastAccessedAt(getCurrentTimestamp())
+                metadata.setLastAccessedBy(userId)
+                metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
+                metadataRepository.save(metadata)
+            } catch (_: Exception) {}
         }.start()
     }
 
