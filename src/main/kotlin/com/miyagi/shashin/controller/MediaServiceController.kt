@@ -33,6 +33,7 @@ import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -64,6 +65,7 @@ class MediaServiceController(
     var messageSource: MessageSource? = null
 ) {
     private var logger: Logger = Logger.getLogger(MediaServiceController::class.simpleName)
+    private val lastAccessedExecutor = Executors.newSingleThreadExecutor()
 
     private var validFileNameRegex = "[^a-zA-Z0-9.-]".toRegex()
 
@@ -524,14 +526,14 @@ class MediaServiceController(
     }
 
     fun updateLastAccessed(model: Model, request: HttpServletRequest, metadata: Metadata, userId: Int? = null) {
-        Thread {
-            try {
-                metadata.setLastAccessedAt(getCurrentTimestamp())
-                metadata.setLastAccessedBy(userId)
-                metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
-                metadataRepository.save(metadata)
-            } catch (_: Exception) {}
-        }.start()
+        val freeFormString = TextUtils.getMetadataFreeformString(model, request)
+        val timestamp = getCurrentTimestamp()
+        lastAccessedExecutor.submit {
+            metadata.setLastAccessedAt(timestamp)
+            metadata.setLastAccessedBy(userId)
+            metadata.setFreeFormString(freeFormString)
+            metadataRepository.save(metadata)
+        }
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
