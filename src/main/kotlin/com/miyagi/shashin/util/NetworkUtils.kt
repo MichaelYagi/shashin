@@ -80,7 +80,7 @@ class NetworkUtils {
                 // Hit an authenticated endpoint (GET, not HEAD) so an invalid key fails the check —
                 // /api/health is unauthenticated and would pass with any key. A bad key returns
                 // 401/403, which falls outside the 200..399 success range.
-                available = pingURL(argusServer + "api/review/count", requestProperties, 1000, "GET")
+                available = pingURL(argusServer.trimEnd('/') + "/api/review/count", requestProperties, 5000, "GET")
             }
 
             val timingEnd = Date()
