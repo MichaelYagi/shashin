@@ -2,7 +2,7 @@ class Training {
 
     constructor(resultList, personId, activePage) {
         this.http = new Http(activePage);
-        this.page = 1;
+        this.page = 0;
         this.rendering = false;
         this.resultList = resultList;
         this.activePage = activePage;
