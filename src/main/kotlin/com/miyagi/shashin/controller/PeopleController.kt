@@ -576,14 +576,14 @@ private val relativeSidecarDir: String? = null
                 .bodyToMono(String::class.java)
                 .block()
 
-            val identities = mapper.readTree(summaryJson ?: "[]")
-            val match = identities.firstOrNull { it["name"]?.asText()?.equals(personName, ignoreCase = true) == true }
+            val identities = mapper.readTree(summaryJson ?: "{}")
+            val match = identities["items"]?.firstOrNull { it["label"]?.asText()?.equals(personName, ignoreCase = true) == true }
 
             if (match == null) {
                 response["status"] = ApiResponse.FAIL.status
                 response["msg"] = "No Argus identity found matching \"$personName\"."
             } else {
-                val argusId = match["identity_id"].asInt()
+                val argusId = match["id"].asInt()
                 if (person.getArgusIdentityId() != argusId) {
                     person.setArgusIdentityId(argusId)
                     recognitionLabelRepository?.save(person)
@@ -1322,11 +1322,11 @@ private val relativeSidecarDir: String? = null
                 .header("X-API-Key", settings.getArgusKey())
                 .retrieve().bodyToMono(String::class.java).block()
 
-            val identities = mapper.readTree(summaryJson ?: "[]")
+            val identities = mapper.readTree(summaryJson ?: "{}")
 
-            for (identity in identities) {
-                val argusIdentityId = identity["identity_id"]?.asInt() ?: continue
-                val argusName = identity["name"]?.asText() ?: continue
+            for (identity in identities["items"] ?: emptyList()) {
+                val argusIdentityId = identity["id"]?.asInt() ?: continue
+                val argusName = identity["label"]?.asText() ?: continue
 
                 val person = recognitionLabelRepository?.findByNameIgnoreCase(argusName) ?: continue
                 identitiesProcessed++
