@@ -459,9 +459,8 @@ private val relativeSidecarDir: String? = null
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
         val module = "training"
-        val page = 0
         syncArgusConfirmedToShashin(personId, model.getAttribute("settings") as Settings)
-        val response = buildCompreFace(model,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
+        val response = buildCompreFace(model, personId, null, model.getAttribute("queryLimit").toString().toInt(), locale)
         val counts = HashMap<String,Int>()
         counts["training"] = 0
         counts["person"] = 0
@@ -521,13 +520,13 @@ private val relativeSidecarDir: String? = null
         return module
     }
 
-    @RequestMapping(value = ["/person/argus/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/person/argus/{personId}/gallery"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedComprefaceList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int, locale: Locale): String {
+    fun getPagedArgusGallery(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @RequestParam(required = false) cursor: String? = null, locale: Locale): String {
         var response = mutableMapOf<String, Any?>()
 
         if (model.getAttribute("currentUser") != "") {
-            response = buildCompreFace(model,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
+            response = buildCompreFace(model, personId, cursor, model.getAttribute("queryLimit").toString().toInt(), locale)
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
 
@@ -603,7 +602,7 @@ private val relativeSidecarDir: String? = null
         }
     }
 
-    private fun buildCompreFace(model: Model, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
+    private fun buildCompreFace(model: Model, personId: Int, cursor: String? = null, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = messageSource?.getMessage("main.nothing", null, locale)
@@ -619,15 +618,15 @@ private val relativeSidecarDir: String? = null
             response["personInfo"] = recognitionLabel.get()
             val argusIdentityId = recognitionLabel.get().getArgusIdentityId()
 
-            val items = getEnrolledGalleryItems(settings, argusIdentityId)
-            if (items.isNotEmpty()) {
-                val pageStart = page * size
-                val pageEnd = minOf(pageStart + size, items.size)
-                val resultList = mutableListOf<MutableMap<String, Any>>()
-
-                if (pageStart < items.size) {
-                    for (i in pageStart until pageEnd) {
-                        val item = items[i]
+            val galleryJson = getArgusGalleryForIdentity(settings, argusIdentityId, limit = size, enrolled = true, cursor = cursor)
+            if (galleryJson != null) {
+                val galleryObj = mapper.readTree(galleryJson)
+                val items = if (galleryObj.has("items")) galleryObj["items"].toList() else emptyList()
+                response["next_cursor"] = galleryObj["next_cursor"]?.takeUnless { it.isNull }?.textValue()
+                response["has_more"] = galleryObj["has_more"]?.asBoolean() ?: false
+                if (items.isNotEmpty()) {
+                    val resultList = mutableListOf<MutableMap<String, Any>>()
+                    for (item in items) {
                         val detectionId = item["detection_id"].asInt().toString()
                         val itemMap = mutableMapOf<String, Any>()
                         itemMap["id"] = detectionId
@@ -642,10 +641,9 @@ private val relativeSidecarDir: String? = null
                         }
                         resultList.add(itemMap)
                     }
+                    response["resultList"] = resultList
+                    response["message"] = ""
                 }
-
-                response["resultList"] = resultList
-                response["message"] = ""
             }
         }
 
@@ -725,8 +723,8 @@ private val relativeSidecarDir: String? = null
     // attributed to the identity (enrolled references, confirmed appearances, and pending matches
     // awaiting review) — each item carries "enrolled" (bool) and "review_status" so callers can
     // narrow to what they actually mean.
-    private fun getGalleryItems(settings: Settings, argusIdentityId: Int?): List<com.fasterxml.jackson.databind.JsonNode> {
-        val json = getArgusGalleryForIdentity(settings, argusIdentityId) ?: return emptyList()
+    private fun getGalleryItems(settings: Settings, argusIdentityId: Int?, enrolled: Boolean = false): List<com.fasterxml.jackson.databind.JsonNode> {
+        val json = getArgusGalleryForIdentity(settings, argusIdentityId, enrolled = enrolled) ?: return emptyList()
         return try {
             val galleryJson = mapper.readTree(json)
             if (galleryJson.has("items")) galleryJson["items"].toList() else emptyList()
@@ -736,18 +734,20 @@ private val relativeSidecarDir: String? = null
         }
     }
 
-    // Training images are gallery items where Argus set enrolled=true — faces that were explicitly
-    // labeled with a person's name via api/detect/faces?label=. Argus 0.1.0-alpha.3+ sets this
-    // flag reliably on enrollment; pending auto-detected faces have enrolled=false.
     private fun getEnrolledGalleryItems(settings: Settings, argusIdentityId: Int?): List<JsonNode> =
-        getGalleryItems(settings, argusIdentityId).filter { it["enrolled"]?.asBoolean() == true }
+        getGalleryItems(settings, argusIdentityId, enrolled = true)
 
-    private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999): String? {
+    private fun getArgusGalleryForIdentity(settings: Settings, argusIdentityId: Int?, limit: Int = 9999, enrolled: Boolean = false, cursor: String? = null): String? {
         if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return null
+        val uri = buildString {
+            append("api/identities/$argusIdentityId/gallery?limit=$limit")
+            if (enrolled) append("&enrolled=true")
+            if (cursor != null) append("&cursor=$cursor")
+        }
         return try {
             WebClient.create(settings.getArgusServer()!!)
                 .get()
-                .uri("api/identities/$argusIdentityId/gallery?limit=$limit")
+                .uri(uri)
                 .header("X-API-Key", settings.getArgusKey())
                 .retrieve()
                 .bodyToMono(String::class.java)

@@ -2,7 +2,7 @@ class Training {
 
     constructor(resultList, personId, activePage) {
         this.http = new Http(activePage);
-        this.page = 0;
+        this.cursor = null;
         this.rendering = false;
         this.resultList = resultList;
         this.activePage = activePage;
@@ -32,24 +32,25 @@ class Training {
 
     async loadNextPage() {
         if (this.rendering === false) {
-            // console.log(this.page)
-            this.updateTraining(this.page, this.personId).then(function (additionalMediaContentList) {
-                // console.log(additionalMediaContentList)
-                this.page++;
+            this.updateTraining(this.cursor, this.personId).then(function (data) {
+                this.cursor = data ? (data.next_cursor || null) : null;
             }.bind(this));
         }
 
         return this.eol;
     }
 
-    async updateTraining(nextPage,personId) {
+    async updateTraining(cursor, personId) {
         this.rendering = true;
 
         let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/person/argus/"+personId+"/"+nextPage);
+            const url = cursor
+                ? "/person/argus/" + personId + "/gallery?cursor=" + encodeURIComponent(cursor)
+                : "/person/argus/" + personId + "/gallery";
+            data = await this.http.ajax("get", url);
         }
 
         if (data !== null && data.hasOwnProperty("resultList")) {
@@ -88,6 +89,10 @@ class Training {
 
                 this.rendering = false;
                 $("#spinner").css("display", "none");
+                if (data.has_more === false) {
+                    this.eol = true;
+                    $(".appendTrainingPhotos").last().text("EOL").css("display","none");
+                }
             } else {
                 $(".appendTrainingPhotos").last().text("EOL").css("display","none");
                 this.rendering = false;
