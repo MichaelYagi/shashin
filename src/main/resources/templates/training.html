@@ -299,6 +299,8 @@
         const personId = /*[[${parameter}]]*/ '';
         const resultList = '[1]';
         const personName = /*[[${personInfo.name}]]*/ '';
+        const initialCursor = /*[[${next_cursor}]]*/ null;
+        const initialHasMore = /*[[${has_more}]]*/ false;
         /*]]>*/
 
         shashin.updateSearchInput(personName);
@@ -313,7 +315,7 @@
             shashin.removeAllMetadataIdList();
         });
 
-        const trainingInstance = new Training(resultList, personId, activePage);
+        const trainingInstance = new Training(resultList, personId, activePage, initialCursor, initialHasMore);
         trainingInstance.init();
         // Util.checkErrorImage();
     });

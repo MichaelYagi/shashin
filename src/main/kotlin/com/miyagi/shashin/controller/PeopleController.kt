@@ -608,6 +608,7 @@ private val relativeSidecarDir: String? = null
         response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["parameter"] = personId
         response["resultList"] = mutableListOf<MutableMap<String, Any>>()
+        response["has_more"] = false
 
         val settings = model.getAttribute("settings") as Settings
         response["argusServer"] = (settings.getArgusServer() ?: "").trimEnd('/')

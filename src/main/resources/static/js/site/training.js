@@ -1,13 +1,13 @@
 class Training {
 
-    constructor(resultList, personId, activePage) {
+    constructor(resultList, personId, activePage, initialCursor = null, initialHasMore = false) {
         this.http = new Http(activePage);
-        this.cursor = null;
+        this.cursor = initialCursor;
         this.rendering = false;
         this.resultList = resultList;
         this.activePage = activePage;
         this.personId = personId;
-        this.eol = false;
+        this.eol = !initialHasMore;
     }
 
     async init() {
