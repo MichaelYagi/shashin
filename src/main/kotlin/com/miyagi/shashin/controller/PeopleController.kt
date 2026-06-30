@@ -457,10 +457,10 @@ private val relativeSidecarDir: String? = null
 
     @GetMapping("/person/argus/{personId}")
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
-    fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
+    fun getArgusTrainingImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
         val module = "training"
         syncArgusConfirmedToShashin(personId, model.getAttribute("settings") as Settings)
-        val response = buildCompreFace(model, personId, null, model.getAttribute("queryLimit").toString().toInt(), locale)
+        val response = buildArgusGallery(model, personId, null, model.getAttribute("queryLimit").toString().toInt(), locale)
         val counts = HashMap<String,Int>()
         counts["training"] = 0
         counts["person"] = 0
@@ -468,7 +468,7 @@ private val relativeSidecarDir: String? = null
         response["counts"] = counts
 
         for ((k, v) in response) {
-            model[k] = v!!
+            if (v != null) model[k] = v
         }
 
         val settings = model.getAttribute("settings") as Settings
@@ -526,7 +526,7 @@ private val relativeSidecarDir: String? = null
         var response = mutableMapOf<String, Any?>()
 
         if (model.getAttribute("currentUser") != "") {
-            response = buildCompreFace(model, personId, cursor, model.getAttribute("queryLimit").toString().toInt(), locale)
+            response = buildArgusGallery(model, personId, cursor, model.getAttribute("queryLimit").toString().toInt(), locale)
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
 
@@ -602,7 +602,7 @@ private val relativeSidecarDir: String? = null
         }
     }
 
-    private fun buildCompreFace(model: Model, personId: Int, cursor: String? = null, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
+    private fun buildArgusGallery(model: Model, personId: Int, cursor: String? = null, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = messageSource?.getMessage("main.nothing", null, locale)
@@ -862,7 +862,7 @@ private val relativeSidecarDir: String? = null
 
         val response = buildPersonAlbum(model,module,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
         for ((k, v) in response) {
-            model[k] = v!!
+            if (v != null) model[k] = v
         }
 
         getAllAttributeData(model)
