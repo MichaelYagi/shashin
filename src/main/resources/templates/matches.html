@@ -27,6 +27,8 @@
                 <span id="bulkSelectedCount" class="small text-muted"></span>
             </div>
 
+            <div id="noMatchesMsg" class="mt-3 text-muted" th:style="${#lists.isEmpty(reviewItems) ? '' : 'display:none;'}">No pending matches for this person.</div>
+
             <th:block th:if="${not #lists.isEmpty(reviewItems)}">
                 <div class="row g-3 p-2">
                     <th:block th:each="item : ${reviewItems}">
@@ -103,10 +105,12 @@
         shashin.updateSearchInput(personName);
 
         const selectedMatches = new Map(); // detectionId -> {personId, cropUrl}
+        let remainingCards = $('.match-crop').length;
 
         function updateBulkToolbar() {
-            if ($('.match-crop').length === 0) {
+            if (remainingCards <= 0) {
                 $('#bulkMatchToolbar').hide();
+                $('#noMatchesMsg').show();
                 return;
             }
             const count = selectedMatches.size;
@@ -165,6 +169,7 @@
 
         function removeCard(detectionId) {
             selectedMatches.delete(String(detectionId));
+            remainingCards--;
             $('#matchCard' + detectionId).parent().fadeOut(300, function() {
                 $(this).remove();
                 updateBulkToolbar();
