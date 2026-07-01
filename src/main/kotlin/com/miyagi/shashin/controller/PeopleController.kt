@@ -822,9 +822,14 @@ private val relativeSidecarDir: String? = null
                 for (person in peopleList) {
                     var coverUrl = ""
                     if (person.getCoverUrl() != null) {
-                        val metadata = metadataRepository?.findByThumbnailCentered(person.getCoverUrl().toString())
-                        if (metadata != null) {
-                            coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                        val personCoverUrl = person.getCoverUrl().toString()
+                        if (personCoverUrl.startsWith("http")) {
+                            coverUrl = personCoverUrl
+                        } else {
+                            val metadata = metadataRepository?.findByThumbnailCentered(personCoverUrl)
+                            if (metadata != null) {
+                                coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                            }
                         }
                     }
                     coverUrls[person.getId() as Int] = coverUrl
@@ -1354,6 +1359,16 @@ private val relativeSidecarDir: String? = null
 
                 val galleryObj = mapper.readTree(galleryJson)
                 val items = galleryObj["items"] ?: continue
+
+                // Set cover from first enrolled crop if none exists
+                if (person.getCoverUrl() == null) {
+                    val firstEnrolled = items.firstOrNull { it["enrolled"]?.asBoolean() == true }
+                    val cropUrl = firstEnrolled?.get("crop_url")?.textValue()
+                    if (cropUrl != null) {
+                        person.setCoverUrl(argusServer + cropUrl)
+                        recognitionLabelRepository?.save(person)
+                    }
+                }
 
                 for (item in items) {
                     val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
