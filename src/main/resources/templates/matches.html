@@ -21,9 +21,9 @@
 
             <div class="mt-2" id="matchesMessage"></div>
 
-            <div id="bulkMatchToolbar" style="display:none;" class="mb-2 d-flex align-items-center gap-2">
-                <button class="btn btn-success btn-sm" id="confirmSelectedBtn">Confirm selected</button>
-                <button class="btn btn-danger btn-sm" id="dismissSelectedBtn">Dismiss selected</button>
+            <div class="mb-2 d-flex align-items-center gap-2">
+                <button class="btn btn-success btn-sm" id="confirmSelectedBtn" disabled>Confirm selected</button>
+                <button class="btn btn-danger btn-sm" id="dismissSelectedBtn" disabled>Dismiss selected</button>
                 <span id="bulkSelectedCount" class="small text-muted"></span>
             </div>
 
@@ -33,15 +33,15 @@
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                             <div class="card h-100 shadow-sm" th:id="${'matchCard'+item.detectionId}">
                                 <div class="row g-0">
-                                    <div class="col-5" style="position:relative;">
-                                        <img th:src="${item.cropUrl}" class="img-fluid rounded-start match-crop"
-                                             th:data-detection-id="${item.detectionId}"
-                                             th:data-person-id="${parameter}"
-                                             th:data-crop-url="${item.cropUrl}"
-                                             style="height:140px;object-fit:cover;width:100%;cursor:pointer;" alt="Face crop">
+                                    <div class="col-5 match-crop" style="position:relative;cursor:pointer;"
+                                         th:data-detection-id="${item.detectionId}"
+                                         th:data-person-id="${parameter}"
+                                         th:data-crop-url="${item.cropUrl}">
+                                        <img th:src="${item.cropUrl}" class="img-fluid rounded-start"
+                                             style="height:140px;object-fit:cover;width:100%;" alt="Face crop">
                                         <div class="match-select-overlay" th:data-detection-id="${item.detectionId}"
-                                             style="position:absolute;top:4px;left:4px;display:none;">
-                                            <span class="bi-check-circle-fill" style="font-size:1.4rem;color:#0d6efd;background:white;border-radius:50%;"></span>
+                                             style="position:absolute;top:4px;left:4px;display:none;pointer-events:none;">
+                                            <span class="bi-check-circle-fill" style="font-size:1.6rem;color:#0d6efd;"></span>
                                         </div>
                                         <div class="text-center" style="font-size:0.7rem;color:#888;">Detected face</div>
                                     </div>
@@ -109,12 +109,8 @@
 
         function updateBulkToolbar() {
             const count = selectedMatches.size;
-            if (count > 0) {
-                $('#bulkMatchToolbar').show();
-                $('#bulkSelectedCount').text(count + ' selected');
-            } else {
-                $('#bulkMatchToolbar').hide();
-            }
+            $('#bulkSelectedCount').text(count > 0 ? count + ' selected' : '');
+            $('#confirmSelectedBtn, #dismissSelectedBtn').prop('disabled', count === 0);
         }
 
         $(document).on('click', '.match-crop', function () {
@@ -122,14 +118,15 @@
             const personId = $(this).data('person-id');
             const cropUrl = $(this).data('crop-url');
             const overlay = $('.match-select-overlay[data-detection-id="' + detectionId + '"]');
+            const img = $(this).find('img');
             if (selectedMatches.has(detectionId)) {
                 selectedMatches.delete(detectionId);
                 overlay.hide();
-                $(this).css('opacity', '1');
+                img.css('opacity', '1');
             } else {
                 selectedMatches.set(detectionId, { personId, cropUrl });
                 overlay.show();
-                $(this).css('opacity', '0.6');
+                img.css('opacity', '0.6');
             }
             updateBulkToolbar();
         });
