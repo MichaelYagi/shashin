@@ -21,9 +21,9 @@
 
             <div class="mt-2" id="matchesMessage"></div>
 
-            <div id="bulkMatchToolbar" class="mb-2 d-flex align-items-center gap-2" th:if="${not #lists.isEmpty(reviewItems)}">
-                <button class="btn btn-success btn-sm" id="confirmSelectedBtn" disabled>Confirm selected</button>
-                <button class="btn btn-danger btn-sm" id="dismissSelectedBtn" disabled>Dismiss selected</button>
+            <div id="bulkMatchToolbar" class="mb-2 d-flex align-items-center gap-2" style="display:none;">
+                <button class="btn btn-success btn-sm" id="confirmSelectedBtn">Confirm selected</button>
+                <button class="btn btn-danger btn-sm" id="dismissSelectedBtn">Dismiss selected</button>
                 <span id="bulkSelectedCount" class="small text-muted"></span>
             </div>
 
@@ -103,16 +103,15 @@
         shashin.updateSearchInput(personName);
 
         const selectedMatches = new Map(); // detectionId -> {personId, cropUrl}
-        let remainingCards = $('.match-crop').length;
 
         function updateBulkToolbar() {
-            if (remainingCards <= 0) {
-                $('#bulkMatchToolbar').hide();
-                return;
-            }
             const count = selectedMatches.size;
-            $('#bulkSelectedCount').text(count > 0 ? count + ' selected' : '');
-            $('#confirmSelectedBtn, #dismissSelectedBtn').prop('disabled', count === 0);
+            if (count === 0) {
+                $('#bulkMatchToolbar').hide();
+            } else {
+                $('#bulkSelectedCount').text(count + ' selected');
+                $('#bulkMatchToolbar').show();
+            }
         }
 
         $(document).on('click', '.match-crop', function () {
@@ -166,7 +165,6 @@
 
         function removeCard(detectionId) {
             selectedMatches.delete(String(detectionId));
-            remainingCards--;
             $('#matchCard' + detectionId).parent().fadeOut(300, function() {
                 $(this).remove();
                 updateBulkToolbar();
