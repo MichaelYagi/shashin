@@ -13,6 +13,13 @@
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div id="albumsMessage"></div>
 
+            <th:block th:if="${faceRecogServicesAvailable and (authority == @environment.getProperty('app.role.admin') or authority == @environment.getProperty('app.role.super'))}">
+                <div class="mb-2">
+                    <button class="btn btn-outline-secondary btn-sm" id="reconcileArgusBtn">Reconcile with Argus</button>
+                    <span id="reconcileArgusStatus" class="ms-2 small text-muted"></span>
+                </div>
+            </th:block>
+
             <th:block th:if="${not #lists.isEmpty(peopleList)}">
                 <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                     <th:block th:each="person, iterStat: ${peopleList}">
@@ -51,6 +58,15 @@
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
         shashin.updateSearchInput(shashin.getTranslatedValue("main.sidebar.people"));
+
+        $("#reconcileArgusBtn").on("click", async function() {
+            $("#reconcileArgusBtn").prop("disabled", true);
+            $("#reconcileArgusStatus").text("Reconciling…");
+            const http = new Http("reconcile argus");
+            const data = await http.ajax("post", "/person/argus/reconcile", "{}");
+            $("#reconcileArgusStatus").text(data && data.msg ? data.msg : "Done.");
+            $("#reconcileArgusBtn").prop("disabled", false);
+        });
     });
 </script>
 </body>

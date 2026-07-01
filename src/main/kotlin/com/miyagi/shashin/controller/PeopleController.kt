@@ -65,7 +65,8 @@ class PeopleController(
     @Value("\${app.role.admin}")
     private var adminRole: String,
     @Value("\${app.sidecar.path}")
-private val relativeSidecarDir: String? = null
+    private val relativeSidecarDir: String? = null,
+    private var argusReconcile: ArgusReconcile? = null
 ): BaseController(
     recognitionLabelRepository = recognitionLabelRepository,
     albumRepository = albumRepository,
@@ -254,6 +255,7 @@ private val relativeSidecarDir: String? = null
 
             }
 
+            argusReconcile?.run(settings)
             shouldStop.set(false)
             FileUtils.deleteThreadFiles(threadExtensionName)
             FileUtils.writeToThreadFileAndLogMessage(messageSource?.getMessage("main.pages.matching.complete", null, locale).toString(), threadFile!!)
@@ -1307,110 +1309,16 @@ private val relativeSidecarDir: String? = null
     fun reconcileArgus(model: Model, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
         val settings = model.getAttribute("settings") as Settings
-
-        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) {
-            response["status"] = ApiResponse.FAIL.status
-            response["msg"] = "Argus is not configured."
-            return mapper.writeValueAsString(response)
-        }
-
-        var identitiesProcessed = 0
-        var recordsUpdated = 0
-
-        try {
-            val webClient = WebClient.create(settings.getArgusServer()!!)
-            val argusServer = settings.getArgusServer()!!.trimEnd('/')
-
-            val summaryJson = webClient.get()
-                .uri("api/identities/summary?type=face")
-                .header("X-API-Key", settings.getArgusKey())
-                .retrieve().bodyToMono(String::class.java).block()
-
-            val identities = mapper.readTree(summaryJson ?: "{}")
-
-            for (identity in identities["items"] ?: emptyList()) {
-                val argusIdentityId = identity["id"]?.asInt() ?: continue
-                val argusName = identity["label"]?.asText() ?: continue
-
-                var person = recognitionLabelRepository?.findByNameIgnoreCase(argusName)
-                if (person == null) {
-                    val newLabel = RecognitionLabel()
-                    newLabel.setName(argusName)
-                    newLabel.setArgusIdentityId(argusIdentityId)
-                    person = recognitionLabelRepository?.save(newLabel)
-                    recordsUpdated++
-                }
-                if (person == null) continue
-                identitiesProcessed++
-
-                // Sync identity ID if wrong
-                if (person.getArgusIdentityId() != argusIdentityId) {
-                    person.setArgusIdentityId(argusIdentityId)
-                    recognitionLabelRepository?.save(person)
-                }
-
-                // Pull full gallery for this identity
-                val galleryJson = webClient.get()
-                    .uri("api/identities/$argusIdentityId/gallery?limit=9999")
-                    .header("X-API-Key", settings.getArgusKey())
-                    .retrieve().bodyToMono(String::class.java).block() ?: continue
-
-                val galleryObj = mapper.readTree(galleryJson)
-                val items = galleryObj["items"] ?: continue
-
-                for (item in items) {
-                    val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
-                    val enrolled = item["enrolled"]?.asBoolean() ?: false
-
-                    val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
-
-                    var changed = false
-                    if (record.getRecognitionLabelId() != person.getId()) {
-                        record.setRecognitionLabelId(person.getId())
-                        changed = true
-                    }
-                    // enrolled=true means explicitly labeled → Training Image (auto_tagged=false)
-                    val expectedAutoTagged = !enrolled
-                    if (record.getAutoTagged() != expectedAutoTagged) {
-                        record.setAutoTagged(expectedAutoTagged)
-                        changed = true
-                    }
-                    if (changed) {
-                        try {
-                            recognitionLabelPhotoRepository?.save(record)
-                            recordsUpdated++
-                        } catch (_: Exception) {}
-                    }
-
-                }
-
-                // Set cover if still unset: prefer Shashin thumbnail, fall back to Argus crop
-                if (person.getCoverUrl() == null) {
-                    val firstMatch = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
-                    val metadataCover = if (firstMatch?.getMetadataId() != null)
-                        metadataRepository?.findByMetadataId(firstMatch.getMetadataId()!!)?.getThumbnailUrlCentered()
-                    else null
-
-                    val cover = metadataCover
-                        ?: items.firstOrNull { it["crop_url"] != null && !it["crop_url"].isNull }
-                            ?.get("crop_url")?.textValue()?.let { argusServer + it }
-
-                    if (cover != null) {
-                        person.setCoverUrl(cover)
-                        recognitionLabelRepository?.save(person)
-                    }
-                }
-            }
-
+        return try {
+            argusReconcile?.run(settings)
             response["status"] = ApiResponse.SUCCESS.status
-            response["msg"] = "Reconciled $identitiesProcessed identities, updated $recordsUpdated records."
+            response["msg"] = "Reconcile complete."
+            mapper.writeValueAsString(response)
         } catch (e: Exception) {
-            logger.log(Level.WARNING, "Argus reconciliation error: ${e.localizedMessage}")
             response["status"] = ApiResponse.FAIL.status
             response["msg"] = "Error: ${e.localizedMessage}"
+            mapper.writeValueAsString(response)
         }
-
-        return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/person/matches/confirm"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])

@@ -109,7 +109,8 @@ class SettingsController(
     private var relativeSidecarDir: String? = null,
     @Value("\${app.build.properties.name}")
     private val appName: String? = null,
-    var messageSource: MessageSource? = null
+    var messageSource: MessageSource? = null,
+    private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null
 ) {
     private var shouldStop = AtomicBoolean(false)
 
@@ -2138,6 +2139,9 @@ class SettingsController(
             }
 
             metadataIdArray.clear()
+
+            val reconcileSettings = settingsRepository?.findFirstByOrderByIdAsc()
+            if (reconcileSettings != null) argusReconcile?.run(reconcileSettings)
         }.start()
     }
 

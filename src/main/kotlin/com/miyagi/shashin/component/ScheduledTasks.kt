@@ -86,7 +86,8 @@ class ScheduledTasks(
     private var superRole: String? = null,
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null,
-    var messageSource: MessageSource? = null
+    var messageSource: MessageSource? = null,
+    private var argusReconcile: ArgusReconcile? = null
 ) {
 
     private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
@@ -218,6 +219,8 @@ class ScheduledTasks(
                 }
             }
 
+
+            argusReconcile?.run(settings)
 
             logger.log(
                 Level.INFO,
