@@ -16,6 +16,21 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 
+## [2.19.1] - 2026-07-01
+### Added
+- Argus reconcile runs automatically after Match Indexing, Media Indexing, and the scheduled face scan
+- Reconcile now creates new Shashin identities for people added directly in Argus
+- Reconcile button moved to the People page (visible to admins and supers when Argus is available)
+- Automatic Media Indexing skips the scan if any configured media directory is inaccessible, preventing false triggers when a NAS connection drops
+
+### Changed
+- Reconcile button hidden from the Match Indexing page
+
+### Fixed
+- Training Images tab no longer shows the batch-delete toolbar on initial page load before any images are selected
+- People page cover photo now falls back to the first matched photo when no explicit cover is set, fixing blank covers for identities imported from Argus
+- Argus-paginated training images no longer double up on first load
+
 ## [2.19.0] - 2026-06-23
 ### Added
 - Argus integration for face and object recognition (self-hosted, replaces CompreFace)
