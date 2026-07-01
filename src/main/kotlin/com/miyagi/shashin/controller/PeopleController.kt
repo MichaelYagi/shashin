@@ -66,7 +66,7 @@ class PeopleController(
     private var adminRole: String,
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null,
-    private var argusReconcile: ArgusReconcile? = null
+    private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null
 ): BaseController(
     recognitionLabelRepository = recognitionLabelRepository,
     albumRepository = albumRepository,
