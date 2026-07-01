@@ -1379,9 +1379,13 @@ private val relativeSidecarDir: String? = null
                         } catch (_: Exception) {}
                     }
 
-                    // Set cover from first Shashin-matched photo if none exists
-                    if (person.getCoverUrl() == null && record.getMetadataId() != null) {
-                        val metadata = metadataRepository?.findByMetadataId(record.getMetadataId()!!)
+                }
+
+                // Set cover from first Shashin-matched photo if still unset
+                if (person.getCoverUrl() == null) {
+                    val firstMatch = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
+                    if (firstMatch?.getMetadataId() != null) {
+                        val metadata = metadataRepository?.findByMetadataId(firstMatch.getMetadataId()!!)
                         if (metadata != null) {
                             person.setCoverUrl(metadata.getThumbnailUrlCentered())
                             recognitionLabelRepository?.save(person)

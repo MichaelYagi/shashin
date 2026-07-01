@@ -362,6 +362,11 @@
             <artifactId>maven-artifact</artifactId>
             <version>3.8.4</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <classifier>osx-x86_64</classifier>
+        </dependency>
     </dependencies>
 
     <build>
