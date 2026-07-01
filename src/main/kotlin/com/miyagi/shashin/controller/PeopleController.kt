@@ -822,15 +822,13 @@ private val relativeSidecarDir: String? = null
                 for (person in peopleList) {
                     var coverUrl = ""
                     if (person.getCoverUrl() != null) {
-                        val personCoverUrl = person.getCoverUrl().toString()
-                        if (personCoverUrl.startsWith("http")) {
-                            coverUrl = personCoverUrl
-                        } else {
-                            val metadata = metadataRepository?.findByThumbnailCentered(personCoverUrl)
-                            if (metadata != null) {
-                                coverUrl = "/api/v1/thumbnails/centered/" + metadata.getId()
-                            }
+                        val metadata = metadataRepository?.findByThumbnailCentered(person.getCoverUrl().toString())
+                        if (metadata != null) {
+                            coverUrl = "/api/v1/thumbnails/centered/" + metadata.getId()
                         }
+                    }
+                    if (coverUrl.isEmpty() && person.getThumbnailUrlCentered() != null) {
+                        coverUrl = person.getThumbnailUrlCentered()!!
                     }
                     coverUrls[person.getId() as Int] = coverUrl
 
