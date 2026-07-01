@@ -1329,7 +1329,15 @@ private val relativeSidecarDir: String? = null
                 val argusIdentityId = identity["id"]?.asInt() ?: continue
                 val argusName = identity["label"]?.asText() ?: continue
 
-                val person = recognitionLabelRepository?.findByNameIgnoreCase(argusName) ?: continue
+                val person = recognitionLabelRepository?.findByNameIgnoreCase(argusName)
+                    ?: run {
+                        val newLabel = RecognitionLabel()
+                        newLabel.setName(argusName)
+                        newLabel.setArgusIdentityId(argusIdentityId)
+                        recognitionLabelRepository?.save(newLabel)
+                        recordsUpdated++
+                        recognitionLabelRepository?.findByNameIgnoreCase(argusName) ?: continue
+                    }
                 identitiesProcessed++
 
                 // Sync identity ID if wrong
