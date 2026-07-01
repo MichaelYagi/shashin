@@ -9,7 +9,7 @@
     "mocha": "10.8.2",
     "mocha-junit-reporter": "^2.0.2",
     "mocha-multi": "^1.1.6",
-    "nyc": "^15.1.0",
+    "nyc": "^18.0.0",
     "prettier": "2.7.1",
     "sinon": "20.0.0"
   },
