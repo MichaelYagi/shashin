@@ -822,9 +822,14 @@ private val relativeSidecarDir: String? = null
                 for (person in peopleList) {
                     var coverUrl = ""
                     if (person.getCoverUrl() != null) {
-                        val metadata = metadataRepository?.findByThumbnailCentered(person.getCoverUrl().toString())
-                        if (metadata != null) {
-                            coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                        val personCoverUrl = person.getCoverUrl().toString()
+                        if (personCoverUrl.startsWith("http")) {
+                            coverUrl = personCoverUrl
+                        } else {
+                            val metadata = metadataRepository?.findByThumbnailCentered(personCoverUrl)
+                            if (metadata != null) {
+                                coverUrl = "/api/v1/thumbnails/centered/" + metadata.getId()
+                            }
                         }
                     }
                     coverUrls[person.getId() as Int] = coverUrl
@@ -1381,15 +1386,20 @@ private val relativeSidecarDir: String? = null
 
                 }
 
-                // Set cover from first Shashin-matched photo if still unset
+                // Set cover if still unset: prefer Shashin thumbnail, fall back to Argus crop
                 if (person.getCoverUrl() == null) {
                     val firstMatch = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
-                    if (firstMatch?.getMetadataId() != null) {
-                        val metadata = metadataRepository?.findByMetadataId(firstMatch.getMetadataId()!!)
-                        if (metadata != null) {
-                            person.setCoverUrl(metadata.getThumbnailUrlCentered())
-                            recognitionLabelRepository?.save(person)
-                        }
+                    val metadataCover = if (firstMatch?.getMetadataId() != null)
+                        metadataRepository?.findByMetadataId(firstMatch.getMetadataId()!!)?.getThumbnailUrlCentered()
+                    else null
+
+                    val cover = metadataCover
+                        ?: items.firstOrNull { it["crop_url"] != null && !it["crop_url"].isNull }
+                            ?.get("crop_url")?.textValue()?.let { argusServer + it }
+
+                    if (cover != null) {
+                        person.setCoverUrl(cover)
+                        recognitionLabelRepository?.save(person)
                     }
                 }
             }
