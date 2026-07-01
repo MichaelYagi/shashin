@@ -13,7 +13,7 @@
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div id="albumsMessage"></div>
 
-            <th:block th:if="${faceRecogServicesAvailable and (authority == @environment.getProperty('app.role.admin') or authority == @environment.getProperty('app.role.super'))}">
+            <th:block th:if="${faceRecogServicesAvailable and (authority == adminRole or authority == superRole)}">
                 <div class="mb-2">
                     <button class="btn btn-outline-secondary btn-sm" id="reconcileArgusBtn">Reconcile with Argus</button>
                     <span id="reconcileArgusStatus" class="ms-2 small text-muted"></span>

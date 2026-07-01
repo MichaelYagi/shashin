@@ -850,6 +850,10 @@ class PeopleController(
             }
         }
 
+        val settings = model.getAttribute("settings") as? Settings
+        model["faceRecogServicesAvailable"] = NetworkUtils.checkArgusConnection(
+            settings?.getArgusServer(), settings?.getArgusKey()
+        )
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
