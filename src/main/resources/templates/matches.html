@@ -21,7 +21,7 @@
 
             <div class="mt-2" id="matchesMessage"></div>
 
-            <div id="bulkMatchToolbar" class="mb-2 d-flex align-items-center gap-2" style="display:none;">
+            <div id="bulkMatchToolbar" class="mb-2 d-none align-items-center gap-2">
                 <button class="btn btn-success btn-sm" id="confirmSelectedBtn">Confirm selected</button>
                 <button class="btn btn-danger btn-sm" id="dismissSelectedBtn">Dismiss selected</button>
                 <span id="bulkSelectedCount" class="small text-muted"></span>
@@ -107,10 +107,10 @@
         function updateBulkToolbar() {
             const count = selectedMatches.size;
             if (count === 0) {
-                $('#bulkMatchToolbar').hide();
+                $('#bulkMatchToolbar').addClass('d-none').removeClass('d-flex');
             } else {
                 $('#bulkSelectedCount').text(count + ' selected');
-                $('#bulkMatchToolbar').show();
+                $('#bulkMatchToolbar').removeClass('d-none').addClass('d-flex');
             }
         }
 
