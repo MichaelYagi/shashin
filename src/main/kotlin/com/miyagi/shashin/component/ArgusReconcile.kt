@@ -33,10 +33,12 @@ class ArgusReconcile(
                 .retrieve().bodyToMono(String::class.java).block()
 
             val identities = mapper.readTree(summaryJson ?: "{}")
+            val argusIdentityIds = mutableSetOf<Int>()
 
             for (identity in identities["items"] ?: emptyList()) {
                 val argusIdentityId = identity["id"]?.asInt() ?: continue
                 val argusName = identity["label"]?.asText() ?: continue
+                argusIdentityIds.add(argusIdentityId)
 
                 var person = recognitionLabelRepository?.findByNameIgnoreCase(argusName)
                 if (person == null) {
@@ -59,6 +61,7 @@ class ArgusReconcile(
 
                 val galleryObj = mapper.readTree(galleryJson)
                 val items = galleryObj["items"] ?: continue
+                val argusDetectionIds = items.mapNotNull { it["detection_id"]?.asInt()?.toString() }.toSet()
 
                 for (item in items) {
                     val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
@@ -77,9 +80,15 @@ class ArgusReconcile(
                         changed = true
                     }
                     if (changed) {
-                        try {
-                            recognitionLabelPhotoRepository?.save(record)
-                        } catch (_: Exception) {}
+                        try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+                    }
+                }
+
+                // Remove tags for detections no longer in this identity's Argus gallery
+                val shashinPhotos = recognitionLabelPhotoRepository?.findAllByRecognitionLabelId(person.getId()) ?: emptyList()
+                for (photo in shashinPhotos) {
+                    if (photo != null && photo.getArgusDetectionId() != null && photo.getArgusDetectionId() !in argusDetectionIds) {
+                        recognitionLabelPhotoRepository?.delete(photo)
                     }
                 }
 
@@ -99,6 +108,17 @@ class ArgusReconcile(
                     }
                 }
             }
+
+            // Delete Shashin identities whose Argus identity no longer exists
+            val allLabels = recognitionLabelRepository?.findAll() ?: emptyList()
+            for (label in allLabels) {
+                if (label != null && label.getArgusIdentityId() != null && label.getArgusIdentityId() !in argusIdentityIds) {
+                    val photos = recognitionLabelPhotoRepository?.findAllByRecognitionLabelId(label.getId())
+                    if (!photos.isNullOrEmpty()) recognitionLabelPhotoRepository?.deleteAll(photos)
+                    recognitionLabelRepository?.delete(label)
+                }
+            }
+
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Argus reconciliation error: ${e.localizedMessage}")
         }
