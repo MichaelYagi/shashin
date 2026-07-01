@@ -44,7 +44,7 @@ class FileWatcherConfig(
                     }
                 }
             }
-            fileSystemWatcher.addListener(ShashinFileChangeListener(settingsController))
+            fileSystemWatcher.addListener(ShashinFileChangeListener(settingsController, mediaDirRepository))
             fileSystemWatcher.start()
         }
         return fileSystemWatcher
