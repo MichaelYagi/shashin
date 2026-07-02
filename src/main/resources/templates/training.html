@@ -338,19 +338,19 @@
         const trainingGalleryItems = [];
         const trainingItemIdxMap = {};
 
-        shashin.addToTrainingGallery = function(embeddingId, metadataId) {
-            if (!metadataId || trainingItemIdxMap.hasOwnProperty(embeddingId)) return;
-            const idx = trainingGalleryItems.length;
-            trainingItemIdxMap[embeddingId] = idx;
-            trainingGalleryItems.push({
-                src: '/api/v1/thumbnails/original/' + metadataId,
-                metadataId: metadataId,
-                metadataDetailFun: shashin.openEditMetadataModal
-            });
-            if (shashin.getLightGallery() !== null) {
-                shashin.refreshAndActivateLgListener(trainingGalleryItems);
+        // Collect server-rendered items first so lightgallery inits with them
+        $('[id^="photoThumbnailContainer"]').each(function() {
+            const embeddingId = this.id.replace('photoThumbnailContainer', '');
+            const metadataId = String($(this).data('metadata-id') || '');
+            if (metadataId && !trainingItemIdxMap.hasOwnProperty(embeddingId)) {
+                trainingItemIdxMap[embeddingId] = trainingGalleryItems.length;
+                trainingGalleryItems.push({
+                    src: '/api/v1/thumbnails/original/' + metadataId,
+                    metadataId: metadataId,
+                    metadataDetailFun: shashin.openEditMetadataModal
+                });
             }
-        };
+        });
 
         const lgTrainingConfig = { dynamic: true, dynamicEl: trainingGalleryItems, plugins: [] };
         if (typeof lgMetadataDetail !== "undefined") {
@@ -360,12 +360,19 @@
         }
         shashin.initLightGallery('trainingGallery', lgTrainingConfig, '');
 
-        // Register server-rendered items
-        $('[id^="photoThumbnailContainer"]').each(function() {
-            const embeddingId = this.id.replace('photoThumbnailContainer', '');
-            const metadataId = $(this).data('metadata-id');
-            if (metadataId) shashin.addToTrainingGallery(embeddingId, metadataId);
-        });
+        // Called by training.js for dynamically loaded items
+        shashin.addToTrainingGallery = function(embeddingId, metadataId) {
+            if (!metadataId || trainingItemIdxMap.hasOwnProperty(embeddingId)) return;
+            trainingItemIdxMap[embeddingId] = trainingGalleryItems.length;
+            trainingGalleryItems.push({
+                src: '/api/v1/thumbnails/original/' + metadataId,
+                metadataId: metadataId,
+                metadataDetailFun: shashin.openEditMetadataModal
+            });
+            if (shashin.getLightGallery() !== null) {
+                shashin.refreshAndActivateLgListener(trainingGalleryItems);
+            }
+        };
 
         $(document).on('click', '.training-gallery-btn', function(e) {
             e.preventDefault();
