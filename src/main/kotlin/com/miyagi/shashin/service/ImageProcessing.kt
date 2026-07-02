@@ -1543,15 +1543,18 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         // The 225px thumbnail shrinks small/distant faces below the detection threshold.
         // Use the original file for images; videos must use the poster thumbnail since the
         // original is not a decodable still image.
+        // Mirrors the resolution logic of /api/v1/thumbnails/original/{id}:
+        // RAW files and videos have a rotation-corrected _original.jpg sidecar written at scan time;
+        // regular JPEGs/PNGs fall back to the raw file (EXIF orientation tag is present for those).
         fun argusImagePath(metadata: Metadata): String? {
-            val type = metadata.getType() ?: ""
-            return if (type.contains("video")) {
-                val smallPath = metadata.getThumbnailPathSmall()
-                val originalPath = smallPath?.replace("_${FileUtils.Companion.thumbnailHeight()}.", "_original.")
-                if (originalPath != null && File(originalPath).exists()) originalPath else smallPath
-            } else {
-                metadata.getPath()
+            val isVideo = metadata.getType()?.contains("video") == true
+            val smallPath = metadata.getThumbnailPathSmall()
+            if (smallPath != null) {
+                val originalPath = smallPath.replace("_${FileUtils.Companion.thumbnailHeight()}.", "_original.")
+                if (File(originalPath).exists()) return originalPath
             }
+            // Videos must use a JPEG frame — never send the raw video file to Argus.
+            return if (isVideo) smallPath else metadata.getPath()
         }
 
         fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, argusDetectionIdMap: MutableMap<String, Any?>, recognitionLabelRepository: RecognitionLabelRepository? = null): MutableMap<String, Any?> {
