@@ -3886,17 +3886,25 @@ class TimelineController(
                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                             recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
-                            // 0.0 confirmed recognition by user
                             recognitionLabelPhotoObj.setConfidence("0.0")
-                            //recognitionLabelPhotoObj.setArgusDetectionId(compreFaceImageId)
-                            recognitionLabelPhotoList.add(recognitionLabelPhotoObj)
+                            recognitionLabelPhotoObj.setAutoTagged(false)
 
-                            buildPersonUpload(
+                            val uploadResult = ImageProcessing.Companion.buildPersonUpload(
                                 settings,
-                                recognitionLabel,
+                                recognitionLabel.trim(),
                                 metadataObj,
-                                argusDetectionIdMap
+                                argusDetectionIdMap,
+                                recognitionLabelRepository
                             )
+                            val uploadResponseData = uploadResult["responseData"]
+                            if (uploadResponseData is Map<*, *>) {
+                                val detectionId = uploadResponseData["detection_id"]
+                                if (detectionId != null) {
+                                    recognitionLabelPhotoObj.setArgusDetectionId(detectionId.toString())
+                                }
+                            }
+
+                            recognitionLabelPhotoList.add(recognitionLabelPhotoObj)
                         }
                     }
                 }
