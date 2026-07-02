@@ -3849,6 +3849,10 @@ class TimelineController(
                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
             } else if (taggedPeople != null && taggedPeople.trim() != "") {
                 val recognitionLabelArray = taggedPeople.split(",")
+                val validLabels = recognitionLabelArray.filter { it.trim().isNotBlank() && it.trim() != "null" }
+                // Only enroll in Argus when a single person is tagged — sending the full photo
+                // for multiple people would enroll every detected face under each label, corrupting training data.
+                val enrollInArgus = validLabels.size == 1
 
                 val argusDetectionIdMap = mutableMapOf<String, Any?>()
 //                    val recognitionLabelList = mutableListOf<RecognitionLabel>()
@@ -3864,8 +3868,7 @@ class TimelineController(
                             recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                             recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                             recognitionLabelObj.setCoverUrl(metadataObj.getThumbnailUrlCentered())
-                            recognitionLabelRepository?.save(recognitionLabelObj)
-                            //recognitionLabelList.add(recognitionLabelObj)
+                            recognitionLabelObj = recognitionLabelRepository?.save(recognitionLabelObj) ?: recognitionLabelObj
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
                         }
@@ -3889,18 +3892,20 @@ class TimelineController(
                             recognitionLabelPhotoObj.setConfidence("0.0")
                             recognitionLabelPhotoObj.setAutoTagged(false)
 
-                            val uploadResult = ImageProcessing.Companion.buildPersonUpload(
-                                settings,
-                                recognitionLabel.trim(),
-                                metadataObj,
-                                argusDetectionIdMap,
-                                recognitionLabelRepository
-                            )
-                            val uploadResponseData = uploadResult["responseData"]
-                            if (uploadResponseData is Map<*, *>) {
-                                val detectionId = uploadResponseData["detection_id"]
-                                if (detectionId != null) {
-                                    recognitionLabelPhotoObj.setArgusDetectionId(detectionId.toString())
+                            if (enrollInArgus) {
+                                val uploadResult = ImageProcessing.Companion.buildPersonUpload(
+                                    settings,
+                                    recognitionLabel.trim(),
+                                    metadataObj,
+                                    argusDetectionIdMap,
+                                    recognitionLabelRepository
+                                )
+                                val uploadResponseData = uploadResult["responseData"]
+                                if (uploadResponseData is Map<*, *>) {
+                                    val detectionId = uploadResponseData["detection_id"]
+                                    if (detectionId != null) {
+                                        recognitionLabelPhotoObj.setArgusDetectionId(detectionId.toString())
+                                    }
                                 }
                             }
 
