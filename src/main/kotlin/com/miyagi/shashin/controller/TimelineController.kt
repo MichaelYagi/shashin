@@ -3135,11 +3135,10 @@ class TimelineController(
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
             if (recognitionLabelPhotos != null) {
                 for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                    if (recognitionLabelPhoto.getAutoTagged() == true) continue
                     val labelId = recognitionLabelPhoto.getRecognitionLabelId() ?: continue
-                    val recognitionLabelObj = recognitionLabelRepository?.findById(labelId)
-                    if (recognitionLabelObj != null) {
-                        labelArray.add(recognitionLabelObj.get().getName()!!)
-                    }
+                    val name = recognitionLabelRepository?.findById(labelId)?.get()?.getName() ?: continue
+                    if (!labelArray.contains(name)) labelArray.add(name)
                 }
             }
             response["taggedPeopleList"] = labelArray
@@ -3868,8 +3867,8 @@ class TimelineController(
                 val enrollInArgus = validLabels.size == 1
 
                 val argusDetectionIdMap = mutableMapOf<String, Any?>()
-//                    val recognitionLabelList = mutableListOf<RecognitionLabel>()
                 val recognitionLabelPhotoList = mutableListOf<RecognitionLabelPhoto>()
+                val processedLabelIds = mutableSetOf<Int>()
 
                 for (recognitionLabel in recognitionLabelArray) {
                     if (recognitionLabel.trim().isNotBlank() && recognitionLabel.trim() != "null") {
@@ -3885,6 +3884,8 @@ class TimelineController(
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
                         }
+
+                        if (!processedLabelIds.add(recognitionLabelObj.getId())) continue
 
                         // For a full save (addPerson=false), deleteManuallyTaggedByMetadataId already
                         // removed manual records but auto-tagged ones may still exist for this person.
