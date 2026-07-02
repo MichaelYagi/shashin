@@ -29,7 +29,7 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
     fun deleteByMetadataId(metadataId: String): Int
 
     @Modifying
-    @Query("DELETE FROM recognitionlabelphoto WHERE metadataId = :metadataId AND (autoTagged = false OR autoTagged IS NULL)", nativeQuery = true)
+    @Query("DELETE FROM recognitionlabelphoto WHERE metadata_id = :metadataId AND (auto_tagged = 0 OR auto_tagged IS NULL)", nativeQuery = true)
     fun deleteManuallyTaggedByMetadataId(@Param("metadataId") metadataId: String): Int
 
     fun deleteByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): Int

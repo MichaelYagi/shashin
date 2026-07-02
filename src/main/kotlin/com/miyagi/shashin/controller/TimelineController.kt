@@ -3826,6 +3826,23 @@ class TimelineController(
         if (metadataObj != null) {
             val metadataId = metadataObj.getId()
 
+            // Snapshot argusDetectionIds from manually-tagged records BEFORE any delete,
+            // so single-person saves can carry the ID forward and skip re-enrolling a face
+            // already in Argus. Only manual records (autoTagged=false) hold enrollment IDs.
+            val existingDetectionIds = mutableMapOf<Int, String>() // recognitionLabelId -> argusDetectionId
+            recognitionLabelPhotoRepository?.findByMetadataId(metadataId)?.forEach { rlp ->
+                val labelId = rlp?.getRecognitionLabelId()
+                val detId = rlp?.getArgusDetectionId()
+                if (labelId != null && !detId.isNullOrBlank() && rlp?.getAutoTagged() == false) {
+                    existingDetectionIds[labelId] = detId
+                }
+            }
+
+            if (!addPerson) {
+                // Only wipe manually-tagged records so auto-detected matches survive across saves.
+                recognitionLabelPhotoRepository?.deleteManuallyTaggedByMetadataId(metadataId)
+            }
+
             if (isObject) {
                 val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                 var recognitionLabelObj = RecognitionLabel()
@@ -3849,24 +3866,6 @@ class TimelineController(
                 // Only enroll in Argus when a single person is tagged — sending the full photo
                 // for multiple people would enroll every detected face under each label, corrupting training data.
                 val enrollInArgus = validLabels.size == 1
-
-                // Snapshot argusDetectionIds from manually-tagged records BEFORE the delete,
-                // so we can carry them forward and skip re-enrolling a face already in Argus.
-                // Only manual records (autoTagged=false) hold enrollment IDs — auto-tagged ones
-                // come from recognition scans and must not suppress a re-enrollment.
-                val existingDetectionIds = mutableMapOf<Int, String>() // recognitionLabelId -> argusDetectionId
-                recognitionLabelPhotoRepository?.findByMetadataId(metadataId)?.forEach { rlp ->
-                    val labelId = rlp?.getRecognitionLabelId()
-                    val detId = rlp?.getArgusDetectionId()
-                    if (labelId != null && !detId.isNullOrBlank() && rlp.getAutoTagged() == false) {
-                        existingDetectionIds[labelId] = detId
-                    }
-                }
-
-                if (!addPerson) {
-                    // Only wipe manually-tagged records so auto-detected matches survive across saves.
-                    recognitionLabelPhotoRepository?.deleteManuallyTaggedByMetadataId(metadataId)
-                }
 
                 val argusDetectionIdMap = mutableMapOf<String, Any?>()
 //                    val recognitionLabelList = mutableListOf<RecognitionLabel>()
@@ -3953,7 +3952,7 @@ class TimelineController(
                 // Multi-person photo: send to Argus for recognition so faces surface in the
                 // Matches review queue. Auto-detected records now survive saves because
                 // deleteManuallyTaggedByMetadataId only wipes manually-tagged rows.
-                if (!enrollInArgus && settings.getFacialDetection() == true) {
+                if (validLabels.size > 1 && settings.getFacialDetection() == true) {
                     val metadataForThread = metadataObj
                     val settingsForThread = settings
                     Thread {
