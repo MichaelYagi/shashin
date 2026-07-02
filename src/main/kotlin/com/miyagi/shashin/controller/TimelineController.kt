@@ -3827,7 +3827,8 @@ class TimelineController(
             val metadataId = metadataObj.getId()
 
             if (addPerson == false) {
-                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                // Only wipe manually-tagged records so auto-detected matches survive across saves.
+                recognitionLabelPhotoRepository?.deleteManuallyTaggedByMetadataId(metadataId)
             }
 
             if (isObject) {
@@ -3853,6 +3854,17 @@ class TimelineController(
                 // Only enroll in Argus when a single person is tagged — sending the full photo
                 // for multiple people would enroll every detected face under each label, corrupting training data.
                 val enrollInArgus = validLabels.size == 1
+
+                // Snapshot existing argusDetectionIds before the delete so we can carry them
+                // forward and skip re-enrolling a face that's already in Argus training.
+                val existingDetectionIds = mutableMapOf<Int, String>() // recognitionLabelId -> argusDetectionId
+                recognitionLabelPhotoRepository?.findByMetadataId(metadataId)?.forEach { rlp ->
+                    val labelId = rlp?.getRecognitionLabelId()
+                    val detId = rlp?.getArgusDetectionId()
+                    if (labelId != null && !detId.isNullOrBlank()) {
+                        existingDetectionIds[labelId] = detId
+                    }
+                }
 
                 val argusDetectionIdMap = mutableMapOf<String, Any?>()
 //                    val recognitionLabelList = mutableListOf<RecognitionLabel>()
@@ -3892,19 +3904,25 @@ class TimelineController(
                             recognitionLabelPhotoObj.setConfidence("0.0")
                             recognitionLabelPhotoObj.setAutoTagged(false)
 
+                            val priorDetectionId = existingDetectionIds[recognitionLabelObj.getId()]
                             if (enrollInArgus) {
-                                val uploadResult = ImageProcessing.Companion.buildPersonUpload(
-                                    settings,
-                                    recognitionLabel.trim(),
-                                    metadataObj,
-                                    argusDetectionIdMap,
-                                    recognitionLabelRepository
-                                )
-                                val uploadResponseData = uploadResult["responseData"]
-                                if (uploadResponseData is Map<*, *>) {
-                                    val detectionId = uploadResponseData["detection_id"]
-                                    if (detectionId != null) {
-                                        recognitionLabelPhotoObj.setArgusDetectionId(detectionId.toString())
+                                if (!priorDetectionId.isNullOrBlank()) {
+                                    // Already enrolled in Argus — carry the detection ID forward, no re-upload.
+                                    recognitionLabelPhotoObj.setArgusDetectionId(priorDetectionId)
+                                } else {
+                                    val uploadResult = ImageProcessing.Companion.buildPersonUpload(
+                                        settings,
+                                        recognitionLabel.trim(),
+                                        metadataObj,
+                                        argusDetectionIdMap,
+                                        recognitionLabelRepository
+                                    )
+                                    val uploadResponseData = uploadResult["responseData"]
+                                    if (uploadResponseData is Map<*, *>) {
+                                        val detectionId = uploadResponseData["detection_id"]
+                                        if (detectionId != null) {
+                                            recognitionLabelPhotoObj.setArgusDetectionId(detectionId.toString())
+                                        }
                                     }
                                 }
                             }
@@ -3916,6 +3934,23 @@ class TimelineController(
 
                 if (recognitionLabelPhotoList.isNotEmpty()) {
                     recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotoList)
+                }
+
+                // Multi-person photo: send to Argus for recognition so faces surface in the
+                // Matches review queue. Auto-detected records now survive saves because
+                // deleteManuallyTaggedByMetadataId only wipes manually-tagged rows.
+                if (!enrollInArgus && settings.getFacialDetection() == true) {
+                    val metadataForThread = metadataObj
+                    val settingsForThread = settings
+                    Thread {
+                        ImageProcessing.Companion.detectAndStoreFaces(
+                            metadataForThread,
+                            settingsForThread,
+                            recognitionLabelRepository,
+                            recognitionLabelPhotoRepository,
+                            replace = false
+                        )
+                    }.start()
                 }
 
             }
