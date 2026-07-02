@@ -1494,66 +1494,38 @@ class PeopleController(
                 when (action) {
                     "confirm" -> {
                         val personIdParam = bodyMap["personId"]?.toString()?.toIntOrNull()
-                        val cropUrl = bodyMap["cropUrl"]?.toString()
 
-                        // Enroll the face as a Training Image by re-posting the crop to api/detect/faces?label=Name.
-                        // This gives it enrolled=true in Argus so it improves future recognition.
-                        var newDetectionId: String? = null
-                        if (personIdParam != null && !cropUrl.isNullOrBlank()) {
+                        if (personIdParam != null) {
                             val person = recognitionLabelRepository?.findById(personIdParam)
                             val personName = person?.takeIf { it.isPresent }?.get()?.getName()
                             if (!personName.isNullOrBlank()) {
-                                try {
-                                    val cropBytes = WebClient.create().get()
-                                        .uri(cropUrl)
-                                        .header("X-API-Key", settings.getArgusKey())
-                                        .retrieve().bodyToMono(ByteArray::class.java).block()
+                                // Patch the original detection in place: sets identity_id and enrolls
+                                // the already-stored crop into the identity's reference set.
+                                val labelBody = mapper.writeValueAsString(mapOf("label" to personName))
+                                val labelResp = webClient.put()
+                                    .uri("api/detections/$detectionId/label")
+                                    .header("X-API-Key", settings.getArgusKey())
+                                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                                    .body(BodyInserters.fromValue(labelBody))
+                                    .retrieve().bodyToMono(String::class.java).block()
 
-                                    if (cropBytes != null) {
-                                        val resource = object : ByteArrayResource(cropBytes) {
-                                            override fun getFilename() = "crop.jpg"
-                                        }
-                                        val builder = MultipartBodyBuilder()
-                                        builder.part("file", resource)
-                                        builder.part("label", personName)
-
-                                        val enrollResp = webClient.post()
-                                            .uri("api/detect/faces")
-                                            .header("X-API-Key", settings.getArgusKey())
-                                            .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
-                                            .body(BodyInserters.fromMultipartData(builder.build()))
-                                            .retrieve().bodyToMono(String::class.java).block()
-
-                                        val enrollJson = mapper.readTree(enrollResp ?: "{}")
-                                        newDetectionId = enrollJson["faces"]?.get(0)?.get("detection_id")?.asInt()?.toString()
-                                        val newIdentityId = enrollJson["faces"]?.get(0)?.get("identity_id")?.asInt()
-                                        if (newIdentityId != null) {
-                                            val p = person.get()
-                                            if (p.getArgusIdentityId() != newIdentityId) {
-                                                p.setArgusIdentityId(newIdentityId)
-                                                recognitionLabelRepository?.save(p)
-                                            }
-                                        }
+                                val labelJson = mapper.readTree(labelResp ?: "{}")
+                                val returnedIdentityId = labelJson["identity_id"]?.asInt()
+                                if (returnedIdentityId != null && person != null) {
+                                    val p = person.get()
+                                    if (p.getArgusIdentityId() != returnedIdentityId) {
+                                        p.setArgusIdentityId(returnedIdentityId)
+                                        recognitionLabelRepository?.save(p)
                                     }
-                                } catch (e: Exception) {
-                                    logger.log(Level.WARNING, "Enrollment on confirm failed for detection $detectionId: ${e.localizedMessage}")
                                 }
                             }
                         }
 
-                        // Confirm the original detection in Argus review queue to clean it up
-                        webClient.post()
-                            .uri("api/review/$detectionId/confirm")
-                            .header("X-API-Key", settings.getArgusKey())
-                            .retrieve().bodyToMono(String::class.java).block()
-
-                        // Update the DB record: link to person, mark as Training Image (auto_tagged=false)
                         val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
                         if (record != null && personIdParam != null) {
                             record.setRecognitionLabelId(personIdParam)
                             record.setAutoTagged(false)
                             record.setConfidence("0.0")
-                            if (newDetectionId != null) record.setArgusDetectionId(newDetectionId)
                             try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
                         }
                     }
