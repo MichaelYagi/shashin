@@ -62,7 +62,10 @@ class Training {
                     const embeddingId = resultObj.id;
                     const imgSrc = argusServer + resultObj.crop_url;
 
+                    const metadataId = resultObj.metadata_id || '';
+
                     let html = '<div id="photoThumbnailContainer'+embeddingId+'" class="photo-thumbnail-container photo-thumbnail" ';
+                    html += 'data-metadata-id="'+metadataId+'" ';
                     html += 'style="float: left; padding-left:0;padding-right:0;">';
                     html += '<a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+index+'"></a>';
                     html += '<img loading="lazy" src="'+imgSrc+'" ';
@@ -71,15 +74,16 @@ class Training {
                     html += '<a href="#" id="select'+embeddingId+'">';
                     html += '<span id="tlicon'+embeddingId+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>';
                     html += '</a></div>';
-                    if (resultObj.metadata_date != null && resultObj.metadata_date !== '') {
-                        html += '<div class="thumbnail-centered" id="tncentered' + embeddingId +'">';
-                        html += '<a href="/timeline#' + resultObj.metadata_date + '" target="_blank">';
+                    if (metadataId !== '') {
+                        html += '<div class="thumbnail-centered" id="tncentered' + embeddingId +'" style="cursor:pointer;">';
+                        html += '<a href="#" class="training-gallery-btn" data-embedding-id="' + embeddingId + '">';
                         html += '<span class="bi-play-btn" style="font-size: 4rem;color: lightgray;">';
                         html += '</span></a></div>';
                     }
                     html += '<div class="thumbnail-tr" id="tntr' + embeddingId +'">';
                     if (resultObj.metadata_date != null && resultObj.metadata_date !== '') {
-                        html += '<span id="timelineviewable' + embeddingId + '" class="bi-calendar overlayIcon overlayIconBackground"></span><br>';
+                        html += '<a href="/timeline#' + resultObj.metadata_date + '" target="_blank" style="color:inherit;">';
+                        html += '<span id="timelineviewable' + embeddingId + '" class="bi-calendar overlayIcon overlayIconBackground"></span></a><br>';
                     }
                     html += '<a href="#" class="training-reassign-btn" data-detection-id="' + embeddingId + '" data-crop-url="' + imgSrc + '">';
                     html += '<span class="bi-person-fill-x overlayIcon overlayIconBackground" style="color:orange;"></span></a>';
@@ -89,6 +93,9 @@ class Training {
                     $(html).insertBefore($(".appendTrainingPhotos").last());
 
                     setPhotoOverlays(embeddingId);
+                    if (metadataId && typeof shashin.addToTrainingGallery === 'function') {
+                        shashin.addToTrainingGallery(embeddingId, metadataId);
+                    }
                 }
 
                 this.rendering = false;

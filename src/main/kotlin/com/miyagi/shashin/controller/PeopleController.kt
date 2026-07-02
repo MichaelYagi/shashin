@@ -636,10 +636,12 @@ class PeopleController(
                         itemMap["crop_url"] = if (item.has("crop_url") && !item["crop_url"].isNull) item["crop_url"].textValue() else ""
                         itemMap["metadata_date"] = ""
                         val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                        itemMap["metadata_id"] = ""
                         if (rlp?.getMetadataId() != null) {
                             val metadataObj = metadataRepository?.findByMetadataId(rlp.getMetadataId()!!)
                             if (metadataObj != null) {
                                 itemMap["metadata_date"] = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
+                                itemMap["metadata_id"] = metadataObj.getId() ?: ""
                             }
                         }
                         resultList.add(itemMap)

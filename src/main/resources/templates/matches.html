@@ -47,9 +47,11 @@
                                     </div>
                                     <div class="col-7">
                                         <th:block th:if="${item.hasPhoto}">
-                                            <a th:href="${'/timeline#'+item.year+'-'+item.month+'-'+item.day}" target="_blank">
+                                            <div class="match-photo-link" style="cursor:pointer;"
+                                                 th:data-metadata-id="${item.metadataId}"
+                                                 th:data-src="${'/api/v1/thumbnails/original/'+item.metadataId}">
                                                 <img th:src="${item.thumbnailUrl}" class="img-fluid" style="height:140px;object-fit:cover;width:100%;" alt="Photo">
-                                            </a>
+                                            </div>
                                         </th:block>
                                         <th:block th:unless="${item.hasPhoto}">
                                             <div class="d-flex align-items-center justify-content-center h-100 text-muted" style="height:140px;font-size:0.8rem;">No photo</div>
@@ -92,6 +94,8 @@
     </div>
 </div>
 
+<div id="matchesGallery" style="display:none;"></div>
+
 <div class="modal fade" id="reassignModal" tabindex="-1">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -125,6 +129,31 @@
         /*]]>*/
 
         shashin.updateSearchInput(personName);
+
+        // Lightgallery for match photo thumbnails
+        const matchGalleryItems = [];
+        const matchGalleryEls = [];
+        $('.match-photo-link').each(function() {
+            matchGalleryEls.push(this);
+            matchGalleryItems.push({
+                src: $(this).data('src'),
+                metadataId: $(this).data('metadata-id'),
+                metadataDetailFun: shashin.openEditMetadataModal
+            });
+        });
+        if (matchGalleryItems.length > 0) {
+            const lgMatchConfig = { dynamic: true, dynamicEl: matchGalleryItems, plugins: [] };
+            if (typeof lgMetadataDetail !== "undefined") {
+                lgMatchConfig.plugins.push(lgMetadataDetail);
+                lgMatchConfig.metadataDetail = true;
+                lgMatchConfig.metadataDetailFun = shashin.openEditMetadataModal;
+            }
+            shashin.initLightGallery('matchesGallery', lgMatchConfig, '');
+        }
+        $(document).on('click', '.match-photo-link', function(e) {
+            const idx = matchGalleryEls.indexOf(this);
+            if (idx >= 0) shashin.openGallery(e, idx);
+        });
 
         const selectedMatches = new Map(); // detectionId -> {personId, cropUrl}
 

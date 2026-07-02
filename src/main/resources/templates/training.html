@@ -200,20 +200,22 @@
                     </script>
                     <div class="col-12">
                         <th:block th:each="faceObj, iterStat: ${resultList}">
-                            <div th:id="${'photoThumbnailContainer'+faceObj.id}" th:data-lg-index="${iterStat.index}" class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
+                            <div th:id="${'photoThumbnailContainer'+faceObj.id}" th:data-lg-index="${iterStat.index}"
+                                 th:data-metadata-id="${faceObj.metadata_id != null ? faceObj.metadata_id : ''}"
+                                 class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
                                 <img loading="lazy" draggable="false" th:src="${argusServer}+${faceObj.crop_url}" style="height:225px;" class="photo-thumbnail-image" th:id="'image'+${faceObj.id}">
 
                                 <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${faceObj.id})}"></div>
-                                <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
-                                    <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.id}">
-                                        <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span></a>
+                                <th:block th:if="${faceObj.metadata_id != null and faceObj.metadata_id != ''}">
+                                    <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.id}" style="cursor:pointer;">
+                                        <a href="#" class="training-gallery-btn" th:data-embedding-id="${faceObj.id}"><span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span></a>
                                     </div>
                                 </th:block>
                                 <div class="thumbnail-tr" th:id="${'tntr'+faceObj.id}">
                                     <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
-                                        <span th:id="${'timelineviewable'+faceObj.id}" class="bi-calendar overlayIcon overlayIconBackground"></span><br>
+                                        <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank" style="color:inherit;"><span th:id="${'timelineviewable'+faceObj.id}" class="bi-calendar overlayIcon overlayIconBackground"></span></a><br>
                                     </th:block>
                                     <a href="#" class="training-reassign-btn"
                                        th:data-detection-id="${faceObj.id}"
@@ -256,6 +258,8 @@
 
     </div>
 </div>
+
+<div id="trainingGallery" style="display:none;"></div>
 
 <div class="modal fade" id="argusTrainingModal" tabindex="-1" role="dialog" aria-labelledby="labeltrash">
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
@@ -329,6 +333,46 @@
         /*]]>*/
 
         shashin.updateSearchInput(personName);
+
+        // Lightgallery for training photos (shows Shashin full photo, not Argus crop)
+        const trainingGalleryItems = [];
+        const trainingItemIdxMap = {};
+
+        shashin.addToTrainingGallery = function(embeddingId, metadataId) {
+            if (!metadataId || trainingItemIdxMap.hasOwnProperty(embeddingId)) return;
+            const idx = trainingGalleryItems.length;
+            trainingItemIdxMap[embeddingId] = idx;
+            trainingGalleryItems.push({
+                src: '/api/v1/thumbnails/original/' + metadataId,
+                metadataId: metadataId,
+                metadataDetailFun: shashin.openEditMetadataModal
+            });
+            if (shashin.getLightGallery() !== null) {
+                shashin.refreshAndActivateLgListener(trainingGalleryItems);
+            }
+        };
+
+        const lgTrainingConfig = { dynamic: true, dynamicEl: trainingGalleryItems, plugins: [] };
+        if (typeof lgMetadataDetail !== "undefined") {
+            lgTrainingConfig.plugins.push(lgMetadataDetail);
+            lgTrainingConfig.metadataDetail = true;
+            lgTrainingConfig.metadataDetailFun = shashin.openEditMetadataModal;
+        }
+        shashin.initLightGallery('trainingGallery', lgTrainingConfig, '');
+
+        // Register server-rendered items
+        $('[id^="photoThumbnailContainer"]').each(function() {
+            const embeddingId = this.id.replace('photoThumbnailContainer', '');
+            const metadataId = $(this).data('metadata-id');
+            if (metadataId) shashin.addToTrainingGallery(embeddingId, metadataId);
+        });
+
+        $(document).on('click', '.training-gallery-btn', function(e) {
+            e.preventDefault();
+            const embeddingId = String($(this).data('embedding-id'));
+            const idx = trainingItemIdxMap[embeddingId];
+            if (idx !== undefined) shashin.openGallery(e, idx);
+        });
 
         $("#argusTrainingAppTools").hide();
         $("#appSearch").show();
