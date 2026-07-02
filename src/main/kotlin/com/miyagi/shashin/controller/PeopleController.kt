@@ -1513,7 +1513,7 @@ class PeopleController(
 
                                 val labelJson = mapper.readTree(labelResp ?: "{}")
                                 val returnedIdentityId = labelJson["identity_id"]?.asInt()
-                                if (returnedIdentityId != null && person != null) {
+                                if (returnedIdentityId != null) {
                                     val p = person.get()
                                     if (p.getArgusIdentityId() != returnedIdentityId) {
                                         p.setArgusIdentityId(returnedIdentityId)
