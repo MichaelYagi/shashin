@@ -3826,11 +3826,6 @@ class TimelineController(
         if (metadataObj != null) {
             val metadataId = metadataObj.getId()
 
-            if (addPerson == false) {
-                // Only wipe manually-tagged records so auto-detected matches survive across saves.
-                recognitionLabelPhotoRepository?.deleteManuallyTaggedByMetadataId(metadataId)
-            }
-
             if (isObject) {
                 val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                 var recognitionLabelObj = RecognitionLabel()
@@ -3855,15 +3850,22 @@ class TimelineController(
                 // for multiple people would enroll every detected face under each label, corrupting training data.
                 val enrollInArgus = validLabels.size == 1
 
-                // Snapshot existing argusDetectionIds before the delete so we can carry them
-                // forward and skip re-enrolling a face that's already in Argus training.
+                // Snapshot argusDetectionIds from manually-tagged records BEFORE the delete,
+                // so we can carry them forward and skip re-enrolling a face already in Argus.
+                // Only manual records (autoTagged=false) hold enrollment IDs — auto-tagged ones
+                // come from recognition scans and must not suppress a re-enrollment.
                 val existingDetectionIds = mutableMapOf<Int, String>() // recognitionLabelId -> argusDetectionId
                 recognitionLabelPhotoRepository?.findByMetadataId(metadataId)?.forEach { rlp ->
                     val labelId = rlp?.getRecognitionLabelId()
                     val detId = rlp?.getArgusDetectionId()
-                    if (labelId != null && !detId.isNullOrBlank()) {
+                    if (labelId != null && !detId.isNullOrBlank() && rlp.getAutoTagged() == false) {
                         existingDetectionIds[labelId] = detId
                     }
+                }
+
+                if (!addPerson) {
+                    // Only wipe manually-tagged records so auto-detected matches survive across saves.
+                    recognitionLabelPhotoRepository?.deleteManuallyTaggedByMetadataId(metadataId)
                 }
 
                 val argusDetectionIdMap = mutableMapOf<String, Any?>()
@@ -3884,6 +3886,18 @@ class TimelineController(
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
                         }
+
+                        // For a full save (addPerson=false), deleteManuallyTaggedByMetadataId already
+                        // removed manual records but auto-tagged ones may still exist for this person.
+                        // Delete them so the UNIQUE constraint allows the new manual tag and so the
+                        // count check below always sees 0 and doesn't skip the person.
+                        if (!addPerson) {
+                            recognitionLabelPhotoRepository?.deleteByRecognitionLabelIdAndMetadataId(
+                                recognitionLabelObj.getId(),
+                                metadataId
+                            )
+                        }
+
                         val recognitionLabelPhotoCount =
                             recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
                                 recognitionLabelObj.getId(),
@@ -3891,7 +3905,7 @@ class TimelineController(
                             )
 
                         if (recognitionLabelPhotoCount == 0 || addPerson) {
-                            // Delete person before adding to existing list of people
+                            // Delete person before adding to existing list of people (addPerson path only)
                             if (recognitionLabelPhotoCount != null && addPerson && recognitionLabelPhotoCount > 0) {
                                 recognitionLabelPhotoRepository?.deleteByRecognitionLabelIdAndMetadataId(
                                     recognitionLabelObj.getId(),

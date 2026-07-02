@@ -4,6 +4,7 @@ import com.miyagi.shashin.model.AlbumPhoto
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.RecognitionLabelId
 import com.miyagi.shashin.model.RecognitionLabelPhoto
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
