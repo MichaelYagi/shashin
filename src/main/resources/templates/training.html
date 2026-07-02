@@ -35,12 +35,8 @@
                                 const transparent = 1.0
 
                                 $("#tntr" + embeddingId).off("click").on("click", function (e) {
+                                    if ($(e.target).closest('a').length) return;
                                     e.preventDefault();
-
-                                    const link = document.getElementById("mediaLink" + embeddingId);
-                                    if (link && $('.thumbnail-tl .bi-circle-fill').length === 0) {
-                                        link.click();
-                                    }
                                 });
 
                                 $("#select" + embeddingId).on("click", function (e) {
