@@ -10,4 +10,7 @@ interface RecognitionLabelRepository : CrudRepository<RecognitionLabel?, Int?> {
     fun findByArgusIdentityId(argusIdentityId: Int): RecognitionLabel?
     @Query("SELECT DISTINCT * FROM recognitionlabel WHERE name != :name ORDER BY name COLLATE NOCASE ASC", nativeQuery = true)
     fun findAllByNameNotContaining(@Param("name") name: String): MutableIterable<RecognitionLabel>?
+
+    @Query("SELECT * FROM recognitionlabel WHERE name LIKE '%' || :name || '%' COLLATE NOCASE ORDER BY name COLLATE NOCASE ASC", nativeQuery = true)
+    fun searchByName(@Param("name") name: String): List<RecognitionLabel?>
 }

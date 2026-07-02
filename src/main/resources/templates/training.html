@@ -210,11 +210,17 @@
                                     <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.id}">
                                         <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span></a>
                                     </div>
-                                    <div class="thumbnail-tr" th:id="${'tntr'+faceObj.id}">
-                                        <span th:id="${'timelineviewable'+faceObj.id}" class="bi-calendar overlayIcon overlayIconBackground"></span>
-                                        <br>
-                                    </div>
                                 </th:block>
+                                <div class="thumbnail-tr" th:id="${'tntr'+faceObj.id}">
+                                    <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
+                                        <span th:id="${'timelineviewable'+faceObj.id}" class="bi-calendar overlayIcon overlayIconBackground"></span><br>
+                                    </th:block>
+                                    <a href="#" class="training-reassign-btn"
+                                       th:data-detection-id="${faceObj.id}"
+                                       th:data-crop-url="${argusServer + faceObj['crop_url']}">
+                                        <span class="bi-person-fill-x overlayIcon overlayIconBackground" style="color:orange;"></span>
+                                    </a>
+                                </div>
 
                                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                     /*<![CDATA[*/
@@ -285,6 +291,25 @@
     </div>
 </div>
 
+<div class="modal fade" id="reassignModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header py-2">
+                <h6 class="modal-title mb-0">Reassign to</h6>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-2" style="position:relative;">
+                <input type="text" class="form-control form-control-sm" id="reassignInput" placeholder="Type a name..." autocomplete="off">
+                <div id="reassignSuggestions" class="list-group shadow-sm" style="display:none;position:absolute;z-index:1050;left:1rem;right:1rem;max-height:200px;overflow-y:auto;"></div>
+            </div>
+            <div class="modal-footer py-2">
+                <button type="button" class="btn btn-warning btn-sm" id="reassignSubmit">Reassign</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
     <script src="/js/site/applisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
@@ -320,7 +345,66 @@
 
         const trainingInstance = new Training(resultList, personId, activePage, initialCursor, initialHasMore);
         trainingInstance.init();
-        // Util.checkErrorImage();
+
+        // Reassign
+        let reassignDetectionId = null;
+        let reassignCropUrl = null;
+        const reassignModal = new bootstrap.Modal(document.getElementById('reassignModal'));
+        let reassignDebounce;
+
+        $('#reassignInput').on('input', function () {
+            clearTimeout(reassignDebounce);
+            const q = $(this).val().trim();
+            if (q.length < 1) { $('#reassignSuggestions').hide().empty(); return; }
+            reassignDebounce = setTimeout(async () => {
+                const res = await fetch('/person/search?q=' + encodeURIComponent(q));
+                const data = await res.json();
+                $('#reassignSuggestions').empty();
+                data.forEach(p => {
+                    $('<button class="list-group-item list-group-item-action py-1" style="font-size:0.85rem;">')
+                        .text(p.name)
+                        .on('click', function () {
+                            $('#reassignInput').val(p.name);
+                            $('#reassignSuggestions').hide();
+                        })
+                        .appendTo('#reassignSuggestions');
+                });
+                $('#reassignSuggestions').toggle(data.length > 0);
+            }, 200);
+        });
+
+        $('#reassignModal').on('hidden.bs.modal', function () {
+            $('#reassignInput').val('').removeClass('is-invalid');
+            $('#reassignSuggestions').hide().empty();
+            reassignDetectionId = null;
+            reassignCropUrl = null;
+        });
+
+        $(document).on('click', '.training-reassign-btn', function (e) {
+            e.preventDefault();
+            reassignDetectionId = String($(this).data('detection-id'));
+            reassignCropUrl = $(this).data('crop-url');
+            reassignModal.show();
+        });
+
+        $('#reassignSubmit').on('click', async function () {
+            const targetName = $('#reassignInput').val().trim();
+            if (!targetName || !reassignDetectionId || !reassignCropUrl) return;
+            $(this).prop('disabled', true).text('…');
+            const http = new Http('reassign training');
+            const data = await http.ajax('post', '/person/training/reassign', JSON.stringify({
+                detectionId: reassignDetectionId,
+                cropUrl: reassignCropUrl,
+                targetName: targetName
+            }));
+            if (data && data.status === shashin.apiResponse.SUCCESS) {
+                reassignModal.hide();
+                $('#photoThumbnailContainer' + reassignDetectionId).fadeOut(300, function () { $(this).remove(); });
+            } else {
+                $('#reassignInput').addClass('is-invalid');
+            }
+            $(this).prop('disabled', false).text('Reassign');
+        });
     });
 </script>
 </body>

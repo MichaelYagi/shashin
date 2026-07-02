@@ -73,6 +73,11 @@
                                                 th:data-detection-id="${item.detectionId}">
                                             <span class="bi-x-lg"></span>
                                         </button>
+                                        <button class="btn btn-warning btn-sm reassign-btn"
+                                                th:data-detection-id="${item.detectionId}"
+                                                th:data-crop-url="${item.cropUrl}">
+                                            <span class="bi-person-fill-x"></span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -84,6 +89,25 @@
 
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
+    </div>
+</div>
+
+<div class="modal fade" id="reassignModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header py-2">
+                <h6 class="modal-title mb-0">Reassign to</h6>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-2" style="position:relative;">
+                <input type="text" class="form-control form-control-sm" id="reassignInput" placeholder="Type a name..." autocomplete="off">
+                <div id="reassignSuggestions" class="list-group shadow-sm" style="display:none;position:absolute;z-index:1050;left:1rem;right:1rem;max-height:200px;overflow-y:auto;"></div>
+            </div>
+            <div class="modal-footer py-2">
+                <button type="button" class="btn btn-warning btn-sm" id="reassignSubmit">Reassign</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -170,6 +194,66 @@
                 updateBulkToolbar();
             });
         }
+
+        // Reassign
+        let reassignDetectionId = null;
+        let reassignCropUrl = null;
+        const reassignModal = new bootstrap.Modal(document.getElementById('reassignModal'));
+        let reassignDebounce;
+
+        $('#reassignInput').on('input', function () {
+            clearTimeout(reassignDebounce);
+            const q = $(this).val().trim();
+            if (q.length < 1) { $('#reassignSuggestions').hide().empty(); return; }
+            reassignDebounce = setTimeout(async () => {
+                const res = await fetch('/person/search?q=' + encodeURIComponent(q));
+                const data = await res.json();
+                $('#reassignSuggestions').empty();
+                data.forEach(p => {
+                    $('<button class="list-group-item list-group-item-action py-1" style="font-size:0.85rem;">')
+                        .text(p.name)
+                        .on('click', function () {
+                            $('#reassignInput').val(p.name);
+                            $('#reassignSuggestions').hide();
+                        })
+                        .appendTo('#reassignSuggestions');
+                });
+                $('#reassignSuggestions').toggle(data.length > 0);
+            }, 200);
+        });
+
+        $('#reassignModal').on('hidden.bs.modal', function () {
+            $('#reassignInput').val('').removeClass('is-invalid');
+            $('#reassignSuggestions').hide().empty();
+            reassignDetectionId = null;
+            reassignCropUrl = null;
+        });
+
+        $(document).on('click', '.reassign-btn', function () {
+            reassignDetectionId = String($(this).data('detection-id'));
+            reassignCropUrl = $(this).data('crop-url');
+            reassignModal.show();
+        });
+
+        $('#reassignSubmit').on('click', async function () {
+            const targetName = $('#reassignInput').val().trim();
+            if (!targetName || !reassignDetectionId || !reassignCropUrl) return;
+            $(this).prop('disabled', true).text('…');
+            const http = new Http('reassign match');
+            const data = await http.ajax('post', '/person/matches/reassign', JSON.stringify({
+                detectionId: reassignDetectionId,
+                cropUrl: reassignCropUrl,
+                targetName: targetName
+            }));
+            if (data && data.status === shashin.apiResponse.SUCCESS) {
+                reassignModal.hide();
+                removeCard(reassignDetectionId);
+                adjustBadge('matchesCountBadge', -1);
+            } else {
+                $('#reassignInput').addClass('is-invalid');
+            }
+            $(this).prop('disabled', false).text('Reassign');
+        });
 
         $(document).on('click', '.confirm-btn', async function () {
             const detectionId = $(this).data('detection-id');

@@ -1325,6 +1325,153 @@ class PeopleController(
         }
     }
 
+    @RequestMapping(value = ["/person/search"], method = [RequestMethod.GET], produces = ["application/json"])
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @ResponseBody
+    fun searchPeople(@RequestParam q: String): String {
+        val results = recognitionLabelRepository?.searchByName(q) ?: emptyList()
+        val list = results.filterNotNull().map { mapOf("id" to it.getId(), "name" to it.getName()) }
+        return mapper.writeValueAsString(list)
+    }
+
+    @RequestMapping(value = ["/person/matches/reassign"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @ResponseBody
+    fun reassignMatch(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
+        val response = mutableMapOf<String, Any?>()
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+        val bodyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        val detectionId = bodyMap["detectionId"]?.toString() ?: return mapper.writeValueAsString(response)
+        val cropUrl = bodyMap["cropUrl"]?.toString() ?: return mapper.writeValueAsString(response)
+        val targetName = bodyMap["targetName"]?.toString()?.trim() ?: return mapper.writeValueAsString(response)
+        val settings = model.getAttribute("settings") as Settings
+        if (settings.getArgusServer().isNullOrBlank()) return mapper.writeValueAsString(response)
+
+        var targetPerson = recognitionLabelRepository?.findByNameIgnoreCase(targetName)
+        if (targetPerson == null) {
+            val newLabel = RecognitionLabel()
+            newLabel.setName(targetName)
+            targetPerson = recognitionLabelRepository?.save(newLabel)
+        }
+        if (targetPerson == null) return mapper.writeValueAsString(response)
+
+        val webClient = WebClient.create(settings.getArgusServer()!!)
+        var newDetectionId: String? = null
+        try {
+            val cropBytes = WebClient.create().get().uri(cropUrl)
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve().bodyToMono(ByteArray::class.java).block()
+            if (cropBytes != null) {
+                val resource = object : ByteArrayResource(cropBytes) { override fun getFilename() = "crop.jpg" }
+                val builder = MultipartBodyBuilder()
+                builder.part("file", resource)
+                builder.part("label", targetName)
+                val enrollResp = webClient.post().uri("api/detect/faces")
+                    .header("X-API-Key", settings.getArgusKey())
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                    .body(BodyInserters.fromMultipartData(builder.build()))
+                    .retrieve().bodyToMono(String::class.java).block()
+                val enrollJson = mapper.readTree(enrollResp ?: "{}")
+                newDetectionId = enrollJson["faces"]?.get(0)?.get("detection_id")?.asInt()?.toString()
+                val newIdentityId = enrollJson["faces"]?.get(0)?.get("identity_id")?.asInt()
+                if (newIdentityId != null && targetPerson.getArgusIdentityId() != newIdentityId) {
+                    targetPerson.setArgusIdentityId(newIdentityId)
+                    recognitionLabelRepository?.save(targetPerson)
+                }
+            }
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Reassign match enroll failed: ${e.localizedMessage}")
+        }
+        try {
+            webClient.post().uri("api/review/$detectionId/confirm")
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve().bodyToMono(String::class.java).block()
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Reassign match confirm failed: ${e.localizedMessage}")
+        }
+        val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+        if (record != null) {
+            record.setRecognitionLabelId(targetPerson.getId())
+            record.setAutoTagged(false)
+            record.setConfidence("0.0")
+            if (newDetectionId != null) record.setArgusDetectionId(newDetectionId)
+            try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+        }
+        response["status"] = ApiResponse.SUCCESS.status
+        response["msg"] = "Reassigned to ${targetPerson.getName()}"
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/person/training/reassign"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @ResponseBody
+    fun reassignTraining(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
+        val response = mutableMapOf<String, Any?>()
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+        val bodyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        val detectionId = bodyMap["detectionId"]?.toString() ?: return mapper.writeValueAsString(response)
+        val cropUrl = bodyMap["cropUrl"]?.toString() ?: return mapper.writeValueAsString(response)
+        val targetName = bodyMap["targetName"]?.toString()?.trim() ?: return mapper.writeValueAsString(response)
+        val settings = model.getAttribute("settings") as Settings
+        if (settings.getArgusServer().isNullOrBlank()) return mapper.writeValueAsString(response)
+
+        var targetPerson = recognitionLabelRepository?.findByNameIgnoreCase(targetName)
+        if (targetPerson == null) {
+            val newLabel = RecognitionLabel()
+            newLabel.setName(targetName)
+            targetPerson = recognitionLabelRepository?.save(newLabel)
+        }
+        if (targetPerson == null) return mapper.writeValueAsString(response)
+
+        val webClient = WebClient.create(settings.getArgusServer()!!)
+        var newDetectionId: String? = null
+        try {
+            val cropBytes = WebClient.create().get().uri(cropUrl)
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve().bodyToMono(ByteArray::class.java).block()
+            if (cropBytes != null) {
+                val resource = object : ByteArrayResource(cropBytes) { override fun getFilename() = "crop.jpg" }
+                val builder = MultipartBodyBuilder()
+                builder.part("file", resource)
+                builder.part("label", targetName)
+                val enrollResp = webClient.post().uri("api/detect/faces")
+                    .header("X-API-Key", settings.getArgusKey())
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                    .body(BodyInserters.fromMultipartData(builder.build()))
+                    .retrieve().bodyToMono(String::class.java).block()
+                val enrollJson = mapper.readTree(enrollResp ?: "{}")
+                newDetectionId = enrollJson["faces"]?.get(0)?.get("detection_id")?.asInt()?.toString()
+                val newIdentityId = enrollJson["faces"]?.get(0)?.get("identity_id")?.asInt()
+                if (newIdentityId != null && targetPerson.getArgusIdentityId() != newIdentityId) {
+                    targetPerson.setArgusIdentityId(newIdentityId)
+                    recognitionLabelRepository?.save(targetPerson)
+                }
+            }
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Reassign training enroll failed: ${e.localizedMessage}")
+        }
+        try {
+            webClient.delete().uri("api/detections/$detectionId")
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve().bodyToMono(String::class.java).block()
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Reassign training delete old detection failed: ${e.localizedMessage}")
+        }
+        val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+        if (record != null) {
+            record.setRecognitionLabelId(targetPerson.getId())
+            record.setAutoTagged(false)
+            record.setConfidence("0.0")
+            if (newDetectionId != null) record.setArgusDetectionId(newDetectionId)
+            try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+        }
+        response["status"] = ApiResponse.SUCCESS.status
+        response["msg"] = "Reassigned to ${targetPerson.getName()}"
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/person/matches/confirm"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody

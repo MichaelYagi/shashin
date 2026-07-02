@@ -76,10 +76,14 @@ class Training {
                         html += '<a href="/timeline#' + resultObj.metadata_date + '" target="_blank">';
                         html += '<span class="bi-play-btn" style="font-size: 4rem;color: lightgray;">';
                         html += '</span></a></div>';
-                        html += '<div class="thumbnail-tr" id="tntr' + embeddingId +'">';
-                        html += '<span id="timelineviewable' + embeddingId + '" class="bi-calendar overlayIcon overlayIconBackground">';
-                        html += '</span><br></div>';
                     }
+                    html += '<div class="thumbnail-tr" id="tntr' + embeddingId +'">';
+                    if (resultObj.metadata_date != null && resultObj.metadata_date !== '') {
+                        html += '<span id="timelineviewable' + embeddingId + '" class="bi-calendar overlayIcon overlayIconBackground"></span><br>';
+                    }
+                    html += '<a href="#" class="training-reassign-btn" data-detection-id="' + embeddingId + '" data-crop-url="' + imgSrc + '">';
+                    html += '<span class="bi-person-fill-x overlayIcon overlayIconBackground" style="color:orange;"></span></a>';
+                    html += '</div>';
                     html += '</div>';
 
                     $(html).insertBefore($(".appendTrainingPhotos").last());
