@@ -1323,7 +1323,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             faceNode: JsonNode,
             metadataObj: Metadata,
             recognitionLabelRepository: RecognitionLabelRepository?,
-            recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?
+            recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?,
+            settings: Settings? = null,
+            webClient: WebClient? = null
         ) {
             val detectionId = faceNode["detection_id"].asInt().toString()
             val rlp = RecognitionLabelPhoto()
@@ -1375,6 +1377,18 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             faceNode["similarity"].asText() else "0.0"
                     )
                     try { recognitionLabelPhotoRepository?.save(rlp) } catch (_: Exception) {}
+                    if (webClient != null && settings?.getArgusKey() != null) {
+                        try {
+                            val mapper2 = ObjectMapper()
+                            val extRefBody = mapper2.writeValueAsString(mapOf("external_ref" to recognitionLabelObj.getId().toString()))
+                            webClient.put()
+                                .uri("api/identities/$argusId/external_ref")
+                                .header("X-API-Key", settings.getArgusKey())
+                                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                                .body(BodyInserters.fromValue(extRefBody))
+                                .retrieve().bodyToMono(String::class.java).block()
+                        } catch (_: Exception) {}
+                    }
                     return
                 }
             }
@@ -1417,7 +1431,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
                 if (facesNode != null && facesNode.size() > 0) {
                     for (faceNode in facesNode) {
-                        storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository)
+                        storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, webClient)
                     }
                 } else {
                     val noFaceRecord = RecognitionLabelPhoto()
@@ -1594,9 +1608,20 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             if (face.has("identity_id") && !face["identity_id"].isNull) {
                                 val identityId = face["identity_id"].asInt()
                                 val recognitionLabelObj = recognitionLabelRepository?.findByNameIgnoreCase(personName)
-                                if (recognitionLabelObj != null && recognitionLabelObj.getArgusIdentityId() != identityId) {
-                                    recognitionLabelObj.setArgusIdentityId(identityId)
-                                    recognitionLabelRepository?.save(recognitionLabelObj)
+                                if (recognitionLabelObj != null) {
+                                    if (recognitionLabelObj.getArgusIdentityId() != identityId) {
+                                        recognitionLabelObj.setArgusIdentityId(identityId)
+                                        recognitionLabelRepository?.save(recognitionLabelObj)
+                                    }
+                                    try {
+                                        val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to recognitionLabelObj.getId().toString()))
+                                        webClient.put()
+                                            .uri("api/identities/$identityId/external_ref")
+                                            .header("X-API-Key", settings.getArgusKey())
+                                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                                            .body(BodyInserters.fromValue(extRefBody))
+                                            .retrieve().bodyToMono(String::class.java).block()
+                                    } catch (_: Exception) {}
                                 }
                             }
                         }
@@ -1717,7 +1742,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
                     if (facesNode != null && facesNode.size() > 0) {
                         for (faceNode in facesNode) {
-                            storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository)
+                            storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, webClient)
                             recognitionCount++
                         }
                     } else {

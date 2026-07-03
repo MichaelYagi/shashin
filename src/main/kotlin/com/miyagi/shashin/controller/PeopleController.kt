@@ -594,17 +594,19 @@ class PeopleController(
                 argusIdentity = mapper.readTree(extRefJson ?: "{}")["items"]?.firstOrNull()
             }
 
-            // 3. Fall back to name match
+            // 3. Fall back to name search — use GET /api/identities?q= so Argus filters server-side
+            //    and there is no page-size cap on the result set to worry about
             if (argusIdentity == null) {
                 val personName = person.getName()
                 if (!personName.isNullOrBlank()) {
-                    val summaryJson = webClient.get()
-                        .uri("api/identities/summary?type=face")
+                    val encoded = java.net.URLEncoder.encode(personName, "UTF-8")
+                    val searchJson = webClient.get()
+                        .uri("api/identities?type=face&q=$encoded")
                         .header("X-API-Key", apiKey)
                         .retrieve()
                         .bodyToMono(String::class.java)
                         .block()
-                    argusIdentity = mapper.readTree(summaryJson ?: "{}")["items"]
+                    argusIdentity = mapper.readTree(searchJson ?: "{}")["items"]
                         ?.firstOrNull { it["label"]?.asText()?.equals(personName, ignoreCase = true) == true }
                 }
             }
@@ -946,6 +948,44 @@ class PeopleController(
         }
         model["titleDescriptor"] = title
         return module
+    }
+
+    @RequestMapping(value = ["/person/{personId}/rename"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["text/plain"])
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @ResponseBody
+    fun renamePerson(model: Model, @PathVariable personId: Int, @RequestBody requestBody: JsonNode): org.springframework.http.ResponseEntity<String> {
+        val newName = requestBody.get("name")?.asText()?.trim()
+        if (newName.isNullOrBlank()) {
+            return org.springframework.http.ResponseEntity.badRequest().body("Name cannot be empty")
+        }
+        val labelOpt = recognitionLabelRepository?.findById(personId)
+        if (labelOpt == null || !labelOpt.isPresent) {
+            return org.springframework.http.ResponseEntity.notFound().build()
+        }
+        val conflicting = recognitionLabelRepository?.findByNameIgnoreCase(newName)
+        if (conflicting != null && conflicting.getId() != personId) {
+            return org.springframework.http.ResponseEntity.badRequest().body("A person with that name already exists")
+        }
+        val label = labelOpt.get()
+        label.setName(newName)
+        recognitionLabelRepository?.save(label)
+
+        val settings = model.getAttribute("settings") as Settings
+        val argusIdentityId = label.getArgusIdentityId()
+        if (argusIdentityId != null && !settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank()) {
+            try {
+                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val body = mapper.writeValueAsString(mapOf("label" to newName))
+                webClient.put()
+                    .uri("api/identities/$argusIdentityId")
+                    .header("X-API-Key", settings.getArgusKey()!!)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .bodyValue(body)
+                    .retrieve().bodyToMono(String::class.java).block()
+            } catch (_: Exception) {}
+        }
+
+        return org.springframework.http.ResponseEntity.ok("OK")
     }
 
     @RequestMapping(value = ["/person/metadata/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -1435,6 +1475,17 @@ class PeopleController(
                     targetPerson.setArgusIdentityId(newIdentityId)
                     recognitionLabelRepository?.save(targetPerson)
                 }
+                if (newIdentityId != null) {
+                    try {
+                        val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to targetPerson.getId().toString()))
+                        webClient.put()
+                            .uri("api/identities/$newIdentityId/external_ref")
+                            .header("X-API-Key", settings.getArgusKey())
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                            .body(BodyInserters.fromValue(extRefBody))
+                            .retrieve().bodyToMono(String::class.java).block()
+                    } catch (_: Exception) {}
+                }
             }
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Reassign match enroll failed: ${e.localizedMessage}")
@@ -1503,6 +1554,17 @@ class PeopleController(
                 if (newIdentityId != null && targetPerson.getArgusIdentityId() != newIdentityId) {
                     targetPerson.setArgusIdentityId(newIdentityId)
                     recognitionLabelRepository?.save(targetPerson)
+                }
+                if (newIdentityId != null) {
+                    try {
+                        val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to targetPerson.getId().toString()))
+                        webClient.put()
+                            .uri("api/identities/$newIdentityId/external_ref")
+                            .header("X-API-Key", settings.getArgusKey())
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                            .body(BodyInserters.fromValue(extRefBody))
+                            .retrieve().bodyToMono(String::class.java).block()
+                    } catch (_: Exception) {}
                 }
             }
         } catch (e: Exception) {

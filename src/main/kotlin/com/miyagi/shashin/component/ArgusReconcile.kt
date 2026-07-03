@@ -25,91 +25,146 @@ class ArgusReconcile(
 
         try {
             val webClient = WebClient.create(settings.getArgusServer()!!)
+            val apiKey = settings.getArgusKey()!!
             val argusServer = settings.getArgusServer()!!.trimEnd('/')
-
-            val summaryJson = webClient.get()
-                .uri("api/identities/summary?type=face")
-                .header("X-API-Key", settings.getArgusKey())
-                .retrieve().bodyToMono(String::class.java).block()
-
-            val identities = mapper.readTree(summaryJson ?: "{}")
             val argusIdentityIds = mutableSetOf<Int>()
 
-            for (identity in identities["items"] ?: emptyList()) {
-                val argusIdentityId = identity["id"]?.asInt() ?: continue
-                val argusName = identity["label"]?.asText() ?: continue
-                argusIdentityIds.add(argusIdentityId)
-
-                var person = recognitionLabelRepository?.findByNameIgnoreCase(argusName)
-                if (person == null) {
-                    val newLabel = RecognitionLabel()
-                    newLabel.setName(argusName)
-                    newLabel.setArgusIdentityId(argusIdentityId)
-                    person = recognitionLabelRepository?.save(newLabel)
+            // Paginate through all Argus identities.
+            // GET /api/identities includes external_ref and supports cursor pagination.
+            // GET /api/identities/summary does not include external_ref and has no cursor pagination.
+            var cursor: String? = null
+            do {
+                val uri = buildString {
+                    append("api/identities?type=face&limit=200")
+                    if (cursor != null) append("&cursor=$cursor")
                 }
-                if (person == null) continue
+                val identitiesJson = webClient.get()
+                    .uri(uri)
+                    .header("X-API-Key", apiKey)
+                    .retrieve().bodyToMono(String::class.java).block() ?: break
 
-                if (person.getArgusIdentityId() != argusIdentityId) {
-                    person.setArgusIdentityId(argusIdentityId)
-                    recognitionLabelRepository?.save(person)
-                }
+                val identitiesObj = mapper.readTree(identitiesJson)
+                val hasMore = identitiesObj["has_more"]?.asBoolean() ?: false
+                cursor = if (hasMore) identitiesObj["next_cursor"]?.textValue() else null
+                val identities = identitiesObj["items"]?.toList() ?: emptyList()
 
-                val galleryJson = webClient.get()
-                    .uri("api/identities/$argusIdentityId/gallery?limit=9999")
-                    .header("X-API-Key", settings.getArgusKey())
-                    .retrieve().bodyToMono(String::class.java).block() ?: continue
+                for (identity in identities) {
+                    val argusId = identity["id"]?.asInt() ?: continue
+                    val argusName = identity["label"]?.asText() ?: continue
+                    val argusExternalRef = identity["external_ref"]?.takeUnless { it.isNull }?.asText()
+                    argusIdentityIds.add(argusId)
 
-                val galleryObj = mapper.readTree(galleryJson)
-                val items = galleryObj["items"] ?: continue
-                val argusDetectionIds = items.mapNotNull { it["detection_id"]?.asInt()?.toString() }.toSet()
+                    // Find existing Shashin person in priority order:
+                    // 1. external_ref — stable ID link written by resync/confirm
+                    // 2. argusIdentityId stored in Shashin — covers pre-external_ref records
+                    // 3. name match — last resort for legacy unlinked records
+                    // 4. create new
+                    var person: RecognitionLabel? = null
 
-                for (item in items) {
-                    val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
-                    val enrolled = item["enrolled"]?.asBoolean() ?: false
-
-                    val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
+                    val externalRefId = argusExternalRef?.toIntOrNull()
+                    if (externalRefId != null) {
+                        person = recognitionLabelRepository?.findById(externalRefId)?.takeIf { it.isPresent }?.get()
+                    }
+                    if (person == null) {
+                        person = recognitionLabelRepository?.findByArgusIdentityId(argusId)
+                    }
+                    if (person == null) {
+                        person = recognitionLabelRepository?.findByNameIgnoreCase(argusName)
+                    }
+                    if (person == null) {
+                        val newLabel = RecognitionLabel()
+                        newLabel.setName(argusName)
+                        newLabel.setArgusIdentityId(argusId)
+                        person = recognitionLabelRepository?.save(newLabel)
+                    }
+                    if (person == null) continue
 
                     var changed = false
-                    if (record.getRecognitionLabelId() != person.getId()) {
-                        record.setRecognitionLabelId(person.getId())
+
+                    if (person.getArgusIdentityId() != argusId) {
+                        person.setArgusIdentityId(argusId)
                         changed = true
                     }
-                    val expectedAutoTagged = !enrolled
-                    if (record.getAutoTagged() != expectedAutoTagged) {
-                        record.setAutoTagged(expectedAutoTagged)
+
+                    // Sync name Argus → Shashin if it drifted
+                    if (argusName.isNotBlank() && !argusName.equals(person.getName(), ignoreCase = true)) {
+                        person.setName(argusName)
                         changed = true
                     }
-                    if (changed) {
-                        try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+
+                    if (changed) recognitionLabelRepository?.save(person)
+
+                    // Stamp Shashin person ID into Argus external_ref if not already set
+                    if (argusExternalRef != person.getId().toString()) {
+                        try {
+                            val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to person.getId().toString()))
+                            webClient.put()
+                                .uri("api/identities/$argusId/external_ref")
+                                .header("X-API-Key", apiKey)
+                                .header("Content-Type", "application/json")
+                                .bodyValue(extRefBody)
+                                .retrieve().bodyToMono(String::class.java).block()
+                        } catch (_: Exception) {}
+                    }
+
+                    // Gallery sync: reconcile enrolled/pending status for each detection
+                    val galleryJson = webClient.get()
+                        .uri("api/identities/$argusId/gallery?limit=9999")
+                        .header("X-API-Key", apiKey)
+                        .retrieve().bodyToMono(String::class.java).block() ?: continue
+
+                    val galleryObj = mapper.readTree(galleryJson)
+                    val items = galleryObj["items"] ?: continue
+                    val argusDetectionIds = items.mapNotNull { it["detection_id"]?.asInt()?.toString() }.toSet()
+
+                    for (item in items) {
+                        val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
+                        val enrolled = item["enrolled"]?.asBoolean() ?: false
+
+                        val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
+
+                        var recordChanged = false
+                        if (record.getRecognitionLabelId() != person.getId()) {
+                            record.setRecognitionLabelId(person.getId())
+                            recordChanged = true
+                        }
+                        val expectedAutoTagged = !enrolled
+                        if (record.getAutoTagged() != expectedAutoTagged) {
+                            record.setAutoTagged(expectedAutoTagged)
+                            recordChanged = true
+                        }
+                        if (recordChanged) {
+                            try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+                        }
+                    }
+
+                    // Remove Shashin photo tags for detections no longer in this identity's Argus gallery
+                    val shashinPhotos = recognitionLabelPhotoRepository?.findAllByRecognitionLabelId(person.getId()) ?: emptyList()
+                    for (photo in shashinPhotos) {
+                        if (photo != null && photo.getArgusDetectionId() != null && photo.getArgusDetectionId() !in argusDetectionIds) {
+                            recognitionLabelPhotoRepository?.delete(photo)
+                        }
+                    }
+
+                    if (person.getCoverUrl() == null) {
+                        val firstMatch = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
+                        val metadataCover = if (firstMatch?.getMetadataId() != null)
+                            metadataRepository?.findByMetadataId(firstMatch.getMetadataId()!!)?.getThumbnailUrlCentered()
+                        else null
+
+                        val cover = metadataCover
+                            ?: items.firstOrNull { it["crop_url"] != null && !it["crop_url"].isNull }
+                                ?.get("crop_url")?.textValue()?.let { argusServer + it }
+
+                        if (cover != null) {
+                            person.setCoverUrl(cover)
+                            recognitionLabelRepository?.save(person)
+                        }
                     }
                 }
+            } while (cursor != null)
 
-                // Remove tags for detections no longer in this identity's Argus gallery
-                val shashinPhotos = recognitionLabelPhotoRepository?.findAllByRecognitionLabelId(person.getId()) ?: emptyList()
-                for (photo in shashinPhotos) {
-                    if (photo != null && photo.getArgusDetectionId() != null && photo.getArgusDetectionId() !in argusDetectionIds) {
-                        recognitionLabelPhotoRepository?.delete(photo)
-                    }
-                }
-
-                if (person.getCoverUrl() == null) {
-                    val firstMatch = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
-                    val metadataCover = if (firstMatch?.getMetadataId() != null)
-                        metadataRepository?.findByMetadataId(firstMatch.getMetadataId()!!)?.getThumbnailUrlCentered()
-                    else null
-
-                    val cover = metadataCover
-                        ?: items.firstOrNull { it["crop_url"] != null && !it["crop_url"].isNull }
-                            ?.get("crop_url")?.textValue()?.let { argusServer + it }
-
-                    if (cover != null) {
-                        person.setCoverUrl(cover)
-                        recognitionLabelRepository?.save(person)
-                    }
-                }
-            }
-
-            // Delete Shashin identities whose Argus identity no longer exists
+            // Remove Shashin persons whose linked Argus identity no longer exists
             val allLabels = recognitionLabelRepository?.findAll() ?: emptyList()
             for (label in allLabels) {
                 if (label != null && label.getArgusIdentityId() != null && label.getArgusIdentityId() !in argusIdentityIds) {

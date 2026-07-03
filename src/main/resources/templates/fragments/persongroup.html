@@ -1,20 +1,91 @@
 <!DOCTYPE html>
 <html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<ul class="nav nav-pills nav-fill ms-3 me-3 mt-3" th:fragment="person(activePage,parameter,counts,faceRecogServicesAvailable,authority,facialDetection)">
-    <th:block th:if="${facialDetection && counts.get('person') > 0 and (authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER')}">
-        <li class="nav-item">
-            <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}"><th:block th:text="#{main.pages.people.tabs.person}"></th:block> <span id="personCountBadge" class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
-        </li>
-        <li class="nav-item">
-            <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}"><th:block th:text="#{main.pages.people.tabs.matches}"></th:block> <span id="matchesCountBadge" class="badge bg-secondary" th:text="${counts.get('matches')}"></span></a>
-        </li>
-        <th:block th:if="${faceRecogServicesAvailable==true}">
-            <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activePage=='training' ? ' active' : ''}" th:href="${'/person/argus/'+parameter}"><th:block th:text="#{main.pages.people.tabs.training}"></th:block> <span id="trainingCountBadge" class="badge bg-secondary" th:text="${counts.get('training')}"></span></a>
-            </li>
+<th:block th:fragment="person(activePage,parameter,counts,faceRecogServicesAvailable,authority,facialDetection)">
+    <div class="d-flex align-items-center ms-3 me-3 mt-3 mb-1">
+        <h4 class="mb-0 me-2" id="personNameHeading" th:text="${personInfo?.name}"></h4>
+        <th:block th:if="${authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER'}">
+            <button class="btn btn-sm btn-link p-0" data-bs-toggle="modal" data-bs-target="#renamePersonModal" aria-label="Rename">
+                <i class="bi bi-pencil"></i>
+            </button>
         </th:block>
+    </div>
+    <ul class="nav nav-pills nav-fill ms-3 me-3 mt-1">
+        <th:block th:if="${facialDetection && counts.get('person') > 0 and (authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER')}">
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}"><th:block th:text="#{main.pages.people.tabs.person}"></th:block> <span id="personCountBadge" class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
+            </li>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}"><th:block th:text="#{main.pages.people.tabs.matches}"></th:block> <span id="matchesCountBadge" class="badge bg-secondary" th:text="${counts.get('matches')}"></span></a>
+            </li>
+            <th:block th:if="${faceRecogServicesAvailable==true}">
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activePage=='training' ? ' active' : ''}" th:href="${'/person/argus/'+parameter}"><th:block th:text="#{main.pages.people.tabs.training}"></th:block> <span id="trainingCountBadge" class="badge bg-secondary" th:text="${counts.get('training')}"></span></a>
+                </li>
+            </th:block>
+        </th:block>
+    </ul>
+
+    <th:block th:if="${authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER'}">
+    <div class="modal fade" id="renamePersonModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rename person</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="renamePersonInput" th:value="${personInfo?.name}">
+                    <div id="renamePersonError" class="text-danger mt-2" style="display:none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="renamePersonConfirm">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:nonce="${cspNonce}">
+    (function() {
+        document.getElementById('renamePersonConfirm').addEventListener('click', async function() {
+            const newName = document.getElementById('renamePersonInput').value.trim();
+            const errorEl = document.getElementById('renamePersonError');
+            errorEl.style.display = 'none';
+            if (!newName) {
+                errorEl.textContent = 'Name cannot be empty.';
+                errorEl.style.display = 'block';
+                return;
+            }
+            const personId = /*[[${personInfo?.id}]]*/ 0;
+            try {
+                const resp = await fetch('/person/' + personId + '/rename', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName })
+                });
+                if (resp.ok) {
+                    document.getElementById('personNameHeading').textContent = newName;
+                    const hiddenEl = document.getElementById('currentPerson');
+                    if (hiddenEl) hiddenEl.value = newName;
+                    bootstrap.Modal.getInstance(document.getElementById('renamePersonModal')).hide();
+                } else {
+                    const msg = await resp.text();
+                    errorEl.textContent = msg || 'Failed to rename.';
+                    errorEl.style.display = 'block';
+                }
+            } catch(e) {
+                errorEl.textContent = 'Network error.';
+                errorEl.style.display = 'block';
+            }
+        });
+        document.getElementById('renamePersonModal').addEventListener('show.bs.modal', function() {
+            const heading = document.getElementById('personNameHeading');
+            document.getElementById('renamePersonInput').value = heading ? heading.textContent.trim() : '';
+            document.getElementById('renamePersonError').style.display = 'none';
+        });
+    })();
+    </script>
     </th:block>
-</ul>
+</th:block>
 </body>
 </html>
