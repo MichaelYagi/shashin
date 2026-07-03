@@ -562,38 +562,92 @@ class PeopleController(
             return mapper.writeValueAsString(response)
         }
         val person = label.get()
-        val personName = person.getName() ?: run {
-            response["status"] = ApiResponse.FAIL.status
-            response["msg"] = "Person has no name."
-            return mapper.writeValueAsString(response)
-        }
 
         return try {
-            val summaryJson = WebClient.create(settings.getArgusServer()!!)
-                .get()
-                .uri("api/identities/summary?type=face")
-                .header("X-API-Key", settings.getArgusKey())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
+            val webClient = WebClient.create(settings.getArgusServer()!!)
+            val apiKey = settings.getArgusKey()!!
+            var argusIdentity: com.fasterxml.jackson.databind.JsonNode? = null
 
-            val identities = mapper.readTree(summaryJson ?: "{}")
-            val match = identities["items"]?.firstOrNull { it["label"]?.asText()?.equals(personName, ignoreCase = true) == true }
+            // 1. Try direct fetch by stored argusIdentityId
+            val existingArgusId = person.getArgusIdentityId()
+            if (existingArgusId != null) {
+                try {
+                    val identityJson = webClient.get()
+                        .uri("api/identities/$existingArgusId")
+                        .header("X-API-Key", apiKey)
+                        .retrieve()
+                        .bodyToMono(String::class.java)
+                        .block()
+                    val node = mapper.readTree(identityJson ?: "{}")
+                    if (node?.has("id") == true) argusIdentity = node
+                } catch (_: Exception) {}
+            }
 
-            if (match == null) {
+            // 2. Fall back to external_ref lookup
+            if (argusIdentity == null) {
+                val extRefJson = webClient.get()
+                    .uri("api/identities?external_ref=$personId&type=face")
+                    .header("X-API-Key", apiKey)
+                    .retrieve()
+                    .bodyToMono(String::class.java)
+                    .block()
+                argusIdentity = mapper.readTree(extRefJson ?: "{}")["items"]?.firstOrNull()
+            }
+
+            // 3. Fall back to name match
+            if (argusIdentity == null) {
+                val personName = person.getName()
+                if (!personName.isNullOrBlank()) {
+                    val summaryJson = webClient.get()
+                        .uri("api/identities/summary?type=face")
+                        .header("X-API-Key", apiKey)
+                        .retrieve()
+                        .bodyToMono(String::class.java)
+                        .block()
+                    argusIdentity = mapper.readTree(summaryJson ?: "{}")["items"]
+                        ?.firstOrNull { it["label"]?.asText()?.equals(personName, ignoreCase = true) == true }
+                }
+            }
+
+            if (argusIdentity == null) {
                 response["status"] = ApiResponse.FAIL.status
-                response["msg"] = "No Argus identity found matching \"$personName\"."
+                response["msg"] = "No matching Argus identity found for \"${person.getName()}\"."
             } else {
-                val argusId = match["id"].asInt()
+                val argusId = argusIdentity["id"].asInt()
+                val argusLabel = argusIdentity["label"]?.takeUnless { it.isNull }?.asText() ?: ""
+                val argusExternalRef = argusIdentity["external_ref"]?.takeUnless { it.isNull }?.asText()
+                val messages = mutableListOf<String>()
+                var changed = false
+
                 if (person.getArgusIdentityId() != argusId) {
                     person.setArgusIdentityId(argusId)
-                    recognitionLabelRepository?.save(person)
-                    response["status"] = ApiResponse.SUCCESS.status
-                    response["msg"] = "Re-synced: Argus identity ID updated to $argusId."
-                } else {
-                    response["status"] = ApiResponse.SUCCESS.status
-                    response["msg"] = "Already in sync (identity ID $argusId)."
+                    changed = true
+                    messages.add("Argus identity ID updated to $argusId")
                 }
+
+                // Sync name Argus → Shashin if different
+                if (argusLabel.isNotBlank() && !argusLabel.equals(person.getName(), ignoreCase = true)) {
+                    person.setName(argusLabel)
+                    changed = true
+                    messages.add("Name updated to \"$argusLabel\" from Argus")
+                }
+
+                if (changed) recognitionLabelRepository?.save(person)
+
+                // Write Shashin person ID into Argus external_ref if not already set
+                if (argusExternalRef != personId.toString()) {
+                    val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to personId.toString()))
+                    webClient.put()
+                        .uri("api/identities/$argusId/external_ref")
+                        .header("X-API-Key", apiKey)
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                        .body(BodyInserters.fromValue(extRefBody))
+                        .retrieve().bodyToMono(String::class.java).block()
+                    messages.add("Linked Shashin person $personId in Argus")
+                }
+
+                response["status"] = ApiResponse.SUCCESS.status
+                response["msg"] = if (messages.isEmpty()) "Already in sync (identity ID $argusId)." else messages.joinToString("; ") + "."
             }
             mapper.writeValueAsString(response)
         } catch (e: Exception) {
@@ -1519,6 +1573,16 @@ class PeopleController(
                                         p.setArgusIdentityId(returnedIdentityId)
                                         recognitionLabelRepository?.save(p)
                                     }
+                                    // Stamp Shashin person ID into Argus external_ref so future resyncs use ID lookup
+                                    try {
+                                        val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to personIdParam.toString()))
+                                        webClient.put()
+                                            .uri("api/identities/$returnedIdentityId/external_ref")
+                                            .header("X-API-Key", settings.getArgusKey())
+                                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                                            .body(BodyInserters.fromValue(extRefBody))
+                                            .retrieve().bodyToMono(String::class.java).block()
+                                    } catch (_: Exception) {}
                                 }
                             }
                         }
