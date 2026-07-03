@@ -99,6 +99,8 @@ CREATE TABLE `settings` (
                             `argusServer` VARCHAR(150),
                             `uploadMediaDirectory` VARCHAR(255) DEFAULT NULL,
                             `sidecarSizeK` REAL DEFAULT 0,
+                            `ollamaUrl` VARCHAR(255) DEFAULT NULL,
+                            `ollamaVisionModel` VARCHAR(255) DEFAULT NULL,
                             `createdAt` DATETIME DEFAULT NULL,
                             `modifiedAt` DATETIME DEFAULT NULL
 );

@@ -87,7 +87,8 @@ class ScheduledTasks(
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null,
     var messageSource: MessageSource? = null,
-    private var argusReconcile: ArgusReconcile? = null
+    private var argusReconcile: ArgusReconcile? = null,
+    private var ollamaVisionService: OllamaVisionService? = null
 ) {
 
     private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
@@ -184,7 +185,7 @@ class ScheduledTasks(
                 }
             }
 
-            val recognitionCount = ImageProcessing.scanAll(
+            val (recognitionCount, scannedIds) = ImageProcessing.scanAll(
                 metadataRepository,
                 recognitionLabelRepository,
                 recognitionLabelPhotoRepository,
@@ -195,6 +196,9 @@ class ScheduledTasks(
                 null,
                 messageSource
             )
+            if (scannedIds.isNotEmpty()) {
+                ollamaVisionService?.processItems(scannedIds, settings)
+            }
             if (superAdmins != null && recognitionCount > 0) {
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")

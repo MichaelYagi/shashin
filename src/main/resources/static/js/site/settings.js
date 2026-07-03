@@ -186,5 +186,49 @@ class Settings {
             }
         });
 
+        async function loadOllamaModels() {
+            const url = $("#ollamaUrl").val().trim();
+            const statusEl = $("#ollamaStatus");
+            if (!url) {
+                statusEl.hide();
+                return;
+            }
+            const btn = $("#loadOllamaModels");
+            btn.prop("disabled", true).text("Loading…");
+            statusEl.hide();
+            try {
+                const resp = await fetch("/settings/ollama/vision-models?url=" + encodeURIComponent(url));
+                const models = await resp.json();
+                const select = $("#ollamaVisionModel");
+                const current = select.val();
+                select.empty().append('<option value="">-- none --</option>');
+                models.forEach(function (m) {
+                    const selected = m === current ? " selected" : "";
+                    select.append('<option value="' + m + '"' + selected + '>' + m + '</option>');
+                });
+                if (models.length === 0) {
+                    select.append('<option value="" disabled>No vision models found</option>');
+                    statusEl.removeClass("bi-check-circle-fill text-success bi-x-circle-fill text-danger")
+                            .addClass("bi-x-circle-fill text-danger").show();
+                } else {
+                    statusEl.removeClass("bi-check-circle-fill text-success bi-x-circle-fill text-danger")
+                            .addClass("bi-check-circle-fill text-success").show();
+                }
+            } catch (e) {
+                console.error("Could not load Ollama models", e);
+                statusEl.removeClass("bi-check-circle-fill text-success bi-x-circle-fill text-danger")
+                        .addClass("bi-x-circle-fill text-danger").show();
+            } finally {
+                btn.prop("disabled", false).text("Load models");
+            }
+        }
+
+        $("#loadOllamaModels").on("click", loadOllamaModels);
+
+        // Auto-check on page load if URL is already saved
+        if ($("#ollamaUrl").val().trim()) {
+            loadOllamaModels();
+        }
+
     }
 }

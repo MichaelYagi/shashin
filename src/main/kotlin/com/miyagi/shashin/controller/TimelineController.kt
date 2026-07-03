@@ -77,6 +77,7 @@ class TimelineController(
     private var searchRepository: SearchRepository,
     private var recognitionLabelRepository: RecognitionLabelRepository? = null,
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
+    private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null,
     var messageSource: MessageSource? = null,
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null,
@@ -1067,6 +1068,7 @@ class TimelineController(
                 var errorDetected = false
 
                 val settings = model.getAttribute("settings") as Settings?
+                val ollamaItems = mutableListOf<Metadata>()
 
                 for (metadataId in metadataIdArray) {
                     val metadataObj = metadataRepository.findById(metadataId)
@@ -1261,6 +1263,9 @@ class TimelineController(
                                             )
                                         }
                                     }
+                                    if (settings != null) {
+                                        ollamaItems.add(metadataCopy)
+                                    }
 
                                     retMap[metadataCopy.getId()] = metadataCopy
                                 } else {
@@ -1276,6 +1281,15 @@ class TimelineController(
                 }
 
                 createVideoGif(metadataIdArray, metadataRepository, true)
+
+                if (settings != null && ollamaItems.isNotEmpty()) {
+                    val capturedSettings = settings
+                    Thread {
+                        for (item in ollamaItems) {
+                            ollamaVisionService?.processMedia(item, capturedSettings, rescan = true)
+                        }
+                    }.start()
+                }
 
                 if (settings?.getDuplicateDetection() == true) {
                     Thread {

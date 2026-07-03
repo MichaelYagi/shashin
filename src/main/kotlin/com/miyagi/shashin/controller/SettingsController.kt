@@ -110,7 +110,8 @@ class SettingsController(
     @Value("\${app.build.properties.name}")
     private val appName: String? = null,
     var messageSource: MessageSource? = null,
-    private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null
+    private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null,
+    private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null
 ) {
     private var shouldStop = AtomicBoolean(false)
 
@@ -275,27 +276,10 @@ class SettingsController(
         model["faceModelAvailable"] = argusModels["face"] == true
         model["objectModelAvailable"] = argusModels["object"] == true
 
-        model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
-        model["faceRecogAvailableStatusColor"] = "red"
-        model["faceRecogAvailableStatusText"] = "Could not connect to Argus server"
-
-        if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
-            model["faceRecogAvailableStatusIcon"] = "bi-info-circle"
-            model["faceRecogAvailableStatusColor"] = "gray"
-            model["faceRecogAvailableStatusText"] = "Argus not setup"
-        } else if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && settings.getArgusServer() != "") {
-            model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
-            model["faceRecogAvailableStatusColor"] = "orange"
-            model["faceRecogAvailableStatusText"] = "Enter a valid Argus key"
-        } else if (settings.getArgusKey() != "" && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
-            model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
-            model["faceRecogAvailableStatusColor"] = "orange"
-            model["faceRecogAvailableStatusText"] = "Enter a valid Argus server endpoint"
-        } else if (faceRecogServicesAvailable) {
-            model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
-            model["faceRecogAvailableStatusColor"] = "green"
-            model["faceRecogAvailableStatusText"] = "Connected to Argus server"
-        }
+        val argusUrlBlank = settings.getArgusServer().isNullOrBlank()
+        val argusKeyBlank = settings.getArgusKey().isNullOrBlank()
+        model["argusStatusVisible"] = !(argusUrlBlank && argusKeyBlank)
+        model["argusStatusClass"] = if (faceRecogServicesAvailable) "bi-check-circle-fill text-success" else "bi-x-circle-fill text-danger"
 
         model["timeScheduleList"] = TextUtils.timeSchedules()
         model["currentTimezone"] = ZoneId.systemDefault()
@@ -311,6 +295,16 @@ class SettingsController(
         model["message"] = ""
 
         return module
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/ollama/vision-models"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getOllamaVisionModels(@RequestParam("url") url: String): String {
+        val mapper = ObjectMapper()
+        val models = if (url.isBlank()) emptyList()
+                     else ollamaVisionService?.getVisionModels(url) ?: emptyList()
+        return mapper.writeValueAsString(models)
     }
 
     @Secured("ROLE_SUPER")
@@ -340,7 +334,9 @@ class SettingsController(
         @RequestParam("duplicateDetection") duplicateDetection: String?,
         @RequestParam("scheduledMatching") scheduledMatching: String?,
         @RequestParam("scheduledTime") scheduledTime: String?,
-        @RequestParam("uploadMediaDirectory") uploadMediaDirectory: String?
+        @RequestParam("uploadMediaDirectory") uploadMediaDirectory: String?,
+        @RequestParam("ollamaUrl") ollamaUrl: String?,
+        @RequestParam("ollamaVisionModel") ollamaVisionModel: String?
     ): String {
         var resetServer = false
         var mediaDirs: List<String>? = null
@@ -469,8 +465,10 @@ class SettingsController(
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc() //model.getAttribute("settings") as Settings?
 
-        settings?.setArgusServer(argusServer)
+        settings?.setArgusServer(argusServer?.trim()?.ifBlank { null }?.trimEnd('/'))
         settings?.setArgusKey(argusKey)
+        settings?.setOllamaUrl(ollamaUrl?.trim()?.ifBlank { null }?.trimEnd('/'))
+        settings?.setOllamaVisionModel(ollamaVisionModel?.trim()?.ifBlank { null })
 
         if (uploadDirDneString == "" && uploadMediaDirectory != null && uploadMediaDirectory.isNotBlank()) {
             settings?.setUploadMediaDirectory(uploadMediaDirectory)
@@ -547,27 +545,10 @@ class SettingsController(
             model["faceModelAvailable"] = argusModels["face"] == true
             model["objectModelAvailable"] = argusModels["object"] == true
 
-            model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
-            model["faceRecogAvailableStatusColor"] = "red"
-            model["faceRecogAvailableStatusText"] = "Could not connect to Argus server"
-
-            if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
-                model["faceRecogAvailableStatusIcon"] = "bi-info-circle"
-                model["faceRecogAvailableStatusColor"] = "gray"
-                model["faceRecogAvailableStatusText"] = "Argus not setup"
-            } else if ((settings.getArgusKey() == "" || settings.getArgusKey() == null) && settings.getArgusServer() != "") {
-                model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
-                model["faceRecogAvailableStatusColor"] = "orange"
-                model["faceRecogAvailableStatusText"] = "Enter a valid Argus key"
-            } else if (settings.getArgusKey() != "" && (settings.getArgusServer() == "" || settings.getArgusServer() == null)) {
-                model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
-                model["faceRecogAvailableStatusColor"] = "orange"
-                model["faceRecogAvailableStatusText"] = "Enter a valid Argus server endpoint"
-            } else if (faceRecogServicesAvailable) {
-                model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
-                model["faceRecogAvailableStatusColor"] = "green"
-                model["faceRecogAvailableStatusText"] = "Connected to Argus server"
-            }
+            val argusUrlBlank = settings.getArgusServer().isNullOrBlank()
+            val argusKeyBlank = settings.getArgusKey().isNullOrBlank()
+            model["argusStatusVisible"] = !(argusUrlBlank && argusKeyBlank)
+            model["argusStatusClass"] = if (faceRecogServicesAvailable) "bi-check-circle-fill text-success" else "bi-x-circle-fill text-danger"
 
             model["objectRecogEnabled"] = settings.getObjectDetection()!!
             model["facialRecogEnabled"] = settings.getFacialDetection()!!
@@ -2033,6 +2014,7 @@ class SettingsController(
 
             var threadText: String
 
+            val ollamaAvailable = settings != null && ollamaVisionService?.isOllamaAvailable(settings) == true
 
             for ((index, metadataId) in metadataIdArray.withIndex()) {
                 val metadataObj = metadataRepository?.findByMetadataId(metadataId)
@@ -2074,7 +2056,8 @@ class SettingsController(
                         if (settings != null && compreFaceServerConnected) {
                             val doFaces = settings.getFacialDetection() == true &&
                                 (recognitionLabelPhotoLabels?.count() ?: 0) >= 1
-                            val doObjects = settings.getObjectDetection() == true
+                            // Skip Argus object detection if Ollama will provide keywords
+                            val doObjects = settings.getObjectDetection() == true && !ollamaAvailable
                             if (doFaces || doObjects) {
                                 recognitionCount += ImageProcessing.Companion.detectAndStoreAll(
                                     metadataObj, settings,
@@ -2138,10 +2121,16 @@ class SettingsController(
                 }
             }
 
+            val scannedIds = metadataIdArray.toList()
             metadataIdArray.clear()
 
             val reconcileSettings = settingsRepository?.findFirstByOrderByIdAsc()
-            if (reconcileSettings != null) argusReconcile?.run(reconcileSettings)
+            if (reconcileSettings != null) {
+                argusReconcile?.run(reconcileSettings)
+                if (scannedIds.isNotEmpty()) {
+                    ollamaVisionService?.processItems(scannedIds, reconcileSettings)
+                }
+            }
         }.start()
     }
 

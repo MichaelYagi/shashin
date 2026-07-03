@@ -46,6 +46,8 @@ class Settings {
     @NotBlank
     private var uploadMediaDirectory: String? = null
     private var sidecarSizeK: Long? = null
+    private var ollamaUrl: String? = null
+    private var ollamaVisionModel: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -191,6 +193,12 @@ class Settings {
         this.scheduledMatching = scheduledMatching
     }
 
+    fun getOllamaUrl(): String? = this.ollamaUrl
+    fun setOllamaUrl(ollamaUrl: String?) { this.ollamaUrl = ollamaUrl }
+
+    fun getOllamaVisionModel(): String? = this.ollamaVisionModel
+    fun setOllamaVisionModel(ollamaVisionModel: String?) { this.ollamaVisionModel = ollamaVisionModel }
+
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -236,6 +244,8 @@ class Settings {
         map["uploadMediaDirectory"] = this.uploadMediaDirectory
         map["sidecarSizeK"] = this.sidecarSizeK
         map["duplicateDetection"] = this.duplicateDetection
+        map["ollamaUrl"] = this.ollamaUrl
+        map["ollamaVisionModel"] = this.ollamaVisionModel
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

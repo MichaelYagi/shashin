@@ -102,7 +102,7 @@ class NetworkUtils {
             if (argusKey.isNullOrBlank() || argusServer.isNullOrBlank()) return result
 
             try {
-                val webClient = WebClient.create(argusServer)
+                val webClient = WebClient.create(argusServer.trimEnd('/') + "/")
 
                 // Validate the key against an authenticated endpoint (throws on 401/403/bad key)
                 webClient.get()

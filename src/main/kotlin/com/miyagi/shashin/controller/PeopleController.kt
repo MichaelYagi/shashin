@@ -66,7 +66,8 @@ class PeopleController(
     private var adminRole: String,
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null,
-    private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null
+    private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null,
+    private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null
 ): BaseController(
     recognitionLabelRepository = recognitionLabelRepository,
     albumRepository = albumRepository,
@@ -204,7 +205,7 @@ class PeopleController(
                     duplicateCount = DuplicateImageDetection.findAndStoreDuplicates(duplicatesRepository!!)
                 }
 
-                val recognitionCount = ImageProcessing.Companion.scanAll(
+                val (recognitionCount, scannedIds) = ImageProcessing.Companion.scanAll(
                     metadataRepository,
                     recognitionLabelRepository,
                     recognitionLabelPhotoRepository,
@@ -216,6 +217,9 @@ class PeopleController(
                     messageSource,
                     locale
                 )
+                if (scannedIds.isNotEmpty()) {
+                    ollamaVisionService?.processItems(scannedIds, settings)
+                }
 
                 val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
 

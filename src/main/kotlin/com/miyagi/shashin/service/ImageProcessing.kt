@@ -1412,7 +1412,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             try {
                 val mapper = ObjectMapper()
-                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
                 val builder = MultipartBodyBuilder()
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
                 if (replace) builder.part("replace", "true")
@@ -1466,7 +1466,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             try {
                 val mapper = ObjectMapper()
-                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
                 val builder = MultipartBodyBuilder()
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
                 if (replace) builder.part("replace", "true")
@@ -1583,7 +1583,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             if (settings.getFacialDetection() == true && NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
                 if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
                     try {
-                        val webClient = WebClient.create(settings.getArgusServer()!!)
+                        val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
                         val builder = MultipartBodyBuilder()
                         builder.part("file", FileSystemResource(argusImagePath(metadata!!)!!))
                         builder.part("label", personName)
@@ -1656,7 +1656,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                 if (metadata !== null) {
                     try {
-                        val webClient = WebClient.create(settings.getArgusServer()!!)
+                        val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
 
                         val builder = MultipartBodyBuilder()
                         builder.part("file", FileSystemResource(argusImagePath(metadata)!!))
@@ -1719,7 +1719,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             var recognitionCount = 0
             try {
                 val mapper = ObjectMapper()
-                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
                 val builder = MultipartBodyBuilder()
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
                 if (replace) builder.part("replace", "true")
@@ -1801,17 +1801,18 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             shouldStop: AtomicBoolean? = null,
             messageSource: MessageSource? = null,
             locale: Locale = Locale("en")
-        ): Int {
+        ): Pair<Int, List<String>> {
             val facesEnabled = settings.getFacialDetection() == true
             val objectsEnabled = settings.getObjectDetection() == true
-            if (!facesEnabled && !objectsEnabled) return 0
-            if (!NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) return 0
+            if (!facesEnabled && !objectsEnabled) return Pair(0, emptyList())
+            if (!NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) return Pair(0, emptyList())
 
             val hasPeopleEnrolled = facesEnabled &&
                 (recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()?.count() ?: 0) > 0
 
-            val photos = metadataRepository?.findWithoutFacesOrKeywords(settings.getMatchScanLimit()!!) ?: return 0
+            val photos = metadataRepository?.findWithoutFacesOrKeywords(settings.getMatchScanLimit()!!) ?: return Pair(0, emptyList())
             var recognitionCount = 0
+            val processedIds = mutableListOf<String>()
 
             for (photo in photos) {
                 if (shouldStop != null && shouldStop.get()) break
@@ -1828,8 +1829,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     doFaces = needsFaces, doObjects = needsObjects,
                     threadFile = threadFile, messageSource = messageSource, locale = locale
                 )
+                processedIds.add(metadataObj.getId())
             }
-            return recognitionCount
+            return Pair(recognitionCount, processedIds)
         }
 
     }

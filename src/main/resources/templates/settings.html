@@ -105,13 +105,38 @@
                                     <input type="hidden" class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
 <!--                                </div>-->
                             </div>
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col-6">
-                                    <label for="argusServer" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefaceurl}"></th:block></strong> (<th:block th:text="#{main.pages.settings.comprefaceurl.example}"></th:block> http://127.0.0.1:8100/)&nbsp;<span id="argusInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.comprefaceurl.tooltip}"></span></label>
-                                    <input class="form-control" id="argusServer" name="argusServer" th:value="${settings.argusServer}">
+                                    <label for="ollamaUrl" class="form-label"><strong>Ollama URL</strong> (e.g. http://127.0.0.1:11434)</label>
+                                    <div class="input-group">
+                                        <input class="form-control" id="ollamaUrl" name="ollamaUrl" th:value="${settings.ollamaUrl}" placeholder="http://...">
+                                        <span class="input-group-text" id="ollamaStatus" style="display:none;"></span>
+                                    </div>
                                 </div>
                                 <div class="col-6">
-                                    <label for="argusKey" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefacekey}"></th:block></strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
+                                    <label for="ollamaVisionModel" class="form-label"><strong>Vision model</strong></label>
+                                    <div class="input-group">
+                                        <select class="form-select" id="ollamaVisionModel" name="ollamaVisionModel">
+                                            <option value="">-- none --</option>
+                                            <th:block th:if="${settings.ollamaVisionModel != null and !#strings.isEmpty(settings.ollamaVisionModel)}">
+                                                <option th:value="${settings.ollamaVisionModel}" th:text="${settings.ollamaVisionModel}" selected></option>
+                                            </th:block>
+                                        </select>
+                                        <button class="btn btn-secondary" type="button" id="loadOllamaModels">Load models</button>
+                                    </div>
+                                    <small class="text-muted">Shows only models with vision capability</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="argusServer" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefaceurl}"></th:block></strong> (<th:block th:text="#{main.pages.settings.comprefaceurl.example}"></th:block> http://127.0.0.1:8100)&nbsp;<span id="argusInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.comprefaceurl.tooltip}"></span></label>
+                                    <div class="input-group">
+                                        <input class="form-control" id="argusServer" name="argusServer" th:value="${settings.argusServer}">
+                                        <span class="input-group-text" th:if="${argusStatusVisible}" th:classappend="${argusStatusClass}"></span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label for="argusKey" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefacekey}"></th:block></strong></label>
                                     <input class="form-control" id="argusKey" name="argusKey" th:value="${settings.argusKey}">
                                 </div>
                             </div>
