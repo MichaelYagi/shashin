@@ -60,24 +60,34 @@ class ArgusReconcile(
                     // 3. name match — last resort for legacy unlinked records
                     // 4. create new
                     var person: RecognitionLabel? = null
+                    var matchSource = "none"
 
                     val externalRefId = argusExternalRef?.toIntOrNull()
                     if (externalRefId != null) {
-                        person = recognitionLabelRepository?.findById(externalRefId)?.takeIf { it.isPresent }?.get()
+                        val found = recognitionLabelRepository?.findById(externalRefId)?.takeIf { it.isPresent }?.get()
+                        if (found != null) { person = found; matchSource = "external_ref($externalRefId)" }
                     }
                     if (person == null) {
-                        person = recognitionLabelRepository?.findByArgusIdentityId(argusId)
+                        val found = recognitionLabelRepository?.findByArgusIdentityId(argusId)
+                        if (found != null) { person = found; matchSource = "argusIdentityId($argusId)" }
                     }
                     if (person == null) {
-                        person = recognitionLabelRepository?.findByNameIgnoreCase(argusName)
+                        val nameMatch = recognitionLabelRepository?.findByNameIgnoreCase(argusName)
+                        // Only take name match if that Shashin person isn't already linked to a different Argus identity
+                        if (nameMatch != null && (nameMatch.getArgusIdentityId() == null || nameMatch.getArgusIdentityId() == argusId)) {
+                            person = nameMatch; matchSource = "name($argusName)"
+                        }
                     }
                     if (person == null) {
                         val newLabel = RecognitionLabel()
                         newLabel.setName(argusName)
                         newLabel.setArgusIdentityId(argusId)
                         person = recognitionLabelRepository?.save(newLabel)
+                        matchSource = "created"
                     }
                     if (person == null) continue
+
+                    logger.log(Level.INFO, "Argus identity $argusId ($argusName) → Shashin #${person.getId()} (${person.getName()}) via $matchSource")
 
                     var changed = false
 
