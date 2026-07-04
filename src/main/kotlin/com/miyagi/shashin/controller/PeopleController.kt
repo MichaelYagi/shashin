@@ -1659,6 +1659,12 @@ class PeopleController(
                             record.setAutoTagged(false)
                             record.setConfidence("0.0")
                             try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+                            record.getMetadataId()?.let { mid ->
+                                metadataRepository?.findById(mid)?.orElse(null)?.let { m ->
+                                    m.setModifiedAt(TextUtils.getCurrentTimestamp())
+                                    metadataRepository?.save(m)
+                                }
+                            }
                         }
                     }
                     "reject" -> {
@@ -1687,6 +1693,12 @@ class PeopleController(
                                     record.setRecognitionLabelId(label.getId())
                                     record.setConfidence("0.0")
                                     try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+                                }
+                                record.getMetadataId()?.let { mid ->
+                                    metadataRepository?.findById(mid)?.orElse(null)?.let { m ->
+                                        m.setModifiedAt(TextUtils.getCurrentTimestamp())
+                                        metadataRepository?.save(m)
+                                    }
                                 }
                             }
                         }

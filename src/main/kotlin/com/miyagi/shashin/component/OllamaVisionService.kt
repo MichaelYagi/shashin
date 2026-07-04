@@ -140,15 +140,22 @@ class OllamaVisionService(
 
             val (description, keywords) = parseResponse(content)
 
+            var metadataDirty = false
+
             if (description.isNotBlank() && (rescan || !hasDescription)) {
                 metadata.setDescription(description)
-                metadata.setModifiedAt(TextUtils.getCurrentTimestamp())
-                metadataRepository.save(metadata)
+                metadataDirty = true
             }
 
             if (keywords.isNotEmpty() && (rescan || !hasKeywords)) {
                 if (rescan) keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
                 saveKeywords(keywords, metadata.getId())
+                metadataDirty = true
+            }
+
+            if (metadataDirty) {
+                metadata.setModifiedAt(TextUtils.getCurrentTimestamp())
+                metadataRepository.save(metadata)
             }
 
             logger.log(Level.INFO, "Ollama: ${metadata.getId()} → \"${description.take(60)}…\" | ${keywords.joinToString()}")
