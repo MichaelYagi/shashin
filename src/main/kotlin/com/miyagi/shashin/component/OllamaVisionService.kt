@@ -229,7 +229,7 @@ class OllamaVisionService(
                     if (items.isEmpty()) break
                     var processed = 0
                     for (item in items) {
-                        if (item == null || shouldStop?.get() == true) break
+                        if (shouldStop?.get() == true) break
                         if (processMedia(item, settings, false, ollamaReady, argusReady)) processed++
                     }
                     if (processed == 0) break
