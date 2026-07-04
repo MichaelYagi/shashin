@@ -165,6 +165,8 @@ class ArgusReconcile(
                     } catch (e: Exception) {
                         logger.log(Level.WARNING, "Gallery sync failed for identity $argusId (${person.getName()}): ${e.localizedMessage}")
                     }
+
+                    Thread.sleep(100)
                 }
             } while (cursor != null)
 
