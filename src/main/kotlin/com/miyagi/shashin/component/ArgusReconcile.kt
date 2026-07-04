@@ -149,14 +149,6 @@ class ArgusReconcile(
                             }
                         }
 
-                        // Remove Shashin photo tags for detections no longer in this identity's Argus gallery
-                        val shashinPhotos = recognitionLabelPhotoRepository?.findAllByRecognitionLabelId(person.getId()) ?: emptyList()
-                        for (photo in shashinPhotos) {
-                            if (photo != null && photo.getArgusDetectionId() != null && photo.getArgusDetectionId() !in argusDetectionIds) {
-                                recognitionLabelPhotoRepository?.delete(photo)
-                            }
-                        }
-
                         if (person.getCoverUrl() == null) {
                             val firstMatch = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
                             val metadataCover = if (firstMatch?.getMetadataId() != null)

@@ -1263,6 +1263,24 @@ class PeopleController(
                 val recognitionLabelArray = personMap["tagpeople"].toString().split(",")
 
                 if (recognitionLabelArray.isNotEmpty()) {
+                    val existingPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
+                    val settingsForDelete = model.getAttribute("settings") as? Settings
+                    if (!existingPhotos.isNullOrEmpty() &&
+                        !settingsForDelete?.getArgusServer().isNullOrBlank() &&
+                        !settingsForDelete?.getArgusKey().isNullOrBlank()) {
+                        val deleteClient = WebClient.create(settingsForDelete!!.getArgusServer()!!)
+                        for (existing in existingPhotos) {
+                            val argDetId = existing?.getArgusDetectionId()
+                            if (!argDetId.isNullOrBlank()) {
+                                try {
+                                    deleteClient.delete()
+                                        .uri("api/detections/$argDetId")
+                                        .header("X-API-Key", settingsForDelete.getArgusKey())
+                                        .retrieve().bodyToMono(String::class.java).block()
+                                } catch (_: Exception) {}
+                            }
+                        }
+                    }
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
 
