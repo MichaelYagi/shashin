@@ -1458,6 +1458,7 @@ class PeopleController(
 
         val webClient = WebClient.create(settings.getArgusServer()!!)
         var newDetectionId: String? = null
+        var enrolledIdentityId: Int? = null
         try {
             val cropBytes = WebClient.create().get().uri(cropUrl)
                 .header("X-API-Key", settings.getArgusKey())
@@ -1474,16 +1475,16 @@ class PeopleController(
                     .retrieve().bodyToMono(String::class.java).block()
                 val enrollJson = mapper.readTree(enrollResp ?: "{}")
                 newDetectionId = enrollJson["faces"]?.get(0)?.get("detection_id")?.asInt()?.toString()
-                val newIdentityId = enrollJson["faces"]?.get(0)?.get("identity_id")?.asInt()
-                if (newIdentityId != null && targetPerson.getArgusIdentityId() != newIdentityId) {
-                    targetPerson.setArgusIdentityId(newIdentityId)
+                enrolledIdentityId = enrollJson["faces"]?.get(0)?.get("identity_id")?.asInt()
+                if (enrolledIdentityId != null && targetPerson.getArgusIdentityId() != enrolledIdentityId) {
+                    targetPerson.setArgusIdentityId(enrolledIdentityId)
                     recognitionLabelRepository?.save(targetPerson)
                 }
-                if (newIdentityId != null) {
+                if (enrolledIdentityId != null) {
                     try {
                         val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to targetPerson.getId().toString()))
                         webClient.put()
-                            .uri("api/identities/$newIdentityId/external_ref")
+                            .uri("api/identities/$enrolledIdentityId/external_ref")
                             .header("X-API-Key", settings.getArgusKey())
                             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                             .body(BodyInserters.fromValue(extRefBody))
@@ -1495,9 +1496,18 @@ class PeopleController(
             logger.log(Level.WARNING, "Reassign match enroll failed: ${e.localizedMessage}")
         }
         try {
-            webClient.post().uri("api/review/$detectionId/confirm")
-                .header("X-API-Key", settings.getArgusKey())
-                .retrieve().bodyToMono(String::class.java).block()
+            if (enrolledIdentityId != null) {
+                val reassignBody = mapper.writeValueAsString(mapOf("identity_id" to enrolledIdentityId))
+                webClient.post().uri("api/review/$detectionId/reassign")
+                    .header("X-API-Key", settings.getArgusKey())
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                    .body(BodyInserters.fromValue(reassignBody))
+                    .retrieve().bodyToMono(String::class.java).block()
+            } else {
+                webClient.post().uri("api/review/$detectionId/confirm")
+                    .header("X-API-Key", settings.getArgusKey())
+                    .retrieve().bodyToMono(String::class.java).block()
+            }
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Reassign match confirm failed: ${e.localizedMessage}")
         }
@@ -1616,13 +1626,14 @@ class PeopleController(
                 when (action) {
                     "confirm" -> {
                         val personIdParam = bodyMap["personId"]?.toString()?.toIntOrNull()
+                        val cropUrl = bodyMap["cropUrl"]?.toString()
+                        var enrolledDetectionId: String? = null
 
                         if (personIdParam != null) {
                             val person = recognitionLabelRepository?.findById(personIdParam)
                             val personName = person?.takeIf { it.isPresent }?.get()?.getName()
                             if (!personName.isNullOrBlank()) {
-                                // Patch the original detection in place: sets identity_id and enrolls
-                                // the already-stored crop into the identity's reference set.
+                                // Label the detection to associate it with the identity
                                 val labelBody = mapper.writeValueAsString(mapOf("label" to personName))
                                 val labelResp = webClient.put()
                                     .uri("api/detections/$detectionId/label")
@@ -1639,7 +1650,6 @@ class PeopleController(
                                         p.setArgusIdentityId(returnedIdentityId)
                                         recognitionLabelRepository?.save(p)
                                     }
-                                    // Stamp Shashin person ID into Argus external_ref so future resyncs use ID lookup
                                     try {
                                         val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to personIdParam.toString()))
                                         webClient.put()
@@ -1650,6 +1660,30 @@ class PeopleController(
                                             .retrieve().bodyToMono(String::class.java).block()
                                     } catch (_: Exception) {}
                                 }
+
+                                // Enroll the crop as a reference image so the person is recognisable in future scans
+                                if (!cropUrl.isNullOrBlank()) {
+                                    try {
+                                        val cropBytes = WebClient.create().get().uri(cropUrl)
+                                            .header("X-API-Key", settings.getArgusKey())
+                                            .retrieve().bodyToMono(ByteArray::class.java).block()
+                                        if (cropBytes != null) {
+                                            val resource = object : ByteArrayResource(cropBytes) { override fun getFilename() = "crop.jpg" }
+                                            val builder = MultipartBodyBuilder()
+                                            builder.part("file", resource)
+                                            builder.part("label", personName)
+                                            val enrollResp = webClient.post().uri("api/detect/faces")
+                                                .header("X-API-Key", settings.getArgusKey())
+                                                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                                                .body(BodyInserters.fromMultipartData(builder.build()))
+                                                .retrieve().bodyToMono(String::class.java).block()
+                                            val enrollJson = mapper.readTree(enrollResp ?: "{}")
+                                            enrolledDetectionId = enrollJson["faces"]?.get(0)?.get("detection_id")?.asInt()?.toString()
+                                        }
+                                    } catch (e: Exception) {
+                                        logger.log(Level.WARNING, "Confirm match enroll failed: ${e.localizedMessage}")
+                                    }
+                                }
                             }
                         }
 
@@ -1658,6 +1692,7 @@ class PeopleController(
                             record.setRecognitionLabelId(personIdParam)
                             record.setAutoTagged(false)
                             record.setConfidence("0.0")
+                            if (enrolledDetectionId != null) record.setArgusDetectionId(enrolledDetectionId)
                             try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
                             record.getMetadataId()?.let { mid ->
                                 metadataRepository?.findById(mid)?.orElse(null)?.let { m ->
