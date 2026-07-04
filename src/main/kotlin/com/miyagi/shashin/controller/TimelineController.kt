@@ -3937,20 +3937,61 @@ class TimelineController(
                                 if (!priorDetectionId.isNullOrBlank()) {
                                     // Already enrolled in Argus — carry the detection ID forward, no re-upload.
                                     recognitionLabelPhotoObj.setArgusDetectionId(priorDetectionId)
-                                } else {
-                                    val uploadResult = ImageProcessing.Companion.buildPersonUpload(
-                                        settings,
-                                        recognitionLabel.trim(),
-                                        metadataObj,
-                                        argusDetectionIdMap,
-                                        recognitionLabelRepository
-                                    )
-                                    val uploadResponseData = uploadResult["responseData"]
-                                    if (uploadResponseData is Map<*, *>) {
-                                        val detectionId = uploadResponseData["detection_id"]
-                                        if (detectionId != null) {
-                                            recognitionLabelPhotoObj.setArgusDetectionId(detectionId.toString())
+                                } else if (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank()) {
+                                    // Detect-then-label: POST without label to get detection IDs, then
+                                    // PUT /api/detections/{id}/label for each face. This prevents the
+                                    // full-photo+label call from tagging every face in a group photo as
+                                    // this one person.
+                                    try {
+                                        val mapper2 = com.fasterxml.jackson.databind.ObjectMapper()
+                                        val wc = org.springframework.web.reactive.function.client.WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
+                                        val b = org.springframework.http.client.MultipartBodyBuilder()
+                                        val imgPath = ImageProcessing.Companion.argusImagePath(metadataObj)
+                                        if (imgPath != null) {
+                                            b.part("file", org.springframework.core.io.FileSystemResource(imgPath))
+                                            val detectRespStr = wc.post().uri("api/detect/faces")
+                                                .header("X-API-Key", settings.getArgusKey())
+                                                .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, org.springframework.http.MediaType.MULTIPART_FORM_DATA.toString())
+                                                .body(org.springframework.web.reactive.function.BodyInserters.fromMultipartData(b.build()))
+                                                .retrieve().bodyToMono(String::class.java).block()
+
+                                            val detectJson = mapper2.readTree(detectRespStr ?: "{}")
+                                            val faces = detectJson["faces"]
+                                            if (faces != null && faces.size() == 1) {
+                                                // Exactly one face — safe to label it as this person
+                                                val face = faces[0]
+                                                val detId = face["detection_id"]?.asInt()?.toString()
+                                                if (detId != null) {
+                                                    val labelBody = mapper2.writeValueAsString(mapOf("label" to recognitionLabelObj.getName()))
+                                                    val labelResp = wc.put()
+                                                        .uri("api/detections/$detId/label")
+                                                        .header("X-API-Key", settings.getArgusKey())
+                                                        .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+                                                        .bodyValue(labelBody)
+                                                        .retrieve().bodyToMono(String::class.java).block()
+
+                                                    val labelJson = mapper2.readTree(labelResp ?: "{}")
+                                                    val returnedIdentityId = labelJson["identity_id"]?.takeUnless { it.isNull }?.asInt()
+                                                    if (returnedIdentityId != null && recognitionLabelObj.getArgusIdentityId() != returnedIdentityId) {
+                                                        recognitionLabelObj.setArgusIdentityId(returnedIdentityId)
+                                                        recognitionLabelRepository?.save(recognitionLabelObj)
+                                                        try {
+                                                            val extBody = mapper2.writeValueAsString(mapOf("external_ref" to recognitionLabelObj.getId().toString()))
+                                                            wc.put().uri("api/identities/$returnedIdentityId/external_ref")
+                                                                .header("X-API-Key", settings.getArgusKey())
+                                                                .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+                                                                .bodyValue(extBody)
+                                                                .retrieve().bodyToMono(String::class.java).block()
+                                                        } catch (_: Exception) {}
+                                                    }
+                                                    recognitionLabelPhotoObj.setArgusDetectionId(detId)
+                                                }
+                                            }
+                                            // Multiple faces: don't label any — user must assign per-face
+                                            // via GET /person/faces/{metadataId} + POST /person/faces/label
                                         }
+                                    } catch (e: Exception) {
+                                        logger.log(java.util.logging.Level.WARNING, "detect-then-label failed for ${metadataObj.getId()}: ${e.localizedMessage}")
                                     }
                                 }
                             }

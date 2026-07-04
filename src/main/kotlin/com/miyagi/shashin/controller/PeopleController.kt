@@ -1423,6 +1423,191 @@ class PeopleController(
         return mapper.writeValueAsString(resp)
     }
 
+    // Detect all faces in a photo via Argus (no label) and return detection IDs + bboxes.
+    // Uses existing recognitionlabelphoto records when available; otherwise calls Argus and stores results.
+    @GetMapping("/person/faces/{metadataId}")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @ResponseBody
+    fun getPhotoFaces(model: Model, @PathVariable metadataId: String): String {
+        val response = mutableMapOf<String, Any?>()
+        val settings = model.getAttribute("settings") as Settings
+
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) {
+            response["faces"] = emptyList<Any>()
+            return mapper.writeValueAsString(response)
+        }
+
+        val argusServer = settings.getArgusServer()!!.trimEnd('/')
+
+        // Use existing detection records when available
+        val existingRlps = recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
+            ?.filterNotNull()?.filter { !it.getArgusDetectionId().isNullOrBlank() } ?: emptyList()
+
+        if (existingRlps.isNotEmpty()) {
+            val faces = existingRlps.map { rlp ->
+                val person = rlp.getRecognitionLabelId()?.let { recognitionLabelRepository?.findById(it)?.orElse(null) }
+                mapOf(
+                    "detectionId" to rlp.getArgusDetectionId(),
+                    "personId" to person?.getId(),
+                    "personName" to person?.getName(),
+                    "autoTagged" to (rlp.getAutoTagged() ?: true)
+                )
+            }
+            response["faces"] = faces
+            return mapper.writeValueAsString(response)
+        }
+
+        // No cached detections — ask Argus to detect without labeling
+        val metadata = metadataRepository?.findByMetadataId(metadataId) ?: run {
+            response["faces"] = emptyList<Any>()
+            return mapper.writeValueAsString(response)
+        }
+        val imagePath = com.miyagi.shashin.service.ImageProcessing.Companion.argusImagePath(metadata)
+        if (imagePath == null) {
+            response["faces"] = emptyList<Any>()
+            return mapper.writeValueAsString(response)
+        }
+
+        return try {
+            val webClient = WebClient.create("$argusServer/")
+            val builder = org.springframework.http.client.MultipartBodyBuilder()
+            builder.part("file", org.springframework.core.io.FileSystemResource(imagePath))
+
+            val detectResp = webClient.post().uri("api/detect/faces")
+                .header("X-API-Key", settings.getArgusKey())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                .body(BodyInserters.fromMultipartData(builder.build()))
+                .retrieve().bodyToMono(String::class.java).block()
+
+            val jsonObj = mapper.readTree(detectResp ?: "{}")
+            val faces = mutableListOf<Map<String, Any?>>()
+
+            if (jsonObj.has("faces")) {
+                for (face in jsonObj["faces"]) {
+                    val detectionId = face["detection_id"]?.asInt()?.toString() ?: continue
+                    val bbox = if (face.has("bbox")) mapper.convertValue(face["bbox"], Map::class.java) else null
+                    val cropUrl = face["crop_url"]?.takeUnless { it.isNull }?.asText()
+                        ?.let { "$argusServer$it" }
+
+                    var personId: Int? = null
+                    var personName: String? = null
+                    if (face.has("identity_id") && !face["identity_id"].isNull) {
+                        val identityId = face["identity_id"].asInt()
+                        val person = recognitionLabelRepository?.findByArgusIdentityId(identityId)
+                        personId = person?.getId()
+                        personName = person?.getName()
+                    }
+
+                    // Store detection in Shashin if not already recorded
+                    if (recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) == null) {
+                        val rlp = RecognitionLabelPhoto()
+                        rlp.setMetadataId(metadataId)
+                        rlp.setArgusDetectionId(detectionId)
+                        rlp.setAutoTagged(true)
+                        rlp.setConfidence("0.0")
+                        if (personId != null) rlp.setRecognitionLabelId(personId)
+                        try { recognitionLabelPhotoRepository?.save(rlp) } catch (_: Exception) {}
+                    }
+
+                    faces.add(mapOf(
+                        "detectionId" to detectionId,
+                        "personId" to personId,
+                        "personName" to personName,
+                        "bbox" to bbox,
+                        "cropUrl" to cropUrl,
+                        "autoTagged" to true
+                    ))
+                }
+            }
+            response["faces"] = faces
+            mapper.writeValueAsString(response)
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error detecting faces for $metadataId: ${e.localizedMessage}")
+            response["faces"] = emptyList<Any>()
+            mapper.writeValueAsString(response)
+        }
+    }
+
+    // Label a specific Argus detection as a person, then update Shashin's recognitionlabelphoto.
+    @PostMapping("/person/faces/label")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @ResponseBody
+    fun labelFace(model: Model, @RequestBody body: JsonNode, locale: Locale): String {
+        val response = mutableMapOf<String, Any?>()
+        val settings = model.getAttribute("settings") as Settings
+        val detectionId = body["detectionId"]?.asText()?.takeIf { it.isNotBlank() }
+            ?: return mapper.writeValueAsString(response.also { it["status"] = ApiResponse.FAIL.status })
+        val metadataId = body["metadataId"]?.asText()?.takeIf { it.isNotBlank() }
+            ?: return mapper.writeValueAsString(response.also { it["status"] = ApiResponse.FAIL.status })
+        val personId = body["personId"]?.takeUnless { it.isNull }?.asInt()
+        val personName = body["personName"]?.takeUnless { it.isNull }?.asText()?.trim()
+
+        var person = personId?.let { recognitionLabelRepository?.findById(it)?.orElse(null) }
+        if (person == null && !personName.isNullOrBlank()) {
+            person = recognitionLabelRepository?.findByNameIgnoreCase(personName) ?: run {
+                val newP = RecognitionLabel()
+                newP.setName(personName)
+                newP.setCreatedAt(getCurrentTimestamp())
+                newP.setModifiedAt(getCurrentTimestamp())
+                recognitionLabelRepository?.save(newP)
+            }
+        }
+        if (person == null) {
+            response["status"] = ApiResponse.FAIL.status
+            response["msg"] = "Person not found"
+            return mapper.writeValueAsString(response)
+        }
+
+        if (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank()) {
+            try {
+                val webClient = WebClient.create(settings.getArgusServer()!!)
+                val labelBody = mapper.writeValueAsString(mapOf("label" to person.getName()))
+                val labelResp = webClient.put()
+                    .uri("api/detections/$detectionId/label")
+                    .header("X-API-Key", settings.getArgusKey())
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .bodyValue(labelBody)
+                    .retrieve().bodyToMono(String::class.java).block()
+
+                val labelJson = mapper.readTree(labelResp ?: "{}")
+                val returnedIdentityId = labelJson["identity_id"]?.takeUnless { it.isNull }?.asInt()
+                if (returnedIdentityId != null && person.getArgusIdentityId() != returnedIdentityId) {
+                    person.setArgusIdentityId(returnedIdentityId)
+                    recognitionLabelRepository?.save(person)
+                    try {
+                        val extRefBody = mapper.writeValueAsString(mapOf("external_ref" to person.getId().toString()))
+                        webClient.put()
+                            .uri("api/identities/$returnedIdentityId/external_ref")
+                            .header("X-API-Key", settings.getArgusKey())
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                            .bodyValue(extRefBody)
+                            .retrieve().bodyToMono(String::class.java).block()
+                    } catch (_: Exception) {}
+                }
+                try {
+                    webClient.post().uri("api/review/$detectionId/confirm")
+                        .header("X-API-Key", settings.getArgusKey())
+                        .retrieve().bodyToMono(String::class.java).block()
+                } catch (_: Exception) {}
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error labeling detection $detectionId: ${e.localizedMessage}")
+            }
+        }
+
+        val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: RecognitionLabelPhoto().also {
+            it.setMetadataId(metadataId)
+            it.setArgusDetectionId(detectionId)
+        }
+        rlp.setRecognitionLabelId(person.getId())
+        rlp.setConfidence("0.0")
+        rlp.setAutoTagged(false)
+        try { recognitionLabelPhotoRepository?.save(rlp) } catch (_: Exception) {}
+
+        response["status"] = ApiResponse.SUCCESS.status
+        response["msg"] = "Labeled as ${person.getName()}"
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/person/argus/reconcile"], method = [RequestMethod.POST], produces = ["application/json"])
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
