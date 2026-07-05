@@ -16,6 +16,23 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 
+## [2.19.2] - 2026-07-04
+### Changed
+- Face tagging now uses detect-then-label flow: POST detect (no label) → PUT label on specific face, preventing all faces in a group photo from being enrolled as the same person
+- People page photo count now uses `COUNT(DISTINCT)` to match the count shown on the person detail page
+- People page now shows all tagged photos without confidence threshold filtering, consistent with the person detail page
+- Settings page layout: Pagination, Notification, and Search History limits moved to a single row (col-4 each); Match Scan and Training Data limits on the next row (col-6 each)
+
+### Removed
+- Facial Recognition Confidence Threshold setting (now managed in Argus)
+- Object Recognition Confidence Threshold setting (now managed in Argus)
+
+### Fixed
+- Argus gallery sync no longer deletes pending detections that are not yet enrolled, preventing valid face tags from being removed after a match scan
+- People page match badge no longer disappears after clicking into a person whose review queue was fetched at a different time
+- Duplicate `recognitionlabelphoto` rows prevented by UNIQUE constraint on `(recognition_label_id, metadata_id)`
+- `schema.sql` corrected to reflect actual Hibernate-generated column names for the `recognitionlabelphoto` table
+
 ## [2.19.1] - 2026-07-01
 ### Added
 - Argus reconcile runs automatically after Match Indexing, Media Indexing, and the scheduled face scan

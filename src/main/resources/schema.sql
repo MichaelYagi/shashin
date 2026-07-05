@@ -146,7 +146,7 @@ CREATE TABLE `recognitionlabelphoto` (
                                          `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                                          `recognition_label_id` INTEGER,
                                          `metadata_id` VARCHAR(36),
-                                         `compreFaceImageId` VARCHAR(36),
+                                         `compre_face_image_id` VARCHAR(36),
                                          `confidence` VARCHAR(36) NOT NULL DEFAULT '99.0',
                                          `auto_tagged` BOOLEAN NOT NULL DEFAULT FALSE,
                                          UNIQUE(`recognition_label_id`,`metadata_id`) ON CONFLICT IGNORE,
