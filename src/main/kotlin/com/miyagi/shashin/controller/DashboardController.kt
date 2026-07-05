@@ -222,7 +222,6 @@ class DashboardController(
             // Site stats
 //        val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
             val peopleList = metadataRepository.findMetadataByPeople(
-                settings?.getRecognitionConfidenceThreshold()!!,
                 TextUtils.getObjectName()
             )
             val favoritesCount = favoriteRepository.count()

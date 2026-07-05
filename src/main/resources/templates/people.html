@@ -18,6 +18,7 @@
                     <button class="btn btn-outline-secondary btn-sm" id="reconcileArgusBtn">Sync with Argus</button>
                     <span id="reconcileArgusStatus" class="ms-2 small text-muted"></span>
                 </div>
+                <p class="small text-muted mb-3"><strong>Sync with Argus</strong> links Shashin people to Argus identities and updates name and photo-tag assignments. It does not re-detect faces in photos. To re-detect faces in a specific photo, use <strong>Reprocess image</strong> in Argus and enable <em>Replace existing detections</em>.</p>
             </th:block>
 
             <th:block th:if="${not #lists.isEmpty(peopleList)}">

@@ -81,8 +81,6 @@ CREATE TABLE `folderdata` (
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
                             `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                            `recognitionConfidenceThreshold` VARCHAR(36) NOT NULL DEFAULT '0.8',
-                            `objectRecognitionConfidenceThreshold` VARCHAR(36) NOT NULL DEFAULT '0.45',
                             `trainingDataLimit` INTEGER NOT NULL DEFAULT 100,
                             `matchScanLimit` INTEGER NOT NULL DEFAULT 30,
                             `queryLimit` INTEGER NOT NULL DEFAULT 30,

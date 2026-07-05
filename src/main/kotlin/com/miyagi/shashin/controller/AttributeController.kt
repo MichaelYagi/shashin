@@ -77,10 +77,6 @@ class AttributeController(
     private var notificationLimitProperty: Int = 20,
     @Value("\${app.config.default.searchhistorylimit}")
     private var searchHistoryLimitProperty: Int = 10,
-    @Value("\${app.config.default.recognitionConfidenceThreshold}")
-    private var recognitionConfidenceThresholdProperty: String,
-    @Value("\${app.config.default.objectRecognitionConfidenceThreshold}")
-    private var objectRecognitionConfidenceThresholdProperty: String,
     @Value("\${server.port}")
     private var portProperty: String,
     @Value("\${app.config.default.scheduledTime}")
@@ -322,8 +318,6 @@ class AttributeController(
             settingsObj.setScheduledTime(scheduledTime)
             model["objectRecogEnabled"] = false
             model["facialRecogEnabled"] = false
-            settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
-            settingsObj.setObjectRecognitionConfidenceThreshold(objectRecognitionConfidenceThresholdProperty)
             settingsObj.setSidecarSizeK(0)
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())

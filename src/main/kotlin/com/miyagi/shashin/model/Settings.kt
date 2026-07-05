@@ -12,10 +12,6 @@ class Settings {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Int = 0
     @NotBlank
-    private var recognitionConfidenceThreshold: String? = null
-    @NotBlank
-    private var objectRecognitionConfidenceThreshold: String? = null
-    @NotBlank
     private var argusServer: String? = null
     @NotBlank
     private var argusKey: String? = null
@@ -63,22 +59,6 @@ class Settings {
 
     fun setScheduledTime(scheduledTime: String?) {
         this.scheduledTime = scheduledTime
-    }
-
-    fun getRecognitionConfidenceThreshold(): String? {
-        return this.recognitionConfidenceThreshold
-    }
-
-    fun setRecognitionConfidenceThreshold(recognitionConfidenceThreshold: String?) {
-        this.recognitionConfidenceThreshold = recognitionConfidenceThreshold
-    }
-
-    fun getObjectRecognitionConfidenceThreshold(): String? {
-        return this.objectRecognitionConfidenceThreshold
-    }
-
-    fun setObjectRecognitionConfidenceThreshold(objectRecognitionConfidenceThreshold: String?) {
-        this.objectRecognitionConfidenceThreshold = objectRecognitionConfidenceThreshold
     }
 
     fun getArgusKey(): String? {
@@ -231,8 +211,6 @@ class Settings {
         map["argusKey"] = this.argusKey
         map["objectDetection"] = this.objectDetection
         map["facialDetection"] = this.facialDetection
-        map["recognitionConfidenceThreshold"] = this.recognitionConfidenceThreshold
-        map["objectRecognitionConfidenceThreshold"] = this.objectRecognitionConfidenceThreshold
         map["queryLimit"] = this.queryLimit
         map["matchScanLimit"] = this.matchScanLimit
         map["trainingDataLimit"] = this.trainingDataLimit

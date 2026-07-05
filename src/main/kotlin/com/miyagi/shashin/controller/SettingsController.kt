@@ -321,7 +321,6 @@ class SettingsController(
         @RequestParam("mediaExcludeDirList") mediaExcludeDirList: String,
         @RequestParam("argusServer") argusServer: String,
         @RequestParam("argusKey") argusKey: String,
-        @RequestParam("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,
         @RequestParam("queryLimit") queryLimit: Int,
         @RequestParam("matchScanLimit") matchScanLimit: Int,
         @RequestParam("trainingDataLimit") trainingDataLimit: Int,
@@ -475,9 +474,6 @@ class SettingsController(
         }
         if (uploadMediaDirectory?.isBlank() == true) {
             settings?.setUploadMediaDirectory(null)
-        }
-        if (recognitionConfidenceThreshold.isNotEmpty()) {
-            settings?.setRecognitionConfidenceThreshold(recognitionConfidenceThreshold)
         }
         if (queryLimit > 0) {
             settings?.setQueryLimit(queryLimit)

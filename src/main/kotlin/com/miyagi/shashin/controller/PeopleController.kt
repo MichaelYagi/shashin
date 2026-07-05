@@ -304,9 +304,9 @@ class PeopleController(
         if (currentUserObj != null) {
             var personCount = 0
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
+                personCount = metadataRepository?.countByPhotoAlbumByPerson(personId,currentUserObj.getId())!!
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
+                personCount = metadataRepository?.countByMetadataByPerson(personId)!!
             }
             if (personCount > 0) {
                 counts["person"] = personCount
@@ -497,9 +497,9 @@ class PeopleController(
         if (currentUserObj != null) {
             var personCount = 0
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
+                personCount = metadataRepository?.countByPhotoAlbumByPerson(personId,currentUserObj.getId())!!
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
+                personCount = metadataRepository?.countByMetadataByPerson(personId)!!
             }
             if (personCount > 0) {
                 counts["person"] = personCount
@@ -863,15 +863,11 @@ class PeopleController(
 
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
                 peopleList = metadataRepository?.findAlbumPhotoByPeople(
-//                    settings.getRecognitionConfidenceThreshold()!!,
-                    "1.0",
                     currentUserObj.getId(),
                     TextUtils.getObjectName()
                 )
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 peopleList = metadataRepository?.findMetadataByPeople(
-//                    settings.getRecognitionConfidenceThreshold()!!,
-                    "1.0",
                     TextUtils.getObjectName()
                 )
             }
@@ -1011,7 +1007,6 @@ class PeopleController(
 
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
                 metadataList = metadataRepository?.findAlbumPhotoByPerson(
-                    settings.getRecognitionConfidenceThreshold()!!,
                     personId,
                     currentUserObj.getId(),
                     pageValue,
@@ -1024,7 +1019,6 @@ class PeopleController(
                 )
             ) {
                 metadataList = metadataRepository?.findMetadataByPerson(
-                    settings.getRecognitionConfidenceThreshold()!!,
                     personId,
                     pageValue,
                     queryLimit
@@ -1089,7 +1083,6 @@ class PeopleController(
             var metadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
                 metadataList = metadataRepository?.findAlbumPhotoByPerson(
-                    settings.getRecognitionConfidenceThreshold()!!,
                     personId,
                     currentUserObj.getId(),
                     pageValue,
@@ -1103,24 +1096,7 @@ class PeopleController(
                     response["recognitionLabels"] = recognitionLabels
                 }
 
-//                metadataList = if (module == "person") {
-//                    metadataRepository?.findMetadataByPersonByModified(
-//                        settings.getRecognitionConfidenceThreshold()!!,
-//                        personId,
-//                        pageValue,
-//                        size
-//                    )
-//                } else {
-//                    metadataRepository?.findMetadataByPerson(
-//                        settings.getRecognitionConfidenceThreshold()!!,
-//                        personId,
-//                        pageValue,
-//                        size
-//                    )
-//                }
-
                 metadataList = metadataRepository?.findMetadataByPerson(
-                    settings.getRecognitionConfidenceThreshold()!!,
                     personId,
                     pageValue,
                     size
@@ -1135,9 +1111,9 @@ class PeopleController(
             if (metadataList != null && metadataList.count() > 0) {
                 var personCount = 0
                 if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                    personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
+                    personCount = metadataRepository?.countByPhotoAlbumByPerson(personId,currentUserObj.getId())!!
                 } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                    personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
+                    personCount = metadataRepository?.countByMetadataByPerson(personId)!!
                 }
                 if (personCount > 0) {
                     counts["person"] = personCount
