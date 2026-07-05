@@ -380,7 +380,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE description IS NOT NULL AND description != \"\" AND year = :year AND month = :month AND day = :day AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllByDescriptionAndYearAndMonthAndDay(@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<Metadata>
 
-   @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(*) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != :objectName AND m.hidden = 0 GROUP BY rl.id", nativeQuery = true)
+   @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(DISTINCT m.id) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != :objectName AND m.hidden = 0 GROUP BY rl.id", nativeQuery = true)
    fun findMetadataByPeople(@Param("objectName") objectName: String): MutableIterable<MetadataPeople>
 
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)

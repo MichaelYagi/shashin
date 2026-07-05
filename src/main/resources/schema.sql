@@ -144,14 +144,14 @@ CREATE TABLE `recognitionlabel` (
 DROP TABLE IF EXISTS `recognitionlabelphoto`;
 CREATE TABLE `recognitionlabelphoto` (
                                          `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                                         `recognitionLabelId` INTEGER,
-                                         `metadataId` VARCHAR(36),
+                                         `recognition_label_id` INTEGER,
+                                         `metadata_id` VARCHAR(36),
                                          `compreFaceImageId` VARCHAR(36),
-                                         `confidence` VARCHAR(36) NOT NULL DEFAULT '99.0', -- 99.0 to be labelled, -1.0 not a face
-                                         `autoTagged` BOOLEAN NOT NULL DEFAULT FALSE,
-                                         UNIQUE(`recognitionLabelId`,`metadataId`) ON CONFLICT IGNORE,
-                                         FOREIGN KEY (`recognitionLabelId`) REFERENCES recognitionlabel(`id`),
-                                         FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`)
+                                         `confidence` VARCHAR(36) NOT NULL DEFAULT '99.0',
+                                         `auto_tagged` BOOLEAN NOT NULL DEFAULT FALSE,
+                                         UNIQUE(`recognition_label_id`,`metadata_id`) ON CONFLICT IGNORE,
+                                         FOREIGN KEY (`recognition_label_id`) REFERENCES recognitionlabel(`id`),
+                                         FOREIGN KEY (`metadata_id`) REFERENCES metadata(`id`)
 );
 
 DROP TABLE IF EXISTS `user`;
