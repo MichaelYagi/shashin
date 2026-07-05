@@ -17,6 +17,11 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 
 ## [2.19.2] - 2026-07-04
+### Added
+- Ollama vision model integration for generating photo descriptions and keyword tags
+- Ollama falls back to Argus object detection when unavailable
+- Ollama URL and vision model configurable in Settings
+
 ### Changed
 - Face tagging now uses detect-then-label flow: POST detect (no label) → PUT label on specific face, preventing all faces in a group photo from being enrolled as the same person
 - People page photo count now uses `COUNT(DISTINCT)` to match the count shown on the person detail page
