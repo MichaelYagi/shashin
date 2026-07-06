@@ -15,6 +15,7 @@ class RecognitionLabel {
     private var name: String? = null
     private var coverUrl: String? = null
     private var argusIdentityId: Int? = null
+    private var argusThumbnailPath: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -50,6 +51,14 @@ class RecognitionLabel {
 
     fun setArgusIdentityId(argusIdentityId: Int?) {
         this.argusIdentityId = argusIdentityId
+    }
+
+    fun getArgusThumbnailPath(): String? {
+        return this.argusThumbnailPath
+    }
+
+    fun setArgusThumbnailPath(argusThumbnailPath: String?) {
+        this.argusThumbnailPath = argusThumbnailPath
     }
 
     fun getCreatedAt(): String? {

@@ -29,6 +29,28 @@ class ArgusReconcile(
             val argusServer = settings.getArgusServer()!!.trimEnd('/')
             val argusIdentityIds = mutableSetOf<Int>()
 
+            // Fetch summary once to get thumbnail_url per identity (used for People page covers)
+            val summaryThumbnailPaths = mutableMapOf<Int, String>()
+            try {
+                val summaryJson = webClient.get()
+                    .uri("api/identities/summary")
+                    .header("X-API-Key", apiKey)
+                    .retrieve().bodyToMono(String::class.java).block()
+                if (!summaryJson.isNullOrBlank()) {
+                    val summaryNode = mapper.readTree(summaryJson)
+                    val summaryItems = when {
+                        summaryNode.isArray -> summaryNode.toList()
+                        summaryNode.has("items") -> summaryNode["items"].toList()
+                        else -> emptyList()
+                    }
+                    for (item in summaryItems) {
+                        val id = item["id"]?.asInt() ?: continue
+                        val thumbUrl = item["thumbnail_url"]?.takeUnless { it.isNull }?.asText() ?: continue
+                        summaryThumbnailPaths[id] = thumbUrl
+                    }
+                }
+            } catch (_: Exception) {}
+
             // Paginate through all Argus identities.
             // GET /api/identities includes external_ref and supports cursor pagination.
             // GET /api/identities/summary does not include external_ref and has no cursor pagination.
@@ -99,6 +121,13 @@ class ArgusReconcile(
                     // Sync name Argus → Shashin if it drifted
                     if (argusName.isNotBlank() && !argusName.equals(person.getName(), ignoreCase = true)) {
                         person.setName(argusName)
+                        changed = true
+                    }
+
+                    // Sync Argus cover crop path
+                    val thumbPath = summaryThumbnailPaths[argusId]
+                    if (thumbPath != null && person.getArgusThumbnailPath() != thumbPath) {
+                        person.setArgusThumbnailPath(thumbPath)
                         changed = true
                     }
 

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -845,6 +846,37 @@ class PeopleController(
         return null
     }
 
+    @GetMapping("/people/{personId}/argus-crop")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @ResponseBody
+    fun getArgusPersonCrop(model: Model, @PathVariable personId: Int): ResponseEntity<ByteArray> {
+        val settings = model.getAttribute("settings") as Settings
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) {
+            return ResponseEntity.notFound().build()
+        }
+        val path = recognitionLabelRepository?.findById(personId)
+            ?.takeIf { it.isPresent }?.get()?.getArgusThumbnailPath()
+        if (path.isNullOrBlank()) return ResponseEntity.notFound().build()
+
+        return try {
+            val bytes = WebClient.create(settings.getArgusServer()!!)
+                .get()
+                .uri(path)
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve()
+                .bodyToMono(ByteArray::class.java)
+                .block() ?: return ResponseEntity.notFound().build()
+
+            ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .header(HttpHeaders.CACHE_CONTROL, "max-age=3600")
+                .body(bytes)
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error proxying Argus crop for person $personId: ${e.localizedMessage}")
+            ResponseEntity.notFound().build()
+        }
+    }
+
     @GetMapping("/people")
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun getPeople(model: Model, locale: Locale): String {
@@ -855,6 +887,7 @@ class PeopleController(
         model["counts"] = counts
         val coverUrls = HashMap<Int, String>()
         model["coverUrls"] = coverUrls
+        model["argusCoverPersonIds"] = emptySet<Int>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -876,8 +909,9 @@ class PeopleController(
                 // Matches badges reflect the Argus review queue (same source the Matches tab renders).
                 // Fetch the queue once and bucket by identity, and map each person to its argusIdentityId.
                 val reviewCountsByIdentity = countArgusReviewMatchesByIdentity(settings)
-                val argusIdByLabelId = recognitionLabelRepository?.findAll()
-                    ?.filterNotNull()?.associate { it.getId() to it.getArgusIdentityId() } ?: emptyMap()
+                val allLabels = recognitionLabelRepository?.findAll()?.filterNotNull() ?: emptyList()
+                val argusIdByLabelId = allLabels.associate { it.getId() to it.getArgusIdentityId() }
+                val argusCoverPersonIds = allLabels.filter { it.getArgusThumbnailPath() != null }.map { it.getId() }.toSet()
 
                 for (person in peopleList) {
                     var coverUrl = ""
@@ -900,6 +934,7 @@ class PeopleController(
                 }
                 model["coverUrls"] = coverUrls
                 model["counts"] = counts
+                model["argusCoverPersonIds"] = argusCoverPersonIds
             }
 
             if (peopleList != null && peopleList.count() > 0) {
