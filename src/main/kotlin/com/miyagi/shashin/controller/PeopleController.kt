@@ -859,7 +859,13 @@ class PeopleController(
         if (path.isNullOrBlank()) return ResponseEntity.notFound().build()
 
         return try {
-            val bytes = WebClient.create(settings.getArgusServer()!!)
+            val exchangeStrategies = org.springframework.web.reactive.function.client.ExchangeStrategies.builder()
+                .codecs { it.defaultCodecs().maxInMemorySize(10 * 1024 * 1024) }
+                .build()
+            val bytes = WebClient.builder()
+                .baseUrl(settings.getArgusServer()!!)
+                .exchangeStrategies(exchangeStrategies)
+                .build()
                 .get()
                 .uri(path)
                 .header("X-API-Key", settings.getArgusKey())
