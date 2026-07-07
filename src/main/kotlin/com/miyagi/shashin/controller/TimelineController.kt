@@ -3956,6 +3956,7 @@ class TimelineController(
                                                 .retrieve().bodyToMono(String::class.java).block()
 
                                             val detectJson = mapper2.readTree(detectRespStr ?: "{}")
+                                            val detectSourceImageId = detectJson["source_image_id"]?.takeUnless { it.isNull }?.asInt()?.toString()
                                             val faces = detectJson["faces"]
                                             if (faces != null && faces.size() == 1) {
                                                 // Exactly one face — safe to label it as this person
@@ -3985,6 +3986,7 @@ class TimelineController(
                                                         } catch (_: Exception) {}
                                                     }
                                                     recognitionLabelPhotoObj.setArgusDetectionId(detId)
+                                                    if (detectSourceImageId != null) recognitionLabelPhotoObj.setArgusSourceImageId(detectSourceImageId)
                                                 }
                                             }
                                             // Multiple faces: don't label any — user must assign per-face

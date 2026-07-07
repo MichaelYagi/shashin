@@ -1325,13 +1325,15 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             recognitionLabelRepository: RecognitionLabelRepository?,
             recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?,
             settings: Settings? = null,
-            webClient: WebClient? = null
+            webClient: WebClient? = null,
+            sourceImageId: String? = null
         ) {
             val detectionId = faceNode["detection_id"].asInt().toString()
             val rlp = RecognitionLabelPhoto()
             rlp.setMetadataId(metadataObj.getId())
             rlp.setArgusDetectionId(detectionId)
             rlp.setAutoTagged(true)
+            if (sourceImageId != null) rlp.setArgusSourceImageId(sourceImageId)
 
             val identityIdNode = faceNode.get("identity_id")
             if (identityIdNode != null && !identityIdNode.isNull) {
@@ -1428,10 +1430,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                 val jsonObj = mapper.readTree(response)
 
+                val sourceImageId = jsonObj["source_image_id"]?.takeUnless { it.isNull }?.asInt()?.toString()
                 val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
                 if (facesNode != null && facesNode.size() > 0) {
                     for (faceNode in facesNode) {
-                        storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, webClient)
+                        storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, webClient, sourceImageId)
                     }
                 } else {
                     val noFaceRecord = RecognitionLabelPhoto()
@@ -1604,6 +1607,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         if (jsonObj.has("faces") && jsonObj["faces"].size() > 0) {
                             val face = jsonObj["faces"][0]
                             responseData["detection_id"] = face["detection_id"].asInt()
+                            val srcImgId = jsonObj["source_image_id"]?.takeUnless { it.isNull }?.asInt()
+                            if (srcImgId != null) responseData["source_image_id"] = srcImgId
 
                             if (face.has("identity_id") && !face["identity_id"].isNull) {
                                 val identityId = face["identity_id"].asInt()
@@ -1739,10 +1744,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val jsonObj = mapper.readTree(response)
 
                 if (doFaces && recognitionLabelPhotoRepository != null) {
+                    val sourceImageId = jsonObj["source_image_id"]?.takeUnless { it.isNull }?.asInt()?.toString()
                     val facesNode = if (jsonObj.has("faces")) jsonObj["faces"] else null
                     if (facesNode != null && facesNode.size() > 0) {
                         for (faceNode in facesNode) {
-                            storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, webClient)
+                            storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, webClient, sourceImageId)
                             recognitionCount++
                         }
                     } else {

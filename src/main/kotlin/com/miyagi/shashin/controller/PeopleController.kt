@@ -357,7 +357,11 @@ class PeopleController(
                         val similarity = topMatch["similarity"]?.asDouble() ?: 0.0
                         val suggestedLabel = topMatch["label"]?.textValue() ?: ""
 
+                        val sourceImageIdStr = item["source_image_id"]?.takeUnless { it.isNull }?.asInt()?.toString()
                         val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                            ?: if (sourceImageIdStr != null)
+                                recognitionLabelPhotoRepository?.findFirstByArgusSourceImageIdAndMetadataIdIsNotNull(sourceImageIdStr)
+                               else null
                         val metadataObj = if (rlp?.getMetadataId() != null)
                             metadataRepository?.findByMetadataId(rlp.getMetadataId()!!) else null
                         val sourceImageUrl = item["source_image_url"]?.takeUnless { it.isNull }?.textValue()
@@ -1343,8 +1347,12 @@ class PeopleController(
                             val jsonRespObj = mapper.readTree(uploadResp)
 
                             var detectionId: String? = null
-                            if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("detection_id")) {
-                                detectionId = jsonRespObj["responseData"]["detection_id"].toString()
+                            var sourceImageId: String? = null
+                            if (jsonRespObj.has("responseData")) {
+                                val rd = jsonRespObj["responseData"]
+                                if (rd.has("detection_id")) detectionId = rd["detection_id"].toString()
+                                if (rd.has("source_image_id") && !rd["source_image_id"].isNull)
+                                    sourceImageId = rd["source_image_id"].asInt().toString()
                             }
 
                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
@@ -1352,6 +1360,7 @@ class PeopleController(
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             recognitionLabelPhotoObj.setConfidence("0.0")
                             recognitionLabelPhotoObj.setArgusDetectionId(detectionId)
+                            if (sourceImageId != null) recognitionLabelPhotoObj.setArgusSourceImageId(sourceImageId)
                             recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                         }
                     }
@@ -1530,6 +1539,8 @@ class PeopleController(
                         rlp.setAutoTagged(true)
                         rlp.setConfidence("0.0")
                         if (personId != null) rlp.setRecognitionLabelId(personId)
+                        jsonObj["source_image_id"]?.takeUnless { it.isNull }?.asInt()?.toString()
+                            ?.let { rlp.setArgusSourceImageId(it) }
                         try { recognitionLabelPhotoRepository?.save(rlp) } catch (_: Exception) {}
                     }
 

@@ -22,6 +22,7 @@ class RecognitionLabelPhoto {
     private var confidence: String? = null
     @NotBlank
     private var autoTagged: Boolean? = false
+    private var argusSourceImageId: String? = null
 
     fun RecognitionLabelPhoto() {}
 
@@ -71,6 +72,14 @@ class RecognitionLabelPhoto {
 
     fun setAutoTagged(autoTagged: Boolean?) {
         this.autoTagged = autoTagged
+    }
+
+    fun getArgusSourceImageId(): String? {
+        return this.argusSourceImageId
+    }
+
+    fun setArgusSourceImageId(argusSourceImageId: String?) {
+        this.argusSourceImageId = argusSourceImageId
     }
 
     override fun toString(): String {

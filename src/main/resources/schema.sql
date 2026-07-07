@@ -149,6 +149,7 @@ CREATE TABLE `recognitionlabelphoto` (
                                          `compre_face_image_id` VARCHAR(36),
                                          `confidence` VARCHAR(36) NOT NULL DEFAULT '99.0',
                                          `auto_tagged` BOOLEAN NOT NULL DEFAULT FALSE,
+                                         `argus_source_image_id` VARCHAR(36),
                                          UNIQUE(`recognition_label_id`,`metadata_id`) ON CONFLICT IGNORE,
                                          FOREIGN KEY (`recognition_label_id`) REFERENCES recognitionlabel(`id`),
                                          FOREIGN KEY (`metadata_id`) REFERENCES metadata(`id`)

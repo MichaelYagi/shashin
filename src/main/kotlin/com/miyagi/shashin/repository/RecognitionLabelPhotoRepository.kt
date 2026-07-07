@@ -38,6 +38,8 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
 
     fun findByArgusDetectionId(argusDetectionId: String): RecognitionLabelPhoto?
 
+    fun findFirstByArgusSourceImageIdAndMetadataIdIsNotNull(argusSourceImageId: String): RecognitionLabelPhoto?
+
     fun findByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): RecognitionLabelPhoto?
 
     fun findAllByRecognitionLabelId(recognitionLabelId: Int): List<RecognitionLabelPhoto?>
