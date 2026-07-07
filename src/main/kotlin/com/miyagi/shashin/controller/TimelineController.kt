@@ -3962,7 +3962,7 @@ class TimelineController(
                                                 val face = faces[0]
                                                 val detId = face["detection_id"]?.asInt()?.toString()
                                                 if (detId != null) {
-                                                    val labelBody = mapper2.writeValueAsString(mapOf("label" to recognitionLabelObj.getName()))
+                                                    val labelBody = mapper2.writeValueAsString(mapOf("label" to recognitionLabelObj.getName(), "enroll" to true))
                                                     val labelResp = wc.put()
                                                         .uri("api/detections/$detId/label")
                                                         .header("X-API-Key", settings.getArgusKey())
