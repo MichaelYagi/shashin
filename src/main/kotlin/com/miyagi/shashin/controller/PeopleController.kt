@@ -358,22 +358,27 @@ class PeopleController(
                         val suggestedLabel = topMatch["label"]?.textValue() ?: ""
 
                         val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
-                        if (rlp == null) logger.log(Level.INFO, "matches: no rlp for detection $detectionId, full item=${item}")
                         val metadataObj = if (rlp?.getMetadataId() != null)
                             metadataRepository?.findByMetadataId(rlp.getMetadataId()!!) else null
+                        val sourceImageUrl = item["source_image_url"]?.takeUnless { it.isNull }?.textValue()
 
                         val itemMap = mutableMapOf<String, Any>()
                         itemMap["detectionId"] = detectionId
                         itemMap["cropUrl"] = argusServer + cropUrl
                         itemMap["similarity"] = similarity
                         itemMap["suggestedLabel"] = suggestedLabel
-                        itemMap["hasPhoto"] = metadataObj != null
                         if (metadataObj != null) {
+                            itemMap["hasPhoto"] = true
                             itemMap["metadataId"] = metadataObj.getId() ?: ""
                             itemMap["thumbnailUrl"] = "/api/v1/thumbnails/225/${metadataObj.getId()}"
                             itemMap["year"] = metadataObj.getYear() ?: ""
                             itemMap["month"] = metadataObj.getMonth() ?: ""
                             itemMap["day"] = metadataObj.getDay() ?: ""
+                        } else if (sourceImageUrl != null) {
+                            itemMap["hasPhoto"] = true
+                            itemMap["thumbnailUrl"] = argusServer + sourceImageUrl
+                        } else {
+                            itemMap["hasPhoto"] = false
                         }
                         reviewItems.add(itemMap)
                     }
@@ -1580,15 +1585,12 @@ class PeopleController(
             try {
                 val webClient = WebClient.create(settings.getArgusServer()!!)
                 val labelBody = mapper.writeValueAsString(mapOf("label" to person.getName(), "enroll" to true))
-                logger.log(Level.INFO, "labelFace: sending to Argus detection $detectionId body=$labelBody")
                 val labelResp = webClient.put()
                     .uri("api/detections/$detectionId/label")
                     .header("X-API-Key", settings.getArgusKey())
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                     .bodyValue(labelBody)
                     .retrieve().bodyToMono(String::class.java).block()
-
-                logger.log(Level.INFO, "labelFace: Argus response=$labelResp")
                 val labelJson = mapper.readTree(labelResp ?: "{}")
                 val returnedIdentityId = labelJson["identity_id"]?.takeUnless { it.isNull }?.asInt()
                 if (returnedIdentityId != null && person.getArgusIdentityId() != returnedIdentityId) {

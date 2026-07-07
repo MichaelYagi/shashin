@@ -47,9 +47,13 @@
                                     </div>
                                     <div class="col-7">
                                         <th:block th:if="${item.hasPhoto}">
-                                            <div class="match-photo-link" style="cursor:pointer;"
+                                            <div th:if="${item.metadataId != null and item.metadataId != ''}"
+                                                 class="match-photo-link" style="cursor:pointer;"
                                                  th:data-metadata-id="${item.metadataId}"
                                                  th:data-src="${'/api/v1/thumbnails/original/'+item.metadataId}">
+                                                <img th:src="${item.thumbnailUrl}" class="img-fluid" style="height:140px;object-fit:cover;width:100%;" alt="Photo">
+                                            </div>
+                                            <div th:unless="${item.metadataId != null and item.metadataId != ''}">
                                                 <img th:src="${item.thumbnailUrl}" class="img-fluid" style="height:140px;object-fit:cover;width:100%;" alt="Photo">
                                             </div>
                                         </th:block>
