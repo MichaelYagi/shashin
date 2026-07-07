@@ -1168,7 +1168,7 @@ class PeopleController(
                 )
                 response["faceRecogServicesAvailable"] = faceRecogServicesAvailable
                 val argusId = recognitionLabel?.get()?.getArgusIdentityId()
-                val galleryJson2 = getArgusGalleryForIdentity(settings, argusId)
+                val galleryJson2 = getArgusGalleryForIdentity(settings, argusId, enrolled = true)
                 if (!galleryJson2.isNullOrBlank()) {
                     val gJson = mapper.readTree(galleryJson2)
                     if (gJson.has("items")) counts["training"] = gJson["items"].size()
@@ -1578,7 +1578,7 @@ class PeopleController(
         if (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank()) {
             try {
                 val webClient = WebClient.create(settings.getArgusServer()!!)
-                val labelBody = mapper.writeValueAsString(mapOf("label" to person.getName()))
+                val labelBody = mapper.writeValueAsString(mapOf("label" to person.getName(), "enroll" to true))
                 val labelResp = webClient.put()
                     .uri("api/detections/$detectionId/label")
                     .header("X-API-Key", settings.getArgusKey())
@@ -1601,11 +1601,6 @@ class PeopleController(
                             .retrieve().bodyToMono(String::class.java).block()
                     } catch (_: Exception) {}
                 }
-                try {
-                    webClient.post().uri("api/review/$detectionId/confirm")
-                        .header("X-API-Key", settings.getArgusKey())
-                        .retrieve().bodyToMono(String::class.java).block()
-                } catch (_: Exception) {}
             } catch (e: Exception) {
                 logger.log(Level.WARNING, "Error labeling detection $detectionId: ${e.localizedMessage}")
             }
