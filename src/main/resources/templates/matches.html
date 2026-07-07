@@ -242,7 +242,12 @@
             if (q.length < 1) { $('#reassignSuggestions').hide().empty(); return; }
             reassignDebounce = setTimeout(async () => {
                 const res = await fetch('/person/search?q=' + encodeURIComponent(q));
-                const data = await res.json();
+                const ql = q.toLowerCase();
+                const data = (await res.json()).sort((a, b) => {
+                    const as = a.name.toLowerCase().startsWith(ql), bs = b.name.toLowerCase().startsWith(ql);
+                    if (as !== bs) return as ? -1 : 1;
+                    return a.name.localeCompare(b.name);
+                });
                 $('#reassignSuggestions').empty();
                 data.forEach(p => {
                     $('<button class="list-group-item list-group-item-action py-1" style="font-size:0.85rem;">')

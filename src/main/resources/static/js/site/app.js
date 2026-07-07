@@ -825,6 +825,20 @@
         return shashin.autocompleteSplit(term).pop();
     };
 
+    // Sort autocomplete results prefix-first: items whose display text starts with the
+    // query appear before items that merely contain it, then alphabetically within each group.
+    shashin.prefixFirstSort = function(items, term) {
+        const q = term.toLowerCase();
+        return items.slice().sort(function(a, b) {
+            const aVal = (typeof a === 'string' ? a : (a.label || a.value || '')).toLowerCase();
+            const bVal = (typeof b === 'string' ? b : (b.label || b.value || '')).toLowerCase();
+            const aStarts = aVal.startsWith(q);
+            const bStarts = bVal.startsWith(q);
+            if (aStarts !== bStarts) return aStarts ? -1 : 1;
+            return aVal.localeCompare(bVal);
+        });
+    };
+
     shashin.processBatchAlbumList = function(data, albumInputVal) {
         if (albumInputVal === undefined) {
             albumInputVal = "";

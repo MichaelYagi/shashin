@@ -584,9 +584,10 @@
                     }
                 });
 
-                let filter = $.ui.autocomplete.filter(
-                    source,
-                    shashin.autocompleteExtractLast(request.term)
+                const autoTerm = shashin.autocompleteExtractLast(request.term);
+                let filter = shashin.prefixFirstSort(
+                    $.ui.autocomplete.filter(source, autoTerm),
+                    autoTerm
                 );
 
                 if (typeof resultLimit !== "undefined" && Number.isInteger(resultLimit)) {
