@@ -376,6 +376,7 @@ class PeopleController(
                             itemMap["day"] = metadataObj.getDay() ?: ""
                         } else if (sourceImageUrl != null) {
                             itemMap["hasPhoto"] = true
+                            itemMap["metadataId"] = ""
                             itemMap["thumbnailUrl"] = argusServer + sourceImageUrl
                         } else {
                             itemMap["hasPhoto"] = false
