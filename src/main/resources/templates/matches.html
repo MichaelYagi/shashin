@@ -53,7 +53,9 @@
                                                  th:data-src="${'/api/v1/thumbnails/original/'+item.metadataId}">
                                                 <img th:src="${item.thumbnailUrl}" class="img-fluid" style="height:140px;object-fit:cover;width:100%;" alt="Photo">
                                             </div>
-                                            <div th:unless="${item.metadataId != null and item.metadataId != ''}">
+                                            <div th:unless="${item.metadataId != null and item.metadataId != ''}"
+                                                 class="match-photo-link" style="cursor:pointer;"
+                                                 th:data-src="${item.thumbnailUrl}">
                                                 <img th:src="${item.thumbnailUrl}" class="img-fluid" style="height:140px;object-fit:cover;width:100%;" alt="Photo">
                                             </div>
                                         </th:block>
