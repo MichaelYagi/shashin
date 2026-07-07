@@ -906,7 +906,7 @@ class PeopleController(
                     TextUtils.getObjectName()
                 )
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                peopleList = metadataRepository?.findMetadataByPeople(
+                peopleList = metadataRepository?.findAllPeopleWithTagCount(
                     TextUtils.getObjectName()
                 )
             }
