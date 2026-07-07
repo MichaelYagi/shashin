@@ -358,6 +358,7 @@ class PeopleController(
                         val suggestedLabel = topMatch["label"]?.textValue() ?: ""
 
                         val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                        if (rlp == null) logger.log(Level.INFO, "matches: no rlp for detection $detectionId, full item=${item}")
                         val metadataObj = if (rlp?.getMetadataId() != null)
                             metadataRepository?.findByMetadataId(rlp.getMetadataId()!!) else null
 
