@@ -1579,6 +1579,7 @@ class PeopleController(
             try {
                 val webClient = WebClient.create(settings.getArgusServer()!!)
                 val labelBody = mapper.writeValueAsString(mapOf("label" to person.getName(), "enroll" to true))
+                logger.log(Level.INFO, "labelFace: sending to Argus detection $detectionId body=$labelBody")
                 val labelResp = webClient.put()
                     .uri("api/detections/$detectionId/label")
                     .header("X-API-Key", settings.getArgusKey())
@@ -1586,6 +1587,7 @@ class PeopleController(
                     .bodyValue(labelBody)
                     .retrieve().bodyToMono(String::class.java).block()
 
+                logger.log(Level.INFO, "labelFace: Argus response=$labelResp")
                 val labelJson = mapper.readTree(labelResp ?: "{}")
                 val returnedIdentityId = labelJson["identity_id"]?.takeUnless { it.isNull }?.asInt()
                 if (returnedIdentityId != null && person.getArgusIdentityId() != returnedIdentityId) {
