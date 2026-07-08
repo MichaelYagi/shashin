@@ -9,7 +9,9 @@ import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.MessageSource
+import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.text.SimpleDateFormat
@@ -129,6 +131,25 @@ class ScheduledTasks(
                 }
             }
         }
+    }
+
+    // Sync Argus identity data on startup and every 15 minutes as a safety net for Argus-side changes
+    @EventListener(ApplicationReadyEvent::class)
+    fun argusReconcileOnStartup() {
+        val settings = settingsRepository?.findFirstByOrderByIdAsc() ?: return
+        if (settings.getFacialDetection() != true ||
+            settings.getArgusServer().isNullOrBlank() ||
+            settings.getArgusKey().isNullOrBlank()) return
+        Thread { argusReconcile?.run(settings) }.start()
+    }
+
+    @Scheduled(cron = "0 */15 * * * *", zone="GMT")
+    fun argusReconcileJob() {
+        val settings = settingsRepository?.findFirstByOrderByIdAsc() ?: return
+        if (settings.getFacialDetection() != true ||
+            settings.getArgusServer().isNullOrBlank() ||
+            settings.getArgusKey().isNullOrBlank()) return
+        Thread { argusReconcile?.run(settings) }.start()
     }
 
     // Configured hour to scan faces

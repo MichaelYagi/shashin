@@ -78,6 +78,7 @@ class TimelineController(
     private var recognitionLabelRepository: RecognitionLabelRepository? = null,
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
     private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null,
+    private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null,
     var messageSource: MessageSource? = null,
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null,
@@ -1664,13 +1665,10 @@ class TimelineController(
                 val taggedPeople = metadataMap["tagpeople"].toString()
                 val isObject = metadataMap["isObject"].toString().toBoolean()
 
-                processPeople(
-                    model.getAttribute("settings") as Settings,
-                    metadataObj.get(),
-                    taggedPeople,
-                    isObject,
-                    false
-                )
+                val settingsForPeople = model.getAttribute("settings") as Settings
+                if (processPeople(settingsForPeople, metadataObj.get(), taggedPeople, isObject, false)) {
+                    Thread { argusReconcile?.run(settingsForPeople) }.start()
+                }
 
                 cleanupOrphanedSubjects(model.getAttribute("settings") as Settings)
                 metricsUtil.end()
@@ -2539,13 +2537,10 @@ class TimelineController(
                             }
                         }
 
-                        processPeople(
-                            model.getAttribute("settings") as Settings,
-                            metadata,
-                            recognitionLabelNames.toString(),
-                            isObject,
-                            addToPeople
-                        )
+                        val settingsForBulkPeople = model.getAttribute("settings") as Settings
+                        if (processPeople(settingsForBulkPeople, metadata, recognitionLabelNames.toString(), isObject, addToPeople)) {
+                            Thread { argusReconcile?.run(settingsForBulkPeople) }.start()
+                        }
 
                         if (dayTaken != null) {
                             metadata.setDay(dayTaken)
@@ -3835,8 +3830,9 @@ class TimelineController(
         }
     }
 
-    private fun processPeople(settings: Settings, metadataObj: Metadata?, taggedPeople: String?, isObject: Boolean, addPerson: Boolean) {
+    private fun processPeople(settings: Settings, metadataObj: Metadata?, taggedPeople: String?, isObject: Boolean, addPerson: Boolean): Boolean {
         if (metadataObj != null) {
+            var argusModified = false
             val metadataId = metadataObj.getId()
 
             // Snapshot argusDetectionIds from manually-tagged records BEFORE any delete,
@@ -3942,6 +3938,7 @@ class TimelineController(
                                     // PUT /api/detections/{id}/label for each face. This prevents the
                                     // full-photo+label call from tagging every face in a group photo as
                                     // this one person.
+                                    argusModified = true
                                     try {
                                         val mapper2 = com.fasterxml.jackson.databind.ObjectMapper()
                                         val wc = org.springframework.web.reactive.function.client.WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
@@ -4025,7 +4022,9 @@ class TimelineController(
                 }
 
             }
+            return argusModified
         }
+        return false
     }
 
     fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, argusDetectionIdMap: MutableMap<String, Any?>) {
