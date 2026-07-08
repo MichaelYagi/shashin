@@ -74,6 +74,7 @@ class ArgusReconcile(
                     val argusId = identity["id"]?.asInt() ?: continue
                     val argusName = identity["label"]?.asText() ?: continue
                     val argusExternalRef = identity["external_ref"]?.takeUnless { it.isNull }?.asText()
+                    val identityThumbUrl = identity["thumbnail_url"]?.takeUnless { it.isNull }?.asText()
                     argusIdentityIds.add(argusId)
 
                     // Find existing Shashin person in priority order:
@@ -124,8 +125,8 @@ class ArgusReconcile(
                         changed = true
                     }
 
-                    // Sync Argus cover crop path
-                    val thumbPath = summaryThumbnailPaths[argusId]
+                    // Sync Argus cover crop path — prefer summary lookup, fall back to per-identity field
+                    val thumbPath = summaryThumbnailPaths[argusId] ?: identityThumbUrl
                     if (thumbPath != null && person.getArgusThumbnailPath() != thumbPath) {
                         person.setArgusThumbnailPath(thumbPath)
                         changed = true
