@@ -29,14 +29,20 @@ class ArgusReconcile(
             val argusServer = settings.getArgusServer()!!.trimEnd('/')
             val argusIdentityIds = mutableSetOf<Int>()
 
-            // Fetch summary once to get thumbnail_url per identity (used for People page covers)
+            // Fetch summary (paginated) to get thumbnail_url per identity (used for People page covers)
             val summaryThumbnailPaths = mutableMapOf<Int, String>()
             try {
-                val summaryJson = webClient.get()
-                    .uri("api/identities/summary")
-                    .header("X-API-Key", apiKey)
-                    .retrieve().bodyToMono(String::class.java).block()
-                if (!summaryJson.isNullOrBlank()) {
+                var summaryCursor: String? = null
+                do {
+                    val summaryUri = buildString {
+                        append("api/identities/summary")
+                        if (summaryCursor != null) append("?cursor=$summaryCursor")
+                    }
+                    val summaryJson = webClient.get()
+                        .uri(summaryUri)
+                        .header("X-API-Key", apiKey)
+                        .retrieve().bodyToMono(String::class.java).block()
+                    if (summaryJson.isNullOrBlank()) break
                     val summaryNode = mapper.readTree(summaryJson)
                     val summaryItems = when {
                         summaryNode.isArray -> summaryNode.toList()
@@ -48,7 +54,9 @@ class ArgusReconcile(
                         val thumbUrl = item["thumbnail_url"]?.takeUnless { it.isNull }?.asText() ?: continue
                         summaryThumbnailPaths[id] = thumbUrl
                     }
-                }
+                    val summaryHasMore = summaryNode["has_more"]?.asBoolean() ?: false
+                    summaryCursor = if (summaryHasMore) summaryNode["next_cursor"]?.textValue() else null
+                } while (summaryCursor != null)
             } catch (_: Exception) {}
 
             // Paginate through all Argus identities.
