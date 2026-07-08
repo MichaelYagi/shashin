@@ -336,12 +336,6 @@
                 data.galleryIndex = args.galleryIndex;
             }
 
-            if (args.hasOwnProperty("labelPhotoMap")) {
-                const labelPhotoMap = args.labelPhotoMap;
-                if (labelPhotoMap.hasOwnProperty(metadata.id) === true && labelPhotoMap[metadata.id].hasOwnProperty("isTagged") === true && labelPhotoMap[metadata.id].isTagged === true) {
-                    overlays.push("isTagged");
-                }
-            }
 
             if (args.hasOwnProperty("editControls") && args.editControls === true) {
                 overlays.push("isEditControls");

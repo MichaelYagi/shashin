@@ -106,11 +106,6 @@ class GalleryTemplates {
         `);
         }
 
-        if ($.inArray("isTagged", overlays) !== -1) {
-            icons.push(`
-            <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>
-        `);
-        }
 
         const iconHtml = icons.length > 0 ? `${icons.join('<br>\n')}<br>` : '';
 
