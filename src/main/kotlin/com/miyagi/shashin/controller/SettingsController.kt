@@ -1543,44 +1543,26 @@ class SettingsController(
         if (mediaDirs != null && mediaDirs.count() > 0) {
             totalMediaCount(mediaDirs)
 
-            var mediaDirNotFound = false
-            for (mediaDir in mediaDirs) {
-                val dir = Paths.get(mediaDir?.getDirectory()!!)
-                if (!Files.exists(dir)) {
-                    mediaDirNotFound = true
-                    break
-                }
+            if (!FileUtils.checkThreadFileAlive("shashinscan")) {
+                // Clean up any existing thread files
+                deleteThreadScan()
+
+                // Iterate through directory in another thread
+                scanProcess(settings, mediaDirs, mediaExcludeDirs, sidecarDir, compreFaceServerConnected, superAdmins, reindexFiles, addToAlbum, uploadUserId, locale)
+
+                return messageSource?.getMessage("main.pages.scan.started", null, locale).toString()
             }
 
-            if (!mediaDirNotFound) {
+            threadFileContent = FileUtils.readThreadFile("shashinscan")
+            var lmsg = messageSource?.getMessage("main.pages.scan.sip", null, locale).toString()
+            if (shouldStop.get()) {
+                lmsg = messageSource?.getMessage("main.pages.scan.cip", null, locale).toString()
+            }
 
-                if (!FileUtils.checkThreadFileAlive("shashinscan")) {
-                    // Clean up any existing thread files
-                    deleteThreadScan()
-
-                    // Iterate through directory in another thread
-                    scanProcess(settings, mediaDirs, mediaExcludeDirs, sidecarDir, compreFaceServerConnected, superAdmins, reindexFiles, addToAlbum, uploadUserId, locale)
-
-                    return messageSource?.getMessage("main.pages.scan.started", null, locale).toString()
-                }
-
-                threadFileContent = FileUtils.readThreadFile("shashinscan")
-                var lmsg = messageSource?.getMessage("main.pages.scan.sip", null, locale).toString()
-                if (shouldStop.get()) {
-                    lmsg = messageSource?.getMessage("main.pages.scan.cip", null, locale).toString()
-                }
-
-                return if (threadFileContent != null) {
-                    lmsg + " - " + threadFileContent.replace("\\", "/")
-                } else {
-                    lmsg
-                }
+            return if (threadFileContent != null) {
+                lmsg + " - " + threadFileContent.replace("\\", "/")
             } else {
-                logger.log(
-                    Level.INFO,
-                    "Directory not found"
-                )
-                return messageSource?.getMessage("main.pages.scan.dnf", null, locale).toString()
+                lmsg
             }
         } else {
             logger.log(
@@ -1608,6 +1590,13 @@ class SettingsController(
 
                     currentMediaCount = 15
                     totalMediaCount = 100
+
+                    // Configured dirs that actually exist on disk — used to distinguish
+                    // "file deleted within a live dir" (safe to remove) from "dir offline/unmounted"
+                    // (skip deletion so we don't wipe records for a temporarily unavailable drive)
+                    val existingMediaDirPaths = mediaDirs?.filter {
+                        it != null && Files.exists(Paths.get(it.getDirectory()!!))
+                    }?.map { it!!.getDirectory().toString() } ?: emptyList()
 
                     for (metadata in metadataList) {
                         if (shouldStop.get()) {
@@ -1648,7 +1637,8 @@ class SettingsController(
                                 }
 
                                 val checkFile = File(metadata.getPath()!!)
-                                if (!checkFile.exists() || !basePathExists || excludeBasePathExists) {
+                                val baseDirExistsOnDisk = existingMediaDirPaths.any { metadata.getPath()!!.startsWith(it) }
+                                if ((!checkFile.exists() && baseDirExistsOnDisk) || !basePathExists || excludeBasePathExists) {
                                     deleteCount++
 
                                     deletedList.add(metadata.getFileName().toString())
@@ -1903,7 +1893,7 @@ class SettingsController(
 
                     if (mediaDirs != null) {
                         for (mediaDir in mediaDirs) {
-                            if (mediaDir != null) {
+                            if (mediaDir != null && Files.exists(Paths.get(mediaDir.getDirectory()!!))) {
                                 getFile(
                                     mediaDir.getDirectory().toString(),
                                     threadFile,
