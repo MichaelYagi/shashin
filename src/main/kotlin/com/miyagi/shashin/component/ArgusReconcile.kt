@@ -185,9 +185,14 @@ class ArgusReconcile(
                                     record.setRecognitionLabelId(person.getId())
                                     recordChanged = true
                                 }
-                                val expectedAutoTagged = !enrolled
-                                if (record.getAutoTagged() != expectedAutoTagged) {
-                                    record.setAutoTagged(expectedAutoTagged)
+                                // enrolled=true → confirm as manually-tagged (auto_tagged=false)
+                                // enrolled=false → only mark auto-tagged if not already manually confirmed;
+                                //   never downgrade a manual tag (auto_tagged=false) to auto-tagged
+                                if (enrolled && record.getAutoTagged() != false) {
+                                    record.setAutoTagged(false)
+                                    recordChanged = true
+                                } else if (!enrolled && record.getAutoTagged() == null) {
+                                    record.setAutoTagged(true)
                                     recordChanged = true
                                 }
                                 if (recordChanged) {
