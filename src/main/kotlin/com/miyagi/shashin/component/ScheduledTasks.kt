@@ -137,18 +137,14 @@ class ScheduledTasks(
     @EventListener(ApplicationReadyEvent::class)
     fun argusReconcileOnStartup() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc() ?: return
-        if (settings.getFacialDetection() != true ||
-            settings.getArgusServer().isNullOrBlank() ||
-            settings.getArgusKey().isNullOrBlank()) return
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return
         Thread { argusReconcile?.run(settings) }.start()
     }
 
     @Scheduled(cron = "0 */15 * * * *", zone="GMT")
     fun argusReconcileJob() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc() ?: return
-        if (settings.getFacialDetection() != true ||
-            settings.getArgusServer().isNullOrBlank() ||
-            settings.getArgusKey().isNullOrBlank()) return
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return
         Thread { argusReconcile?.run(settings) }.start()
     }
 
