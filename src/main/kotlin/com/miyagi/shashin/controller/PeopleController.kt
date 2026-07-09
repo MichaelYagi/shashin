@@ -1160,6 +1160,18 @@ class PeopleController(
                 response["allAlbumList"] = albumList
             }
 
+            val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
+                settings.getArgusServer(),
+                settings.getArgusKey()
+            )
+            response["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+            val argusId = recognitionLabel?.get()?.getArgusIdentityId()
+            val galleryJson2 = getArgusGalleryForIdentity(settings, argusId, enrolled = true)
+            if (!galleryJson2.isNullOrBlank()) {
+                val gJson = mapper.readTree(galleryJson2)
+                if (gJson.has("items")) counts["training"] = gJson["items"].size()
+            }
+
             if (metadataList != null && metadataList.count() > 0) {
                 var personCount = 0
                 if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
@@ -1171,18 +1183,6 @@ class PeopleController(
                     counts["person"] = personCount
                 } else {
                     counts["person"] = 0
-                }
-
-                val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
-                    settings.getArgusServer(),
-                    settings.getArgusKey()
-                )
-                response["faceRecogServicesAvailable"] = faceRecogServicesAvailable
-                val argusId = recognitionLabel?.get()?.getArgusIdentityId()
-                val galleryJson2 = getArgusGalleryForIdentity(settings, argusId, enrolled = true)
-                if (!galleryJson2.isNullOrBlank()) {
-                    val gJson = mapper.readTree(galleryJson2)
-                    if (gJson.has("items")) counts["training"] = gJson["items"].size()
                 }
 
                 response["message"] = ""
