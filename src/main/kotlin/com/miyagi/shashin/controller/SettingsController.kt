@@ -1820,12 +1820,14 @@ class SettingsController(
                                                 if (recognitionLabelPhoto.getArgusDetectionId() != null && recognitionLabelPhoto.getArgusDetectionId()!!
                                                         .isNotBlank()
                                                 ) {
-                                                    webClient.delete()
-                                                        .uri("api/face_embeddings/${recognitionLabelPhoto.getArgusDetectionId()}")
-                                                        .header("X-API-Key", settings.getArgusKey())
-                                                        .retrieve()
-                                                        .bodyToMono(String::class.java)
-                                                        .block()
+                                                    try {
+                                                        webClient.delete()
+                                                            .uri("api/face_embeddings/${recognitionLabelPhoto.getArgusDetectionId()}")
+                                                            .header("X-API-Key", settings.getArgusKey())
+                                                            .retrieve()
+                                                            .bodyToMono(String::class.java)
+                                                            .block()
+                                                    } catch (_: Exception) {}
                                                 }
                                             }
                                         }
@@ -1840,8 +1842,9 @@ class SettingsController(
                                     // Check folder data
                                     val metadataFolderCount = metadataRepository.countAllByFolder(folder.toString())
                                     if (metadataFolderCount == 0) {
-                                        val folderData = folderDataRepository!!.findByFolder(folder.toString())
-                                        folderDataRepository.deleteById(folderData.getId()!!)
+                                        val folderData = folderDataRepository?.findByFolder(folder.toString())
+                                        val folderDataId = folderData?.getId()
+                                        if (folderDataId != null) folderDataRepository?.deleteById(folderDataId)
                                     }
 
                                     logger.log(
