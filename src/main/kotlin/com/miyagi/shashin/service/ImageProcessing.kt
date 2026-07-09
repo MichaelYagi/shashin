@@ -1583,7 +1583,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             uploadResponse["msg"] = ""
             uploadResponse["status"] = ApiResponse.FAIL.status
 
-            if (settings.getFacialDetection() == true && NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
+            if (NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
                 if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
                     try {
                         val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
@@ -1655,7 +1655,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             recognitionResponse["msg"] = ""
             recognitionResponse["status"] = ApiResponse.FAIL.status
 
-            if (settings.getFacialDetection() == true && NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
+            if (NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
 
                 val response: String?
 

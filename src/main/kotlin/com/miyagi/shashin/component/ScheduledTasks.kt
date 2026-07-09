@@ -101,7 +101,7 @@ class ScheduledTasks(
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
-        if (settings != null && superAdmins != null && settings.getFacialDetection() == true &&
+        if (settings != null && superAdmins != null &&
             !settings.getArgusServer().isNullOrBlank() &&
             !settings.getArgusKey().isNullOrBlank()
         ) {

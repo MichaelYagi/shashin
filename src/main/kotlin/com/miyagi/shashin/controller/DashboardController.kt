@@ -204,10 +204,8 @@ class DashboardController(
             metricsUtil.end()
 
             response["argusAvailable"] = null
-            if (settings?.getFacialDetection() == true &&
-                settings.getArgusKey() != null &&
-                settings.getArgusKey() != "" && settings.getArgusServer() != null &&
-                settings.getArgusServer() != ""
+            if (!settings?.getArgusServer().isNullOrBlank() &&
+                !settings?.getArgusKey().isNullOrBlank()
             ) {
                 metricsUtil.start("argus check")
                 val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(

@@ -319,7 +319,8 @@ class NotificationsController(
             // Unchecked matches now come from the Argus review queue (its global pending count),
             // consistent with the per-person Matches badges, rather than stale local low-match rows.
             response["uncheckedPersonMatches"] = getArgusReviewCount(settings)
-            response["facialDetection"] = settings.getFacialDetection()
+            val argusConfigured = !settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank()
+            response["facialDetection"] = settings.getFacialDetection() == true || argusConfigured
         }
 
         return mapper.writeValueAsString(response)

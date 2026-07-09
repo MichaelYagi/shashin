@@ -1252,7 +1252,7 @@ class TimelineController(
                                     // replace=true makes Argus drop the image's prior detections of that type;
                                     // we clear Shashin's local face mirror so old detection_id rows don't linger.
                                     if (settings != null && NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
-                                        val doFaces = settings.getFacialDetection() == true
+                                        val doFaces = true
                                         val doObjects = settings.getObjectDetection() == true
                                         if (doFaces) recognitionLabelPhotoRepository?.deleteByMetadataId(metadataCopy.getId())
                                         if (doFaces || doObjects) {
@@ -4015,7 +4015,7 @@ class TimelineController(
                 // Multi-person photo: send to Argus for recognition so faces surface in the
                 // Matches review queue. Auto-detected records now survive saves because
                 // deleteManuallyTaggedByMetadataId only wipes manually-tagged rows.
-                if (validLabels.size > 1 && settings.getFacialDetection() == true) {
+                if (validLabels.size > 1 && (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank())) {
                     val metadataForThread = metadataObj
                     val settingsForThread = settings
                     Thread {

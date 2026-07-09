@@ -211,7 +211,7 @@ class ToolsController(
         var message = ""
 
         if (settings != null &&
-            settings.getFacialDetection() == true &&
+            (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank()) &&
             currentUserObj != null &&
             currentUserObj.getAuthority() != null &&
             (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER")
@@ -307,11 +307,8 @@ class ToolsController(
         metricsUtil.start("argus endpoint")
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
-        if (settings?.getFacialDetection() == true &&
-            settings.getArgusKey() != null &&
-            settings.getArgusKey() != "" &&
-            settings.getArgusServer() != null &&
-            settings.getArgusServer() != "")
+        if (!settings?.getArgusServer().isNullOrBlank() &&
+            !settings?.getArgusKey().isNullOrBlank())
         {
             val argusTimingStart = Date()
             val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
