@@ -1764,14 +1764,10 @@ class SettingsController(
 
                                     // Delete from keywords
                                     keywordPhotoRepository?.deleteAllByMetadataId(metadata.getId())
-                                    val keywords = keywordRepository?.findAll()
-                                    if (keywords != null) {
-                                        for (keywordObj in keywords) {
-                                            val keywordCount =
-                                                keywordPhotoRepository?.countByKeywordId(keywordObj!!.getId())
-                                            if (keywordCount != null && keywordCount == 0) {
-                                                keywordRepository?.deleteById(keywordObj!!.getId())
-                                            }
+                                    val orphanedKeywordIds = keywordRepository?.findAllOrphanedKeywordIds()
+                                    if (orphanedKeywordIds != null) {
+                                        for (id in orphanedKeywordIds) {
+                                            keywordRepository?.deleteById(id)
                                         }
                                     }
                                     logger.log(
