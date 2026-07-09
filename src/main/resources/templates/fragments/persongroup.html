@@ -11,7 +11,7 @@
         </th:block>
     </div>
     <ul class="nav nav-pills nav-fill ms-3 me-3 mt-1">
-        <th:block th:if="${facialDetection && counts.get('person') > 0 and (authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER')}">
+        <th:block th:if="${facialDetection && (counts.get('person') > 0 or counts.get('matches') > 0 or counts.get('training') > 0) and (authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER')}">
             <li class="nav-item">
                 <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}"><th:block th:text="#{main.pages.people.tabs.person}"></th:block> <span id="personCountBadge" class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
             </li>
