@@ -1252,7 +1252,7 @@ class TimelineController(
                                     // replace=true makes Argus drop the image's prior detections of that type;
                                     // we clear Shashin's local face mirror so old detection_id rows don't linger.
                                     if (settings != null && NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
-                                        val doFaces = true
+                                        val doFaces = settings.getFacialDetection() == true
                                         val doObjects = settings.getObjectDetection() == true
                                         if (doFaces) recognitionLabelPhotoRepository?.deleteByMetadataId(metadataCopy.getId())
                                         if (doFaces || doObjects) {

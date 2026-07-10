@@ -286,7 +286,7 @@ class SettingsController(
         val scheduledTime = settings.getScheduledTime()
         model["scheduledTime"] = scheduledTime as String
         model["objectRecogEnabled"] = settings.getObjectDetection()!!
-        model["facialRecogEnabled"] = settings.getFacialDetection() == true || (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank())
+        model["facialRecogEnabled"] = settings.getFacialDetection() == true || settings.getObjectDetection() == true
         model["msg"] = ""
         model["statusMessage"] = dirDneString
         model["activePage"] = module
@@ -547,7 +547,7 @@ class SettingsController(
             model["argusStatusClass"] = if (faceRecogServicesAvailable) "bi-check-circle-fill text-success" else "bi-x-circle-fill text-danger"
 
             model["objectRecogEnabled"] = settings.getObjectDetection()!!
-            model["facialRecogEnabled"] = settings.getFacialDetection() == true || (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank())
+            model["facialRecogEnabled"] = settings.getFacialDetection() == true || settings.getObjectDetection() == true
             model["duplicateDetectionEnabled"] = settings.getDuplicateDetection()!!
         }
 
@@ -610,7 +610,7 @@ class SettingsController(
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
-        model["facialRecogEnabled"] = settings.getFacialDetection() == true || (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank())
+        model["facialRecogEnabled"] = settings.getFacialDetection() == true || settings.getObjectDetection() == true
 
         val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
             settings.getArgusServer(),
@@ -775,7 +775,7 @@ class SettingsController(
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
-        model["facialRecogEnabled"] = settings.getFacialDetection() == true || (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank())
+        model["facialRecogEnabled"] = settings.getFacialDetection() == true || settings.getObjectDetection() == true
 
         val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
             settings.getArgusServer(),
@@ -861,7 +861,7 @@ class SettingsController(
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
-        model["facialRecogEnabled"] = settings.getFacialDetection() == true || (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank())
+        model["facialRecogEnabled"] = settings.getFacialDetection() == true || settings.getObjectDetection() == true
 
         if (settings.getFacialDetection() == true || !settings.getArgusServer().isNullOrBlank() || settings.getObjectDetection() == true) {
             model["message"] = messageSource?.getMessage("main.pages.scan.scan.identify", null, locale)
@@ -882,7 +882,7 @@ class SettingsController(
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
-        model["facialRecogEnabled"] = settings.getFacialDetection() == true || (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank())
+        model["facialRecogEnabled"] = settings.getFacialDetection() == true || settings.getObjectDetection() == true
 
         val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
             settings.getArgusServer(),
@@ -940,7 +940,7 @@ class SettingsController(
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
-        model["facialRecogEnabled"] = settings.getFacialDetection() == true || (!settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank())
+        model["facialRecogEnabled"] = settings.getFacialDetection() == true || settings.getObjectDetection() == true
 
         val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
             settings.getArgusServer(),
@@ -2039,7 +2039,8 @@ class SettingsController(
                     // Detect faces and objects during index scan
                     try {
                         if (settings != null && compreFaceServerConnected) {
-                            val doFaces = (recognitionLabelPhotoLabels?.count() ?: 0) >= 1
+                            val doFaces = settings.getFacialDetection() == true &&
+                                (recognitionLabelPhotoLabels?.count() ?: 0) >= 1
                             // Skip Argus object detection if Ollama will provide keywords
                             val doObjects = settings.getObjectDetection() == true && !ollamaAvailable
                             if (doFaces || doObjects) {

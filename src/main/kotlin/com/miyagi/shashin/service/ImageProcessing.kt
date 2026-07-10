@@ -1808,8 +1808,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             messageSource: MessageSource? = null,
             locale: Locale = Locale("en")
         ): Pair<Int, List<String>> {
-            val argusConfigured = !settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank()
-            val facesEnabled = settings.getFacialDetection() == true || argusConfigured
+            val facesEnabled = settings.getFacialDetection() == true
             val objectsEnabled = settings.getObjectDetection() == true
             if (!facesEnabled && !objectsEnabled) return Pair(0, emptyList())
             if (!NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) return Pair(0, emptyList())
