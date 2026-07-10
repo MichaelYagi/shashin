@@ -1729,9 +1729,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
                 if (replace) builder.part("replace", "true")
 
-                val uri = if (doFaces && doObjects) "api/detect/all"
-                          else if (doFaces) "api/detect/faces"
-                          else "api/detect/objects"
+                val uri = "api/detect/all"
                 val response = webClient.post()
                     .uri(uri)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
