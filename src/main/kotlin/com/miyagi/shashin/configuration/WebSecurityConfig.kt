@@ -107,7 +107,8 @@ class MultiSecurityConfig {
         )
 
         var publicApiList = arrayOf(
-            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**", "/api/v1/share/**", "/api/v1/tags", "/api/v1/metadata/*"
+            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**", "/api/v1/share/**", "/api/v1/tags", "/api/v1/metadata/*",
+            "/api/argus/webhook"
         )
 
         var publicList = publicApiList + resourceList + arrayOf(
