@@ -1417,6 +1417,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
                 val builder = MultipartBodyBuilder()
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
+                builder.part("external_ref", metadataObj.getId().toString())
                 if (replace) builder.part("replace", "true")
 
                 val response = webClient.post()
@@ -1472,6 +1473,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
                 val builder = MultipartBodyBuilder()
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
+                builder.part("external_ref", metadataObj.getId().toString())
                 if (replace) builder.part("replace", "true")
 
                 val response = webClient.post()
@@ -1590,6 +1592,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         val builder = MultipartBodyBuilder()
                         builder.part("file", FileSystemResource(argusImagePath(metadata!!)!!))
                         builder.part("label", personName)
+                        builder.part("external_ref", metadata.getId().toString())
 
                         val response = webClient.post()
                             .uri("api/detect/faces")
@@ -1727,6 +1730,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val webClient = WebClient.create(settings.getArgusServer()!!.trimEnd('/') + "/")
                 val builder = MultipartBodyBuilder()
                 builder.part("file", FileSystemResource(argusImagePath(metadataObj)!!))
+                builder.part("external_ref", metadataObj.getId().toString())
                 if (replace) builder.part("replace", "true")
 
                 val uri = if (doFaces && doObjects) "api/detect/all"
