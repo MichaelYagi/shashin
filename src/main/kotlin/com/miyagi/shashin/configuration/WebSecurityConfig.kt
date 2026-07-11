@@ -107,8 +107,7 @@ class MultiSecurityConfig {
         )
 
         var publicApiList = arrayOf(
-            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**", "/api/v1/share/**", "/api/v1/tags", "/api/v1/metadata/*",
-            "/api/argus/webhook"
+            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**", "/api/v1/share/**", "/api/v1/tags", "/api/v1/metadata/*"
         )
 
         var publicList = publicApiList + resourceList + arrayOf(
@@ -242,6 +241,18 @@ class ApiSecurityConfig {
     @Bean
     fun passwordApiEncoder(): PasswordEncoder? {
         return BCryptPasswordEncoder()
+    }
+
+    // Stateless, no CSRF — for inbound server-to-server callbacks
+    @Bean
+    @Throws(Exception::class)
+    fun webhookSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher("/api/argus/webhook")
+            .csrf { it.disable() }
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .authorizeHttpRequests { it.anyRequest().permitAll() }
+        return http.build()
     }
 
     // Permit all for resources
