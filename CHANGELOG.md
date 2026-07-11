@@ -16,6 +16,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 
+## [2.20.0] - 2026-07-10
+### Added
+- Argus webhook receiver (`POST /api/argus/webhook`) for real-time sync: handles `identity.created`, `identity.updated` (rename, thumbnail, enroll/unenroll), `identity.merged`, `identity.deleted`, and `detection.labeled`
+- `external_ref` (Shashin metadata ID) now passed on all Argus detect calls, enabling direct photo lookup from webhook payloads
+
+### Fixed
+- Match Indexing tab now shown when facial or object detection is enabled, not when Argus is merely configured
+
 ## [2.19.2] - 2026-07-04
 ### Added
 - Ollama vision model integration for generating photo descriptions and keyword tags
