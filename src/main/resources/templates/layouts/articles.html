@@ -44,6 +44,17 @@
             </nav>
         </th:block>
 
+        <th:block th:if="${activePage == 'articles/webhooks'}">
+            <nav class="d-none d-xl-block col-xl-4 float-end">
+                <ul class="section-nav">
+                    <li class="toc-entry toc-h2"><a href="#webhooks">Argus Webhooks</a></li>
+                    <li class="toc-entry toc-h2"><a href="#setup">Setup</a></li>
+                    <li class="toc-entry toc-h2"><a href="#events">What Each Event Does</a></li>
+                    <li class="toc-entry toc-h2"><a href="#syncbutton">When to Use Sync With Argus</a></li>
+                </ul>
+            </nav>
+        </th:block>
+
         <th:block th:if="${activePage == 'articles/quickstart' && (userCount == 0 || authority == 'ROLE_SUPER')}">
             <nav class="d-none d-xl-block col-xl-4 float-end">
                 <ul class="section-nav">

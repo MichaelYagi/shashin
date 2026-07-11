@@ -1,0 +1,99 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:insert="layouts/articles :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+    <div class="col-11 col-md-10 col-xl-9">
+
+        <h2 id="webhooks">
+            <div>Argus Webhooks<a class="anchorjs-link" href="#webhooks" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>Webhooks let Argus notify Shashin in real time whenever an identity or detection changes — renames, new people, merges, deletions, and face tag assignments all propagate immediately without waiting for a manual sync.</p>
+        <p>Webhooks are <strong>optional</strong>. If you do not configure one, the <strong>Sync with Argus</strong> button on the People page and the scheduled reconcile handle all synchronisation.</p>
+
+        <h2 id="setup">
+            <div>Setup<a class="anchorjs-link" href="#setup" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <ol>
+            <li>In Argus, open <strong>Settings → Webhooks</strong> and add a new webhook.</li>
+            <li>Set the URL to:
+<pre class="mt-2"><code>http://&lt;your-shashin-host&gt;:6624/api/argus/webhook</code></pre>
+            </li>
+            <li>Leave <strong>Secret</strong> blank.</li>
+            <li>Subscribe to these events:
+                <ul>
+                    <li><code>detection.labeled</code></li>
+                    <li><code>identity.created</code></li>
+                    <li><code>identity.deleted</code></li>
+                    <li><code>identity.merged</code></li>
+                    <li><code>identity.updated</code></li>
+                </ul>
+            </li>
+            <li>Save and use the <strong>Test</strong> button — Argus should report a <strong>200</strong> response.</li>
+        </ol>
+
+        <h2 id="events">
+            <div>What Each Event Does<a class="anchorjs-link" href="#events" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>What Shashin does</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>identity.created</code></td>
+                    <td>Creates a matching person in Shashin and links the Argus identity ID. If a person with the same name already exists and is not linked to another Argus identity, they are linked instead of duplicated.</td>
+                </tr>
+                <tr>
+                    <td><code>identity.updated</code> — renamed</td>
+                    <td>Updates the person's name in Shashin to match Argus.</td>
+                </tr>
+                <tr>
+                    <td><code>identity.updated</code> — thumbnail_updated</td>
+                    <td>Updates the person's cover thumbnail on the People page.</td>
+                </tr>
+                <tr>
+                    <td><code>identity.updated</code> — embedding_added</td>
+                    <td>Marks the corresponding face tag as manually confirmed (<strong>not</strong> auto-tagged).</td>
+                </tr>
+                <tr>
+                    <td><code>identity.updated</code> — embedding_removed</td>
+                    <td>Reverts the corresponding face tag back to auto-tagged.</td>
+                </tr>
+                <tr>
+                    <td><code>identity.merged</code></td>
+                    <td>Moves all face tags from the deleted source person to the surviving target person, then removes the source.</td>
+                </tr>
+                <tr>
+                    <td><code>identity.deleted</code></td>
+                    <td>Removes the person and all their face tags from Shashin.</td>
+                </tr>
+                <tr>
+                    <td><code>detection.labeled</code></td>
+                    <td>Reassigns the face tag to the correct person when a detection is labeled or reassigned in Argus.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="syncbutton">
+            <div>When to Use Sync With Argus<a class="anchorjs-link" href="#syncbutton" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>Even with webhooks active, run <strong>Sync with Argus</strong> (People page) after:</p>
+        <ul>
+            <li>First connecting Argus — webhooks only deliver future events, not existing data.</li>
+            <li>Shashin downtime — any events fired while Shashin was offline are not replayed.</li>
+            <li>Changing which face model is active in Argus.</li>
+        </ul>
+
+    </div>
+</section>
+</body>
+</html>
