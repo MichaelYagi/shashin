@@ -1,0 +1,57 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:insert="layouts/articles :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+    <div class="col-11 col-md-10 col-xl-9">
+
+        <h2 id="ollama">
+            <div>Ollama<a class="anchorjs-link" href="#ollama" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p><strong>Ollama</strong> is a self-hosted service for running large language models locally. Shashin uses it with a vision-capable model to generate keyword tags and descriptions for your photos.</p>
+        <p>Ollama is optional. If it is not configured or not reachable, Shashin falls back to Argus for object detection (if Argus is connected and object detection is enabled).</p>
+
+        <h2 id="whatitdoes">
+            <div>What Ollama Does in Shashin<a class="anchorjs-link" href="#whatitdoes" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <ul>
+            <li>Analyses each photo using a vision model and extracts descriptive keyword tags.</li>
+            <li>Tags are stored in Shashin and become searchable alongside EXIF metadata.</li>
+            <li>Takes priority over Argus for object detection — if Ollama is reachable, Argus is not called for objects.</li>
+            <li>Photos that already have keyword tags from a previous scan are skipped unless a rescan is requested.</li>
+        </ul>
+
+        <h2 id="connection">
+            <div>Connecting Ollama to Shashin<a class="anchorjs-link" href="#connection" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <ol>
+            <li>Install and run <a href="https://ollama.com" target="_blank">Ollama</a>.</li>
+            <li>Pull a vision-capable model, for example:
+<pre class="mt-2"><code>ollama pull llava</code></pre>
+            </li>
+            <li>In Shashin, open <a href="/settings">Settings</a> and enter the Ollama URL (e.g. <code>http://127.0.0.1:11434</code>) and the model name under <strong>Object Detection</strong>.</li>
+            <li>Enable <strong>Object Detection</strong>.</li>
+            <li>Save — Shashin checks whether the model is reachable before using it.</li>
+        </ol>
+
+        <h2 id="scanning">
+            <div>Running a Scan<a class="anchorjs-link" href="#scanning" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>Object detection runs as part of a media scan. Go to <a href="/settings/scan">Media Indexing</a> and click <strong>Scan</strong>. Shashin sends each photo to Ollama in turn and stores the returned tags. The scan skips photos that already have keyword tags unless you run a forced rescan.</p>
+        <p>After scanning, keyword tags are searchable from the search bar and visible in the photo detail panel.</p>
+
+        <h2 id="fallback">
+            <div>Argus Fallback<a class="anchorjs-link" href="#fallback" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>If Ollama is configured but unreachable at scan time, Shashin automatically falls back to Argus for object detection (provided Argus is connected and object detection is enabled). Photos that already have Ollama-generated tags are not re-processed by Argus.</p>
+
+    </div>
+</section>
+</body>
+</html>

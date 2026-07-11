@@ -54,6 +54,46 @@ class ArticlesController(
         return module
     }
 
+    @RequestMapping(value = ["/articles/argus"], method = [RequestMethod.GET])
+    fun getArgus(model: Model, request: HttpServletRequest): String {
+        val module = "articles/argus"
+
+        model["loggedIn"] = false
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        val sessionUser = request.session.getAttribute("CurrentUser") as User?
+
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true)) {
+            model["loggedIn"] = true
+        }
+
+        val moduleArray = module.split("/")
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(moduleArray[moduleArray.size-1])
+
+        return module
+    }
+
+    @RequestMapping(value = ["/articles/ollama"], method = [RequestMethod.GET])
+    fun getOllama(model: Model, request: HttpServletRequest): String {
+        val module = "articles/ollama"
+
+        model["loggedIn"] = false
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        val sessionUser = request.session.getAttribute("CurrentUser") as User?
+
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true)) {
+            model["loggedIn"] = true
+        }
+
+        val moduleArray = module.split("/")
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(moduleArray[moduleArray.size-1])
+
+        return module
+    }
+
     @RequestMapping(value = ["/articles/webhooks"], method = [RequestMethod.GET])
     fun getWebhooks(model: Model, request: HttpServletRequest): String {
         val module = "articles/webhooks"

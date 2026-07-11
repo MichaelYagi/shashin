@@ -44,6 +44,29 @@
             </nav>
         </th:block>
 
+        <th:block th:if="${activePage == 'articles/ollama'}">
+            <nav class="d-none d-xl-block col-xl-4 float-end">
+                <ul class="section-nav">
+                    <li class="toc-entry toc-h2"><a href="#ollama">Ollama</a></li>
+                    <li class="toc-entry toc-h2"><a href="#whatitdoes">What Ollama Does in Shashin</a></li>
+                    <li class="toc-entry toc-h2"><a href="#connection">Connecting Ollama to Shashin</a></li>
+                    <li class="toc-entry toc-h2"><a href="#scanning">Running a Scan</a></li>
+                    <li class="toc-entry toc-h2"><a href="#fallback">Argus Fallback</a></li>
+                </ul>
+            </nav>
+        </th:block>
+
+        <th:block th:if="${activePage == 'articles/argus'}">
+            <nav class="d-none d-xl-block col-xl-4 float-end">
+                <ul class="section-nav">
+                    <li class="toc-entry toc-h2"><a href="#argus">Argus</a></li>
+                    <li class="toc-entry toc-h2"><a href="#whatitdoes">What Argus Does</a></li>
+                    <li class="toc-entry toc-h2"><a href="#connection">Connecting Argus to Shashin</a></li>
+                    <li class="toc-entry toc-h2"><a href="#howintegrates">How the Integration Works</a></li>
+                </ul>
+            </nav>
+        </th:block>
+
         <th:block th:if="${activePage == 'articles/webhooks'}">
             <nav class="d-none d-xl-block col-xl-4 float-end">
                 <ul class="section-nav">

@@ -1,0 +1,70 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:insert="layouts/articles :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+    <div class="col-11 col-md-10 col-xl-9">
+
+        <h2 id="argus">
+            <div>Argus<a class="anchorjs-link" href="#argus" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p><strong>Argus</strong> is a self-hosted recognition server that Shashin uses for face detection, face recognition, and object detection. It runs as a separate service and communicates with Shashin over HTTP.</p>
+        <p>Argus is optional. Without it, Shashin still scans, indexes, and serves your media — you just won't have face recognition or object detection.</p>
+
+        <h2 id="whatitdoes">
+            <div>What Argus Does<a class="anchorjs-link" href="#whatitdoes" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <ul>
+            <li><strong>Face detection</strong> — finds faces in photos and videos, returns bounding boxes and crops.</li>
+            <li><strong>Face recognition</strong> — compares detected faces against enrolled identities and suggests matches.</li>
+            <li><strong>Object detection</strong> — identifies objects in photos (used when Ollama is not available) and returns class labels that become searchable keywords in Shashin.</li>
+            <li><strong>Review queue</strong> — holds unconfirmed match suggestions for you to accept or reject.</li>
+            <li><strong>Identity management</strong> — stores named identities, their enrolled face embeddings, and a gallery of associated detections.</li>
+        </ul>
+
+        <h2 id="connection">
+            <div>Connecting Argus to Shashin<a class="anchorjs-link" href="#connection" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <ol>
+            <li>Run Argus and note its URL (e.g. <code>http://127.0.0.1:8000</code>).</li>
+            <li>Generate an API key in Argus.</li>
+            <li>In Shashin, open <a href="/settings">Settings</a> and enter the Argus server URL and API key under <strong>Face Recognition</strong>.</li>
+            <li>Enable <strong>Face Detection</strong> and/or <strong>Object Detection</strong> as needed.</li>
+            <li>Save — Shashin will verify the connection and show the Argus status.</li>
+        </ol>
+
+        <h2 id="howintegrates">
+            <div>How the Integration Works<a class="anchorjs-link" href="#howintegrates" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <h3>Scanning</h3>
+        <p>When a face or object scan runs in Shashin, each photo or video thumbnail is sent to Argus via its detect API. Argus returns detected faces (with identity suggestions if known) and/or object classes. Shashin stores these results as face tags (<strong>People</strong>) and keyword tags.</p>
+
+        <h3>Tagging people</h3>
+        <ol>
+            <li>Open any photo that shows a face clearly.</li>
+            <li>Click the face crop in the detail panel to open the labeling UI.</li>
+            <li>Type the person's name and confirm — this sends the face to Argus with a label, enrolling it as a training image for that identity.</li>
+            <li>Repeat for a few more photos of the same person to improve recognition accuracy.</li>
+            <li>Run a <strong>Face Scan</strong> from the <a href="/settings/scan">Media Indexing</a> tab.</li>
+            <li>Open <strong>People</strong>, select a person, and check the <strong>Matches</strong> tab to confirm or reject suggestions from the Argus review queue.</li>
+        </ol>
+
+        <h3>Sync</h3>
+        <p>Shashin and Argus stay in sync in two ways:</p>
+        <ul>
+            <li><strong>Sync with Argus</strong> button (People page) — pulls all identities, names, cover thumbnails, and enrolled status from Argus in one pass. Use this after first setup or after Shashin downtime.</li>
+            <li><strong>Webhooks</strong> — Argus can push changes to Shashin in real time as they happen. See <a href="/articles/webhooks">Webhooks</a> for setup instructions.</li>
+        </ul>
+
+        <h3>Object detection fallback</h3>
+        <p>If <a href="https://ollama.com" target="_blank">Ollama</a> is configured and reachable, Shashin uses it for object detection instead of Argus. Argus is used as the fallback when Ollama is unavailable.</p>
+
+    </div>
+</section>
+</body>
+</html>
