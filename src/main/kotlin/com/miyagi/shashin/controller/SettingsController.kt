@@ -117,7 +117,7 @@ class SettingsController(
 
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
-    private var alreadyScannedFilepaths = mutableListOf<String>()
+    private var alreadyScannedFilepaths = mutableSetOf<String>()
 
     private var recognitionCount: Int = 0
 
@@ -1605,11 +1605,6 @@ class SettingsController(
                         }
                         if (metadata != null) {
                             if (!metadata.getPath().isNullOrBlank()) {
-                                FileUtils.writeToThreadFileAndLogMessage(
-                                    messageSource?.getMessage("main.pages.scan.change", null, locale).toString() + " - " + metadata.getPath(),
-                                    threadFile
-                                )
-
                                 // Check if metadata path still exists, if not, delete media
                                 var basePathExists = false
                                 var excludeBasePathExists = false
@@ -2149,6 +2144,7 @@ class SettingsController(
         val files = f.listFiles()
 
         if (files != null) {
+            val allowableExtensions = FileUtils.allowableMediaFiles().toHashSet()
             for (i in files.indices) {
 
                 val file: File = files[i]
@@ -2178,12 +2174,12 @@ class SettingsController(
 
                     val mediaExtension = FileUtils.probeFileExtension(file)
 
-                    if (!exclude && !alreadyScannedFilepaths.contains(file.path) && FileUtils.allowableMediaFiles().contains(mediaExtension)) {
+                    if (!exclude && !alreadyScannedFilepaths.contains(file.path) && allowableExtensions.contains(mediaExtension)) {
 
                         //val mediaProcessingUtils = MediaProcessing(apiVersion,geocodeUrl)
                         var metadataObj: Metadata? = Metadata()
 
-                        if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(mediaExtension)) {
+                        if (!shouldStop.get()) {
                             val startTimeMillis = System.currentTimeMillis()
                             // Process metadata
                             val metadataProcessing =
@@ -2256,7 +2252,7 @@ class SettingsController(
 
                         FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     } else {
-                        if (!FileUtils.allowableMediaFiles().contains(mediaExtension)) {
+                        if (!allowableExtensions.contains(mediaExtension)) {
                             threadText = messageSource?.getMessage("main.pages.scan.error.extension", arrayOf(file.path), locale).toString()
                             logger.log(Level.INFO, "Extension invalid: " + file.name)
                         } else {
