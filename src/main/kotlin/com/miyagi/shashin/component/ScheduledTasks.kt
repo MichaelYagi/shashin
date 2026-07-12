@@ -214,6 +214,7 @@ class ScheduledTasks(
                 messageSource
             )
             if (scannedIds.isNotEmpty()) {
+                metadataRepository?.bulkUpdateLastAccessedAt(TextUtils.getCurrentTimestamp(), scannedIds)
                 ollamaVisionService?.processItems(scannedIds, settings)
             }
             if (superAdmins != null && recognitionCount > 0) {

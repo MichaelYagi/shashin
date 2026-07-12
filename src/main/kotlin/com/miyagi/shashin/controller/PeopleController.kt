@@ -219,6 +219,7 @@ class PeopleController(
                     locale
                 )
                 if (scannedIds.isNotEmpty()) {
+                    metadataRepository?.bulkUpdateLastAccessedAt(getCurrentTimestamp(), scannedIds)
                     ollamaVisionService?.processItems(scannedIds, settings)
                 }
 

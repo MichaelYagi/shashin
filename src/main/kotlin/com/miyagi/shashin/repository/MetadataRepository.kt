@@ -1,7 +1,9 @@
 package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.*
+import jakarta.transaction.Transactional
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.ListCrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
@@ -517,4 +519,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT COUNT(*) FROM album a INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)
    fun countAlbumByMediaAsAdmin(@Param("type") type: String): Int
+
+   @Modifying
+   @Transactional
+   @Query("UPDATE metadata SET last_accessed_at = :ts WHERE id IN :ids", nativeQuery = true)
+   fun bulkUpdateLastAccessedAt(@Param("ts") ts: String, @Param("ids") ids: List<String>)
 }

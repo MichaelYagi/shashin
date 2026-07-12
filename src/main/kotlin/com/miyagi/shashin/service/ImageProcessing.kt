@@ -1329,6 +1329,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             sourceImageId: String? = null
         ) {
             val detectionId = faceNode["detection_id"].asInt().toString()
+            metadataObj.setModifiedAt(TextUtils.Companion.getCurrentTimestamp())
             val rlp = RecognitionLabelPhoto()
             rlp.setMetadataId(metadataObj.getId())
             rlp.setArgusDetectionId(detectionId)
@@ -1407,6 +1408,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             settings: Settings,
             recognitionLabelRepository: RecognitionLabelRepository?,
             recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?,
+            metadataRepository: MetadataRepository? = null,
             replace: Boolean = false
         ): Boolean {
             if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return false
@@ -1437,6 +1439,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     for (faceNode in facesNode) {
                         storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, webClient, sourceImageId)
                     }
+                    try { metadataRepository?.save(metadataObj) } catch (_: Exception) {}
                 } else {
                     val noFaceRecord = RecognitionLabelPhoto()
                     noFaceRecord.setMetadataId(metadataObj.getId())
@@ -1755,6 +1758,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             storeFaceDetection(faceNode, metadataObj, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, webClient, sourceImageId)
                             recognitionCount++
                         }
+                        try { metadataRepository?.save(metadataObj) } catch (_: Exception) {}
                     } else {
                         val noFaceRecord = RecognitionLabelPhoto()
                         noFaceRecord.setMetadataId(metadataObj.getId())
