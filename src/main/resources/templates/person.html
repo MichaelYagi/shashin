@@ -39,7 +39,7 @@
                                 <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
                                 <input type="hidden" th:name="'dateTaken'+${metadata.id}" th:id="'dateTaken'+${metadata.id}" th:value="${metadata.year+'-'+metadata.month+'-'+metadata.day}">
 
-                                <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},${(authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER') and labelPhotoMap.get(metadata.id).get('isTagged')})}"></div>
+                                <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
 
                                 <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
 

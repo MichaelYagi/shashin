@@ -1209,7 +1209,6 @@ class PeopleController(
                     val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
 
                     var labelString = ""
-                    var isAutoTagged = false
                     val nameTaggedMap = mutableMapOf<String,Any>()
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
@@ -1217,16 +1216,12 @@ class PeopleController(
                             if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != TextUtils.getObjectName()) {
                                 labelString += recognitionLabelObj.get().getName() + ","
                             }
-                            if (!isAutoTagged) {
-                                isAutoTagged = recognitionLabelPhoto.getAutoTagged() == true
-                            }
                         }
                     }
 
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
                         nameTaggedMap["labels"] = labelString
-                        nameTaggedMap["isTagged"] = isAutoTagged
                         labelPhotoMap[metadata.getId()] = nameTaggedMap
                     }
 
