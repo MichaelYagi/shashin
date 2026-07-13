@@ -222,6 +222,23 @@ class OllamaVisionService(
         )
         if (ctxValid) {
             payload["context"] = mapper.readTree(storedCtx!!.getContext())
+        } else {
+            // Inject metadata context as system prompt on the first turn only;
+            // subsequent turns inherit it through the stored context tokens
+            val systemParts = mutableListOf<String>()
+            metadata.getTakenAt()?.takeIf { it.isNotBlank() }?.let { systemParts.add("Date taken: $it") }
+            val place = metadata.getPlaceName()?.takeIf { it.isNotBlank() }
+            val lat = metadata.getLat()?.takeIf { it.isNotBlank() }
+            val lng = metadata.getLng()?.takeIf { it.isNotBlank() }
+            if (place != null) {
+                val coords = if (lat != null && lng != null) " ($lat, $lng)" else ""
+                systemParts.add("Location: $place$coords")
+            } else if (lat != null && lng != null) {
+                systemParts.add("Coordinates: $lat, $lng")
+            }
+            if (systemParts.isNotEmpty()) {
+                payload["system"] = systemParts.joinToString("\n")
+            }
         }
 
         return try {
