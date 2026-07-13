@@ -679,12 +679,14 @@ function askAppendMessage(role, content, createdAt) {
         );
     } else if (role === "assistant") {
         const timeStr = createdAt || new Date().toLocaleString();
-        $chat.append(
-            $('<div class="d-flex flex-column mb-2">').append(
-                $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).html(typeof formatMessage === "function" ? formatMessage(content) : $('<span>').text(content).html()),
-                $('<small class="text-muted mt-1">').text(timeStr + " · " + (askOllamaModel || ""))
-            )
+        const $msg = $('<div class="d-flex flex-column mb-2">').append(
+            $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).html(typeof formatMessage === "function" ? formatMessage(content) : $('<span>').text(content).html()),
+            $('<small class="text-muted mt-1">').text(timeStr + " · " + (askOllamaModel || ""))
         );
+        $chat.append($msg);
+        const chatEl = $chat[0];
+        chatEl.scrollTop = $msg[0].getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop;
+        return;
     } else if (role === "thinking") {
         $chat.append(
             $('<div id="askThinking" class="d-flex align-items-center gap-2 text-muted p-2">').append(
