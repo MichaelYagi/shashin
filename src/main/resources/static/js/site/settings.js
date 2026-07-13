@@ -230,5 +230,25 @@ class Settings {
             loadOllamaModels();
         }
 
+        $("#generateEmbeddingsBtn").on("click", function() {
+            const btn = $(this);
+            const status = $("#generateEmbeddingsStatus");
+            btn.prop("disabled", true).text("Starting...");
+            $.ajax({
+                url: "/search/embeddings/generate",
+                method: "POST",
+                success: function(data) {
+                    status.text(data.msg || "Started");
+                },
+                error: function(xhr) {
+                    const d = xhr.responseJSON;
+                    status.text(d?.msg || "Error starting embedding generation");
+                },
+                complete: function() {
+                    btn.prop("disabled", false).text("Generate embeddings");
+                }
+            });
+        });
+
     }
 }

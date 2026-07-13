@@ -335,7 +335,8 @@ class SettingsController(
         @RequestParam("scheduledTime") scheduledTime: String?,
         @RequestParam("uploadMediaDirectory") uploadMediaDirectory: String?,
         @RequestParam("ollamaUrl") ollamaUrl: String?,
-        @RequestParam("ollamaVisionModel") ollamaVisionModel: String?
+        @RequestParam("ollamaVisionModel") ollamaVisionModel: String?,
+        @RequestParam("ollamaEmbedModel") ollamaEmbedModel: String?
     ): String {
         var resetServer = false
         var mediaDirs: List<String>? = null
@@ -468,6 +469,7 @@ class SettingsController(
         settings?.setArgusKey(argusKey)
         settings?.setOllamaUrl(ollamaUrl?.trim()?.ifBlank { null }?.trimEnd('/'))
         settings?.setOllamaVisionModel(ollamaVisionModel?.trim()?.ifBlank { null })
+        settings?.setOllamaEmbedModel(ollamaEmbedModel?.trim()?.ifBlank { null })
 
         if (uploadDirDneString == "" && uploadMediaDirectory != null && uploadMediaDirectory.isNotBlank()) {
             settings?.setUploadMediaDirectory(uploadMediaDirectory)

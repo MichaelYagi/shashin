@@ -44,6 +44,7 @@ class Settings {
     private var sidecarSizeK: Long? = null
     private var ollamaUrl: String? = null
     private var ollamaVisionModel: String? = null
+    private var ollamaEmbedModel: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -179,6 +180,9 @@ class Settings {
     fun getOllamaVisionModel(): String? = this.ollamaVisionModel
     fun setOllamaVisionModel(ollamaVisionModel: String?) { this.ollamaVisionModel = ollamaVisionModel }
 
+    fun getOllamaEmbedModel(): String? = this.ollamaEmbedModel
+    fun setOllamaEmbedModel(v: String?) { this.ollamaEmbedModel = v }
+
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -224,6 +228,7 @@ class Settings {
         map["duplicateDetection"] = this.duplicateDetection
         map["ollamaUrl"] = this.ollamaUrl
         map["ollamaVisionModel"] = this.ollamaVisionModel
+        map["ollamaEmbedModel"] = this.ollamaEmbedModel
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

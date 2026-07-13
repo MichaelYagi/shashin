@@ -64,6 +64,8 @@ class Metadata {
     private var flipVertically: Boolean? = null
     private var rotation: Int? = null
     private var duplicateHash: String? = null
+    @Column(columnDefinition = "TEXT")
+    private var embedding: String? = null
 
     // Without a default constructor, Jackson will throw an exception
     fun Metadata() {}
@@ -237,6 +239,8 @@ class Metadata {
     fun getDuplicateHash(): String? {
         return this.duplicateHash
     }
+    fun getEmbedding(): String? = this.embedding
+    fun setEmbedding(v: String?) { this.embedding = v }
     fun getFlipHorizontally(): Boolean? {
         return this.flipHorizontally
     }

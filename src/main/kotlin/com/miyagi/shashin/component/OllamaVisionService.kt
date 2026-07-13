@@ -24,6 +24,7 @@ import java.time.Duration
 import java.util.Base64
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.sqrt
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -156,6 +157,8 @@ class OllamaVisionService(
             if (description.isNotBlank() && (rescan || !hasDescription)) {
                 metadata.setDescription(description)
                 metadataDirty = true
+                val vec = embed(description, settings)
+                if (vec != null) metadata.setEmbedding(mapper.writeValueAsString(vec.toList()))
             }
 
             if (keywords.isNotEmpty() && (rescan || !hasKeywords)) {
@@ -198,6 +201,53 @@ class OllamaVisionService(
 
     fun isOllamaConfigured(settings: Settings): Boolean =
         !settings.getOllamaUrl().isNullOrBlank() && !settings.getOllamaVisionModel().isNullOrBlank()
+
+    fun isEmbedConfigured(settings: Settings): Boolean =
+        !settings.getOllamaUrl().isNullOrBlank() && !settings.getOllamaEmbedModel().isNullOrBlank()
+
+    fun embed(text: String, settings: Settings): FloatArray? {
+        val model = settings.getOllamaEmbedModel()?.takeIf { it.isNotBlank() } ?: return null
+        val url = settings.getOllamaUrl()?.takeIf { it.isNotBlank() } ?: return null
+        val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to text))
+        return try {
+            val client = WebClient.builder()
+                .baseUrl(url.trimEnd('/'))
+                .codecs { it.defaultCodecs().maxInMemorySize(5 * 1024 * 1024) }
+                .build()
+            val response = client.post()
+                .uri("/api/embed")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block(Duration.ofSeconds(30)) ?: return null
+            val node = mapper.readTree(response)
+            val arr = node["embeddings"]?.get(0) ?: node["embedding"] ?: return null
+            FloatArray(arr.size()) { arr[it].floatValue() }
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Ollama embed error: ${e.localizedMessage}")
+            null
+        }
+    }
+
+    fun generateEmbeddingsBatch(settings: Settings, shouldStop: AtomicBoolean? = null) {
+        if (!isEmbedConfigured(settings)) return
+        val batchSize = 50
+        while (true) {
+            if (shouldStop?.get() == true) return
+            val batch = metadataRepository.findAllWithDescriptionAndNoEmbedding(batchSize)
+            if (batch.isEmpty()) break
+            for (metadata in batch) {
+                if (shouldStop?.get() == true) return
+                val desc = metadata.getDescription() ?: continue
+                val vec = embed(desc, settings) ?: continue
+                metadata.setEmbedding(mapper.writeValueAsString(vec.toList()))
+                metadata.setModifiedAt(TextUtils.getCurrentTimestamp())
+                metadataRepository.save(metadata)
+            }
+        }
+        logger.log(Level.INFO, "Embedding generation complete")
+    }
 
     fun ask(metadata: Metadata, question: String, settings: Settings, contextRepository: OllamaContextRepository?): String? {
         val metadataId = metadata.getId() ?: return null

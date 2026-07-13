@@ -53,6 +53,7 @@ CREATE TABLE `metadata` (
                             `flipVertically` BOOLEAN NOT NULL DEFAULT FALSE,
                             `rotation` INTEGER DEFAULT 0,
                             `duplicateHash` VARCHAR(256) DEFAULT NULL,
+                            `embedding` TEXT DEFAULT NULL,
                             `hidden` BOOLEAN NOT NULL DEFAULT FALSE,
                             `addedAt` DATETIME DEFAULT NULL,
                             `takenAt` DATETIME DEFAULT NULL,
@@ -99,6 +100,7 @@ CREATE TABLE `settings` (
                             `sidecarSizeK` REAL DEFAULT 0,
                             `ollamaUrl` VARCHAR(255) DEFAULT NULL,
                             `ollamaVisionModel` VARCHAR(255) DEFAULT NULL,
+                            `ollamaEmbedModel` VARCHAR(255) DEFAULT NULL,
                             `createdAt` DATETIME DEFAULT NULL,
                             `modifiedAt` DATETIME DEFAULT NULL
 );

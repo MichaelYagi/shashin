@@ -119,6 +119,19 @@
                                     <small class="text-muted">Shows only models with vision capability</small>
                                 </div>
                             </div>
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <label for="ollamaEmbedModel" class="form-label"><strong>Embed model</strong> (for semantic search)</label>
+                                    <input class="form-control" id="ollamaEmbedModel" name="ollamaEmbedModel" th:value="${settings.ollamaEmbedModel}" placeholder="e.g. nomic-embed-text">
+                                    <small class="text-muted">Run <code>ollama pull nomic-embed-text</code> then enter the model name here</small>
+                                </div>
+                                <div class="col-6 d-flex align-items-end">
+                                    <div>
+                                        <button class="btn btn-secondary" type="button" id="generateEmbeddingsBtn">Generate embeddings</button>
+                                        <div class="text-muted small mt-1" id="generateEmbeddingsStatus"></div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-6">
                                     <label for="argusServer" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefaceurl}"></th:block></strong> (<th:block th:text="#{main.pages.settings.comprefaceurl.example}"></th:block> http://127.0.0.1:8100)&nbsp;<span id="argusInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.comprefaceurl.tooltip}"></span></label>

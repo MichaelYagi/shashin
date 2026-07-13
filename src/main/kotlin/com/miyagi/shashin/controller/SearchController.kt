@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.OllamaVisionService
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.Settings
@@ -12,6 +13,7 @@ import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
+import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.SearchHistoryTypes
 import com.miyagi.shashin.util.SearchQueryBuilder
@@ -33,6 +35,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
 import kotlin.math.ceil
+import kotlin.math.sqrt
 
 
 @Controller
@@ -44,6 +47,8 @@ class SearchController(
     private val keywordRepository: KeywordRepository? = null,
     private val favoriteRepository: FavoriteRepository? = null,
     private val jdbcTemplate: JdbcTemplate,
+    private val ollamaVisionService: OllamaVisionService? = null,
+    private val settingsRepository: SettingsRepository? = null,
     recognitionLabelRepository: RecognitionLabelRepository? = null,
     albumRepository: AlbumRepository? = null
 ): BaseController(
@@ -375,6 +380,100 @@ class SearchController(
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return "redirect:/$module"
+    }
+
+    private fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
+        var dot = 0f; var normA = 0f; var normB = 0f
+        val len = minOf(a.size, b.size)
+        for (i in 0 until len) { dot += a[i] * b[i]; normA += a[i] * a[i]; normB += b[i] * b[i] }
+        return if (normA == 0f || normB == 0f) 0f else dot / sqrt(normA * normB)
+    }
+
+    private fun semanticSearch(query: String, size: Int, settings: Settings): List<Metadata> {
+        val queryVec = ollamaVisionService?.embed(query, settings) ?: return emptyList()
+        val rows = jdbcTemplate.queryForList("SELECT id, embedding FROM metadata WHERE hidden = 0 AND embedding IS NOT NULL AND embedding != ''")
+        val scored = rows.mapNotNull { row ->
+            val id = row["id"] as? String ?: return@mapNotNull null
+            val embJson = row["embedding"] as? String ?: return@mapNotNull null
+            try {
+                val node = mapper.readTree(embJson)
+                val vec = FloatArray(node.size()) { node[it].floatValue() }
+                Pair(id, cosineSimilarity(queryVec, vec))
+            } catch (e: Exception) { null }
+        }.sortedByDescending { it.second }.take(size)
+        val idOrder = scored.map { it.first }
+        val byId = metadataRepository.findAllById(idOrder).associateBy { it.getId() }
+        return idOrder.mapNotNull { byId[it] }
+    }
+
+    @RequestMapping(value = ["/search/semantic"], method = [RequestMethod.GET])
+    fun getSemanticSearch(model: Model, @RequestParam(required = false) q: String?, request: HttpServletRequest): String {
+        val module = "search"
+        getAllAttributeData(model)
+        model["pageParam"] = 0
+        model["term"] = q ?: ""
+        model["favorites"] = mutableMapOf<String, Any>()
+        model["keywordMap"] = mutableMapOf<String, String>()
+        model["status"] = ApiResponse.SUCCESS.status
+        model["msg"] = ""
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = q ?: ""
+        model["semanticMode"] = true
+
+        if (!q.isNullOrBlank()) {
+            val settings = model.getAttribute("settings") as Settings?
+            if (settings != null && ollamaVisionService?.isEmbedConfigured(settings) == true) {
+                val size = model.getAttribute("queryLimit").toString().toIntOrNull() ?: 30
+                val results = semanticSearch(q, size, settings)
+                model["metadataSearchList"] = results
+            } else {
+                model["metadataSearchList"] = emptyList<Metadata>()
+                model["msg"] = "Semantic search is not configured. Set an embed model in Settings."
+            }
+        } else {
+            model["metadataSearchList"] = emptyList<Metadata>()
+        }
+        return module
+    }
+
+    @RequestMapping(value = ["/api/v1/search/semantic"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getApiSemanticSearch(@RequestParam(required = false) q: String?, @RequestParam(required = false) size: Int?): String {
+        val response = mutableMapOf<String, Any?>()
+        if (q.isNullOrBlank()) {
+            response["status"] = ApiResponse.FAIL.status; response["msg"] = "No query provided"
+            return mapper.writeValueAsString(response)
+        }
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        if (settings == null || ollamaVisionService?.isEmbedConfigured(settings) != true) {
+            response["status"] = ApiResponse.FAIL.status; response["msg"] = "Semantic search not configured"
+            return mapper.writeValueAsString(response)
+        }
+        val results = semanticSearch(q, size ?: 20, settings)
+        response["status"] = ApiResponse.SUCCESS.status
+        response["query"] = q
+        response["metadataSearchList"] = results
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/search/embeddings/generate"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    fun generateEmbeddings(model: Model): String {
+        val response = mutableMapOf<String, Any?>()
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        if (settings == null || ollamaVisionService?.isEmbedConfigured(settings) != true) {
+            response["status"] = ApiResponse.FAIL.status; response["msg"] = "Embed model not configured in Settings"
+            return mapper.writeValueAsString(response)
+        }
+        val remaining = metadataRepository.countWithDescriptionAndNoEmbedding()
+        Thread {
+            ollamaVisionService?.generateEmbeddingsBatch(settings)
+        }.start()
+        response["status"] = ApiResponse.SUCCESS.status
+        response["msg"] = "Embedding generation started for $remaining photos"
+        return mapper.writeValueAsString(response)
     }
 
     @RouterOperation(
