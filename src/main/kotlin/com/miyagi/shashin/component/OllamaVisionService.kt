@@ -107,7 +107,8 @@ class OllamaVisionService(
             "The photo's metadata indicates it was taken at: $place. Include this naturally if relevant.\n\n"
         else ""
 
-        val prompt = "${locationHint}Describe this photo briefly and naturally in under 500 characters. " +
+        val prompt = "${locationHint}Write a warm, personal caption for this photo as if it's a cherished memory — " +
+            "like something you'd write in a photo album. Keep it under 500 characters, natural and human. " +
             "Don't start with 'This is a photo of' or similar.\n\n" +
             "Then on a new line:\nKEYWORDS: word1,word2,word3"
 
