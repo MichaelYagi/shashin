@@ -681,7 +681,7 @@ function askAppendMessage(role, content, createdAt) {
         const timeStr = createdAt || new Date().toLocaleString();
         $chat.append(
             $('<div class="d-flex flex-column mb-2">').append(
-                $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).text(content),
+                $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).html(typeof formatMessage === "function" ? formatMessage(content) : $('<span>').text(content).html()),
                 $('<small class="text-muted mt-1">').text(timeStr + " · " + (askOllamaModel || ""))
             )
         );
