@@ -110,6 +110,7 @@ class ArticlesController(
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(moduleArray[moduleArray.size-1])
+        model["baseUrl"] = "${request.scheme}://${request.serverName}:${request.serverPort}"
 
         return module
     }

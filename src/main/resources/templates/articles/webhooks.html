@@ -20,7 +20,12 @@
         <ol>
             <li>In Argus, open <strong>Settings → Webhooks</strong> and add a new webhook.</li>
             <li>Set the URL to:
-<pre class="mt-2"><code>http://&lt;your-shashin-host&gt;:6624/api/argus/webhook</code></pre>
+                <div class="mt-2 d-flex align-items-center gap-2">
+                    <pre class="mb-0"><code id="webhookUrl" th:text="${baseUrl + '/api/argus/webhook'}"></code></pre>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="copyWebhookUrlBtn" title="Copy">
+                        <span id="copyWebhookUrlIcon" class="bi-clipboard-plus"></span>
+                    </button>
+                </div>
             </li>
             <li>Save and use the <strong>Test</strong> button — Argus should report a <strong>200</strong> response.</li>
         </ol>
@@ -92,6 +97,20 @@
         </ul>
 
     </div>
+
+    <script type="text/javascript" th:nonce="${cspNonce}">
+        $("#copyWebhookUrlBtn").on("click", function() {
+            const url = $("#webhookUrl").text();
+            Util.copyToClipboard(url, function(ok) {
+                const icon = $("#copyWebhookUrlIcon");
+                icon.removeClass("bi-clipboard-plus bi-clipboard-check bi-clipboard-x")
+                    .addClass(ok ? "bi-clipboard-check" : "bi-clipboard-x");
+                setTimeout(function() {
+                    icon.removeClass("bi-clipboard-check bi-clipboard-x").addClass("bi-clipboard-plus");
+                }, 2000);
+            });
+        });
+    </script>
 </section>
 </body>
 </html>
