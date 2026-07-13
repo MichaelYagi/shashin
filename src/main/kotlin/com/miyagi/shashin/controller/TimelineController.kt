@@ -79,6 +79,7 @@ class TimelineController(
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
     private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null,
     private var ollamaConversationRepository: com.miyagi.shashin.repository.OllamaConversationRepository? = null,
+    private var ollamaContextRepository: com.miyagi.shashin.repository.OllamaContextRepository? = null,
     private var settingsRepository: SettingsRepository? = null,
     private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null,
     var messageSource: MessageSource? = null,
@@ -4073,12 +4074,7 @@ class TimelineController(
         val question = node["question"]?.asText()?.takeIf { it.isNotBlank() }
             ?: return mapper.writeValueAsString(mapOf("error" to "No question provided"))
 
-        val history = ollamaConversationRepository
-            ?.findAllByMetadataIdOrderByIdAsc(id)
-            ?.map { mapOf("role" to (it.getRole() ?: "user"), "content" to (it.getContent() ?: "")) }
-            ?: emptyList()
-
-        val answer = ollamaVisionService?.ask(metadata, question, history, settings)
+        val answer = ollamaVisionService?.ask(metadata, question, settings, ollamaContextRepository)
             ?: return mapper.writeValueAsString(mapOf("error" to "No response from Ollama"))
 
         val ts = getCurrentTimestamp()

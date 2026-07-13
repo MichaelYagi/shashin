@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Keyword
 import com.miyagi.shashin.model.KeywordPhoto
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.OllamaContext
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.KeywordPhotoRepository
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.OllamaContextRepository
 import com.miyagi.shashin.service.ImageProcessing
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
@@ -20,6 +22,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.Duration
 import java.util.Base64
+import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -32,6 +35,13 @@ class OllamaVisionService(
 ) {
     private val logger = Logger.getLogger(OllamaVisionService::class.simpleName)
     private val mapper = ObjectMapper()
+
+    // Option 2: in-memory LRU cache of encoded images (max 50 entries)
+    private val imageCache: MutableMap<String, String> = Collections.synchronizedMap(
+        object : LinkedHashMap<String, String>(64, 0.75f, true) {
+            override fun removeEldestEntry(eldest: Map.Entry<String, String>) = size > 50
+        }
+    )
 
     fun getVisionModels(ollamaUrl: String): List<String> {
         return try {
@@ -189,34 +199,30 @@ class OllamaVisionService(
     fun isOllamaConfigured(settings: Settings): Boolean =
         !settings.getOllamaUrl().isNullOrBlank() && !settings.getOllamaVisionModel().isNullOrBlank()
 
-    fun ask(metadata: Metadata, question: String, history: List<Map<String, String>>, settings: Settings): String? {
+    fun ask(metadata: Metadata, question: String, settings: Settings, contextRepository: OllamaContextRepository?): String? {
+        val metadataId = metadata.getId() ?: return null
         val imagePath = ImageProcessing.Companion.argusImagePath(metadata) ?: return null
         val imageFile = File(imagePath)
         if (!imageFile.exists()) return null
 
-        val imageB64 = try { encodeForOllama(imageFile) } catch (e: Exception) { return null }
+        // Option 2: use cached base64, encode from disk only on first access
+        val imageB64 = imageCache[metadataId]
+            ?: try { encodeForOllama(imageFile).also { imageCache[metadataId] = it } } catch (e: Exception) { return null }
 
-        val messages = mutableListOf<Map<String, Any>>()
-        if (history.isEmpty()) {
-            messages.add(mapOf("role" to "user", "content" to "/no_think $question", "images" to listOf(imageB64)))
-        } else {
-            var imageInjected = false
-            for (msg in history) {
-                if (!imageInjected && msg["role"] == "user") {
-                    messages.add(mapOf("role" to "user", "content" to "/no_think ${msg["content"] ?: ""}", "images" to listOf(imageB64)))
-                    imageInjected = true
-                } else {
-                    messages.add(mapOf("role" to (msg["role"] ?: "user"), "content" to (msg["content"] ?: "")))
-                }
-            }
-            messages.add(mapOf("role" to "user", "content" to "/no_think $question"))
-        }
+        // Option 3: load stored context tokens; discard if model changed
+        val storedCtx = contextRepository?.findByMetadataId(metadataId)
+        val ctxValid = storedCtx != null && storedCtx.getModel() == settings.getOllamaVisionModel()
 
-        val payload = mapper.writeValueAsString(mapOf(
+        // Option 1: image always in the current prompt only, not in history
+        val payload = mutableMapOf<String, Any>(
             "model" to settings.getOllamaVisionModel()!!,
-            "messages" to messages,
+            "prompt" to "/no_think $question",
+            "images" to listOf(imageB64),
             "stream" to false
-        ))
+        )
+        if (ctxValid) {
+            payload["context"] = mapper.readTree(storedCtx!!.getContext())
+        }
 
         return try {
             val client = WebClient.builder()
@@ -224,18 +230,30 @@ class OllamaVisionService(
                 .codecs { it.defaultCodecs().maxInMemorySize(20 * 1024 * 1024) }
                 .build()
             val response = client.post()
-                .uri("/api/chat")
+                .uri("/api/generate")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .bodyValue(payload)
+                .bodyValue(mapper.writeValueAsString(payload))
                 .retrieve()
                 .bodyToMono(String::class.java)
                 .block(Duration.ofSeconds(120)) ?: return null
 
-            var content = mapper.readTree(response)["message"]?.get("content")?.asText() ?: return null
+            val responseNode = mapper.readTree(response)
+            var content = responseNode["response"]?.asText() ?: return null
             content = content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
+
+            // Save updated context tokens back to DB
+            val newContextNode = responseNode["context"]
+            if (newContextNode != null && contextRepository != null) {
+                val ctxObj = (if (ctxValid) storedCtx else null) ?: OllamaContext().also { it.setMetadataId(metadataId) }
+                ctxObj.setModel(settings.getOllamaVisionModel())
+                ctxObj.setContext(mapper.writeValueAsString(newContextNode))
+                ctxObj.setUpdatedAt(TextUtils.getCurrentTimestamp())
+                contextRepository.save(ctxObj)
+            }
+
             content
         } catch (e: Exception) {
-            logger.log(Level.WARNING, "Ollama ask error for ${metadata.getId()}: ${e.localizedMessage}")
+            logger.log(Level.WARNING, "Ollama ask error for $metadataId: ${e.localizedMessage}")
             null
         }
     }

@@ -339,6 +339,14 @@ CREATE TABLE `ollama_conversation` (
                                 `created_at` VARCHAR(32)
 );
 
+CREATE TABLE IF NOT EXISTS `ollama_context` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                                `metadata_id` VARCHAR(36) NOT NULL,
+                                `model` VARCHAR(128),
+                                `context` TEXT NOT NULL,
+                                `updated_at` VARCHAR(32)
+);
+
 INSERT INTO `hibernate_sequence` VALUES (362);
 
 PRAGMA journal_mode = WAL;
