@@ -10,7 +10,7 @@
             <div>Ollama<a class="anchorjs-link" href="#ollama" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
 
-        <p><strong>Ollama</strong> is a self-hosted service for running large language models locally. Shashin uses it with a vision-capable model to generate keyword tags and descriptions for your photos.</p>
+        <p><strong>Ollama</strong> is a self-hosted service for running large language models locally. Shashin uses it with a vision-capable model to generate captions and keyword tags for your photos, and to power the <strong>Ask</strong> tab — a conversational Q&amp;A interface on every photo.</p>
         <p>Ollama is optional. If it is not configured or not reachable, Shashin falls back to Argus for object detection (if Argus is connected and object detection is enabled).</p>
 
         <h2 id="whatitdoes">
@@ -18,8 +18,9 @@
         </h2>
 
         <ul>
-            <li>Analyses each photo using a vision model and extracts descriptive keyword tags.</li>
-            <li>Tags are stored in Shashin and become searchable alongside EXIF metadata.</li>
+            <li>Generates a warm, personal caption and keyword tags for each photo at scan time.</li>
+            <li>Tags and captions are stored in Shashin and become searchable alongside EXIF metadata.</li>
+            <li>Enables the <strong>Ask</strong> tab on every photo — ask any question about the photo and continue the conversation naturally.</li>
             <li>Takes priority over Argus for object detection — if Ollama is reachable, Argus is not called for objects.</li>
             <li>Photos that already have keyword tags from a previous scan are skipped unless a rescan is requested.</li>
         </ul>
@@ -44,6 +45,19 @@
 
         <p>Object detection runs as part of a media scan. Go to <a href="/settings/scan">Media Indexing</a> and click <strong>Scan</strong>. Shashin sends each photo to Ollama in turn and stores the returned tags. The scan skips photos that already have keyword tags unless you run a forced rescan.</p>
         <p>After scanning, keyword tags are searchable from the search bar and visible in the photo detail panel.</p>
+
+        <h2 id="ask">
+            <div>Ask<a class="anchorjs-link" href="#ask" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>When Ollama is connected with a vision model, an <strong>Ask</strong> tab appears in the photo detail modal. You can type any question about the photo and receive an answer from the model.</p>
+
+        <ul>
+            <li>Conversations are <strong>contextual</strong> — you can ask follow-up questions and refer back to previous answers naturally (e.g. <em>"What colour is the scarf?"</em> → <em>"What is it made of?"</em>).</li>
+            <li>Conversations are <strong>saved per photo</strong> — close the modal and reopen it later to continue where you left off.</li>
+            <li>The model is given the photo's <strong>date taken</strong> and <strong>location</strong> (place name and coordinates) as context, so it can answer questions like <em>"When was this taken?"</em> or <em>"Where is this?"</em>.</li>
+            <li>Each turn sends only the current question and image — prior exchanges are encoded in Ollama's context token cache, keeping payloads small regardless of conversation length.</li>
+        </ul>
 
         <h2 id="fallback">
             <div>Argus Fallback<a class="anchorjs-link" href="#fallback" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
