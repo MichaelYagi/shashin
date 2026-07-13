@@ -141,13 +141,6 @@ class ScheduledTasks(
         Thread { argusReconcile?.run(settings) }.start()
     }
 
-    @Scheduled(cron = "0 */15 * * * *", zone="GMT")
-    fun argusReconcileJob() {
-        val settings = settingsRepository?.findFirstByOrderByIdAsc() ?: return
-        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return
-        Thread { argusReconcile?.run(settings) }.start()
-    }
-
     // Configured hour to scan faces
     @Scheduled(cron = "#{cronProperties.expression()}", zone="GMT")
     fun scanSubjectsAndObjectsJob() {
