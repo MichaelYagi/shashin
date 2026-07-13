@@ -4037,7 +4037,7 @@ class TimelineController(
         return false
     }
 
-    @RequestMapping(value = ["/api/v1/ollama/status"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/ollama/status"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun ollamaStatus(): String {
@@ -4047,7 +4047,7 @@ class TimelineController(
         return mapper.writeValueAsString(mapOf("available" to configured, "model" to if (configured) settings?.getOllamaVisionModel() else null))
     }
 
-    @RequestMapping(value = ["/api/v1/photo/{id}/conversation"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/photo/{id}/conversation"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun getConversation(@PathVariable id: String): String {
@@ -4057,7 +4057,7 @@ class TimelineController(
         return mapper.writeValueAsString(result)
     }
 
-    @RequestMapping(value = ["/api/v1/photo/{id}/ask"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/photo/{id}/ask"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun askPhoto(@PathVariable id: String, @RequestBody body: String): String {

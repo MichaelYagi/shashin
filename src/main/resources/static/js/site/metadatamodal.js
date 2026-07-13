@@ -661,7 +661,7 @@ let askOllamaModel = null;
 let askLoadedForMetadataId = null;
 
 // Check once on page load
-$.get("/api/v1/ollama/status", function(data) {
+$.get("/ollama/status", function(data) {
     if (data.available) {
         askOllamaModel = data.model;
         $("#askTabNav").show();
@@ -703,7 +703,7 @@ function askLoadConversation(metadataId) {
     if (askLoadedForMetadataId === metadataId) return;
     askLoadedForMetadataId = metadataId;
     $("#askChatMessages").empty();
-    $.get("/api/v1/photo/" + metadataId + "/conversation", function(messages) {
+    $.get("/photo/" + metadataId + "/conversation", function(messages) {
         messages.forEach(function(msg) {
             askAppendMessage(msg.role, msg.content, msg.createdAt);
         });
@@ -721,7 +721,7 @@ function askSend() {
     askAppendMessage("thinking", "");
 
     $.ajax({
-        url: "/api/v1/photo/" + metadataId + "/ask",
+        url: "/photo/" + metadataId + "/ask",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify({ question: question }),
