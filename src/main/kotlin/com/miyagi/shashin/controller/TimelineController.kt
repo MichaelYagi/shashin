@@ -79,6 +79,7 @@ class TimelineController(
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
     private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null,
     private var ollamaConversationRepository: com.miyagi.shashin.repository.OllamaConversationRepository? = null,
+    private var settingsRepository: SettingsRepository? = null,
     private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null,
     var messageSource: MessageSource? = null,
     @Value("\${app.endpoint.url.geocode}")
@@ -4041,7 +4042,7 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun ollamaStatus(): String {
         val mapper = ObjectMapper()
-        val settings = settingsRepository.findFirstByOrderByIdAsc()
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
         val configured = settings != null && ollamaVisionService?.isOllamaConfigured(settings) == true
         return mapper.writeValueAsString(mapOf("available" to configured, "model" to if (configured) settings?.getOllamaVisionModel() else null))
     }
@@ -4061,7 +4062,7 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun askPhoto(@PathVariable id: String, @RequestBody body: String): String {
         val mapper = ObjectMapper()
-        val settings = settingsRepository.findFirstByOrderByIdAsc()
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
             ?: return mapper.writeValueAsString(mapOf("error" to "Ollama not configured"))
         if (ollamaVisionService?.isOllamaConfigured(settings) != true)
             return mapper.writeValueAsString(mapOf("error" to "Ollama not configured"))
