@@ -3,6 +3,8 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.RecognitionLabel
+import com.miyagi.shashin.model.RecognitionLabelPhoto
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.repository.SettingsRepository
@@ -19,7 +21,8 @@ import java.util.logging.Logger
 class ArgusWebhookController(
     private var recognitionLabelRepository: RecognitionLabelRepository? = null,
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
-    private var settingsRepository: SettingsRepository? = null
+    private var settingsRepository: SettingsRepository? = null,
+    private var metadataRepository: MetadataRepository? = null
 ) {
     private val logger = Logger.getLogger(ArgusWebhookController::class.simpleName)
     private val mapper = ObjectMapper()
@@ -32,11 +35,13 @@ class ArgusWebhookController(
             val event = root["event"]?.asText() ?: return ResponseEntity.ok().build()
             val data = root["data"] ?: return ResponseEntity.ok().build()
             when (event) {
-                "identity.created"  -> handleIdentityCreated(data)
-                "identity.updated"  -> handleIdentityUpdated(data)
-                "identity.merged"   -> handleIdentityMerged(data)
-                "identity.deleted"  -> handleIdentityDeleted(data)
-                "detection.labeled" -> handleDetectionLabeled(data)
+                "identity.created"   -> handleIdentityCreated(data)
+                "identity.updated"   -> handleIdentityUpdated(data)
+                "identity.merged"    -> handleIdentityMerged(data)
+                "identity.deleted"   -> handleIdentityDeleted(data)
+                "detection.labeled"  -> handleDetectionLabeled(data)
+                "detection.deleted"  -> handleDetectionDeleted(data)
+                "detection.created"  -> handleDetectionCreated(data)
             }
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Argus webhook error: ${e.localizedMessage}")
@@ -149,13 +154,52 @@ class ArgusWebhookController(
     private fun handleDetectionLabeled(data: JsonNode) {
         if (data["type"]?.asText() != "face") return
         val detectionId = data["detection_id"]?.asInt()?.toString() ?: return
-        val identityId = data["identity_id"]?.takeUnless { it.isNull }?.asInt() ?: return
         val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: return
+
+        val identityIdNode = data["identity_id"]
+        if (identityIdNode == null || identityIdNode.isNull) {
+            // Rejected — unlink from any person
+            if (record.getRecognitionLabelId() != null) {
+                record.setRecognitionLabelId(null)
+                try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+            }
+            return
+        }
+
+        val identityId = identityIdNode.asInt()
         val person = recognitionLabelRepository?.findByArgusIdentityId(identityId) ?: return
         if (record.getRecognitionLabelId() != person.getId()) {
             record.setRecognitionLabelId(person.getId())
             try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
         }
+    }
+
+    private fun handleDetectionDeleted(data: JsonNode) {
+        val detectionIds = data["detection_ids"]?.takeUnless { it.isNull } ?: return
+        for (node in detectionIds) {
+            val detectionId = node?.asInt()?.toString() ?: continue
+            val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
+            try { recognitionLabelPhotoRepository?.delete(record) } catch (_: Exception) {}
+        }
+    }
+
+    private fun handleDetectionCreated(data: JsonNode) {
+        if (data["type"]?.asText() != "face") return
+        val detectionId = data["detection_id"]?.asInt()?.toString() ?: return
+        val metadataId = data["external_ref"]?.takeUnless { it.isNull }?.asText()?.takeIf { it.isNotBlank() } ?: return
+
+        // Skip if we already have a record for this detection
+        if (recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) != null) return
+
+        // Verify the source photo exists
+        val metadata = metadataRepository?.findById(metadataId)?.takeIf { it.isPresent }?.get() ?: return
+
+        val stub = RecognitionLabelPhoto()
+        stub.setMetadataId(metadata.getId())
+        stub.setArgusDetectionId(detectionId)
+        stub.setConfidence("0.0")
+        stub.setAutoTagged(true)
+        try { recognitionLabelPhotoRepository?.save(stub) } catch (_: Exception) {}
     }
 
     private fun stampExternalRef(argusId: Int, shashinId: Int?) {

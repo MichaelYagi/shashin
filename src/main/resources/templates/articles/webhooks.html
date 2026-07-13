@@ -25,6 +25,8 @@
             <li>Leave <strong>Secret</strong> blank.</li>
             <li>Subscribe to these events:
                 <ul>
+                    <li><code>detection.created</code></li>
+                    <li><code>detection.deleted</code></li>
                     <li><code>detection.labeled</code></li>
                     <li><code>identity.created</code></li>
                     <li><code>identity.deleted</code></li>
@@ -76,8 +78,16 @@
                     <td>Removes the person and all their face tags from Shashin.</td>
                 </tr>
                 <tr>
+                    <td><code>detection.created</code></td>
+                    <td>When Argus reprocesses an image, creates a stub face tag record in Shashin so the subsequent <code>detection.labeled</code> event can find it and assign the correct person.</td>
+                </tr>
+                <tr>
+                    <td><code>detection.deleted</code></td>
+                    <td>Removes face tag records that were bulk-deleted from Argus's review queue, keeping Shashin's data clean.</td>
+                </tr>
+                <tr>
                     <td><code>detection.labeled</code></td>
-                    <td>Reassigns the face tag to the correct person when a detection is labeled or reassigned in Argus.</td>
+                    <td>Reassigns a face tag to the correct person when labeled or reassigned in Argus. If the detection is rejected (no identity assigned), the face tag is unlinked from any person in Shashin.</td>
                 </tr>
             </tbody>
         </table>
