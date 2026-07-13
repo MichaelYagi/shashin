@@ -27,6 +27,9 @@
                 <li class="nav-item" id="mapTabNav">
                     <a class="nav-link" data-bs-toggle="tab" id="mapTabLink" href="#mapTab"><th:block th:text="#{main.sidebar.map}"></th:block></a>
                 </li>
+                <li class="nav-item" id="askTabNav" style="display:none;">
+                    <a class="nav-link" data-bs-toggle="tab" id="askTabLink" href="#askTab">Ask</a>
+                </li>
             </ul>
             <div class="modal-body ui-front" id="propMetadataBody">
                 <div class="tab-content">
@@ -161,6 +164,14 @@
                     <div class="tab-pane container fade" id="mapTab">
                         <span id="mapTabMessage"><th:block th:text="#{main.modal.map.message}"></th:block></label></span>
                         <div data-role="dialog" id="modalmap" class="map" style="width: 100%;height: 400px"></div>
+                    </div>
+                    <div class="tab-pane container fade" id="askTab">
+                        <div id="askChatMessages" style="height:320px;overflow-y:auto;display:flex;flex-direction:column;padding:4px 0 8px 0;"></div>
+                        <div class="d-flex gap-2 mt-2 align-items-end border-top pt-2">
+                            <textarea class="form-control" id="askInput" rows="2" placeholder="Type your message..."></textarea>
+                            <button class="btn btn-primary" id="askSendBtn" style="min-width:70px;">Send</button>
+                        </div>
+                        <small class="text-muted mt-1 d-block" id="askModelLabel"></small>
                     </div>
                 </div>
             </div>

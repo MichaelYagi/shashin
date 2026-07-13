@@ -78,6 +78,7 @@ class TimelineController(
     private var recognitionLabelRepository: RecognitionLabelRepository? = null,
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
     private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null,
+    private var ollamaConversationRepository: com.miyagi.shashin.repository.OllamaConversationRepository? = null,
     private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null,
     var messageSource: MessageSource? = null,
     @Value("\${app.endpoint.url.geocode}")
@@ -4033,6 +4034,62 @@ class TimelineController(
             return argusModified
         }
         return false
+    }
+
+    @RequestMapping(value = ["/api/v1/ollama/status"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    fun ollamaStatus(): String {
+        val mapper = ObjectMapper()
+        val settings = settingsRepository.findFirstByOrderByIdAsc()
+        val configured = settings != null && ollamaVisionService?.isOllamaConfigured(settings) == true
+        return mapper.writeValueAsString(mapOf("available" to configured, "model" to if (configured) settings?.getOllamaVisionModel() else null))
+    }
+
+    @RequestMapping(value = ["/api/v1/photo/{id}/conversation"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    fun getConversation(@PathVariable id: String): String {
+        val mapper = ObjectMapper()
+        val messages = ollamaConversationRepository?.findAllByMetadataIdOrderByIdAsc(id) ?: emptyList()
+        val result = messages.map { mapOf("role" to it.getRole(), "content" to it.getContent(), "createdAt" to it.getCreatedAt()) }
+        return mapper.writeValueAsString(result)
+    }
+
+    @RequestMapping(value = ["/api/v1/photo/{id}/ask"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    fun askPhoto(@PathVariable id: String, @RequestBody body: String): String {
+        val mapper = ObjectMapper()
+        val settings = settingsRepository.findFirstByOrderByIdAsc()
+            ?: return mapper.writeValueAsString(mapOf("error" to "Ollama not configured"))
+        if (ollamaVisionService?.isOllamaConfigured(settings) != true)
+            return mapper.writeValueAsString(mapOf("error" to "Ollama not configured"))
+        val metadataRecord = metadataRepository.findById(id)
+        if (!metadataRecord.isPresent) return mapper.writeValueAsString(mapOf("error" to "Photo not found"))
+        val metadata = metadataRecord.get()
+        val node = mapper.readTree(body)
+        val question = node["question"]?.asText()?.takeIf { it.isNotBlank() }
+            ?: return mapper.writeValueAsString(mapOf("error" to "No question provided"))
+
+        val history = ollamaConversationRepository
+            ?.findAllByMetadataIdOrderByIdAsc(id)
+            ?.map { mapOf("role" to (it.getRole() ?: "user"), "content" to (it.getContent() ?: "")) }
+            ?: emptyList()
+
+        val answer = ollamaVisionService?.ask(metadata, question, history, settings)
+            ?: return mapper.writeValueAsString(mapOf("error" to "No response from Ollama"))
+
+        val ts = getCurrentTimestamp()
+        val userMsg = com.miyagi.shashin.model.OllamaConversation().also {
+            it.setMetadataId(id); it.setRole("user"); it.setContent(question); it.setCreatedAt(ts)
+        }
+        val assistantMsg = com.miyagi.shashin.model.OllamaConversation().also {
+            it.setMetadataId(id); it.setRole("assistant"); it.setContent(answer); it.setCreatedAt(ts)
+        }
+        ollamaConversationRepository?.saveAll(listOf(userMsg, assistantMsg))
+
+        return mapper.writeValueAsString(mapOf("answer" to answer, "model" to settings.getOllamaVisionModel(), "createdAt" to ts))
     }
 
     fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, argusDetectionIdMap: MutableMap<String, Any?>) {

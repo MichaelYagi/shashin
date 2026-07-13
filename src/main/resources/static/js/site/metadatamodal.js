@@ -100,7 +100,7 @@ $("#propMetadata")
         e.which === 13 ||
         e.keyCode === 13;
 
-    if (isEnter && e.target.id !== "description") {
+    if (isEnter && e.target.id !== "description" && e.target.id !== "askInput") {
         await saveMetadata(e);
     }
 });
@@ -654,6 +654,115 @@ document.querySelectorAll('.nav-link').forEach(linkItem => {
 $('#propMetadata').on('keydown', function (e) {
     e.stopPropagation(); // prevent bubbling to background
 });
+
+// ── Ollama Ask tab ────────────────────────────────────────────────────────────
+
+let askOllamaModel = null;
+let askLoadedForMetadataId = null;
+
+// Check once on page load
+$.get("/api/v1/ollama/status", function(data) {
+    if (data.available) {
+        askOllamaModel = data.model;
+        $("#askTabNav").show();
+        $("#askModelLabel").text("Model: " + askOllamaModel);
+    }
+});
+
+function askAppendMessage(role, content, createdAt) {
+    const $chat = $("#askChatMessages");
+    if (role === "user") {
+        $chat.append(
+            $('<div class="d-flex justify-content-end mb-2">').append(
+                $('<div class="p-3 rounded bg-primary text-white">').css({"max-width":"75%","word-break":"break-word"}).text(content)
+            )
+        );
+    } else if (role === "assistant") {
+        const timeStr = createdAt || new Date().toLocaleString();
+        $chat.append(
+            $('<div class="d-flex flex-column mb-2">').append(
+                $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).text(content),
+                $('<small class="text-muted mt-1">').text(timeStr + " · " + (askOllamaModel || ""))
+            )
+        );
+    } else if (role === "thinking") {
+        $chat.append(
+            $('<div id="askThinking" class="d-flex align-items-center gap-2 text-muted p-2">').append(
+                $('<div class="spinner-border spinner-border-sm">'),
+                $('<small>').text("Thinking...")
+            )
+        );
+    } else if (role === "error") {
+        $chat.append($('<div class="text-danger small p-2">').text(content));
+    }
+    const el = $chat[0];
+    el.scrollTop = el.scrollHeight;
+}
+
+function askLoadConversation(metadataId) {
+    if (askLoadedForMetadataId === metadataId) return;
+    askLoadedForMetadataId = metadataId;
+    $("#askChatMessages").empty();
+    $.get("/api/v1/photo/" + metadataId + "/conversation", function(messages) {
+        messages.forEach(function(msg) {
+            askAppendMessage(msg.role, msg.content, msg.createdAt);
+        });
+    });
+}
+
+function askSend() {
+    const question = $("#askInput").val().trim();
+    if (!question) return;
+    const metadataId = $("#metadataId").val();
+    if (!metadataId) return;
+
+    $("#askInput").val("");
+    askAppendMessage("user", question);
+    askAppendMessage("thinking", "");
+
+    $.ajax({
+        url: "/api/v1/photo/" + metadataId + "/ask",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ question: question }),
+        success: function(data) {
+            $("#askThinking").remove();
+            if (data.error) {
+                askAppendMessage("error", data.error);
+                return;
+            }
+            askAppendMessage("assistant", data.answer || "", data.createdAt);
+        },
+        error: function() {
+            $("#askThinking").remove();
+            askAppendMessage("error", "Something went wrong. Please try again.");
+        }
+    });
+}
+
+// Reset loaded marker when modal opens a new photo so conversation reloads
+$("#propMetadata").on("show.bs.modal", function() {
+    askLoadedForMetadataId = null;
+});
+
+$("#askSendBtn").off("click").on("click", function() { askSend(); });
+
+$("#askInput").on("keydown", function(e) {
+    if ((e.key === "Enter" || e.keyCode === 13) && !e.shiftKey) {
+        e.preventDefault();
+        askSend();
+    }
+});
+
+$("#askTabLink").off("click").on("click", function(e) {
+    e.preventDefault();
+    const propMetadataModal = document.getElementById("propMetadata");
+    const modal = bootstrap.Modal.getInstance(propMetadataModal);
+    modal.handleUpdate();
+    askLoadConversation($("#metadataId").val());
+});
+
+// ── End Ask tab ────────────────────────────────────────────────────────────────
 
 $('body').off("click").on("click", function(event) {
     const metadataId = $("#metadataId").val();

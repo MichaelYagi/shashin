@@ -186,6 +186,60 @@ class OllamaVisionService(
         return Pair(description, keywords)
     }
 
+    fun isOllamaConfigured(settings: Settings): Boolean =
+        !settings.getOllamaUrl().isNullOrBlank() && !settings.getOllamaVisionModel().isNullOrBlank()
+
+    fun ask(metadata: Metadata, question: String, history: List<Map<String, String>>, settings: Settings): String? {
+        val imagePath = ImageProcessing.Companion.argusImagePath(metadata) ?: return null
+        val imageFile = File(imagePath)
+        if (!imageFile.exists()) return null
+
+        val imageB64 = try { encodeForOllama(imageFile) } catch (e: Exception) { return null }
+
+        val messages = mutableListOf<Map<String, Any>>()
+        if (history.isEmpty()) {
+            messages.add(mapOf("role" to "user", "content" to "/no_think $question", "images" to listOf(imageB64)))
+        } else {
+            var imageInjected = false
+            for (msg in history) {
+                if (!imageInjected && msg["role"] == "user") {
+                    messages.add(mapOf("role" to "user", "content" to "/no_think ${msg["content"] ?: ""}", "images" to listOf(imageB64)))
+                    imageInjected = true
+                } else {
+                    messages.add(mapOf("role" to (msg["role"] ?: "user"), "content" to (msg["content"] ?: "")))
+                }
+            }
+            messages.add(mapOf("role" to "user", "content" to "/no_think $question"))
+        }
+
+        val payload = mapper.writeValueAsString(mapOf(
+            "model" to settings.getOllamaVisionModel()!!,
+            "messages" to messages,
+            "stream" to false
+        ))
+
+        return try {
+            val client = WebClient.builder()
+                .baseUrl(settings.getOllamaUrl()!!.trimEnd('/'))
+                .codecs { it.defaultCodecs().maxInMemorySize(20 * 1024 * 1024) }
+                .build()
+            val response = client.post()
+                .uri("/api/chat")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block(Duration.ofSeconds(120)) ?: return null
+
+            var content = mapper.readTree(response)["message"]?.get("content")?.asText() ?: return null
+            content = content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
+            content
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Ollama ask error for ${metadata.getId()}: ${e.localizedMessage}")
+            null
+        }
+    }
+
     private fun saveKeywords(keywords: List<String>, metadataId: String) {
         for (term in keywords) {
             if (term.isBlank()) continue

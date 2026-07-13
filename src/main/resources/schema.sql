@@ -330,6 +330,15 @@ CREATE TABLE `duplicates` (
                                 FOREIGN KEY (image_id_two) REFERENCES metadata(id)
 );
 
+DROP TABLE IF EXISTS `ollama_conversation`;
+CREATE TABLE `ollama_conversation` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                                `metadata_id` VARCHAR(36),
+                                `role` VARCHAR(16) NOT NULL,
+                                `content` TEXT NOT NULL,
+                                `created_at` VARCHAR(32)
+);
+
 INSERT INTO `hibernate_sequence` VALUES (362);
 
 PRAGMA journal_mode = WAL;
