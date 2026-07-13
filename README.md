@@ -1,7 +1,21 @@
 [![CircleCI](https://circleci.com/gh/MichaelYagi/shashin/tree/main.svg?style=shield&circle-token=a7f7505f8d0357fbae3ca5be7a41ff8debed1d1d)](https://circleci.com/gh/MichaelYagi/shashin)
 
 # Shashin
-A self-hosted media gallery.
+A self-hosted media gallery with AI-powered photo understanding.
+
+Scan local directories, browse your library, and let AI describe, tag, and answer questions about your photos — all on your own hardware.
+
+- **AI captions & keywords** — connect [Ollama](https://ollama.com/) to auto-generate descriptions and tags for every photo
+- **Conversational Q&A** — ask any photo a question and get an answer; conversation history is saved per photo
+- **Face recognition** — detect, enrol, and label faces via [Argus](https://github.com/MichaelYagi/argus), with real-time webhook sync
+- **Object detection** — automatically tag photos with what's in them
+- **Interactive map** — browse by location with OpenLayers and reverse geocoding
+- **Rich browsing** — timeline, folders, albums, favourites, keywords, date taken/modified/accessed
+- **Full-text search** — across titles, descriptions, keywords, people, and places
+- **EXIF metadata** — extracted automatically; fully editable
+- **Duplicate detection** — perceptual hashing with BK-tree similarity search
+- **Multi-user** — three role levels, session auth for the UI, API key auth for the REST API
+- **RSS / Atom feeds**
 
 <img src="https://michaelyagi.github.io/images/shashinss.png" alt="shashin"/>
 
