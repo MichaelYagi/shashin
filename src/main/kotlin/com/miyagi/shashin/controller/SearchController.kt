@@ -402,7 +402,7 @@ class SearchController(
             } catch (e: Exception) { null }
         }.sortedByDescending { it.second }.take(size)
         val idOrder = scored.map { it.first }
-        val byId = metadataRepository.findAllById(idOrder).associateBy { it.getId() }
+        val byId = metadataRepository.findAllById(idOrder).filterNotNull().associateBy { it.getId() }
         return idOrder.mapNotNull { byId[it] }
     }
 
