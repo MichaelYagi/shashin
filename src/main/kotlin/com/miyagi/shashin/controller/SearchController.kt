@@ -213,10 +213,14 @@ class SearchController(
                 }
             }
 
-            // Blend keyword results with semantic search on page 0 for regular queries
+            // Blend keyword results with semantic search on page 0 for regular queries,
+            // but only when keyword search didn't already return a full page — avoids the
+            // Ollama HTTP call + full embedding scan on snappy keyword hits.
             val specialTerms = setOf("shashinedit", "shashinedited", "nodupehash", "nolatlng", "latlng", "description")
+            val keywordCount = metadataList?.count() ?: 0
             if (page == 0 && settingsObj != null && !specialTerms.contains(updatedTerm.lowercase())
-                && ollamaVisionService?.isEmbedConfigured(settingsObj) == true) {
+                && ollamaVisionService?.isEmbedConfigured(settingsObj) == true
+                && keywordCount < size) {
                 val blended = blendedSearch(updatedTerm, size, settingsObj, metadataList?.toList() ?: emptyList())
                 metadataList = blended.toMutableList()
                 response["metadataSearchList"] = metadataList
