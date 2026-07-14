@@ -177,7 +177,7 @@ class OllamaVisionService(
             if (description.isNotBlank() && (rescan || !hasDescription)) {
                 metadata.setDescription(description)
                 metadataDirty = true
-                val vec = embed(description, settings)
+                val vec = embedImage(imageFile, settings)
                 if (vec != null) metadata.setEmbedding(mapper.writeValueAsString(vec.toList()))
             }
 
@@ -229,7 +229,11 @@ class OllamaVisionService(
         !settings.getOllamaUrl().isNullOrBlank()
 
     fun embed(text: String, settings: Settings): FloatArray? {
-        val model = settings.getOllamaEmbedModel()?.takeIf { it.isNotBlank() } ?: "nomic-embed-text"
+        // Use the vision model so query embeddings live in the same space as image embeddings.
+        // Fall back to the dedicated embed model only when no vision model is configured.
+        val model = settings.getOllamaVisionModel()?.takeIf { it.isNotBlank() }
+            ?: settings.getOllamaEmbedModel()?.takeIf { it.isNotBlank() }
+            ?: "nomic-embed-text"
         val url = settings.getOllamaUrl()?.takeIf { it.isNotBlank() } ?: return null
         val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to text))
         return try {
@@ -253,22 +257,50 @@ class OllamaVisionService(
         }
     }
 
+    fun embedImage(imageFile: File, settings: Settings): FloatArray? {
+        val model = settings.getOllamaVisionModel()?.takeIf { it.isNotBlank() } ?: return null
+        val url = settings.getOllamaUrl()?.takeIf { it.isNotBlank() } ?: return null
+        val b64 = try { encodeForOllama(imageFile) } catch (e: Exception) { return null }
+        val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to "", "images" to listOf(b64)))
+        return try {
+            val client = WebClient.builder()
+                .baseUrl(url.trimEnd('/'))
+                .codecs { it.defaultCodecs().maxInMemorySize(20 * 1024 * 1024) }
+                .build()
+            val response = client.post()
+                .uri("/api/embed")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block(Duration.ofSeconds(60)) ?: return null
+            val node = mapper.readTree(response)
+            val arr = node["embeddings"]?.get(0) ?: node["embedding"] ?: return null
+            FloatArray(arr.size()) { arr[it].floatValue() }
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Ollama image embed error: ${e.localizedMessage}")
+            null
+        }
+    }
+
     fun generateEmbeddingsBatch(settings: Settings, shouldStop: AtomicBoolean? = null) {
-        if (!isEmbedConfigured(settings)) return
+        if (!isOllamaConfigured(settings)) return
         if (embeddingRunning.get()) return
         embeddingRunning.set(true)
         embeddingProcessed.set(0)
-        embeddingTotal.set(metadataRepository.countWithDescriptionAndNoEmbedding().toInt())
+        embeddingTotal.set(metadataRepository.countWithNoEmbedding().toInt())
         try {
             val batchSize = 50
             while (true) {
                 if (shouldStop?.get() == true) return
-                val batch = metadataRepository.findAllWithDescriptionAndNoEmbedding(batchSize)
+                val batch = metadataRepository.findAllWithNoEmbedding(batchSize)
                 if (batch.isEmpty()) break
                 for (metadata in batch) {
                     if (shouldStop?.get() == true) return
-                    val desc = metadata.getDescription() ?: continue
-                    val vec = embed(desc, settings) ?: continue
+                    val imagePath = ImageProcessing.Companion.argusImagePath(metadata) ?: continue
+                    val imageFile = File(imagePath)
+                    if (!imageFile.exists()) continue
+                    val vec = embedImage(imageFile, settings) ?: continue
                     val embeddingJson = mapper.writeValueAsString(vec.toList())
                     val timestamp = TextUtils.getCurrentTimestamp()
                     jdbcTemplate.update(

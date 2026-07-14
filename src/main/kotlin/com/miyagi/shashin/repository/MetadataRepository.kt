@@ -104,6 +104,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE thumbnail_url_centered = :thumbnailUrlCentered", nativeQuery = true)
    fun findByThumbnailCentered(@Param("thumbnailUrlCentered") thumbnailUrlCentered: String): Metadata?
 
+   @Query("SELECT * FROM metadata WHERE thumbnail_url_centered IN :urls", nativeQuery = true)
+   fun findAllByThumbnailCenteredIn(@Param("urls") urls: Collection<String>): List<Metadata>
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
@@ -154,6 +157,12 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != '' AND (embedding IS NULL OR embedding = '')", nativeQuery = true)
    fun countWithDescriptionAndNoEmbedding(): Long
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND (embedding IS NULL OR embedding = '') LIMIT :limit", nativeQuery = true)
+   fun findAllWithNoEmbedding(@Param("limit") limit: Int): List<Metadata>
+
+   @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND (embedding IS NULL OR embedding = '')", nativeQuery = true)
+   fun countWithNoEmbedding(): Long
 
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.description IS NOT NULL AND m.description != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllDescriptionAndUserIdOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>

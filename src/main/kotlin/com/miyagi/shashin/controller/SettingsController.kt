@@ -312,8 +312,10 @@ class SettingsController(
     @ResponseBody
     fun getOllamaEmbedStatus(@RequestParam("url") url: String): String {
         val mapper = ObjectMapper()
-        val available = url.isNotBlank() && (ollamaVisionService?.hasEmbedModel(url) ?: false)
-        return mapper.writeValueAsString(mapOf("available" to available, "model" to if (available) "nomic-embed-text" else null))
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val visionModel = settings?.getOllamaVisionModel()?.takeIf { it.isNotBlank() }
+        val available = url.isNotBlank() && visionModel != null && (ollamaVisionService?.isOllamaAvailable(settings!!) ?: false)
+        return mapper.writeValueAsString(mapOf("available" to available, "model" to if (available) visionModel else null))
     }
 
     @Secured("ROLE_SUPER")
@@ -2005,9 +2007,6 @@ class SettingsController(
 
     fun objectAndFacialRecognition(settings: Settings?, compreFaceServerConnected: Boolean, threadFile: File, metadataArrayCount: Int, locale: Locale) {
         Thread {
-            val recognitionLabelPhotoLabels =
-                recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
-
             val superAdminsUsers = userRepository?.findAllByAuthorityEquals(superRole!!)
 
             var threadText: String
@@ -2052,8 +2051,7 @@ class SettingsController(
                     // Detect faces and objects during index scan
                     try {
                         if (settings != null && compreFaceServerConnected) {
-                            val doFaces = settings.getFacialDetection() == true &&
-                                (recognitionLabelPhotoLabels?.count() ?: 0) >= 1
+                            val doFaces = settings.getFacialDetection() == true
                             // Skip Argus object detection if Ollama will provide keywords
                             val doObjects = settings.getObjectDetection() == true && !ollamaAvailable
                             if (doFaces || doObjects) {

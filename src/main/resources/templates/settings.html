@@ -105,7 +105,7 @@
                                         <span class="input-group-text" id="ollamaStatus" style="display:none;"></span>
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-6" id="visionModelSection" th:style="${settings.ollamaUrl == null or #strings.isEmpty(settings.ollamaUrl)} ? 'display:none;' : ''">
                                     <label for="ollamaVisionModel" class="form-label"><strong>Vision model</strong></label>
                                     <div class="input-group">
                                         <select class="form-select" id="ollamaVisionModel" name="ollamaVisionModel">
@@ -233,7 +233,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <th:block th:text="#{main.pages.settings.control.delete.confirm('DELETE')}"></th:block><br>
+                <th:block th:utext="#{main.pages.settings.control.delete.confirm('DELETE')}"></th:block><br>
                 <input class="form-control" type="text" id="deleteConfirm" value="">
             </div>
             <div class="modal-footer">

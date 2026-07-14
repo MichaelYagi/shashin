@@ -225,6 +225,7 @@ class Settings {
             const statusEl = $("#ollamaStatus");
             if (!url) {
                 statusEl.hide();
+                $("#visionModelSection").hide();
                 updateEmbedStatus(false);
                 return;
             }
@@ -245,14 +246,17 @@ class Settings {
                     select.append('<option value="" disabled>No vision models found</option>');
                     statusEl.removeClass("bi-check-circle-fill text-success bi-x-circle-fill text-danger")
                             .addClass("bi-x-circle-fill text-danger").show();
+                    $("#visionModelSection").hide();
                 } else {
                     statusEl.removeClass("bi-check-circle-fill text-success bi-x-circle-fill text-danger")
                             .addClass("bi-check-circle-fill text-success").show();
+                    $("#visionModelSection").show();
                 }
             } catch (e) {
                 console.error("Could not load Ollama models", e);
                 statusEl.removeClass("bi-check-circle-fill text-success bi-x-circle-fill text-danger")
                         .addClass("bi-x-circle-fill text-danger").show();
+                $("#visionModelSection").hide();
             } finally {
                 btn.prop("disabled", false).text("Load models");
             }

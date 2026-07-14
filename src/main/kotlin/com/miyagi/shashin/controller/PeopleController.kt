@@ -19,7 +19,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -45,6 +44,7 @@ import jakarta.servlet.http.HttpSession
 import org.springframework.context.MessageSource
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.client.MultipartBodyBuilder
+import org.springframework.messaging.simp.SimpMessagingTemplate
 import java.security.Principal
 
 @Suppress("UNCHECKED_CAST")
@@ -68,7 +68,8 @@ class PeopleController(
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null,
     private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null,
-    private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null
+    private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null,
+    private var messagingTemplate: SimpMessagingTemplate? = null
 ): BaseController(
     recognitionLabelRepository = recognitionLabelRepository,
     albumRepository = albumRepository,
@@ -85,9 +86,7 @@ class PeopleController(
     val resp = mutableMapOf<String, Any?>()
 
     @MessageMapping("/matchmessage")
-    @SendTo("/topic/matchmessages")
-    @Throws(java.lang.Exception::class)
-    fun sendMatcnMessage(message: ScanMessage, principal: Principal): Message? {
+    fun sendMatcnMessage(message: ScanMessage, principal: Principal) {
         val username = principal.name
         val user = userRepository?.findByUsername(username)
         var lang = "en"
@@ -112,7 +111,11 @@ class PeopleController(
         val messageObj = Message()
         messageObj.setContent(msg)
 
-        return messageObj
+        try {
+            messagingTemplate?.convertAndSend("/topic/matchmessages", messageObj)
+        } catch (_: Exception) {
+            // session closed before delivery — safe to ignore
+        }
     }
 
     @SubscribeMapping("/topic/matchmessages")
@@ -931,13 +934,19 @@ class PeopleController(
                 val argusIdByLabelId = allLabels.associate { it.getId() to it.getArgusIdentityId() }
                 val argusCoverPersonIds = allLabels.filter { it.getArgusThumbnailPath() != null }.map { it.getId() }.toSet()
 
+                // Batch-load cover URL → metadata ID in one query instead of one per person
+                val rawCoverUrls = peopleList.mapNotNull { it.getCoverUrl()?.toString() }.toSet()
+                val coverUrlToId: Map<String, String> = if (rawCoverUrls.isNotEmpty()) {
+                    metadataRepository?.findAllByThumbnailCenteredIn(rawCoverUrls)
+                        ?.associate { it.getThumbnailUrlCentered()!! to it.getId() } ?: emptyMap()
+                } else emptyMap()
+
                 for (person in peopleList) {
                     var coverUrl = ""
-                    if (person.getCoverUrl() != null) {
-                        val metadata = metadataRepository?.findByThumbnailCentered(person.getCoverUrl().toString())
-                        if (metadata != null) {
-                            coverUrl = "/api/v1/thumbnails/centered/" + metadata.getId()
-                        }
+                    val rawCover = person.getCoverUrl()?.toString()
+                    if (rawCover != null) {
+                        val id = coverUrlToId[rawCover]
+                        if (id != null) coverUrl = "/api/v1/thumbnails/centered/$id"
                     }
                     if (coverUrl.isEmpty() && person.getThumbnailUrlCentered() != null) {
                         coverUrl = person.getThumbnailUrlCentered()!!
