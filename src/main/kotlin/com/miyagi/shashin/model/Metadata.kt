@@ -1,5 +1,6 @@
 package com.miyagi.shashin.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.IOException
 import jakarta.persistence.*
@@ -64,6 +65,7 @@ class Metadata {
     private var flipVertically: Boolean? = null
     private var rotation: Int? = null
     private var duplicateHash: String? = null
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private var embedding: String? = null
 
