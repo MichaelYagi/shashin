@@ -142,9 +142,12 @@ class OllamaVisionService(
             "The photo's metadata indicates it was taken at: $place. Include this naturally if relevant.\n\n"
         else ""
 
-        val prompt = "${locationHint}Write a warm, personal caption for this photo as if it's a cherished memory — " +
-            "like something you'd write in a photo album. Keep it under 500 characters, natural and human. " +
-            "Don't start with 'This is a photo of' or similar.\n\n" +
+        val prompt = "${locationHint}Describe this photo as an outside observer. " +
+            "NEVER use I, me, my, mine, we, our, us — you are not in this photo and have no memories of it. " +
+            "Do not invent dialogue, quotes, or personal memories. " +
+            "Describe the people, place, activity, and mood warmly and vividly. " +
+            "Target exactly 450 characters — no more, no less. Use the space for meaningful detail about colours, expressions, atmosphere, or context. No filler. " +
+            "Don't start with 'This is a photo of'.\n\n" +
             "Then on a new line:\nKEYWORDS: word1,word2,word3"
 
         val payload = mapper.writeValueAsString(mapOf(
@@ -174,7 +177,8 @@ class OllamaVisionService(
             // Strip Qwen3 thinking blocks
             content = content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
 
-            val (description, keywords) = parseResponse(content)
+            val (rawDescription, keywords) = parseResponse(content)
+            val description = if (rawDescription.length > 500) rawDescription.take(500).trimEnd() else rawDescription
 
             var metadataDirty = false
             var embeddingDirty = false
