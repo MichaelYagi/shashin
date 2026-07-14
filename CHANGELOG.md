@@ -35,7 +35,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Background embedding writes use `JdbcTemplate` directly (avoids JPA transaction interference from non-Spring-managed threads)
 
 ### Fixed
-- "Cannot commit — no transaction is active" and "Cannot rollback — no transaction is active" errors during concurrent page loads while embedding generation runs in background
+- SQLite cannot commit / cannot rollback errors during concurrent page loads while embedding generation runs in background
 
 ## [2.20.0] - 2026-07-10
 ### Added
