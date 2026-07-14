@@ -258,21 +258,61 @@ class Settings {
             loadOllamaModels();
         }
 
+        // Resume progress display if a job is already running when the page loads
+        $.ajax({
+            url: "/search/embeddings/progress",
+            method: "GET",
+            success: function(data) {
+                if (data.running) {
+                    $("#generateEmbeddingsBtn").prop("disabled", true).text("Running…");
+                    $("#generateEmbeddingsStatus").text("Processing " + data.processed + " / " + data.total + "…");
+                    embeddingPollTimer = setTimeout(pollEmbeddingProgress, 2000);
+                }
+            }
+        });
+
+        let embeddingPollTimer = null;
+
+        function pollEmbeddingProgress() {
+            $.ajax({
+                url: "/search/embeddings/progress",
+                method: "GET",
+                success: function(data) {
+                    if (data.running) {
+                        $("#generateEmbeddingsStatus").text("Processing " + data.processed + " / " + data.total + "…");
+                        embeddingPollTimer = setTimeout(pollEmbeddingProgress, 2000);
+                    } else {
+                        const done = data.total > 0;
+                        $("#generateEmbeddingsStatus").text(done ? "Done — " + data.total + " embeddings generated" : "");
+                        $("#generateEmbeddingsBtn").prop("disabled", false).text("Generate embeddings");
+                    }
+                },
+                error: function() {
+                    $("#generateEmbeddingsBtn").prop("disabled", false).text("Generate embeddings");
+                }
+            });
+        }
+
         $("#generateEmbeddingsBtn").on("click", function() {
             const btn = $(this);
             const status = $("#generateEmbeddingsStatus");
-            btn.prop("disabled", true).text("Starting...");
+            btn.prop("disabled", true).text("Starting…");
+            if (embeddingPollTimer) { clearTimeout(embeddingPollTimer); embeddingPollTimer = null; }
             $.ajax({
                 url: "/search/embeddings/generate",
                 method: "POST",
                 success: function(data) {
-                    status.text(data.msg || "Started");
+                    if (data.status === shashin.apiResponse.SUCCESS) {
+                        status.text("Processing 0 / " + (data.msg.match(/\d+/) || ["?"])[0] + "…");
+                        embeddingPollTimer = setTimeout(pollEmbeddingProgress, 2000);
+                    } else {
+                        status.text(data.msg || "Error");
+                        btn.prop("disabled", false).text("Generate embeddings");
+                    }
                 },
                 error: function(xhr) {
                     const d = xhr.responseJSON;
                     status.text(d?.msg || "Error starting embedding generation");
-                },
-                complete: function() {
                     btn.prop("disabled", false).text("Generate embeddings");
                 }
             });

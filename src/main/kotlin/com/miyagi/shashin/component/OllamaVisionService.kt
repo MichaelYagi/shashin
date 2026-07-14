@@ -24,6 +24,7 @@ import java.time.Duration
 import java.util.Base64
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.sqrt
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -36,6 +37,11 @@ class OllamaVisionService(
 ) {
     private val logger = Logger.getLogger(OllamaVisionService::class.simpleName)
     private val mapper = ObjectMapper()
+
+    @Volatile var embeddingRunning = false
+        private set
+    val embeddingProcessed = AtomicInteger(0)
+    val embeddingTotal = AtomicInteger(0)
 
     // Option 2: in-memory LRU cache of encoded images (max 50 entries)
     private val imageCache: MutableMap<String, String> = Collections.synchronizedMap(
@@ -245,21 +251,30 @@ class OllamaVisionService(
 
     fun generateEmbeddingsBatch(settings: Settings, shouldStop: AtomicBoolean? = null) {
         if (!isEmbedConfigured(settings)) return
-        val batchSize = 50
-        while (true) {
-            if (shouldStop?.get() == true) return
-            val batch = metadataRepository.findAllWithDescriptionAndNoEmbedding(batchSize)
-            if (batch.isEmpty()) break
-            for (metadata in batch) {
+        if (embeddingRunning) return
+        embeddingRunning = true
+        embeddingProcessed.set(0)
+        embeddingTotal.set(metadataRepository.countWithDescriptionAndNoEmbedding().toInt())
+        try {
+            val batchSize = 50
+            while (true) {
                 if (shouldStop?.get() == true) return
-                val desc = metadata.getDescription() ?: continue
-                val vec = embed(desc, settings) ?: continue
-                metadata.setEmbedding(mapper.writeValueAsString(vec.toList()))
-                metadata.setModifiedAt(TextUtils.getCurrentTimestamp())
-                metadataRepository.save(metadata)
+                val batch = metadataRepository.findAllWithDescriptionAndNoEmbedding(batchSize)
+                if (batch.isEmpty()) break
+                for (metadata in batch) {
+                    if (shouldStop?.get() == true) return
+                    val desc = metadata.getDescription() ?: continue
+                    val vec = embed(desc, settings) ?: continue
+                    metadata.setEmbedding(mapper.writeValueAsString(vec.toList()))
+                    metadata.setModifiedAt(TextUtils.getCurrentTimestamp())
+                    metadataRepository.save(metadata)
+                    embeddingProcessed.incrementAndGet()
+                }
             }
+            logger.log(Level.INFO, "Embedding generation complete")
+        } finally {
+            embeddingRunning = false
         }
-        logger.log(Level.INFO, "Embedding generation complete")
     }
 
     fun ask(metadata: Metadata, question: String, settings: Settings, contextRepository: OllamaContextRepository?): String? {

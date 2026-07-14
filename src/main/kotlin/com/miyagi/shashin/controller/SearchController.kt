@@ -457,6 +457,15 @@ class SearchController(
         return mapper.writeValueAsString(response)
     }
 
+    @RequestMapping(value = ["/search/embeddings/progress"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getEmbeddingProgress(): String {
+        val running = ollamaVisionService?.embeddingRunning ?: false
+        val processed = ollamaVisionService?.embeddingProcessed?.get() ?: 0
+        val total = ollamaVisionService?.embeddingTotal?.get() ?: 0
+        return mapper.writeValueAsString(mapOf("running" to running, "processed" to processed, "total" to total))
+    }
+
     @RequestMapping(value = ["/search/embeddings/generate"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
@@ -465,6 +474,12 @@ class SearchController(
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
         if (settings == null || ollamaVisionService?.isEmbedConfigured(settings) != true) {
             response["status"] = ApiResponse.FAIL.status; response["msg"] = "Embed model not configured in Settings"
+            return mapper.writeValueAsString(response)
+        }
+        if (ollamaVisionService?.embeddingRunning == true) {
+            val processed = ollamaVisionService.embeddingProcessed.get()
+            val total = ollamaVisionService.embeddingTotal.get()
+            response["status"] = ApiResponse.FAIL.status; response["msg"] = "Already running ($processed / $total processed)"
             return mapper.writeValueAsString(response)
         }
         val remaining = metadataRepository.countWithDescriptionAndNoEmbedding()
