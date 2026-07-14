@@ -474,6 +474,7 @@ class SettingsController(
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc() //model.getAttribute("settings") as Settings?
 
+        val previousArgusServer = settings?.getArgusServer()
         settings?.setArgusServer(argusServer?.trim()?.ifBlank { null }?.trimEnd('/'))
         settings?.setArgusKey(argusKey)
         settings?.setOllamaUrl(ollamaUrl?.trim()?.ifBlank { null }?.trimEnd('/'))
@@ -551,6 +552,12 @@ class SettingsController(
             model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
             model["faceModelAvailable"] = argusModels["face"] == true
             model["objectModelAvailable"] = argusModels["object"] == true
+
+            if (previousArgusServer.isNullOrBlank() && !settings.getArgusServer().isNullOrBlank()) {
+                if (argusModels["face"] == true) settings.setFacialDetection(true)
+                if (argusModels["object"] == true) settings.setObjectDetection(true)
+                settingsRepository?.save(settings)
+            }
 
             val argusUrlBlank = settings.getArgusServer().isNullOrBlank()
             val argusKeyBlank = settings.getArgusKey().isNullOrBlank()
