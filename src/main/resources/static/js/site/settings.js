@@ -186,13 +186,17 @@ class Settings {
             }
         });
 
+        let embedReadyHtml = '';
+
         function updateEmbedStatus(available, model) {
             const statusEl = $("#embedModelStatus");
             const btn = $("#generateEmbeddingsBtn");
             if (available && model) {
-                statusEl.html('<span class="bi-check-circle-fill text-success"></span> <code>' + model + '</code> ready for semantic search');
+                embedReadyHtml = '<span class="bi-check-circle-fill text-success"></span> <code>' + model + '</code> ready for semantic search';
+                statusEl.html(embedReadyHtml);
                 btn.prop("disabled", false);
             } else {
+                embedReadyHtml = '';
                 statusEl.html('Run <code>ollama pull nomic-embed-text</code> to enable semantic search');
                 btn.prop("disabled", true);
             }
@@ -258,19 +262,6 @@ class Settings {
             loadOllamaModels();
         }
 
-        // Resume progress display if a job is already running when the page loads
-        $.ajax({
-            url: "/search/embeddings/progress",
-            method: "GET",
-            success: function(data) {
-                if (data.running) {
-                    $("#generateEmbeddingsBtn").prop("disabled", true).text("Running…");
-                    $("#generateEmbeddingsStatus").text("Processing " + data.processed + " / " + data.total + "…");
-                    embeddingPollTimer = setTimeout(pollEmbeddingProgress, 2000);
-                }
-            }
-        });
-
         let embeddingPollTimer = null;
 
         function pollEmbeddingProgress() {
@@ -279,23 +270,35 @@ class Settings {
                 method: "GET",
                 success: function(data) {
                     if (data.running) {
-                        $("#generateEmbeddingsStatus").text("Processing " + data.processed + " / " + data.total + "…");
+                        $("#embedModelStatus").text("Processing " + data.processed + " / " + data.total + "…");
                         embeddingPollTimer = setTimeout(pollEmbeddingProgress, 2000);
                     } else {
-                        const done = data.total > 0;
-                        $("#generateEmbeddingsStatus").text(done ? "Done — " + data.total + " embeddings generated" : "");
+                        if (embedReadyHtml) $("#embedModelStatus").html(embedReadyHtml);
                         $("#generateEmbeddingsBtn").prop("disabled", false).text("Generate embeddings");
                     }
                 },
                 error: function() {
+                    if (embedReadyHtml) $("#embedModelStatus").html(embedReadyHtml);
                     $("#generateEmbeddingsBtn").prop("disabled", false).text("Generate embeddings");
                 }
             });
         }
 
+        // Resume progress display if a job is already running when the page loads
+        $.ajax({
+            url: "/search/embeddings/progress",
+            method: "GET",
+            success: function(data) {
+                if (data.running) {
+                    $("#generateEmbeddingsBtn").prop("disabled", true).text("Running…");
+                    $("#embedModelStatus").text("Processing " + data.processed + " / " + data.total + "…");
+                    embeddingPollTimer = setTimeout(pollEmbeddingProgress, 2000);
+                }
+            }
+        });
+
         $("#generateEmbeddingsBtn").on("click", function() {
             const btn = $(this);
-            const status = $("#generateEmbeddingsStatus");
             btn.prop("disabled", true).text("Starting…");
             if (embeddingPollTimer) { clearTimeout(embeddingPollTimer); embeddingPollTimer = null; }
             $.ajax({
@@ -303,16 +306,16 @@ class Settings {
                 method: "POST",
                 success: function(data) {
                     if (data.status === shashin.apiResponse.SUCCESS) {
-                        status.text("Processing 0 / " + (data.msg.match(/\d+/) || ["?"])[0] + "…");
+                        const total = (data.msg.match(/\d+/) || ["?"])[0];
+                        $("#embedModelStatus").text("Processing 0 / " + total + "…");
                         embeddingPollTimer = setTimeout(pollEmbeddingProgress, 2000);
                     } else {
-                        status.text(data.msg || "Error");
+                        if (embedReadyHtml) $("#embedModelStatus").html(embedReadyHtml);
                         btn.prop("disabled", false).text("Generate embeddings");
                     }
                 },
                 error: function(xhr) {
-                    const d = xhr.responseJSON;
-                    status.text(d?.msg || "Error starting embedding generation");
+                    if (embedReadyHtml) $("#embedModelStatus").html(embedReadyHtml);
                     btn.prop("disabled", false).text("Generate embeddings");
                 }
             });
