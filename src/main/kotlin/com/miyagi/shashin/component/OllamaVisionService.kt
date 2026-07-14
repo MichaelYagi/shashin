@@ -216,10 +216,10 @@ class OllamaVisionService(
         !settings.getOllamaUrl().isNullOrBlank() && !settings.getOllamaVisionModel().isNullOrBlank()
 
     fun isEmbedConfigured(settings: Settings): Boolean =
-        !settings.getOllamaUrl().isNullOrBlank() && !settings.getOllamaEmbedModel().isNullOrBlank()
+        !settings.getOllamaUrl().isNullOrBlank()
 
     fun embed(text: String, settings: Settings): FloatArray? {
-        val model = settings.getOllamaEmbedModel()?.takeIf { it.isNotBlank() } ?: return null
+        val model = settings.getOllamaEmbedModel()?.takeIf { it.isNotBlank() } ?: "nomic-embed-text"
         val url = settings.getOllamaUrl()?.takeIf { it.isNotBlank() } ?: return null
         val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to text))
         return try {
