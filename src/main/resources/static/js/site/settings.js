@@ -186,11 +186,38 @@ class Settings {
             }
         });
 
+        function updateEmbedStatus(available, model) {
+            const statusEl = $("#embedModelStatus");
+            const btn = $("#generateEmbeddingsBtn");
+            if (available && model) {
+                statusEl.html('<span class="bi-check-circle-fill text-success"></span> <code>' + model + '</code> ready for semantic search');
+                btn.prop("disabled", false);
+            } else {
+                statusEl.html('Run <code>ollama pull nomic-embed-text</code> to enable semantic search');
+                btn.prop("disabled", true);
+            }
+        }
+
+        async function checkEmbedModel(url) {
+            if (!url) { updateEmbedStatus(false); return; }
+            try {
+                const resp = await fetch("/settings/ollama/embed-status?url=" + encodeURIComponent(url));
+                const data = await resp.json();
+                updateEmbedStatus(data.available, data.model);
+                if (data.available && data.model) {
+                    $("#ollamaEmbedModel").val(data.model);
+                }
+            } catch (e) {
+                updateEmbedStatus(false);
+            }
+        }
+
         async function loadOllamaModels() {
             const url = $("#ollamaUrl").val().trim();
             const statusEl = $("#ollamaStatus");
             if (!url) {
                 statusEl.hide();
+                updateEmbedStatus(false);
                 return;
             }
             const btn = $("#loadOllamaModels");
@@ -221,6 +248,7 @@ class Settings {
             } finally {
                 btn.prop("disabled", false).text("Load models");
             }
+            await checkEmbedModel(url);
         }
 
         $("#loadOllamaModels").on("click", loadOllamaModels);

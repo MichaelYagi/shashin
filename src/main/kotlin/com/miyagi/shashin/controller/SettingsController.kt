@@ -307,6 +307,15 @@ class SettingsController(
         return mapper.writeValueAsString(models)
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/ollama/embed-status"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getOllamaEmbedStatus(@RequestParam("url") url: String): String {
+        val mapper = ObjectMapper()
+        val available = url.isNotBlank() && (ollamaVisionService?.hasEmbedModel(url) ?: false)
+        return mapper.writeValueAsString(mapOf("available" to available, "model" to if (available) "nomic-embed-text" else null))
+    }
+
     @Secured("ROLE_SUPER")
     @CacheEvict(value = ["firstSettingQuery"], allEntries = true)
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])

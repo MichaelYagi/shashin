@@ -60,6 +60,19 @@ class OllamaVisionService(
         }
     }
 
+    fun hasEmbedModel(ollamaUrl: String): Boolean {
+        return try {
+            val client = WebClient.create(ollamaUrl.trimEnd('/'))
+            val resp = client.get().uri("/api/tags")
+                .retrieve().bodyToMono(String::class.java)
+                .block(Duration.ofSeconds(5)) ?: return false
+            val json = mapper.readTree(resp)
+            json["models"]?.any { it["name"]?.asText()?.startsWith("nomic-embed-text") == true } ?: false
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun isOllamaAvailable(settings: Settings): Boolean {
         val url = settings.getOllamaUrl()?.trim() ?: return false
         if (url.isBlank()) return false
