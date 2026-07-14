@@ -25,11 +25,21 @@ touch shashin_release_data.json
 echo "{\"tag_name\":\"v$version\",\"body\":\"$release_notes\"}" > shashin_release_data.json
 
 # curl request to create release
-curl_cmd="curl --request POST --header 'Content-Type: application/json' --header 'Authorization: Bearer $ghtoken' -v --http1.1 'https://api.github.com/repos/michaelyagi/shashin/releases' -d @shashin_release_data.json"
-eval "$curl_cmd"
+http_status=$(curl --request POST \
+  --header 'Content-Type: application/json' \
+  --header "Authorization: Bearer $ghtoken" \
+  --http1.1 \
+  --write-out '%{http_code}' \
+  --output curl_response.json \
+  "https://api.github.com/repos/michaelyagi/shashin/releases" \
+  -d @shashin_release_data.json)
+
+cat curl_response.json
 
 # Cleanup files
-del_data_cmd="rm -f shashin_release_data.json"
-eval "$del_data_cmd"
-del_txt_cmd="rm -f shashin_release_notes.txt"
-eval "$del_txt_cmd"
+rm -f shashin_release_data.json shashin_release_notes.txt curl_response.json
+
+if [ "$http_status" -lt 200 ] || [ "$http_status" -gt 299 ]; then
+  echo "GitHub release creation failed with HTTP $http_status"
+  exit 1
+fi
