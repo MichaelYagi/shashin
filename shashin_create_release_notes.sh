@@ -21,18 +21,36 @@ release_notes="${release_notes//$'\r'/\\n}"
 release_notes="${release_notes//$'\n'}"
 
 # Create json payload
-touch shashin_release_data.json
 echo "{\"tag_name\":\"v$version\",\"body\":\"$release_notes\"}" > shashin_release_data.json
 
-# curl request to create release
-http_status=$(curl --request POST \
-  --header 'Content-Type: application/json' \
+# Check if a release already exists for this tag
+existing_id=$(curl --silent \
   --header "Authorization: Bearer $ghtoken" \
   --http1.1 \
-  --write-out '%{http_code}' \
-  --output curl_response.json \
-  "https://api.github.com/repos/michaelyagi/shashin/releases" \
-  -d @shashin_release_data.json)
+  "https://api.github.com/repos/michaelyagi/shashin/releases/tags/v$version" \
+  | grep '"id"' | head -1 | grep -o '[0-9]*')
+
+if [ -n "$existing_id" ]; then
+  echo "Updating existing release $existing_id for v$version"
+  http_status=$(curl --request PATCH \
+    --header 'Content-Type: application/json' \
+    --header "Authorization: Bearer $ghtoken" \
+    --http1.1 \
+    --write-out '%{http_code}' \
+    --output curl_response.json \
+    "https://api.github.com/repos/michaelyagi/shashin/releases/$existing_id" \
+    -d @shashin_release_data.json)
+else
+  echo "Creating new release for v$version"
+  http_status=$(curl --request POST \
+    --header 'Content-Type: application/json' \
+    --header "Authorization: Bearer $ghtoken" \
+    --http1.1 \
+    --write-out '%{http_code}' \
+    --output curl_response.json \
+    "https://api.github.com/repos/michaelyagi/shashin/releases" \
+    -d @shashin_release_data.json)
+fi
 
 cat curl_response.json
 
