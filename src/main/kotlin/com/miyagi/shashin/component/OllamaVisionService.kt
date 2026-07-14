@@ -38,8 +38,7 @@ class OllamaVisionService(
     private val logger = Logger.getLogger(OllamaVisionService::class.simpleName)
     private val mapper = ObjectMapper()
 
-    @Volatile var embeddingRunning = false
-        private set
+    val embeddingRunning = AtomicBoolean(false)
     val embeddingProcessed = AtomicInteger(0)
     val embeddingTotal = AtomicInteger(0)
 
@@ -251,8 +250,8 @@ class OllamaVisionService(
 
     fun generateEmbeddingsBatch(settings: Settings, shouldStop: AtomicBoolean? = null) {
         if (!isEmbedConfigured(settings)) return
-        if (embeddingRunning) return
-        embeddingRunning = true
+        if (embeddingRunning.get()) return
+        embeddingRunning.set(true)
         embeddingProcessed.set(0)
         embeddingTotal.set(metadataRepository.countWithDescriptionAndNoEmbedding().toInt())
         try {
@@ -273,7 +272,7 @@ class OllamaVisionService(
             }
             logger.log(Level.INFO, "Embedding generation complete")
         } finally {
-            embeddingRunning = false
+            embeddingRunning.set(false)
         }
     }
 
