@@ -16,6 +16,7 @@ import com.miyagi.shashin.util.TextUtils
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.ByteArrayOutputStream
@@ -33,7 +34,8 @@ import java.util.logging.Logger
 class OllamaVisionService(
     private val metadataRepository: MetadataRepository,
     private val keywordRepository: KeywordRepository,
-    private val keywordPhotoRepository: KeywordPhotoRepository
+    private val keywordPhotoRepository: KeywordPhotoRepository,
+    private val jdbcTemplate: JdbcTemplate
 ) {
     private val logger = Logger.getLogger(OllamaVisionService::class.simpleName)
     private val mapper = ObjectMapper()
@@ -186,8 +188,11 @@ class OllamaVisionService(
             }
 
             if (metadataDirty) {
-                metadata.setModifiedAt(TextUtils.getCurrentTimestamp())
-                metadataRepository.save(metadata)
+                val ts = TextUtils.getCurrentTimestamp()
+                jdbcTemplate.update(
+                    "UPDATE metadata SET description = ?, embedding = ?, modified_at = ? WHERE id = ?",
+                    metadata.getDescription(), metadata.getEmbedding(), ts, metadata.getId()
+                )
             }
 
             logger.log(Level.INFO, "Ollama: ${metadata.getId()} → \"${description.take(60)}…\" | ${keywords.joinToString()}")
@@ -264,9 +269,12 @@ class OllamaVisionService(
                     if (shouldStop?.get() == true) return
                     val desc = metadata.getDescription() ?: continue
                     val vec = embed(desc, settings) ?: continue
-                    metadata.setEmbedding(mapper.writeValueAsString(vec.toList()))
-                    metadata.setModifiedAt(TextUtils.getCurrentTimestamp())
-                    metadataRepository.save(metadata)
+                    val embeddingJson = mapper.writeValueAsString(vec.toList())
+                    val timestamp = TextUtils.getCurrentTimestamp()
+                    jdbcTemplate.update(
+                        "UPDATE metadata SET embedding = ?, modified_at = ? WHERE id = ?",
+                        embeddingJson, timestamp, metadata.getId()
+                    )
                     embeddingProcessed.incrementAndGet()
                 }
             }
