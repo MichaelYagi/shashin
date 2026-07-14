@@ -7,6 +7,7 @@ Scan local directories, browse your library, and let AI describe, tag, and answe
 
 - **AI captions & keywords** — connect [Ollama](https://ollama.com/) to auto-generate descriptions and tags for every photo
 - **Ask your photos** — conversational Q&A on any photo; ask follow-up questions and pick up where you left off; conversation history saved per photo
+- **Semantic search** — find photos by meaning, not just keywords; powered by `nomic-embed-text` embeddings via Ollama
 - **Face recognition** — detect, enrol, and label faces via [Argus](https://github.com/MichaelYagi/argus), with real-time webhook sync
 - **Object detection** — automatically tag photos with what's in them
 - **Interactive map** — browse by location with OpenLayers and reverse geocoding

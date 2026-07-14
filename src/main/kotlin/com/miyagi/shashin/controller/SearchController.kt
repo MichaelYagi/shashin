@@ -213,6 +213,16 @@ class SearchController(
                 }
             }
 
+            // Blend keyword results with semantic search on page 0 for regular queries
+            val specialTerms = setOf("shashinedit", "shashinedited", "nodupehash", "nolatlng", "latlng", "description")
+            if (page == 0 && settingsObj != null && !specialTerms.contains(updatedTerm.lowercase())
+                && ollamaVisionService?.isEmbedConfigured(settingsObj) == true) {
+                val blended = blendedSearch(updatedTerm, size, settingsObj, metadataList?.toList() ?: emptyList())
+                metadataList = blended.toMutableList()
+                response["metadataSearchList"] = metadataList
+                response["totalPages"] = 0
+            }
+
             val metadataIdList = mutableListOf<String>()
             if (metadataList != null) {
                 for (metadata in metadataList) {
@@ -389,7 +399,7 @@ class SearchController(
         return if (normA == 0f || normB == 0f) 0f else dot / sqrt(normA * normB)
     }
 
-    private fun semanticSearch(query: String, size: Int, settings: Settings): List<Metadata> {
+    private fun scoredSemanticSearch(query: String, size: Int, settings: Settings): List<Pair<Metadata, Float>> {
         val queryVec = ollamaVisionService?.embed(query, settings) ?: return emptyList()
         val rows = jdbcTemplate.queryForList("SELECT id, embedding FROM metadata WHERE hidden = 0 AND embedding IS NOT NULL AND embedding != ''")
         val scored = rows.mapNotNull { row ->
@@ -403,39 +413,27 @@ class SearchController(
         }.sortedByDescending { it.second }.take(size)
         val idOrder = scored.map { it.first }
         val byId = metadataRepository.findAllById(idOrder).filterNotNull().associateBy { it.getId() }
-        return idOrder.mapNotNull { byId[it] }
+        val scoreMap = scored.toMap()
+        return idOrder.mapNotNull { id -> byId[id]?.let { Pair(it, scoreMap[id] ?: 0f) } }
+    }
+
+    private fun semanticSearch(query: String, size: Int, settings: Settings): List<Metadata> =
+        scoredSemanticSearch(query, size, settings).map { it.first }
+
+    private fun blendedSearch(query: String, size: Int, settings: Settings, keywordResults: List<Metadata>): List<Metadata> {
+        val blended = LinkedHashMap<String, Pair<Metadata, Float>>()
+        // Keyword results ranked 1.0 → 0.999… preserving SQL relevance order
+        keywordResults.forEachIndexed { i, m -> blended[m.getId()] = Pair(m, 1.0f - i * 0.001f) }
+        // Semantic-only results fill in below keyword matches
+        scoredSemanticSearch(query, size * 2, settings).forEach { (m, score) ->
+            blended.putIfAbsent(m.getId(), Pair(m, score))
+        }
+        return blended.values.sortedByDescending { it.second }.take(size).map { it.first }
     }
 
     @RequestMapping(value = ["/search/semantic"], method = [RequestMethod.GET])
-    fun getSemanticSearch(model: Model, @RequestParam(required = false) q: String?, request: HttpServletRequest): String {
-        val module = "search"
-        getAllAttributeData(model)
-        model["pageParam"] = 0
-        model["term"] = q ?: ""
-        model["favorites"] = mutableMapOf<String, Any>()
-        model["keywordMap"] = mutableMapOf<String, String>()
-        model["status"] = ApiResponse.SUCCESS.status
-        model["msg"] = ""
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = q ?: ""
-        model["semanticMode"] = true
-
-        if (!q.isNullOrBlank()) {
-            val settings = model.getAttribute("settings") as Settings?
-            if (settings != null && ollamaVisionService?.isEmbedConfigured(settings) == true) {
-                val size = model.getAttribute("queryLimit").toString().toIntOrNull() ?: 30
-                val results = semanticSearch(q, size, settings)
-                model["metadataSearchList"] = results
-            } else {
-                model["metadataSearchList"] = emptyList<Metadata>()
-                model["msg"] = "Semantic search is not configured. Set an embed model in Settings."
-            }
-        } else {
-            model["metadataSearchList"] = emptyList<Metadata>()
-        }
-        return module
-    }
+    fun getSemanticSearch(@RequestParam(required = false) q: String?): String =
+        "redirect:/search" + if (!q.isNullOrBlank()) "?term=${java.net.URLEncoder.encode(q, "UTF-8")}" else ""
 
     @RequestMapping(value = ["/api/v1/search/semantic"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody

@@ -10,7 +10,7 @@
             <div>Ollama<a class="anchorjs-link" href="#ollama" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
 
-        <p><strong>Ollama</strong> is a self-hosted service for running large language models locally. Shashin uses it with a vision-capable model to generate captions and keyword tags for your photos, and to power the <strong>Ask</strong> tab — a conversational Q&amp;A interface on every photo.</p>
+        <p><strong>Ollama</strong> is a self-hosted service for running large language models locally. Shashin integrates with Ollama for three things: generating captions and keyword tags for your photos, powering the <strong>Ask</strong> tab for conversational Q&amp;A on any photo, and enabling <strong>semantic search</strong> across your entire library.</p>
         <p>Ollama is optional. If it is not configured or not reachable, Shashin falls back to Argus for object detection (if Argus is connected and object detection is enabled).</p>
 
         <h2 id="whatitdoes">
@@ -18,9 +18,10 @@
         </h2>
 
         <ul>
-            <li>Generates a warm, personal caption and keyword tags for each photo at scan time.</li>
+            <li>Generates a caption and keyword tags for each photo at scan time.</li>
             <li>Tags and captions are stored in Shashin and become searchable alongside EXIF metadata.</li>
             <li>Enables the <strong>Ask</strong> tab on every photo — ask any question about the photo and continue the conversation naturally.</li>
+            <li>Powers <strong>semantic search</strong> — find photos by meaning using the <code>nomic-embed-text</code> embedding model.</li>
             <li>Takes priority over Argus for object detection — if Ollama is reachable, Argus is not called for objects.</li>
             <li>Photos that already have keyword tags from a previous scan are skipped unless a rescan is requested.</li>
         </ul>
@@ -34,30 +35,54 @@
             <li>Pull a vision-capable model, for example:
 <pre class="mt-2"><code>ollama pull llava</code></pre>
             </li>
-            <li>In Shashin, open <a href="/settings">Settings</a> and enter the Ollama URL (e.g. <code>http://127.0.0.1:11434</code>) and the model name under <strong>Object Detection</strong>.</li>
-            <li>Enable <strong>Object Detection</strong>.</li>
-            <li>Save — Shashin checks whether the model is reachable before using it.</li>
+            <li>In Shashin, open <a href="/settings">Settings</a>, enter the Ollama URL (e.g. <code>http://127.0.0.1:11434</code>), and click <strong>Load models</strong> to select your vision model.</li>
+            <li>Save settings.</li>
         </ol>
 
         <h2 id="scanning">
             <div>Running a Scan<a class="anchorjs-link" href="#scanning" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
 
-        <p>Object detection runs as part of a media scan. Go to <a href="/settings/scan">Media Indexing</a> and click <strong>Scan</strong>. Shashin sends each photo to Ollama in turn and stores the returned tags. The scan skips photos that already have keyword tags unless you run a forced rescan.</p>
-        <p>After scanning, keyword tags are searchable from the search bar and visible in the photo detail panel.</p>
+        <p>Caption and keyword generation runs as part of a media scan. Go to <a href="/settings/scan">Media Indexing</a> and click <strong>Scan</strong>. Shashin sends each photo to Ollama in turn and stores the returned caption and tags. The scan skips photos that already have keyword tags unless you run a forced rescan.</p>
+        <p>After scanning, keyword tags and captions are searchable from the search bar and visible in the photo detail panel.</p>
 
         <h2 id="ask">
             <div>Ask<a class="anchorjs-link" href="#ask" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
 
-        <p>When Ollama is connected with a vision model, an <strong>Ask</strong> tab appears in the photo detail modal. You can type any question about the photo and receive an answer from the model.</p>
+        <p>When Ollama is connected with a vision model, an <strong>Ask</strong> tab appears in the photo detail modal. Type any question about the photo and receive an answer from the model.</p>
 
         <ul>
-            <li>Conversations are <strong>contextual</strong> — you can ask follow-up questions and refer back to previous answers naturally (e.g. <em>"What colour is the scarf?"</em> → <em>"What is it made of?"</em>).</li>
+            <li>Conversations are <strong>contextual</strong> — ask follow-up questions and refer back to previous answers naturally (e.g. <em>"What colour is the scarf?"</em> → <em>"What is it made of?"</em>).</li>
             <li>Conversations are <strong>saved per photo</strong> — close the modal and reopen it later to continue where you left off.</li>
             <li>The model is given the photo's <strong>date taken</strong> and <strong>location</strong> (place name and coordinates) as context, so it can answer questions like <em>"When was this taken?"</em> or <em>"Where is this?"</em>.</li>
             <li>Each turn sends only the current question and image — prior exchanges are encoded in Ollama's context token cache, keeping payloads small regardless of conversation length.</li>
         </ul>
+
+        <h2 id="semantic">
+            <div>Semantic Search<a class="anchorjs-link" href="#semantic" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>Semantic search lets you find photos by meaning rather than exact keywords — search for <em>"birthday cake"</em> and find photos captioned <em>"celebrating with candles"</em>, or search for <em>"dogs on the beach"</em> and surface relevant shots even if those words never appear in any tag.</p>
+
+        <p>It uses <a href="https://ollama.com/library/nomic-embed-text" target="_blank"><code>nomic-embed-text</code></a>, a lightweight embedding model that runs locally via Ollama alongside your vision model.</p>
+
+        <h3>Setup</h3>
+        <ol>
+            <li>Pull the embedding model:
+<pre class="mt-2"><code>ollama pull nomic-embed-text</code></pre>
+            </li>
+            <li>Open <a href="/settings">Settings</a>. Once the Ollama URL is configured and <code>nomic-embed-text</code> is detected, a <strong>Generate embeddings</strong> button appears — click it to embed all photos that have captions.</li>
+            <li>Progress is shown in real time. The job runs on the server, so you can navigate away and return to check progress.</li>
+        </ol>
+
+        <h3>Using Semantic Search</h3>
+        <p>Once embeddings are generated, the regular search bar automatically blends results. Keyword matches always appear first (exact matches rank highest), followed by semantically similar photos that may not share any of the same words. There is no mode to switch — it just works.</p>
+        <p>Semantic search is also available as a standalone REST API endpoint:</p>
+<pre class="mt-2"><code>GET /api/v1/search/semantic?q=dogs+on+the+beach&amp;size=20
+x-api-key: &lt;your-api-key&gt;</code></pre>
+
+        <p>New photos scanned after embeddings are generated will have their embeddings created automatically at scan time, so the index stays up to date without manual intervention.</p>
 
         <h2 id="fallback">
             <div>Argus Fallback<a class="anchorjs-link" href="#fallback" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>

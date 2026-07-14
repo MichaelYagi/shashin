@@ -18,18 +18,6 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <input type="hidden" id="searchTerm" th:value="${term}">
-            <input type="hidden" id="semanticMode" th:value="${semanticMode != null and semanticMode}">
-
-            <div th:if="${settings != null and settings.ollamaEmbedModel != null and !#strings.isEmpty(settings.ollamaEmbedModel)}" class="d-flex align-items-center gap-2 mt-2 mb-1 ms-1">
-                <a th:if="${semanticMode == null or !semanticMode}" th:href="'/search/semantic?q=' + ${#strings.escapeXml(term)}" class="btn btn-sm btn-outline-secondary">
-                    <span class="bi-stars"></span> Semantic search
-                </a>
-                <th:block th:if="${semanticMode != null and semanticMode}">
-                    <span class="badge bg-secondary"><span class="bi-stars"></span> Semantic</span>
-                    <a th:href="'/search?term=' + ${#strings.escapeXml(term)}" class="btn btn-sm btn-outline-secondary">Keyword search</a>
-                </th:block>
-            </div>
-            <div th:if="${msg != null and !#strings.isEmpty(msg)}" class="text-muted small ms-1 mb-1" th:text="${msg}"></div>
 
             <div id="scroll-gallery">
                 <th:block th:if="${term != '' and not #lists.isEmpty(metadataSearchList)}">
