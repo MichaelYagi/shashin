@@ -146,7 +146,7 @@ class OllamaVisionService(
             "NEVER use I, me, my, mine, we, our, us — you are not in this photo and have no memories of it. " +
             "Do not invent dialogue, quotes, or personal memories. " +
             "Describe the people, place, activity, and mood warmly and vividly. " +
-            "Target exactly 450 characters — no more, no less. Use the space for meaningful detail about colours, expressions, atmosphere, or context. No filler. " +
+            "STRICT LIMIT: your description must be under 500 characters total. Aim for 400-480 characters. Stop writing when you approach 480 characters. " +
             "Don't start with 'This is a photo of'.\n\n" +
             "Then on a new line:\nKEYWORDS: word1,word2,word3"
 
@@ -178,7 +178,12 @@ class OllamaVisionService(
             content = content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
 
             val (rawDescription, keywords) = parseResponse(content)
-            val description = if (rawDescription.length > 500) rawDescription.take(500).trimEnd() else rawDescription
+            val description = if (rawDescription.length > 500) {
+                val cut = rawDescription.take(500)
+                val lastSentence = maxOf(cut.lastIndexOf('.'), cut.lastIndexOf('!'), cut.lastIndexOf('?'))
+                if (lastSentence > 350) cut.take(lastSentence + 1)
+                else cut.substringBeforeLast(' ').trimEnd()
+            } else rawDescription
 
             var metadataDirty = false
             var embeddingDirty = false
@@ -230,7 +235,7 @@ class OllamaVisionService(
 
     private fun parseResponse(text: String): Pair<String, List<String>> {
         val parts = text.split(Regex("\\nKEYWORDS\\s*:\\s*", RegexOption.IGNORE_CASE), limit = 2)
-        val description = parts[0].trim().take(500)
+        val description = parts[0].trim()
         val keywords = if (parts.size >= 2)
             parts[1].split(",").map { it.trim().lowercase() }.filter { it.isNotBlank() }.take(10)
         else emptyList()
