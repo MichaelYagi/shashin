@@ -16,6 +16,27 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 
+## [2.21.0] - 2026-07-13
+### Added
+- Semantic search powered by Ollama (`nomic-embed-text`): photo descriptions are embedded on ingest and searchable via natural language queries
+- Blended search combines keyword and semantic results on page 0, ranked by relevance; keyword-only results returned on subsequent pages
+- Embeddings generated automatically during media scan via Ollama vision pipeline; backfill batch job available in Settings for existing libraries
+- Embedding generation progress indicator in Settings (polls live progress during batch run)
+- Search history now persisted and shown as autocomplete suggestions in the search box
+- Ollama embed model status check in Settings (shows whether `nomic-embed-text` is available)
+- Search spinner on profile icon in topnav while search is loading
+- `GET /search/embeddings/progress` and `POST /search/embeddings/generate` API endpoints
+- `GET /api/v1/search/semantic` API endpoint for direct semantic search
+
+### Changed
+- Semantic blended search skipped when keyword results already fill a page, keeping keyword searches snappy
+- SQLite connection pool configured with `auto-commit=false` and `provider_disables_autocommit=true` to prevent double-commit errors with sqlite-jdbc
+- Removed `transaction_mode=IMMEDIATE` from JDBC URL to eliminate write-lock contention under concurrent load
+- Background embedding writes use `JdbcTemplate` directly (avoids JPA transaction interference from non-Spring-managed threads)
+
+### Fixed
+- "Cannot commit — no transaction is active" and "Cannot rollback — no transaction is active" errors during concurrent page loads while embedding generation runs in background
+
 ## [2.20.0] - 2026-07-10
 ### Added
 - Argus webhook receiver (`POST /api/argus/webhook`) for real-time sync: handles `identity.created`, `identity.updated` (rename, thumbnail, enroll/unenroll), `identity.merged`, `identity.deleted`, and `detection.labeled`
