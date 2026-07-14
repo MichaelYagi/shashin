@@ -42,6 +42,8 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         const searchTerm = $("#appSearchInput").val().trim();
         if (searchTerm === "") {
             e.preventDefault();
+        } else {
+            Util.showSearchSpinner(true);
         }
     });
 

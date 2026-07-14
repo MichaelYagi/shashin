@@ -72,7 +72,7 @@ class Search {
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            $("#searchSpinner").show();
+            Util.showSearchSpinner(true);
             data = await this.http.ajax("get", "/search/" + nextPage + "?term=" + encodeURIComponent(term).replace(";", "%3B"));
         }
 
@@ -151,21 +151,21 @@ class Search {
 
                 this.lastLgIndex = lastLgIndex;
                 $("#spinner").css("display", "none");
-                $("#searchSpinner").hide();
+                Util.showSearchSpinner(false);
                 this.rendering = false;
             } else {
                 $(".appendSearchPhotos").last().text("EOL").css("display","none");
                 this.rendering = false;
                 this.eol = true;
                 $("#spinner").css("display","none");
-                $("#searchSpinner").hide();
+                Util.showSearchSpinner(false);
             }
         } else {
             $(".appendSearchPhotos").last().text("EOL").css("display","none");
             this.rendering = false;
             this.eol = true;
             $("#spinner").css("display","none");
-            $("#searchSpinner").hide();
+            Util.showSearchSpinner(false);
         }
 
         return mediaContentList;

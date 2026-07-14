@@ -120,6 +120,18 @@ class Util {
         }
     }
 
+    static showSearchSpinner(show = true) {
+        if (show === true) {
+            $("#searchSpinner").css("display", "block");
+            $("#profileImage").css("opacity", 0.5);
+            $("#profileImagePlaceholder").css("opacity", 0.5);
+        } else {
+            $("#searchSpinner").css("display", "none");
+            $("#profileImage").css("opacity", 1.0);
+            $("#profileImagePlaceholder").css("opacity", 1.0);
+        }
+    }
+
     static konamiCodeListener(callback) {
         let konamiCodePosition = 0;
         const konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'b', 'a'];
