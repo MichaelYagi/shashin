@@ -474,8 +474,8 @@ class SearchController(
     fun generateEmbeddings(model: Model): String {
         val response = mutableMapOf<String, Any?>()
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
-        if (settings == null || ollamaVisionService?.isOllamaConfigured(settings) != true) {
-            response["status"] = ApiResponse.FAIL.status; response["msg"] = "Vision model not configured in Settings"
+        if (settings == null || ollamaVisionService?.isEmbedConfigured(settings) != true) {
+            response["status"] = ApiResponse.FAIL.status; response["msg"] = "Embed model not configured in Settings"
             return mapper.writeValueAsString(response)
         }
         if (ollamaVisionService?.embeddingRunning?.get() == true) {

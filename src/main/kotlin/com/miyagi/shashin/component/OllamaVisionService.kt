@@ -18,6 +18,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -35,8 +37,10 @@ class OllamaVisionService(
     private val metadataRepository: MetadataRepository,
     private val keywordRepository: KeywordRepository,
     private val keywordPhotoRepository: KeywordPhotoRepository,
-    private val jdbcTemplate: JdbcTemplate
+    private val jdbcTemplate: JdbcTemplate,
+    transactionManager: PlatformTransactionManager
 ) {
+    private val txTemplate = TransactionTemplate(transactionManager)
     private val logger = Logger.getLogger(OllamaVisionService::class.simpleName)
     private val mapper = ObjectMapper()
 
@@ -173,12 +177,16 @@ class OllamaVisionService(
             val (description, keywords) = parseResponse(content)
 
             var metadataDirty = false
+            var embeddingDirty = false
 
             if (description.isNotBlank() && (rescan || !hasDescription)) {
                 metadata.setDescription(description)
                 metadataDirty = true
-                val vec = embedImage(imageFile, settings)
-                if (vec != null) metadata.setEmbedding(mapper.writeValueAsString(vec.toList()))
+                val vec = embed(description, settings)
+                if (vec != null) {
+                    metadata.setEmbedding(mapper.writeValueAsString(vec.toList()))
+                    embeddingDirty = true
+                }
             }
 
             if (keywords.isNotEmpty() && (rescan || !hasKeywords)) {
@@ -189,10 +197,13 @@ class OllamaVisionService(
 
             if (metadataDirty) {
                 val ts = TextUtils.getCurrentTimestamp()
-                jdbcTemplate.update(
-                    "UPDATE metadata SET description = ?, embedding = ?, modified_at = ? WHERE id = ?",
-                    metadata.getDescription(), metadata.getEmbedding(), ts, metadata.getId()
-                )
+                if (embeddingDirty) {
+                    val desc = metadata.getDescription(); val emb = metadata.getEmbedding(); val id = metadata.getId()
+                    txTemplate.execute { jdbcTemplate.update("UPDATE metadata SET description = ?, embedding = ?, modified_at = ? WHERE id = ?", desc, emb, ts, id) }
+                } else {
+                    val desc = metadata.getDescription(); val id = metadata.getId()
+                    txTemplate.execute { jdbcTemplate.update("UPDATE metadata SET description = ?, modified_at = ? WHERE id = ?", desc, ts, id) }
+                }
             }
 
             logger.log(Level.INFO, "Ollama: ${metadata.getId()} → \"${description.take(60)}…\" | ${keywords.joinToString()}")
@@ -229,11 +240,7 @@ class OllamaVisionService(
         !settings.getOllamaUrl().isNullOrBlank()
 
     fun embed(text: String, settings: Settings): FloatArray? {
-        // Use the vision model so query embeddings live in the same space as image embeddings.
-        // Fall back to the dedicated embed model only when no vision model is configured.
-        val model = settings.getOllamaVisionModel()?.takeIf { it.isNotBlank() }
-            ?: settings.getOllamaEmbedModel()?.takeIf { it.isNotBlank() }
-            ?: "nomic-embed-text"
+        val model = settings.getOllamaEmbedModel()?.takeIf { it.isNotBlank() } ?: "nomic-embed-text"
         val url = settings.getOllamaUrl()?.takeIf { it.isNotBlank() } ?: return null
         val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to text))
         return try {
@@ -284,30 +291,44 @@ class OllamaVisionService(
     }
 
     fun generateEmbeddingsBatch(settings: Settings, shouldStop: AtomicBoolean? = null) {
-        if (!isOllamaConfigured(settings)) return
+        if (!isEmbedConfigured(settings)) return
         if (embeddingRunning.get()) return
         embeddingRunning.set(true)
         embeddingProcessed.set(0)
-        embeddingTotal.set(metadataRepository.countWithNoEmbedding().toInt())
+        embeddingTotal.set(0)
+        val ollamaReady = isOllamaAvailable(settings)
+        val failed = mutableSetOf<String>()
+        val done = mutableSetOf<String>()
+        val seen = mutableSetOf<String>()
         try {
             val batchSize = 50
             while (true) {
                 if (shouldStop?.get() == true) return
-                val batch = metadataRepository.findAllWithNoEmbedding(batchSize)
+                val skip = failed.size + done.size
+                val batch = metadataRepository.findAllWithNoEmbedding(batchSize + skip)
+                    .filter { it.getId() !in failed && it.getId() !in done }
+                    .take(batchSize)
+                batch.forEach { m -> m.getId()?.let { if (seen.add(it)) embeddingTotal.incrementAndGet() } }
                 if (batch.isEmpty()) break
                 for (metadata in batch) {
                     if (shouldStop?.get() == true) return
-                    val imagePath = ImageProcessing.Companion.argusImagePath(metadata) ?: continue
-                    val imageFile = File(imagePath)
-                    if (!imageFile.exists()) continue
-                    val vec = embedImage(imageFile, settings) ?: continue
-                    val embeddingJson = mapper.writeValueAsString(vec.toList())
-                    val timestamp = TextUtils.getCurrentTimestamp()
-                    jdbcTemplate.update(
-                        "UPDATE metadata SET embedding = ?, modified_at = ? WHERE id = ?",
-                        embeddingJson, timestamp, metadata.getId()
-                    )
-                    embeddingProcessed.incrementAndGet()
+                    val id = metadata.getId() ?: continue
+                    val succeeded: Boolean
+                    if (metadata.getDescription().isNullOrBlank()) {
+                        if (!ollamaReady) { failed.add(id); continue }
+                        val saved = processMedia(metadata, settings, rescan = false, ollamaReady = true, argusReady = false)
+                        succeeded = saved && !metadata.getEmbedding().isNullOrBlank()
+                    } else {
+                        val vec = embed(metadata.getDescription()!!, settings)
+                        if (vec != null) {
+                            val emb = mapper.writeValueAsString(vec.toList()); val ts = TextUtils.getCurrentTimestamp()
+                            txTemplate.execute { jdbcTemplate.update("UPDATE metadata SET embedding = ?, modified_at = ? WHERE id = ?", emb, ts, id) }
+                            succeeded = true
+                        } else {
+                            succeeded = false
+                        }
+                    }
+                    if (succeeded) { embeddingProcessed.incrementAndGet(); done.add(id) } else failed.add(id)
                 }
             }
             logger.log(Level.INFO, "Embedding generation complete")

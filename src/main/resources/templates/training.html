@@ -201,7 +201,7 @@
                                  class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                                <img loading="lazy" draggable="false" th:src="${argusServer}+${faceObj.crop_url}" style="height:225px;" class="photo-thumbnail-image" th:id="'image'+${faceObj.id}">
+                                <img loading="lazy" draggable="false" th:src="@{/person/argus/crop(path=${faceObj.crop_url})}" style="height:225px;" class="photo-thumbnail-image" th:id="'image'+${faceObj.id}">
 
                                 <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${faceObj.id})}"></div>
                                 <th:block th:if="${faceObj.metadata_id != null and faceObj.metadata_id != ''}">
@@ -215,7 +215,7 @@
                                     </th:block>
                                     <a href="#" class="training-reassign-btn"
                                        th:data-detection-id="${faceObj.id}"
-                                       th:data-crop-url="${argusServer + faceObj['crop_url']}">
+                                       th:data-crop-url="@{/person/argus/crop(path=${faceObj['crop_url']})}">
                                         <span class="bi-person-fill-x overlayIcon overlayIconBackground" style="color:orange;"></span>
                                     </a>
                                 </div>

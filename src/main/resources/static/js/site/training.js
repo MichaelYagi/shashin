@@ -60,7 +60,7 @@ class Training {
                 for (const index in resultList) {
                     const resultObj = resultList[index];
                     const embeddingId = resultObj.id;
-                    const imgSrc = argusServer + resultObj.crop_url;
+                    const imgSrc = '/person/argus/crop?path=' + encodeURIComponent(resultObj.crop_url);
 
                     const metadataId = resultObj.metadata_id || '';
 

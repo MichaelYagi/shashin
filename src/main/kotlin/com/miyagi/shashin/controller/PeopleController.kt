@@ -898,6 +898,39 @@ class PeopleController(
         }
     }
 
+    @GetMapping("/person/argus/crop")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @ResponseBody
+    fun getArgusTrainingCrop(model: Model, @RequestParam path: String): ResponseEntity<ByteArray> {
+        val settings = model.getAttribute("settings") as Settings
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) {
+            return ResponseEntity.notFound().build()
+        }
+        return try {
+            val exchangeStrategies = org.springframework.web.reactive.function.client.ExchangeStrategies.builder()
+                .codecs { it.defaultCodecs().maxInMemorySize(10 * 1024 * 1024) }
+                .build()
+            val bytes = WebClient.builder()
+                .baseUrl(settings.getArgusServer()!!)
+                .exchangeStrategies(exchangeStrategies)
+                .build()
+                .get()
+                .uri(path)
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve()
+                .bodyToMono(ByteArray::class.java)
+                .block() ?: return ResponseEntity.notFound().build()
+
+            ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .header(HttpHeaders.CACHE_CONTROL, "max-age=3600")
+                .body(bytes)
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error proxying Argus crop: ${e.localizedMessage}")
+            ResponseEntity.notFound().build()
+        }
+    }
+
     @GetMapping("/people")
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun getPeople(model: Model, locale: Locale): String {

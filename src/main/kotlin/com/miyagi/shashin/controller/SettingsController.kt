@@ -312,10 +312,8 @@ class SettingsController(
     @ResponseBody
     fun getOllamaEmbedStatus(@RequestParam("url") url: String): String {
         val mapper = ObjectMapper()
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
-        val visionModel = settings?.getOllamaVisionModel()?.takeIf { it.isNotBlank() }
-        val available = url.isNotBlank() && visionModel != null && (ollamaVisionService?.isOllamaAvailable(settings!!) ?: false)
-        return mapper.writeValueAsString(mapOf("available" to available, "model" to if (available) visionModel else null))
+        val available = url.isNotBlank() && (ollamaVisionService?.hasEmbedModel(url) ?: false)
+        return mapper.writeValueAsString(mapOf("available" to available, "model" to if (available) "nomic-embed-text" else null))
     }
 
     @Secured("ROLE_SUPER")
@@ -2044,6 +2042,10 @@ class SettingsController(
                                 Level.INFO,
                                 "Place set for " + metadataObj.getFileName()
                             )
+                            if (metadataObj.getEmbedding().isNullOrBlank()) {
+                                val freshEmbedding = metadataRepository?.findByMetadataId(metadataObj.getId())?.getEmbedding()
+                                if (!freshEmbedding.isNullOrBlank()) metadataObj.setEmbedding(freshEmbedding)
+                            }
                             metadataRepository.save(metadataObj)
                         }
                     }
