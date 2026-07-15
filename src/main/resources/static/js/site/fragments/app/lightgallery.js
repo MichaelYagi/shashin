@@ -1,58 +1,34 @@
 (function( shashin, $, undefined ) {
-    let _lgSubHtmlObserver = null;
-
-    function _hideSubHtml() {
-        const el = document.querySelector('.lg-outer .lg-sub-html');
-        if (el) {
-            el.style.setProperty('opacity', '0', 'important');
-            el.style.setProperty('visibility', 'hidden', 'important');
-        }
-    }
-
-    function _showSubHtml() {
-        const el = document.querySelector('.lg-outer .lg-sub-html');
-        if (el) {
-            el.style.removeProperty('opacity');
-            el.style.removeProperty('visibility');
-        }
-    }
-
-    function _startSubHtmlObserver() {
-        const lgOuter = document.querySelector('.lg-outer');
-        if (!lgOuter || _lgSubHtmlObserver) return;
-        _lgSubHtmlObserver = new MutationObserver(function() {
-            if (shashin.videoPlaying) _hideSubHtml();
-        });
-        _lgSubHtmlObserver.observe(lgOuter, { attributes: true, attributeFilter: ['class'] });
-    }
-
-    function _stopSubHtmlObserver() {
-        if (_lgSubHtmlObserver) { _lgSubHtmlObserver.disconnect(); _lgSubHtmlObserver = null; }
-    }
-
     shashin.videoPlaying = false;
 
     document.addEventListener('play', function(e) {
         if (e.target.tagName !== 'VIDEO') return;
         shashin.videoPlaying = true;
         shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
-        _hideSubHtml();
-        _startSubHtmlObserver();
     }, true);
 
     document.addEventListener('pause', function(e) {
         if (e.target.tagName !== 'VIDEO') return;
         shashin.videoPlaying = false;
-        _stopSubHtmlObserver();
-        _showSubHtml();
     }, true);
 
     document.addEventListener('ended', function(e) {
         if (e.target.tagName !== 'VIDEO') return;
         shashin.videoPlaying = false;
-        _stopSubHtmlObserver();
-        _showSubHtml();
     }, true);
+
+    document.addEventListener('mousemove', function() {
+        const video = document.querySelector('.lg-outer video');
+        if (!video || video.paused || video.ended) return;
+        requestAnimationFrame(function() {
+            const subHtml = document.querySelector('.lg-outer .lg-sub-html');
+            if (subHtml) {
+                subHtml.style.setProperty('opacity', '0', 'important');
+                subHtml.style.setProperty('visibility', 'hidden', 'important');
+            }
+            shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
+        });
+    });
 
     shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {
         shashin.setLightGalleryElement(lgElement);
@@ -152,7 +128,6 @@
                     $("#metadata").val("");
                 }
                 shashin.videoPlaying = false;
-                _stopSubHtmlObserver();
                 shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml"]});
             });
 
