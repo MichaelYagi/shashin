@@ -42,7 +42,7 @@
                     <input type="hidden" name="albumList" id="albumList" value="">
                     <input type="hidden" name="peopleList" id="peopleList" value="">
                     <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') and activePage != 'archived'}">
-                    <div class="tab-pane container show active" id="generalTab">
+                    <div class="tab-pane container show active px-0" id="generalTab">
                         <form id="saveTimelineModalForm">
                             <div class="form-group row">
                                 <div class="col-sm">
@@ -159,15 +159,15 @@
                         </form>
                     </div>
                     </th:block>
-                    <div th:class="'tab-pane container fade'+${(authority == 'ROLE_USER' or activePage == 'archived') ? ' show active':''}" id="detailsTab">
+                    <div th:class="'tab-pane container fade px-0'+${(authority == 'ROLE_USER' or activePage == 'archived') ? ' show active':''}" id="detailsTab">
                         <div th:replace="~{fragments/detailsinfo :: detailsinfo(${currentUser})}"></div>
                     </div>
                     <th:block th:if="${authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN'}">
-                    <div class="tab-pane container fade" id="exifTab">
+                    <div class="tab-pane container fade px-0" id="exifTab">
                         <textarea class="form-control" id="exifInfo" rows="20" readonly></textarea>
                     </div>
                     </th:block>
-                    <div class="tab-pane container fade" id="mapTab">
+                    <div class="tab-pane container fade px-0" id="mapTab">
                         <span id="mapTabMessage"><th:block th:text="#{main.modal.map.message}"></th:block></label></span>
                         <div data-role="dialog" id="modalmap" class="map" style="width: 100%;height: 400px"></div>
                     </div>
