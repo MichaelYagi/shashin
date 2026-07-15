@@ -87,13 +87,11 @@
                 }
             });
 
-            shashin.infiniteScrollGallery.addEventListener('lgHasVideo', _ => {
-                shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
-            });
-
-            shashin.infiniteScrollGallery.addEventListener('lgPosterClick', _ => {
-                shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
-            });
+            shashin.infiniteScrollGallery.addEventListener('play', function(e) {
+                if (e.target.tagName === 'VIDEO') {
+                    shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
+                }
+            }, true);
 
             shashin.infiniteScrollGallery.addEventListener('lgAfterClose', _ => {
                 if (Util.sessionStorageAvailable() === true) {
