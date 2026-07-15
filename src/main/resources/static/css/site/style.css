@@ -575,3 +575,9 @@ footer {
     padding: 25px 0 15px 1px;
   }
 }
+
+body.shashin-video-playing .lg-sub-html {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

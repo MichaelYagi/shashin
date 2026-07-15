@@ -2,14 +2,21 @@
     document.addEventListener('play', function(e) {
         if (e.target.tagName === 'VIDEO') {
             shashin.videoPlaying = true;
+            document.body.classList.add('shashin-video-playing');
             shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
         }
     }, true);
     document.addEventListener('pause', function(e) {
-        if (e.target.tagName === 'VIDEO') { shashin.videoPlaying = false; }
+        if (e.target.tagName === 'VIDEO') {
+            shashin.videoPlaying = false;
+            document.body.classList.remove('shashin-video-playing');
+        }
     }, true);
     document.addEventListener('ended', function(e) {
-        if (e.target.tagName === 'VIDEO') { shashin.videoPlaying = false; }
+        if (e.target.tagName === 'VIDEO') {
+            shashin.videoPlaying = false;
+            document.body.classList.remove('shashin-video-playing');
+        }
     }, true);
 
     shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {
