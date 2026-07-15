@@ -171,12 +171,12 @@
                         <span id="mapTabMessage"><th:block th:text="#{main.modal.map.message}"></th:block></label></span>
                         <div data-role="dialog" id="modalmap" class="map" style="width: 100%;height: 400px"></div>
                     </div>
-                    <div class="tab-pane container fade" id="askTab">
+                    <div class="tab-pane container fade px-0" id="askTab">
                         <style>
                             @keyframes ask-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
                             .ask-cursor { animation: ask-blink 0.8s step-end infinite; font-weight: bold; }
                         </style>
-                        <div class="card mt-2 mx-n3">
+                        <div class="card mt-2">
                             <div class="card-body p-2">
                                 <div id="askChatMessages" style="height:430px;overflow-y:auto;display:flex;flex-direction:column;padding:4px 0 4px 0;"></div>
                             </div>
@@ -195,7 +195,7 @@
                     <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.close}"></th:block></button>
                     </th:block>
                 </div>
-                <div id="askInputFooter" class="d-none flex-column gap-1 w-100" style="padding: 0 0.75rem;">
+                <div id="askInputFooter" class="d-none flex-column gap-1 w-100">
                     <div class="d-flex gap-2 align-items-stretch">
                         <textarea class="form-control" id="askInput" rows="2" placeholder="Type your message..."></textarea>
                         <button class="btn btn-primary" id="askSendBtn" style="min-width:70px;">Send</button>
