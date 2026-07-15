@@ -1,4 +1,10 @@
 (function( shashin, $, undefined ) {
+    document.addEventListener('play', function(e) {
+        if (e.target.tagName === 'VIDEO') {
+            shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
+        }
+    }, true);
+
     shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {
         shashin.setLightGalleryElement(lgElement);
         shashin.setLightGallery(additionalLgConfigs);
@@ -87,11 +93,6 @@
                 }
             });
 
-            shashin.infiniteScrollGallery.addEventListener('play', function(e) {
-                if (e.target.tagName === 'VIDEO') {
-                    shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
-                }
-            }, true);
 
             shashin.infiniteScrollGallery.addEventListener('lgAfterClose', _ => {
                 if (Util.sessionStorageAvailable() === true) {

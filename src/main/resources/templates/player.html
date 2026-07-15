@@ -113,7 +113,7 @@
             licenseKey: Util.lgApiKey()
         });
 
-        videoEl.addEventListener("play", function(e) {
+        document.addEventListener("play", function(e) {
             if (e.target.tagName === "VIDEO") {
                 shashin.closeToastMessages({tags: ["playerSubhtml"]});
             }
