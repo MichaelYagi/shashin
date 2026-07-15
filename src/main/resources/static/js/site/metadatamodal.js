@@ -679,9 +679,9 @@ function askAppendMessage(role, content, createdAt) {
         );
     } else if (role === "assistant") {
         const timeStr = createdAt || new Date().toLocaleString();
-        const $msg = $('<div class="d-flex flex-column mb-2">').append(
+        const $msg = $('<div class="mb-2">').append(
             $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).html(typeof formatMessage === "function" ? formatMessage(content) : $('<span>').text(content).html()),
-            $('<small class="text-muted mt-1">').text(timeStr + " · " + (askOllamaModel || ""))
+            $('<div class="text-muted small mt-1">').text(timeStr + " · " + (askOllamaModel || ""))
         );
         $chat.append($msg);
         const chatEl = $chat[0];
@@ -723,7 +723,7 @@ async function askSend() {
     askAppendMessage("user", question);
 
     const $chat = $("#askChatMessages");
-    const $msgDiv = $('<div class="d-flex flex-column mb-2">');
+    const $msgDiv = $('<div class="mb-2">');
     const $content = $('<div class="p-3 rounded">').css({"background": "var(--bs-secondary-bg)", "word-break": "break-word"});
     const $cursor = $('<span class="ask-cursor ms-1">▊</span>');
     $content.html('<span class="spinner-border spinner-border-sm text-muted me-2" role="status"></span><span class="text-muted small">Thinking…</span>');
@@ -775,7 +775,7 @@ async function askSend() {
         }
 
         $cursor.remove();
-        $msgDiv.append($('<small class="text-muted mt-1">').text(new Date().toLocaleString() + " · " + (askOllamaModel || "")));
+        $msgDiv.append($('<div class="text-muted small mt-1">').text(new Date().toLocaleString() + " · " + (askOllamaModel || "")));
     } catch (e) {
         $content.addClass("text-danger").text("Something went wrong. Please try again.");
     } finally {
