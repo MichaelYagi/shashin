@@ -157,7 +157,8 @@ class OllamaVisionService(
                 "content" to "/no_think $prompt",
                 "images" to listOf(imageB64)
             )),
-            "stream" to false
+            "stream" to false,
+            "options" to mapOf("num_predict" to 180, "temperature" to 0.2)
         ))
 
         return try {
@@ -215,7 +216,7 @@ class OllamaVisionService(
                 }
             }
 
-            logger.log(Level.INFO, "Ollama: ${metadata.getId()} → \"${description.take(60)}…\" | ${keywords.joinToString()}")
+            logger.log(Level.INFO, "Ollama: ${metadata.getId()} → \"${description.take(60)}…\" | ${keywords.joinToString()} [saved]")
             true
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Ollama error for ${metadata.getId()}: ${e.localizedMessage}")
@@ -226,7 +227,7 @@ class OllamaVisionService(
     private fun encodeForOllama(file: File): String {
         val buf = ByteArrayOutputStream()
         Thumbnails.of(file)
-            .size(1024, 1024)
+            .size(512, 512)
             .keepAspectRatio(true)
             .outputFormat("jpg")
             .toOutputStream(buf)
@@ -337,7 +338,11 @@ class OllamaVisionService(
                             succeeded = false
                         }
                     }
-                    if (succeeded) { embeddingProcessed.incrementAndGet(); done.add(id) } else failed.add(id)
+                    if (succeeded) {
+                        val n = embeddingProcessed.incrementAndGet()
+                        logger.log(Level.INFO, "[$n / ${embeddingTotal.get()}] ${metadata.getId()}")
+                        done.add(id)
+                    } else failed.add(id)
                 }
             }
             logger.log(Level.INFO, "Embedding generation complete")
