@@ -785,9 +785,22 @@ async function askSend() {
     }
 }
 
+$("#askTabLink").on("shown.bs.tab", function() {
+    $("#modalDefaultActions").hide();
+    $("#askInputFooter").css("display", "flex");
+    $("#askInput").focus();
+});
+
+$("#askTabLink").on("hide.bs.tab", function() {
+    $("#askInputFooter").hide();
+    $("#modalDefaultActions").show();
+});
+
 // Reset loaded marker when modal opens a new photo so conversation reloads
 $("#propMetadata").on("show.bs.modal", function() {
     askLoadedForMetadataId = null;
+    $("#askInputFooter").hide();
+    $("#modalDefaultActions").show();
 });
 
 $("#askSendBtn").off("click").on("click", function() { askSend(); });

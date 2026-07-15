@@ -175,23 +175,27 @@
                                 <div id="askChatMessages" style="height:300px;overflow-y:auto;display:flex;flex-direction:column;padding:4px 0 4px 0;"></div>
                             </div>
                         </div>
-                        <div class="d-flex gap-2 mt-2 align-items-stretch">
-                            <textarea class="form-control" id="askInput" rows="2" placeholder="Type your message..."></textarea>
-                            <button class="btn btn-primary" id="askSendBtn" style="min-width:70px;">Send</button>
-                        </div>
-                        <small class="text-muted mt-1 d-block" id="askModelLabel"></small>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div id="metadataModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
-                <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') and activePage != 'archived'}">
-                <button type="button" class="btn btn-primary" id="saveMetadata"><th:block th:text="#{main.modal.save}"></th:block></button>
-                <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
-                </th:block>
-                <th:block th:if="${authority == 'ROLE_USER'}">
-                <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.close}"></th:block></button>
-                </th:block>
+                <div id="modalDefaultActions" class="d-flex gap-2">
+                    <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') and activePage != 'archived'}">
+                    <button type="button" class="btn btn-primary" id="saveMetadata"><th:block th:text="#{main.modal.save}"></th:block></button>
+                    <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
+                    </th:block>
+                    <th:block th:if="${authority == 'ROLE_USER'}">
+                    <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.close}"></th:block></button>
+                    </th:block>
+                </div>
+                <div id="askInputFooter" class="d-flex gap-2 align-items-center flex-grow-1" style="display:none !important;">
+                    <textarea class="form-control" id="askInput" rows="2" placeholder="Type your message..."></textarea>
+                    <div class="d-flex flex-column gap-1 align-items-end">
+                        <button class="btn btn-primary" id="askSendBtn" style="min-width:70px;">Send</button>
+                        <small class="text-muted" id="askModelLabel"></small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
