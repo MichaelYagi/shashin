@@ -158,7 +158,7 @@ class OllamaVisionService(
                 "images" to listOf(imageB64)
             )),
             "stream" to false,
-            "options" to mapOf("num_predict" to 180, "temperature" to 0.2)
+            "options" to mapOf("num_predict" to 180, "temperature" to 0.7)
         ))
 
         return try {
@@ -238,7 +238,7 @@ class OllamaVisionService(
         val parts = text.split(Regex("\\nKEYWORDS\\s*:\\s*", RegexOption.IGNORE_CASE), limit = 2)
         val description = parts[0].trim()
         val keywords = if (parts.size >= 2)
-            parts[1].split(",").map { it.trim().lowercase() }.filter { it.isNotBlank() }.take(10)
+            parts[1].split(",").map { it.trim().lowercase().replace("_", " ") }.filter { it.isNotBlank() }.take(10)
         else emptyList()
         return Pair(description, keywords)
     }
