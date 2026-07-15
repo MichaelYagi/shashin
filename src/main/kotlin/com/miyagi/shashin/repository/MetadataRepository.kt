@@ -181,6 +181,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
    fun findDistinctFirstByHiddenIsFalseByDescriptionOrderByYearDescMonthDescDayDesc(): Metadata?
 
+   @Cacheable(value = ["metadataDates"], key = "'all'")
    @Query("SELECT year,month,day, COUNT(*) AS count FROM metadata WHERE hidden = 0 GROUP BY year, month, day ORDER BY year DESC, month DESC, day DESC", nativeQuery = true)
    fun findAllYearMonthDay(): MutableIterable<MetadataDate>?
 
@@ -205,12 +206,15 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
            "WHERE cumulative_total <= :limit", nativeQuery = true)
    fun findAllYearMonthDayByOffsetAndLimit(@Param("limit") limit: Int): MutableIterable<MetadataDate>?
 
+   @Cacheable(value = ["metadataDates"], key = "{#type}")
    @Query("SELECT year,month,day,COUNT(*) AS count FROM metadata WHERE hidden = 0 AND type LIKE %:type% GROUP BY year,month,day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByMediaType(@Param("type") type: String): MutableIterable<MetadataDate>?
 
+   @Cacheable(value = ["metadataDates"], key = "'noCoord'")
    @Query("SELECT year,month,day,COUNT(*) AS count FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) GROUP BY year,month,day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByNoCoord(): MutableIterable<MetadataDate>?
 
+   @Cacheable(value = ["metadataDates"], key = "'description'")
    @Query("SELECT year,month,day,COUNT(*) AS count FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" GROUP BY year,month,day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByDescription(): MutableIterable<MetadataDate>?
 
@@ -257,9 +261,11 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT camera, COUNT(*) AS count FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY count DESC", nativeQuery = true)
    fun countByCameraType(): MutableIterable<CameraTypeCount>
 
+   @Cacheable(value = ["cameraLens"], key = "'cameras'")
    @Query("SELECT camera FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY camera COLLATE NOCASE ASC", nativeQuery = true)
    fun findByCameraTypeAlphabetical(): MutableIterable<String>
 
+   @Cacheable(value = ["cameraLens"], key = "'lenses'")
    @Query("SELECT lens FROM metadata WHERE lens IS NOT NULL GROUP BY lens ORDER BY lens COLLATE NOCASE ASC", nativeQuery = true)
    fun findByLensTypeAlphabetical(): MutableIterable<String>
 
@@ -400,6 +406,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(DISTINCT m.id) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != :objectName AND m.hidden = 0 GROUP BY rl.id", nativeQuery = true)
    fun findMetadataByPeople(@Param("objectName") objectName: String): MutableIterable<MetadataPeople>
 
+   @Cacheable(value = ["peopleTagCounts"], key = "{#objectName}")
    @Query("SELECT rl.id, rl.name, rl.cover_url as coverUrl, COUNT(DISTINCT rlp.metadata_id) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM recognitionlabel rl LEFT JOIN recognitionlabelphoto rlp ON rl.id = rlp.recognition_label_id AND (rlp.auto_tagged = 0 OR rlp.auto_tagged IS NULL) LEFT JOIN metadata m ON m.id = rlp.metadata_id AND m.hidden = 0 WHERE rl.name != :objectName GROUP BY rl.id ORDER BY rl.name COLLATE NOCASE ASC", nativeQuery = true)
    fun findAllPeopleWithTagCount(@Param("objectName") objectName: String): MutableIterable<MetadataPeople>
 
@@ -451,6 +458,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE id IN :metadataIds", nativeQuery = true)
    fun findAllByMetadataIds(metadataIds: Array<String>): MutableIterable<Metadata>
 
+   @Cacheable(value = ["metadataDates"], key = "'yearMonth'")
    @Query("SELECT year, month, COUNT(*) as count FROM metadata WHERE hidden = 0 GROUP BY year, month order by year DESC, month DESC", nativeQuery = true)
    fun countByYearAndMonth(): MutableIterable<MetadataYearMonthCount>
 

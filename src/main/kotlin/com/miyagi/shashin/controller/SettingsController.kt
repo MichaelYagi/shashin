@@ -647,7 +647,7 @@ class SettingsController(
 
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/content/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     @ResponseBody
     @Transactional
     fun deleteContent(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
@@ -919,7 +919,7 @@ class SettingsController(
     }
 
     @Secured("ROLE_SUPER")
-    @CacheEvict(value = ["allMetadata", "getFileStats", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "getFileStats", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -1194,7 +1194,7 @@ class SettingsController(
     }
 
     @Secured("ROLE_SUPER")
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     @PostMapping("/settings/snapshot")
     @Transactional
     fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam importDatabase: Optional<String>, @RequestParam snapshotFile: MultipartFile, locale: Locale): String {
@@ -1514,7 +1514,7 @@ class SettingsController(
         return false
     }
 
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0, locale: Locale = Locale.ENGLISH): String {
         recognitionCount = 0
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)

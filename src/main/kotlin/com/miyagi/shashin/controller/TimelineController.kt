@@ -1061,7 +1061,7 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/rescan/metadata", "/api/v1/rescan/metadata"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun rescanMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -1336,7 +1336,7 @@ class TimelineController(
     @RequestMapping(value = ["/metadata/remove/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun removeMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, locale: Locale): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -1517,7 +1517,7 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse, locale: Locale): String? {
 //        println(requestBody)
 
@@ -1886,7 +1886,7 @@ class TimelineController(
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/batch/coordinates","/api/v1/update/metadata/batch/coordinates"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     @ResponseBody
     fun updateBatchLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse, locale: Locale): String? {
         resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
@@ -2052,7 +2052,7 @@ class TimelineController(
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/coordinates/{metadataId}","/api/v1/update/metadata/coordinates/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     @ResponseBody
     fun updateLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse, locale: Locale): String? {
 //        println(requestBody)
@@ -2216,7 +2216,7 @@ class TimelineController(
     @RequestMapping(value = ["/metadata/remove/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun removeBatchMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
 //        println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -2410,7 +2410,7 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
 //println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
@@ -3427,7 +3427,7 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/preview/edit/thumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun previewEditThumbs(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -3542,7 +3542,7 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/edit/thumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun editThumbs(model: Model, @RequestBody requestBody: JsonNode, @RequestParam restore: Optional<Boolean>, locale: Locale): String? {
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -3721,7 +3721,7 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/thumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun updateThumbs(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 

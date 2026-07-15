@@ -71,6 +71,18 @@ DROP INDEX IF EXISTS `idx_metadata_datetype`;
 CREATE INDEX `idx_metadata_datetype` ON metadata (`year` DESC, `month` DESC, `day` DESC, `hidden`, `type`);
 DROP INDEX IF EXISTS `idx_metadata_date`;
 CREATE INDEX `idx_metadata_date` ON metadata (`year` DESC, `month` DESC, `day` DESC, `hidden`);
+DROP INDEX IF EXISTS `idx_metadata_hidden_ymd`;
+CREATE INDEX `idx_metadata_hidden_ymd` ON metadata (`hidden`, `year` DESC, `month` DESC, `day` DESC);
+DROP INDEX IF EXISTS `idx_metadata_hidden_taken_at`;
+CREATE INDEX `idx_metadata_hidden_taken_at` ON metadata (`hidden`, `takenAt`);
+DROP INDEX IF EXISTS `idx_metadata_hidden_added_at`;
+CREATE INDEX `idx_metadata_hidden_added_at` ON metadata (`hidden`, `addedAt` DESC);
+DROP INDEX IF EXISTS `idx_metadata_hidden_modified_at`;
+CREATE INDEX `idx_metadata_hidden_modified_at` ON metadata (`hidden`, `modifiedAt` DESC);
+DROP INDEX IF EXISTS `idx_metadata_hidden_accessed_at`;
+CREATE INDEX `idx_metadata_hidden_accessed_at` ON metadata (`hidden`, `lastAccessedAt` DESC);
+DROP INDEX IF EXISTS `idx_metadata_hidden_folder`;
+CREATE INDEX `idx_metadata_hidden_folder` ON metadata (`hidden`, `folder`);
 
 DROP TABLE IF EXISTS `folderdata`;
 CREATE TABLE `folderdata` (
@@ -350,6 +362,11 @@ CREATE TABLE IF NOT EXISTS `ollama_context` (
 );
 
 INSERT INTO `hibernate_sequence` VALUES (362);
+
+CREATE INDEX `idx_rlp_metadata_id` ON recognitionlabelphoto (`metadata_id`);
+CREATE INDEX `idx_ap_album_id` ON albumphoto (`albumId`);
+CREATE INDEX `idx_kp_keyword_id` ON keywordphoto (`keywordId`);
+CREATE INDEX `idx_ua_album_id` ON useralbum (`albumId`);
 
 PRAGMA journal_mode = WAL;
 PRAGMA synchronous = NORMAL;

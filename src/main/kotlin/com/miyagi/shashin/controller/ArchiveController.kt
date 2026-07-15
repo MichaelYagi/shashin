@@ -164,7 +164,7 @@ class ArchiveController(
     @RequestMapping(value = ["/unarchive"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
     fun postUnarchiveMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val trashMp = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (trashMp.containsKey("metadataIdList")) {
