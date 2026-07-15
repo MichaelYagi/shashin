@@ -1,8 +1,15 @@
 (function( shashin, $, undefined ) {
     document.addEventListener('play', function(e) {
         if (e.target.tagName === 'VIDEO') {
+            shashin.videoPlaying = true;
             shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
         }
+    }, true);
+    document.addEventListener('pause', function(e) {
+        if (e.target.tagName === 'VIDEO') { shashin.videoPlaying = false; }
+    }, true);
+    document.addEventListener('ended', function(e) {
+        if (e.target.tagName === 'VIDEO') { shashin.videoPlaying = false; }
     }, true);
 
     shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {

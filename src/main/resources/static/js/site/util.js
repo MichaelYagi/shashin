@@ -86,7 +86,7 @@ class Util {
                             const el = mutation.target;
                             if (el.classList.contains('lg-hide-items')) {
                                 shashin.closeToastMessages({tag: tag});
-                            } else if (description.trim() !== "") {
+                            } else if (description.trim() !== "" && !shashin.videoPlaying) {
                                 shashin.showToastMessage(null, description, {
                                     tag: tag,
                                     autohide: false,
