@@ -725,10 +725,14 @@ async function askSend() {
     const $chat = $("#askChatMessages");
     const $msgDiv = $('<div class="d-flex flex-column mb-2">');
     const $content = $('<div class="p-3 rounded">').css({"background": "var(--bs-secondary-bg)", "word-break": "break-word"});
+    const $cursor = $('<span class="ask-cursor ms-1">▊</span>');
+    $content.html('<span class="spinner-border spinner-border-sm text-muted me-2" role="status"></span><span class="text-muted small">Thinking…</span>');
     $msgDiv.append($content);
     $chat.append($msgDiv);
+    $chat[0].scrollTop = $chat[0].scrollHeight;
 
     let fullText = "";
+    let firstToken = true;
 
     try {
         const response = await fetch("/photo/" + metadataId + "/ask/stream", {
@@ -761,13 +765,16 @@ async function askSend() {
                     if (data.error) { $content.addClass("text-danger").text(data.error); return; }
                     if (data.token) {
                         fullText += data.token;
-                        $content.html(typeof formatMessage === "function" ? formatMessage(fullText) : $("<span>").text(fullText).html());
+                        if (firstToken) { $content.empty(); firstToken = false; }
+                        const rendered = typeof formatMessage === "function" ? formatMessage(fullText) : $("<span>").text(fullText).html();
+                        $content.html(rendered).append($cursor);
                         $chat[0].scrollTop = $chat[0].scrollHeight;
                     }
                 } catch (_) {}
             }
         }
 
+        $cursor.remove();
         $msgDiv.append($('<small class="text-muted mt-1">').text(new Date().toLocaleString() + " · " + (askOllamaModel || "")));
     } catch (e) {
         $content.addClass("text-danger").text("Something went wrong. Please try again.");
