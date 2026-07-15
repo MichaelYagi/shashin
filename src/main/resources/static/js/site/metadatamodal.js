@@ -679,10 +679,9 @@ function askAppendMessage(role, content, createdAt) {
         );
     } else if (role === "assistant") {
         const timeStr = createdAt || new Date().toLocaleString();
-        const $msg = $('<div class="mb-2">').append(
-            $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).html(typeof formatMessage === "function" ? formatMessage(content) : $('<span>').text(content).html()),
-            $('<div class="text-muted small mt-1">').text(timeStr + " · " + (askOllamaModel || ""))
-        );
+        const $bubble = $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).html(typeof formatMessage === "function" ? formatMessage(content) : $('<span>').text(content).html());
+        $bubble.append($('<div class="text-muted small mt-2">').text(timeStr + " · " + (askOllamaModel || "")));
+        const $msg = $('<div class="mb-2">').append($bubble);
         $chat.append($msg);
         const chatEl = $chat[0];
         chatEl.scrollTop = $msg[0].getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop;
@@ -775,7 +774,7 @@ async function askSend() {
         }
 
         $cursor.remove();
-        $msgDiv.append($('<div class="text-muted small mt-1">').text(new Date().toLocaleString() + " · " + (askOllamaModel || "")));
+        $content.append($('<div class="text-muted small mt-2">').text(new Date().toLocaleString() + " · " + (askOllamaModel || "")));
     } catch (e) {
         $content.addClass("text-danger").text("Something went wrong. Please try again.");
     } finally {
