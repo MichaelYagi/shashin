@@ -786,21 +786,21 @@ async function askSend() {
 }
 
 $("#askTabLink").on("shown.bs.tab", function() {
-    $("#modalDefaultActions").hide();
-    $("#askInputFooter").css("display", "flex");
+    $("#modalDefaultActions").addClass("d-none");
+    $("#askInputFooter").removeClass("d-none").addClass("d-flex");
     $("#askInput").focus();
 });
 
 $("#askTabLink").on("hide.bs.tab", function() {
-    $("#askInputFooter").hide();
-    $("#modalDefaultActions").show();
+    $("#askInputFooter").removeClass("d-flex").addClass("d-none");
+    $("#modalDefaultActions").removeClass("d-none");
 });
 
 // Reset loaded marker when modal opens a new photo so conversation reloads
 $("#propMetadata").on("show.bs.modal", function() {
     askLoadedForMetadataId = null;
-    $("#askInputFooter").hide();
-    $("#modalDefaultActions").show();
+    $("#askInputFooter").removeClass("d-flex").addClass("d-none");
+    $("#modalDefaultActions").removeClass("d-none");
 });
 
 $("#askSendBtn").off("click").on("click", function() { askSend(); });
