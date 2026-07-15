@@ -712,34 +712,70 @@ function askLoadConversation(metadataId) {
     });
 }
 
-function askSend() {
+async function askSend() {
     const question = $("#askInput").val().trim();
     if (!question) return;
     const metadataId = $("#metadataId").val();
     if (!metadataId) return;
 
-    $("#askInput").val("");
+    $("#askInput").val("").prop("disabled", true);
+    $("#askSendBtn").prop("disabled", true);
     askAppendMessage("user", question);
-    askAppendMessage("thinking", "");
 
-    $.ajax({
-        url: "/photo/" + metadataId + "/ask",
-        method: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({ question: question }),
-        success: function(data) {
-            $("#askThinking").remove();
-            if (data.error) {
-                askAppendMessage("error", data.error);
-                return;
-            }
-            askAppendMessage("assistant", data.answer || "", data.createdAt);
-        },
-        error: function() {
-            $("#askThinking").remove();
-            askAppendMessage("error", "Something went wrong. Please try again.");
+    const $chat = $("#askChatMessages");
+    const $msgDiv = $('<div class="d-flex flex-column mb-2">');
+    const $content = $('<div class="p-3 rounded">').css({"background": "var(--bs-secondary-bg)", "word-break": "break-word"});
+    $msgDiv.append($content);
+    $chat.append($msgDiv);
+
+    let fullText = "";
+
+    try {
+        const response = await fetch("/photo/" + metadataId + "/ask/stream", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: question })
+        });
+
+        if (!response.ok || !response.body) {
+            $content.addClass("text-danger").text("Something went wrong. Please try again.");
+            return;
         }
-    });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+            for (const line of lines) {
+                if (!line.startsWith("data:")) continue;
+                const jsonStr = line.slice(5).trim();
+                if (!jsonStr) continue;
+                try {
+                    const data = JSON.parse(jsonStr);
+                    if (data.error) { $content.addClass("text-danger").text(data.error); return; }
+                    if (data.token) {
+                        fullText += data.token;
+                        $content.html(typeof formatMessage === "function" ? formatMessage(fullText) : $("<span>").text(fullText).html());
+                        $chat[0].scrollTop = $chat[0].scrollHeight;
+                    }
+                } catch (_) {}
+            }
+        }
+
+        $msgDiv.append($('<small class="text-muted mt-1">').text(new Date().toLocaleString() + " · " + (askOllamaModel || "")));
+    } catch (e) {
+        $content.addClass("text-danger").text("Something went wrong. Please try again.");
+    } finally {
+        $("#askInput").prop("disabled", false);
+        $("#askSendBtn").prop("disabled", false);
+        $chat[0].scrollTop = $chat[0].scrollHeight;
+    }
 }
 
 // Reset loaded marker when modal opens a new photo so conversation reloads

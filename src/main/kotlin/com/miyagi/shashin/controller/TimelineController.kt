@@ -46,6 +46,7 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.context.MessageSource
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.awt.image.BufferedImage
 import java.time.LocalDateTime
@@ -4087,6 +4088,45 @@ class TimelineController(
         ollamaConversationRepository?.saveAll(listOf(userMsg, assistantMsg))
 
         return mapper.writeValueAsString(mapOf("answer" to answer, "model" to settings.getOllamaVisionModel(), "createdAt" to ts))
+    }
+
+    @RequestMapping(value = ["/photo/{id}/ask/stream"], method = [RequestMethod.POST], produces = ["text/event-stream"])
+    @ResponseBody
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    fun askPhotoStream(@PathVariable id: String, @RequestBody body: String): SseEmitter {
+        val mapper = ObjectMapper()
+        val emitter = SseEmitter(120_000L)
+        fun sendError(msg: String) {
+            try { emitter.send(SseEmitter.event().data(mapper.writeValueAsString(mapOf("error" to msg)))); emitter.complete() } catch (_: Exception) {}
+        }
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        if (settings == null || ollamaVisionService?.isOllamaConfigured(settings) != true) { sendError("Ollama not configured"); return emitter }
+        val metadataRecord = metadataRepository.findById(id)
+        if (!metadataRecord.isPresent) { sendError("Photo not found"); return emitter }
+        val metadata = metadataRecord.get()
+        val question = try { mapper.readTree(body)["question"]?.asText()?.takeIf { it.isNotBlank() } } catch (_: Exception) { null }
+        if (question == null) { sendError("No question provided"); return emitter }
+
+        Thread {
+            val fullAnswer = StringBuilder()
+            try {
+                ollamaVisionService?.askStream(metadata, question, settings, ollamaContextRepository) { token ->
+                    fullAnswer.append(token)
+                    try { emitter.send(SseEmitter.event().data(mapper.writeValueAsString(mapOf("token" to token)))) } catch (_: Exception) {}
+                }
+                val ts = getCurrentTimestamp()
+                if (fullAnswer.isNotBlank()) {
+                    val userMsg = com.miyagi.shashin.model.OllamaConversation().also { it.setMetadataId(id); it.setRole("user"); it.setContent(question); it.setCreatedAt(ts) }
+                    val assistantMsg = com.miyagi.shashin.model.OllamaConversation().also { it.setMetadataId(id); it.setRole("assistant"); it.setContent(fullAnswer.toString()); it.setCreatedAt(ts) }
+                    ollamaConversationRepository?.saveAll(listOf(userMsg, assistantMsg))
+                }
+                emitter.send(SseEmitter.event().name("done").data(mapper.writeValueAsString(mapOf("createdAt" to ts))))
+                emitter.complete()
+            } catch (e: Exception) {
+                try { emitter.send(SseEmitter.event().data(mapper.writeValueAsString(mapOf("error" to "Stream error")))); emitter.complete() } catch (_: Exception) {}
+            }
+        }.start()
+        return emitter
     }
 
     fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, argusDetectionIdMap: MutableMap<String, Any?>) {

@@ -370,7 +370,8 @@ class OllamaVisionService(
             "model" to settings.getOllamaVisionModel()!!,
             "prompt" to "/no_think $question",
             "images" to listOf(imageB64),
-            "stream" to false
+            "stream" to false,
+            "options" to mapOf("num_predict" to 400)
         )
         if (ctxValid) {
             payload["context"] = mapper.readTree(storedCtx!!.getContext())
@@ -424,6 +425,86 @@ class OllamaVisionService(
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Ollama ask error for $metadataId: ${e.localizedMessage}")
             null
+        }
+    }
+
+    fun askStream(
+        metadata: Metadata,
+        question: String,
+        settings: Settings,
+        contextRepository: OllamaContextRepository?,
+        onToken: (String) -> Unit
+    ): Boolean {
+        val metadataId = metadata.getId() ?: return false
+        val ollamaUrl = settings.getOllamaUrl()?.trimEnd('/') ?: return false
+        val imagePath = ImageProcessing.Companion.argusImagePath(metadata) ?: return false
+        val imageFile = File(imagePath)
+        if (!imageFile.exists()) return false
+
+        val imageB64 = imageCache[metadataId]
+            ?: try { encodeForOllama(imageFile).also { imageCache[metadataId] = it } } catch (e: Exception) { return false }
+
+        val storedCtx = contextRepository?.findByMetadataId(metadataId)
+        val ctxValid = storedCtx != null && storedCtx.getModel() == settings.getOllamaVisionModel()
+
+        val payload = mutableMapOf<String, Any>(
+            "model" to settings.getOllamaVisionModel()!!,
+            "prompt" to "/no_think $question",
+            "images" to listOf(imageB64),
+            "stream" to true,
+            "options" to mapOf("num_predict" to 400)
+        )
+        if (ctxValid) {
+            payload["context"] = mapper.readTree(storedCtx!!.getContext())
+        } else {
+            val systemParts = mutableListOf<String>()
+            metadata.getTakenAt()?.takeIf { it.isNotBlank() }?.let { systemParts.add("Date taken: $it") }
+            val place = metadata.getPlaceName()?.takeIf { it.isNotBlank() }
+            val lat = metadata.getLat()?.takeIf { it.isNotBlank() }
+            val lng = metadata.getLng()?.takeIf { it.isNotBlank() }
+            if (place != null) {
+                val coords = if (lat != null && lng != null) " ($lat, $lng)" else ""
+                systemParts.add("Location: $place$coords")
+            } else if (lat != null && lng != null) {
+                systemParts.add("Coordinates: $lat, $lng")
+            }
+            if (systemParts.isNotEmpty()) payload["system"] = systemParts.joinToString("\n")
+        }
+
+        return try {
+            val conn = java.net.URL("$ollamaUrl/api/generate").openConnection() as java.net.HttpURLConnection
+            conn.requestMethod = "POST"
+            conn.setRequestProperty("Content-Type", "application/json")
+            conn.doOutput = true
+            conn.connectTimeout = 15_000
+            conn.readTimeout = 120_000
+            conn.outputStream.use { it.write(mapper.writeValueAsBytes(payload)) }
+
+            conn.inputStream.bufferedReader().use { reader ->
+                reader.forEachLine { line ->
+                    if (line.isBlank()) return@forEachLine
+                    try {
+                        val node = mapper.readTree(line)
+                        val token = node["response"]?.asText() ?: ""
+                        if (token.isNotEmpty()) onToken(token)
+                        if (node["done"]?.asBoolean() == true) {
+                            val ctxNode = node["context"]
+                            if (ctxNode != null && contextRepository != null) {
+                                val ctxObj = (if (ctxValid) storedCtx else null)
+                                    ?: OllamaContext().also { it.setMetadataId(metadataId) }
+                                ctxObj.setModel(settings.getOllamaVisionModel())
+                                ctxObj.setContext(mapper.writeValueAsString(ctxNode))
+                                ctxObj.setUpdatedAt(TextUtils.getCurrentTimestamp())
+                                contextRepository.save(ctxObj)
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
+            }
+            true
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Ollama ask stream error for $metadataId: ${e.localizedMessage}")
+            false
         }
     }
 
