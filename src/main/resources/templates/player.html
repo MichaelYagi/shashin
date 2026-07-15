@@ -113,25 +113,6 @@
             licenseKey: Util.lgApiKey()
         });
 
-        document.addEventListener("play", function(e) {
-            if (e.target.tagName === "VIDEO") {
-                shashin.videoPlaying = true;
-                document.body.classList.add("shashin-video-playing");
-                shashin.closeToastMessages({tags: ["playerSubhtml"]});
-            }
-        }, true);
-        document.addEventListener("pause", function(e) {
-            if (e.target.tagName === "VIDEO") {
-                shashin.videoPlaying = false;
-                document.body.classList.remove("shashin-video-playing");
-            }
-        }, true);
-        document.addEventListener("ended", function(e) {
-            if (e.target.tagName === "VIDEO") {
-                shashin.videoPlaying = false;
-                document.body.classList.remove("shashin-video-playing");
-            }
-        }, true);
 
         photoImageEl.click();
         photoImageEl.attr("style", "display:block");
