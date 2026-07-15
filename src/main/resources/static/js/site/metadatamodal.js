@@ -803,6 +803,7 @@ $("#propMetadata").on("show.bs.modal", function() {
     $("#askInputFooter").removeClass("d-flex").addClass("d-none");
     $("#modalDefaultActions").removeClass("d-none");
     $("#metadataModalStatus").css("display", "");
+    shashin.closeToastMessages({tags: ["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
 });
 
 $("#askSendBtn").off("click").on("click", function() { askSend(); });
