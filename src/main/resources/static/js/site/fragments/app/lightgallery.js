@@ -87,6 +87,14 @@
                 }
             });
 
+            shashin.infiniteScrollGallery.addEventListener('lgHasVideo', _ => {
+                shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
+            });
+
+            shashin.infiniteScrollGallery.addEventListener('lgPosterClick', _ => {
+                shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
+            });
+
             shashin.infiniteScrollGallery.addEventListener('lgAfterClose', _ => {
                 if (Util.sessionStorageAvailable() === true) {
                     sessionStorage.removeItem("metadata");

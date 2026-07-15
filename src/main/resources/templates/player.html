@@ -92,7 +92,9 @@
 
         const photoImageEl = $("#photoImage");
 
-        lightGallery(document.getElementById("video"), {
+        const videoEl = document.getElementById("video");
+
+        lightGallery(videoEl, {
             plugins: [lgVideo, lgRelativeCaption, lgRotate],
             hideBarsDelay: 5000,
             showBarsAfter: 5000,
@@ -109,6 +111,13 @@
             flipHorizontal: true,
             flipVertical: false,
             licenseKey: Util.lgApiKey()
+        });
+
+        videoEl.addEventListener("lgHasVideo", function() {
+            shashin.closeToastMessages({tags: ["playerSubhtml"]});
+        });
+        videoEl.addEventListener("lgPosterClick", function() {
+            shashin.closeToastMessages({tags: ["playerSubhtml"]});
         });
 
         photoImageEl.click();
