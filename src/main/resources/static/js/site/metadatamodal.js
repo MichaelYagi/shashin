@@ -822,6 +822,31 @@ $("#askTabLink").off("click").on("click", function(e) {
 
 // ── End Ask tab ────────────────────────────────────────────────────────────────
 
+// ── Full-image overlay ─────────────────────────────────────────────────────────
+$(document).on("click", "#propMetadataModalThumbnail img", function() {
+    const metadataId = $("#metadataId").val();
+    if (!metadataId) return;
+    $("#imgFullOverlayImg").attr("src", "/api/v1/thumbnails/original/" + metadataId);
+    $("#imgFullOverlay").css("display", "flex");
+});
+
+$(document).on("mouseover", "#propMetadataModalThumbnail img", function() {
+    $(this).css("cursor", "zoom-in");
+});
+
+$("#imgFullOverlay").on("click", function(e) {
+    if ($(e.target).is("#imgFullOverlayImg")) return;
+    $("#imgFullOverlay").hide();
+    $("#imgFullOverlayImg").attr("src", "");
+});
+
+$(document).on("keydown", function(e) {
+    if (e.key === "Escape" && $("#imgFullOverlay").is(":visible")) {
+        $("#imgFullOverlay").hide();
+        $("#imgFullOverlayImg").attr("src", "");
+    }
+});
+
 $('body').off("click").on("click", function(event) {
     const metadataId = $("#metadataId").val();
 
