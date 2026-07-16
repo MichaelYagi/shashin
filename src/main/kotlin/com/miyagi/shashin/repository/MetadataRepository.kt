@@ -427,11 +427,11 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN albumphoto ap on m.id = ap.metadata_id LEFT JOIN useralbum ua on ap.album_id = ua.album_id LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND m.taken_at >= :startDate AND m.taken_at <= :endDate AND rl.id = :recognitionLabelId AND (rlp.auto_tagged = 0 OR rlp.auto_tagged IS NULL) AND ua.user_id = :userId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findAlbumPhotoByPersonAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("recognitionLabelId") recognitionLabelId: Int, @Param("userId") userId: Int): MutableList<Metadata>?
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id WHERE kp.metadata_id IS NULL AND m.hidden = 0 ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id WHERE kp.metadata_id IS NULL AND m.hidden = 0 ORDER BY m.id LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findWithoutKeywords(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id WHERE m.hidden = 0 AND (kp.metadata_id IS NULL OR rlp.metadata_id IS NULL) ORDER BY RANDOM() LIMIT 0, :matchScanLimit", nativeQuery = true)
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id WHERE m.hidden = 0 AND (kp.metadata_id IS NULL OR rlp.metadata_id IS NULL) ORDER BY m.id LIMIT 0, :matchScanLimit", nativeQuery = true)
    fun findWithoutFacesOrKeywords(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id WHERE rlp.metadata_id IS NULL AND m.hidden = 0 ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id WHERE rlp.metadata_id IS NULL AND m.hidden = 0 ORDER BY m.id LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
 
    @Query("SELECT COUNT(DISTINCT folder) FROM metadata WHERE hidden = 0", nativeQuery = true)
