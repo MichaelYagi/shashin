@@ -198,13 +198,12 @@
                 setTimeout(function () {
                     if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
                         timelineSettings.enableScrollSpy = true;
-                        debounce(renderViewport, 300);
-                        timelineSettings.enableScrollSpy = false;
+                        renderViewport();
                     }
                 }, 1500);
             }
 
-            debounce(renderViewport, 300);
+            renderViewport();
 
             const containerRect = document.getElementById("container").getBoundingClientRect();
             const galleryRect = document.getElementById("infinite-scroll-gallery").getBoundingClientRect();
@@ -219,7 +218,7 @@
                 timelineSettings.scrollByN();
 
                 timelineSettings.enableScrollSpy = true;
-                debounce(renderViewport, 300);
+                renderViewport();
 
                 setTimeout(function () {
                     if (containerTop  === galleryTop ||
@@ -227,7 +226,7 @@
                         containerTop  === (galleryTop+1)
                     ) {
                         timelineSettings.enableScrollSpy = true;
-                        debounce(renderViewport, 300);
+                        renderViewport();
 
                     }
                 }, 1000);

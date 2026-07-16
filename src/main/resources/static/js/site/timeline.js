@@ -192,7 +192,10 @@
     };
 
     // Render only what's needed
+    let isRenderingAlt = false;
     timelineSettings.renderThumbnailsAlt = async function(id,mediaTypeFilter) {
+        if (isRenderingAlt) return timelineSettings.successMidMsg;
+        isRenderingAlt = true;
         if (timelineSettings.initialized === false) {
             timelineSettings.initialized = true;
         } else {
@@ -338,6 +341,7 @@
                 const wasAtTop = document.getElementById("container").scrollTop === 0;
 
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                await new Promise(r => setTimeout(r, 0));
                 if (msg === timelineSettings.success && $("#" + currentId).length === 1) {
                     await timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
 
@@ -364,7 +368,23 @@
                 shashin.printMessageToConsole("attaching below attachPoint:" + attachPoint,{tag:"timeline"});
                 shashin.printMessageToConsole("attaching id:" + currentId,{tag:"timeline"});
                 shashin.printMessageToConsole("actionBelow:"+action,{tag:"timeline"});
-                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+
+                let currentAction = action;
+                if (attachPoint !== null) {
+                    const dateParts = currentId.split("-");
+                    const yearMonth = dateParts[0] + "-" + parseInt(dateParts[1], 10);
+                    const numberOfPhotos = timelineSettings.metadataYearMonthCount[yearMonth];
+                    const sectionHeight = (numberOfPhotos !== null && numberOfPhotos > 0)
+                        ? Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5)
+                        : 0;
+                    if (sectionHeight > 0) {
+                        await timelineSettings.createEmptyContainer(currentId, attachPoint, sectionHeight);
+                        currentAction = "emptyContainer";
+                    }
+                }
+
+                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, currentAction, attachPoint);
+                await new Promise(r => setTimeout(r, 0));
                 if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
                     await timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
@@ -401,6 +421,7 @@
                     }
 
                     const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                    await new Promise(r => setTimeout(r, 0));
                     if (msg === timelineSettings.success && $("#" + currentId).length === 1) {
                         await timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                     }
@@ -448,6 +469,7 @@
             shashin.printMessageToConsole("attaching id:" + id,{tag:"timeline"});
             shashin.printMessageToConsole("attaching mid action:" + action,{tag:"timeline"});
             const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
+            await new Promise(r => setTimeout(r, 0));
             if (msg === timelineSettings.success && $("#" + id).length === 1) {
                 await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
             }
@@ -457,6 +479,7 @@
         shashin.printMessageToConsole("==============================================",{tag:"timeline"});
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
+        isRenderingAlt = false;
         timelineSettings.enableScrollSpy = true;
 
         return timelineSettings.successMidMsg;

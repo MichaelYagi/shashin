@@ -1661,11 +1661,14 @@ class Util {
         // console.log("$(\"#\" + id).outerHeight(true):"+$("#" + id).outerHeight(true))
 
         if (Util.isSafari()) {
-            let totalHeight = 0;
-            $('#container_'+id).children().each(function() {
-                totalHeight += $(this).outerHeight(true);
-            });
-            return totalHeight;
+            if ($("#container_" + id).length > 0) {
+                return $("#container_" + id).outerHeight(true);
+            }
+            return ($("#br" + id).outerHeight(true) || 0) +
+                   ($("#" + id).outerHeight(true) || 0) +
+                   ($("#row" + id).outerHeight(true) || 0) +
+                   ($("#tail_" + id).outerHeight(true) || 0) +
+                   ($("#amp_" + id).outerHeight(true) || 0);
         } else {
             return $("#container_" + id).outerHeight(true);
         }
