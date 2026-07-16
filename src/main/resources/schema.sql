@@ -366,6 +366,7 @@ INSERT INTO `hibernate_sequence` VALUES (362);
 CREATE INDEX `idx_rlp_metadata_id` ON recognitionlabelphoto (`metadata_id`);
 CREATE INDEX `idx_ap_album_id` ON albumphoto (`albumId`);
 CREATE INDEX `idx_kp_keyword_id` ON keywordphoto (`keywordId`);
+CREATE INDEX `idx_kp_metadata_id` ON keywordphoto (`metadata_id`);
 CREATE INDEX `idx_ua_album_id` ON useralbum (`albumId`);
 
 PRAGMA journal_mode = WAL;
