@@ -80,6 +80,8 @@ class PeopleController(
 
     private val threadExtensionName: String = "facescan_shashinscan"
 
+    private val userLocaleCache = java.util.concurrent.ConcurrentHashMap<String, Locale>()
+
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     val mapper = ObjectMapper()
@@ -88,12 +90,11 @@ class PeopleController(
     @MessageMapping("/matchmessage")
     fun sendMatcnMessage(message: ScanMessage, principal: Principal) {
         val username = principal.name
-        val user = userRepository?.findByUsername(username)
-        var lang = "en"
-        if (user != null && user.getLanguage() != null && user.getLanguage() != "") {
-            lang = user.getLanguage().toString()
+        val locale = userLocaleCache.getOrPut(username) {
+            val user = userRepository?.findByUsername(username)
+            val lang = if (user?.getLanguage().isNullOrEmpty()) "en" else user!!.getLanguage()!!
+            Locale(lang)
         }
-        val locale = Locale(lang)
 
         var msg = messageSource?.getMessage("main.pages.matching.start", null, locale).toString()
 
