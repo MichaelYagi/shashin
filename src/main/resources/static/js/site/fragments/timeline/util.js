@@ -14,8 +14,5 @@
 
     timelineSettings.scrollByN = function(scrollBy = 1) {
         document.getElementById("container").scrollBy({top: scrollBy, behavior: "instant"});
-        if (document.getElementsByTagName("MAIN").length > 0) {
-            document.getElementsByTagName("MAIN")[0].scrollBy({top: scrollBy, behavior: "instant"});
-        }
     };
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));

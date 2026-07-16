@@ -484,15 +484,13 @@ class Util {
 
     static isInViewport(element) {
         if (element.length > 0) {
-            const header = $('header');
-            const elementTop = element.offset().top;
-            const elementBottom = elementTop + element.outerHeight();
-            const viewportTop = header.outerHeight()-$(window).scrollTop();
-            const viewportBottom = viewportTop + ($(window).height()-header.outerHeight());
-
-            return elementBottom > viewportTop && elementTop < viewportBottom;
+            const rect = element[0].getBoundingClientRect();
+            const container = document.getElementById('container');
+            const containerRect = container
+                ? container.getBoundingClientRect()
+                : { top: 0, bottom: window.innerHeight };
+            return rect.bottom > containerRect.top && rect.top < containerRect.bottom;
         }
-
         return false;
     }
 

@@ -138,7 +138,7 @@
                         shashin.dayHeadingListener(id, "timeline", mediaTypeFilter);
 
                         // Scrolling behavior different on Chrome iOS
-                        if (Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                        if (Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
                             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                     timelineSettings.setScrollSpyActive(id);
@@ -162,7 +162,7 @@
 
                 if (Util.isMobile() === false) {
                     // Scrolling behavior different on Chrome iOS
-                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && Util.isFirefox() === false && (Util.isMobile() === false && Util.agentOS() === "Android") === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && Util.isFirefox() === false && (Util.isMobile() === false && Util.agentOS() === "Android") === false && !(Util.getOS() === "iOS" && Util.isChrome() === true) && Util.isSafari() === false) {
                         timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                             if (msg === timelineSettings.success) {
                                 // Set TOC active element
@@ -1587,14 +1587,12 @@
 
             setTimeout(function () {
                 if (action === "above") {
-                    // Find anchor element in viewport
                     const anchorElement = $(".scrollspy:visible").first()[0];
-
-                    htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
-                        // deferred.resolve(timelineSettings.success);
+                    htmlEl.insertBefore($("#container_" + attachToId));
+                    requestAnimationFrame(function () {
                         ret = timelineSettings.success;
                         if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                            $("#container").scrollTop(Util.getDateGalleryHeight(date));
+                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                             $("#infinite-scroll-gallery").visible();
                         }
                     });
@@ -1603,9 +1601,9 @@
                     $("#container_"+date).html(internalHtml);
                     $('<span class="attachMetadataPhotos" id="amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" style="visibility: hidden"></span>').insertAfter($("#container_"+date));
                 } else if (action === "new") {
-                    $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
+                    $("#infinite-scroll-gallery").prepend(htmlEl);
+                    requestAnimationFrame(function () {
                         if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                            //$("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                             $("#infinite-scroll-gallery").visible();
                         }
                         ret = timelineSettings.success;
@@ -1613,24 +1611,20 @@
                 } else {
                     if (attachToId == null) {
                         if ($(".attachMetadataPhotos").length > 0) {
-                            htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                                    $("#container").scrollTop(tempScrollTop);
-                                    $("#infinite-scroll-gallery").visible();
-                                }
-                                ret = timelineSettings.success;
-                            });
+                            htmlEl.insertAfter($(".attachMetadataPhotos").last());
                         } else {
-                            $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                                    $("#container").scrollTop(tempScrollTop);
-                                    $("#infinite-scroll-gallery").visible();
-                                }
-                                ret = timelineSettings.success;
-                            });
+                            $("#infinite-scroll-gallery").prepend(htmlEl);
                         }
+                        requestAnimationFrame(function () {
+                            if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                                $("#container").scrollTop(tempScrollTop);
+                                $("#infinite-scroll-gallery").visible();
+                            }
+                            ret = timelineSettings.success;
+                        });
                     } else {
-                        htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
+                        htmlEl.insertAfter($("#amp_" + attachToId));
+                        requestAnimationFrame(function () {
                             if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
                                 $("#container").scrollTop(tempScrollTop);
                                 $("#infinite-scroll-gallery").visible();

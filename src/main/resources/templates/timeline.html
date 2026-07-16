@@ -2,29 +2,25 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
-<th:block th:if="${agentName != 'Safari'}">
 <style>
     .cursor-wait, .cursor-wait * {
         cursor: wait !important;
     }
 
     #container {
-        -webkit-overflow-scrolling: touch;
         overflow-y: scroll;
         height: 100vh;
+        height: 100dvh;
     }
 
-    /* Fix Safari's buggy 100vh behavior */
     html, body {
         height: -webkit-fill-available;
     }
 
-    /* Prevent body scroll bleed when container is active */
     body.noscroll {
         overflow: hidden;
     }
 </style>
-</th:block>
 
 <body class="thumb d-flex flex-column vh-100 overflow-hidden">
 

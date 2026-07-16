@@ -408,13 +408,6 @@
             const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
             topOfPage = $(elementsInViewPort[0]).attr("id") === firstDate;
 
-            if (scrollTimer !== null) clearTimeout(scrollTimer);
-            scrollTimer = setTimeout(() => {
-                requestAnimationFrame(() => {
-                    $(window).trigger("scrollStop");
-                });
-            }, 200);
-
             if ($offcanvasToc.css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
                 timelineSettings.scrollToTimelineToc(elementsInViewPort);
             }
