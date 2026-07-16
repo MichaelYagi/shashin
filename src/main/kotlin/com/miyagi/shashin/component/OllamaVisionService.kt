@@ -137,12 +137,7 @@ class OllamaVisionService(
             return false
         }
 
-        val place = metadata.getPlaceName()
-        val locationHint = if (!place.isNullOrBlank())
-            "The photo's metadata indicates it was taken at: $place. Include this naturally if relevant.\n\n"
-        else ""
-
-        val prompt = "${locationHint}Describe this photo as an outside observer. " +
+        val prompt = "Describe this photo as an outside observer. " +
             "NEVER use I, me, my, mine, we, our, us — you are not in this photo and have no memories of it. " +
             "Do not invent dialogue, quotes, or personal memories. " +
             "Describe the people, place, activity, and mood warmly and vividly. " +
@@ -150,13 +145,13 @@ class OllamaVisionService(
             "Don't start with 'This is a photo of'.\n\n" +
             "Then on a new line:\nKEYWORDS: word1,word2,word3"
 
+        val messages = mutableListOf<Map<String, Any>>()
+        buildSystemContext(metadata, false)?.let { messages.add(mapOf("role" to "system", "content" to it)) }
+        messages.add(mapOf("role" to "user", "content" to "/no_think $prompt", "images" to listOf(imageB64)))
+
         val payload = mapper.writeValueAsString(mapOf(
             "model" to settings.getOllamaVisionModel()!!,
-            "messages" to listOf(mapOf(
-                "role" to "user",
-                "content" to "/no_think $prompt",
-                "images" to listOf(imageB64)
-            )),
+            "messages" to messages,
             "stream" to false,
             "options" to mapOf("num_predict" to 180, "temperature" to 0.7)
         ))
@@ -376,22 +371,7 @@ class OllamaVisionService(
         if (ctxValid) {
             payload["context"] = mapper.readTree(storedCtx!!.getContext())
         } else {
-            // Inject metadata context as system prompt on the first turn only;
-            // subsequent turns inherit it through the stored context tokens
-            val systemParts = mutableListOf<String>()
-            metadata.getTakenAt()?.takeIf { it.isNotBlank() }?.let { systemParts.add("Date taken: $it") }
-            val place = metadata.getPlaceName()?.takeIf { it.isNotBlank() }
-            val lat = metadata.getLat()?.takeIf { it.isNotBlank() }
-            val lng = metadata.getLng()?.takeIf { it.isNotBlank() }
-            if (place != null) {
-                val coords = if (lat != null && lng != null) " ($lat, $lng)" else ""
-                systemParts.add("Location: $place$coords")
-            } else if (lat != null && lng != null) {
-                systemParts.add("Coordinates: $lat, $lng")
-            }
-            if (systemParts.isNotEmpty()) {
-                payload["system"] = systemParts.joinToString("\n")
-            }
+            buildSystemContext(metadata, true)?.let { payload["system"] = it }
         }
 
         return try {
@@ -457,18 +437,7 @@ class OllamaVisionService(
         if (ctxValid) {
             payload["context"] = mapper.readTree(storedCtx!!.getContext())
         } else {
-            val systemParts = mutableListOf<String>()
-            metadata.getTakenAt()?.takeIf { it.isNotBlank() }?.let { systemParts.add("Date taken: $it") }
-            val place = metadata.getPlaceName()?.takeIf { it.isNotBlank() }
-            val lat = metadata.getLat()?.takeIf { it.isNotBlank() }
-            val lng = metadata.getLng()?.takeIf { it.isNotBlank() }
-            if (place != null) {
-                val coords = if (lat != null && lng != null) " ($lat, $lng)" else ""
-                systemParts.add("Location: $place$coords")
-            } else if (lat != null && lng != null) {
-                systemParts.add("Coordinates: $lat, $lng")
-            }
-            if (systemParts.isNotEmpty()) payload["system"] = systemParts.joinToString("\n")
+            buildSystemContext(metadata, true)?.let { payload["system"] = it }
         }
 
         return try {
@@ -506,6 +475,37 @@ class OllamaVisionService(
             logger.log(Level.WARNING, "Ollama ask stream error for $metadataId: ${e.localizedMessage}")
             false
         }
+    }
+
+    private fun buildSystemContext(metadata: Metadata, includeDescriptionAndKeywords: Boolean): String? {
+        val parts = mutableListOf<String>()
+        metadata.getTakenAt()?.takeIf { it.isNotBlank() }?.let {
+            val tz = metadata.getTimeZone()?.takeIf { it.isNotBlank() }
+            parts.add("Date taken: $it${if (tz != null) " ($tz)" else ""}")
+        }
+        val place = metadata.getPlaceName()?.takeIf { it.isNotBlank() }
+        val lat = metadata.getLat()?.takeIf { it.isNotBlank() }
+        val lng = metadata.getLng()?.takeIf { it.isNotBlank() }
+        if (place != null) {
+            val coords = if (lat != null && lng != null) " ($lat, $lng)" else ""
+            parts.add("Location: $place$coords")
+        } else if (lat != null && lng != null) {
+            parts.add("Coordinates: $lat, $lng")
+        }
+        val albums = jdbcTemplate.queryForList(
+            "SELECT a.name FROM album a JOIN albumphoto ap ON a.id = ap.album_id WHERE ap.metadata_id = ?",
+            String::class.java, metadata.getId()
+        )
+        if (albums.isNotEmpty()) parts.add("Albums: ${albums.joinToString(", ")}")
+        if (includeDescriptionAndKeywords) {
+            metadata.getDescription()?.takeIf { it.isNotBlank() }?.let { parts.add("Description: $it") }
+            val keywords = jdbcTemplate.queryForList(
+                "SELECT k.keyword FROM keyword k JOIN keywordphoto kp ON k.id = kp.keyword_id WHERE kp.metadata_id = ?",
+                String::class.java, metadata.getId()
+            )
+            if (keywords.isNotEmpty()) parts.add("Keywords: ${keywords.joinToString(", ")}")
+        }
+        return if (parts.isNotEmpty()) parts.joinToString("\n") else null
     }
 
     private fun saveKeywords(keywords: List<String>, metadataId: String) {
