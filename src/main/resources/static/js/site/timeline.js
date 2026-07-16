@@ -1588,11 +1588,12 @@
             setTimeout(function () {
                 if (action === "above") {
                     const anchorElement = $(".scrollspy:visible").first()[0];
+                    const currentScrollTop = $("#container").scrollTop();
                     htmlEl.insertBefore($("#container_" + attachToId));
                     requestAnimationFrame(function () {
                         ret = timelineSettings.success;
                         if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                            $("#container").scrollTop(currentScrollTop + Util.getDateGalleryHeight(date));
                             $("#infinite-scroll-gallery").visible();
                         }
                     });
@@ -1615,23 +1616,15 @@
                         } else {
                             $("#infinite-scroll-gallery").prepend(htmlEl);
                         }
-                        requestAnimationFrame(function () {
-                            if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                                $("#container").scrollTop(tempScrollTop);
-                                $("#infinite-scroll-gallery").visible();
-                            }
-                            ret = timelineSettings.success;
-                        });
                     } else {
                         htmlEl.insertAfter($("#amp_" + attachToId));
-                        requestAnimationFrame(function () {
-                            if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
-                                $("#container").scrollTop(tempScrollTop);
-                                $("#infinite-scroll-gallery").visible();
-                            }
-                            ret = timelineSettings.success;
-                        });
                     }
+                    requestAnimationFrame(function () {
+                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                            $("#infinite-scroll-gallery").visible();
+                        }
+                        ret = timelineSettings.success;
+                    });
                 }
             }, 0);
         } else {
