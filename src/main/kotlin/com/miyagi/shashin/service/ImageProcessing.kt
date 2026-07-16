@@ -1825,18 +1825,26 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             if (!NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) return Pair(0, emptyList())
 
             val hasPeopleEnrolled = facesEnabled &&
-                (recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()?.count() ?: 0) > 0
+                (recognitionLabelPhotoRepository?.existsByRecognitionLabelIdIsNotNull() == true)
 
-            val photos = metadataRepository?.findWithoutFacesOrKeywords(settings.getMatchScanLimit()!!) ?: return Pair(0, emptyList())
+            val limit = settings.getMatchScanLimit()!!
+            val photos = metadataRepository?.findWithoutFacesOrKeywords(limit) ?: return Pair(0, emptyList())
+
+            val nonMatchedIds: Set<String> = if (facesEnabled && hasPeopleEnrolled)
+                metadataRepository.findNonMatchedIds(limit).toSet()
+            else emptySet()
+
+            val withoutKeywordIds: Set<String> = if (objectsEnabled)
+                metadataRepository.findWithoutKeywordIds(limit).toSet()
+            else emptySet()
+
             var recognitionCount = 0
             val processedIds = mutableListOf<String>()
 
             for (photo in photos) {
                 if (shouldStop != null && shouldStop.get()) break
-                val needsFaces = facesEnabled && hasPeopleEnrolled &&
-                    (recognitionLabelPhotoRepository?.countByMetadataId(photo.getId()) ?: 1) == 0
-                val needsObjects = objectsEnabled &&
-                    (keywordPhotoRepository?.countByMetadataId(photo.getId()) ?: 1) == 0
+                val needsFaces = photo.getId() in nonMatchedIds
+                val needsObjects = photo.getId() in withoutKeywordIds
                 if (!needsFaces && !needsObjects) continue
                 recognitionCount += detectAndStoreAll(
                     photo, settings,

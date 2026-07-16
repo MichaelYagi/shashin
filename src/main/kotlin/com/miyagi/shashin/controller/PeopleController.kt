@@ -946,21 +946,21 @@ class PeopleController(
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            var peopleList: MutableIterable<MetadataPeople>? = null
+            var peopleList: List<MetadataPeople>? = null
             val settings = model.getAttribute("settings") as Settings
 
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
                 peopleList = metadataRepository?.findAlbumPhotoByPeople(
                     currentUserObj.getId(),
                     TextUtils.getObjectName()
-                )
+                )?.toList()
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 peopleList = metadataRepository?.findAllPeopleWithTagCount(
                     TextUtils.getObjectName()
-                )
+                )?.toList()
             }
 
-            if (peopleList != null && peopleList.count() > 0) {
+            if (!peopleList.isNullOrEmpty()) {
                 // Matches badges reflect the Argus review queue (same source the Matches tab renders).
                 // Fetch the queue once and bucket by identity, and map each person to its argusIdentityId.
                 val reviewCountsByIdentity = countArgusReviewMatchesByIdentity(settings)
@@ -998,7 +998,7 @@ class PeopleController(
                 model["argusCoverPersonIds"] = argusCoverPersonIds
             }
 
-            if (peopleList != null && peopleList.count() > 0) {
+            if (!peopleList.isNullOrEmpty()) {
                 model["peopleList"] = peopleList
                 model["message"] = ""
             }

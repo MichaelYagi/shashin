@@ -129,6 +129,9 @@ class SettingsController(
 
     private val userLocaleCache = java.util.concurrent.ConcurrentHashMap<String, Locale>()
 
+    @Volatile
+    private var hasMediaDirsCache: Boolean? = null
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -152,8 +155,12 @@ class SettingsController(
         //println("message:${message.getMessage()}")
         var msg = messageSource?.getMessage("main.pages.scan.started", null, locale)
 
-        val mediaDirs = mediaDirRepository?.findByExclude(false)
-        if (mediaDirs != null && mediaDirs.count() > 0) {
+        val hasMediaDirs = hasMediaDirsCache ?: run {
+            val result = (mediaDirRepository?.findByExclude(false)?.count() ?: 0) > 0
+            hasMediaDirsCache = result
+            result
+        }
+        if (hasMediaDirs) {
             if (!FileUtils.checkThreadFileAlive("shashinscan")) {
                 msg = messageSource?.getMessage("main.pages.scan.complete", null, locale)
                 if (shouldStop.get()) {

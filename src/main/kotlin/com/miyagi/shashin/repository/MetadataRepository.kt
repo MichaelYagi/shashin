@@ -433,6 +433,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    fun findWithoutFacesOrKeywords(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
    @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND NOT EXISTS (SELECT 1 FROM recognitionlabelphoto rlp WHERE rlp.metadata_id = m.id) ORDER BY m.id LIMIT 0, :matchScanLimit", nativeQuery = true)
    fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
+   @Query("SELECT m.id FROM metadata m WHERE m.hidden = 0 AND NOT EXISTS (SELECT 1 FROM recognitionlabelphoto rlp WHERE rlp.metadata_id = m.id) ORDER BY m.id LIMIT 0, :matchScanLimit", nativeQuery = true)
+   fun findNonMatchedIds(@Param("matchScanLimit") matchScanLimit: Int): List<String>
+   @Query("SELECT m.id FROM metadata m WHERE m.hidden = 0 AND NOT EXISTS (SELECT 1 FROM keywordphoto kp WHERE kp.metadata_id = m.id) ORDER BY m.id LIMIT 0, :matchScanLimit", nativeQuery = true)
+   fun findWithoutKeywordIds(@Param("matchScanLimit") matchScanLimit: Int): List<String>
 
    @Query("SELECT COUNT(DISTINCT folder) FROM metadata WHERE hidden = 0", nativeQuery = true)
    fun countByFolder(): Int
