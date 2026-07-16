@@ -127,6 +127,8 @@ class SettingsController(
 
     private var metadataIdArray = mutableListOf<String>()
 
+    private val userLocaleCache = java.util.concurrent.ConcurrentHashMap<String, Locale>()
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -135,12 +137,11 @@ class SettingsController(
     @Throws(java.lang.Exception::class)
     fun sendScanMessage(message: ScanMessage, principal: Principal): Message? {
         val username = principal.name
-        val user = userRepository?.findByUsername(username)
-        var lang = "en"
-        if (user != null && user.getLanguage() != null && user.getLanguage() != "") {
-            lang = user.getLanguage().toString()
+        val locale = userLocaleCache.getOrPut(username) {
+            val user = userRepository?.findByUsername(username)
+            val lang = if (user?.getLanguage().isNullOrEmpty()) "en" else user!!.getLanguage()!!
+            Locale(lang)
         }
-        val locale = Locale(lang)
 
         val messageMap = mutableMapOf<String,Any>()
 
