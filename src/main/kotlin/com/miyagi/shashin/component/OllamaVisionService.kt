@@ -479,10 +479,6 @@ class OllamaVisionService(
 
     private fun buildSystemContext(metadata: Metadata, includeDescriptionAndKeywords: Boolean): String? {
         val parts = mutableListOf<String>()
-        metadata.getTakenAt()?.takeIf { it.isNotBlank() }?.let {
-            val tz = metadata.getTimeZone()?.takeIf { it.isNotBlank() }
-            parts.add("Date taken: $it${if (tz != null) " ($tz)" else ""}")
-        }
         val place = metadata.getPlaceName()?.takeIf { it.isNotBlank() }
         val lat = metadata.getLat()?.takeIf { it.isNotBlank() }
         val lng = metadata.getLng()?.takeIf { it.isNotBlank() }
