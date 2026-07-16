@@ -35,22 +35,22 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
    fun findMetadataIdBetweenTakenAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAccessAtNoCoord(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAccessAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenModifiedAtNoCoord(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenModifiedAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAddedAtNoCoord(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAddedAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
@@ -59,22 +59,22 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
    fun findMetadataIdBetweenTakenAtWithMediaType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAccessedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAccessedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenModifiedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenModifiedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAddedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAddedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
@@ -125,16 +125,16 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllWithCoordByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\" AND EXISTS (SELECT 1 FROM albumphoto a JOIN useralbum ua ON ua.album_id = a.album_id WHERE a.metadata_id = m.id AND ua.user_id = :userId) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllWithCoordAndUserIdOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\" AND m.taken_at >= :startDate AND m.taken_at <= :endDate ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\" AND m.taken_at >= :startDate AND m.taken_at <= :endDate AND EXISTS (SELECT 1 FROM albumphoto a JOIN useralbum ua ON ua.album_id = a.album_id WHERE a.metadata_id = m.id AND ua.user_id = :userId) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findAllWithCoordAndUserIdByDate(@Param("userId") userId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) AND EXISTS (SELECT 1 FROM albumphoto a JOIN useralbum ua ON ua.album_id = a.album_id WHERE a.metadata_id = m.id AND ua.user_id = :userId) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingCoordAndUserIdOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) AND m.taken_at >= :startDate AND m.taken_at <= :endDate ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) AND m.taken_at >= :startDate AND m.taken_at <= :endDate AND EXISTS (SELECT 1 FROM albumphoto a JOIN useralbum ua ON ua.album_id = a.album_id WHERE a.metadata_id = m.id AND ua.user_id = :userId) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findAllMissingCoordAndUserIdByDate(@Param("userId") userId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -143,7 +143,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND (description IS NULL OR description = \"\") AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingDescriptionByTypeOffsetAndLimit(@Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT m.* FROM metadata m LEFT JOIN keywordphoto mk ON mk.metadata_id = m.id WHERE m.hidden = 0 AND type LIKE %:type% AND mk.keyword_id IS NULL ORDER BY year DESC, month DESC, day DESC, time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND m.type LIKE %:type% AND NOT EXISTS (SELECT 1 FROM keywordphoto mk WHERE mk.metadata_id = m.id) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingKeywordsByTypeOffsetAndLimit(@Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -164,10 +164,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND (embedding IS NULL OR embedding = '')", nativeQuery = true)
    fun countWithNoEmbedding(): Long
 
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.description IS NOT NULL AND m.description != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND m.description IS NOT NULL AND m.description != \"\" AND EXISTS (SELECT 1 FROM albumphoto a JOIN useralbum ua ON ua.album_id = a.album_id WHERE a.metadata_id = m.id AND ua.user_id = :userId) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllDescriptionAndUserIdOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN albumphoto a ON m.id = a.metadata_id LEFT JOIN useralbum ua ON ua.album_id = a.album_id WHERE ua.user_id = :userId AND m.hidden = 0 AND m.description IS NOT NULL AND m.description != \"\" AND m.taken_at >= :startDate AND m.taken_at <= :endDate ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND m.description IS NOT NULL AND m.description != \"\" AND m.taken_at >= :startDate AND m.taken_at <= :endDate AND EXISTS (SELECT 1 FROM albumphoto a JOIN useralbum ua ON ua.album_id = a.album_id WHERE a.metadata_id = m.id AND ua.user_id = :userId) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findAllDescriptionAndUserIdByDate(@Param("userId") userId: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    fun findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDescTimeDesc(): Metadata?
@@ -185,6 +185,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT year,month,day, COUNT(*) AS count FROM metadata WHERE hidden = 0 GROUP BY year, month, day ORDER BY year DESC, month DESC, day DESC", nativeQuery = true)
    fun findAllYearMonthDay(): MutableIterable<MetadataDate>?
 
+   @Cacheable(value = ["metadataDates"], key = "{#limit}")
    @Query("WITH date_counts AS (\n" +
            "  SELECT\n" +
            "    year,\n" +
@@ -269,7 +270,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT lens FROM metadata WHERE lens IS NOT NULL GROUP BY lens ORDER BY lens COLLATE NOCASE ASC", nativeQuery = true)
    fun findByLensTypeAlphabetical(): MutableIterable<String>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 1 AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 1 AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findAllByHiddenByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    @Query("SELECT * FROM metadata WHERE hidden = 1 ORDER BY modified_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -278,52 +279,52 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 ORDER BY modified_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findModifiedByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 ORDER BY last_accessed_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findLastAccessedByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findLastAccessedByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 ORDER BY added_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findRecentByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTakenByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY taken_at DESC", nativeQuery = true)
    fun findTakenByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY modified_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findModifiedByMediaTypeAndDate(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY modified_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByNoCoordAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findModifiedByNoCoordAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY modified_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findModifiedByDescriptionAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY added_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findRecentByMediaTypeAndDate(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY taken_at DESC", nativeQuery = true)
    fun findTakenByMediaTypeAndDate(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND type LIKE %:type%", nativeQuery = true)
@@ -332,19 +333,19 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY added_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByNoCoordAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findRecentByNoCoordAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY taken_at DESC", nativeQuery = true)
    fun findTakenByNoCoordAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY added_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findRecentByDescriptionAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY taken_at DESC", nativeQuery = true)
    fun findTakenByDescriptionAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\"))", nativeQuery = true)
@@ -365,19 +366,19 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY last_accessed_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findLastAccessedByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findLastAccessedByMediaTypeAndDate(@Param("type") type: String, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY last_accessed_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findLastAccessedByNoCoordAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findLastAccessedByNoCoordAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY last_accessed_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findLastAccessedByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findLastAccessedByDescriptionAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    fun findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(year: Int?, month: Int?, day: Int?, hidden: Boolean?): MutableIterable<Metadata>
@@ -413,7 +414,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId AND (rlp.auto_tagged = 0 OR rlp.auto_tagged IS NULL) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findMetadataByPerson(@Param("recognitionLabelId") recognitionLabelId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId AND (rlp.auto_tagged = 0 OR rlp.auto_tagged IS NULL) AND CAST(strftime('%s', m.taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId AND (rlp.auto_tagged = 0 OR rlp.auto_tagged IS NULL) AND m.taken_at >= :startDate AND m.taken_at <= :endDate ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findMetadataByPersonAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("recognitionLabelId") recognitionLabelId: Int): MutableList<Metadata>?
 
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId AND (rlp.auto_tagged = 0 OR rlp.auto_tagged IS NULL) ORDER BY m.modified_at DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
