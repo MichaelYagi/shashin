@@ -318,7 +318,7 @@ class AlbumsController(
             slideshowAlbumResponse["albums"] = albumsArray
         }
 
-        response = buildAlbums(model, 0, userAlbumCount, locale, loadSharingData = false)
+        response = buildAlbums(model, 0, userAlbumCount, locale)
         response["slideshowAlbum"] = slideshowAlbumResponse
 
         return mapper.writeValueAsString(response)
@@ -358,7 +358,7 @@ class AlbumsController(
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildAlbums(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale, loadSharingData: Boolean = true): MutableMap<String, Any?> {
+    private fun buildAlbums(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "albums"
@@ -499,7 +499,7 @@ class AlbumsController(
                     response["albumsList"] = albums
                     response["albumsCommentsMap"] = albumsCommentsMap
 
-                    if (loadSharingData && (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER")) {
+                    if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
                         val userCount = userRepository.count()
 
                         if (userCount > 1) {
