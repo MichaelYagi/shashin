@@ -1739,6 +1739,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val uri = if (doFaces && doObjects) "api/detect/all"
                           else if (doFaces) "api/detect/faces"
                           else "api/detect/objects"
+                logger.log(Level.INFO, "[DEBUG] detectAndStoreAll: sending ${metadataObj.getId()} to Argus ($uri)")
+                val debugArgusT = System.currentTimeMillis()
                 val response = webClient.post()
                     .uri(uri)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
@@ -1747,6 +1749,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     .retrieve()
                     .bodyToMono(String::class.java)
                     .block()
+                logger.log(Level.INFO, "[DEBUG] detectAndStoreAll: Argus responded in ${System.currentTimeMillis() - debugArgusT}ms")
 
                 val jsonObj = mapper.readTree(response)
 
@@ -1819,15 +1822,24 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val facesEnabled = settings.getFacialDetection() == true
             val objectsEnabled = settings.getObjectDetection() == true
             if (!facesEnabled && !objectsEnabled) return Pair(0, emptyList())
+            logger.log(Level.INFO, "[DEBUG] scanAll: checking Argus connection")
+            val debugT0 = System.currentTimeMillis()
             if (!NetworkUtils.Companion.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) return Pair(0, emptyList())
+            logger.log(Level.INFO, "[DEBUG] scanAll: Argus connection check done in ${System.currentTimeMillis() - debugT0}ms")
 
+            val debugT1 = System.currentTimeMillis()
             val hasPeopleEnrolled = facesEnabled &&
                 (recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()?.count() ?: 0) > 0
+            logger.log(Level.INFO, "[DEBUG] scanAll: hasPeopleEnrolled=$hasPeopleEnrolled (${System.currentTimeMillis() - debugT1}ms)")
 
+            val debugT2 = System.currentTimeMillis()
             val photos = metadataRepository?.findWithoutFacesOrKeywords(settings.getMatchScanLimit()!!) ?: return Pair(0, emptyList())
+            logger.log(Level.INFO, "[DEBUG] scanAll: findWithoutFacesOrKeywords done in ${System.currentTimeMillis() - debugT2}ms")
             var recognitionCount = 0
             val processedIds = mutableListOf<String>()
 
+            logger.log(Level.INFO, "[DEBUG] scanAll: entering photo loop")
+            var debugSkipped = 0
             for (photo in photos) {
                 if (shouldStop != null && shouldStop.get()) break
                 val metadataObj = metadataRepository.findById(photo.getId()).orElse(null) ?: continue
@@ -1835,7 +1847,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     (recognitionLabelPhotoRepository?.countByMetadataId(metadataObj.getId()) ?: 1) == 0
                 val needsObjects = objectsEnabled &&
                     (keywordPhotoRepository?.countByMetadataId(metadataObj.getId()) ?: 1) == 0
-                if (!needsFaces && !needsObjects) continue
+                if (!needsFaces && !needsObjects) { debugSkipped++; continue }
+                logger.log(Level.INFO, "[DEBUG] scanAll: calling detectAndStoreAll for ${metadataObj.getId()} (skipped=$debugSkipped doFaces=$needsFaces doObjects=$needsObjects)")
+                val debugT3 = System.currentTimeMillis()
                 recognitionCount += detectAndStoreAll(
                     metadataObj, settings,
                     recognitionLabelRepository, recognitionLabelPhotoRepository,
@@ -1843,8 +1857,10 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     doFaces = needsFaces, doObjects = needsObjects,
                     threadFile = threadFile, messageSource = messageSource, locale = locale
                 )
+                logger.log(Level.INFO, "[DEBUG] scanAll: detectAndStoreAll done in ${System.currentTimeMillis() - debugT3}ms")
                 processedIds.add(metadataObj.getId())
             }
+            logger.log(Level.INFO, "[DEBUG] scanAll: loop complete, processed=${processedIds.size} skipped=$debugSkipped")
             return Pair(recognitionCount, processedIds)
         }
 

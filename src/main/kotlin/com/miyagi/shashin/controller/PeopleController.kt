@@ -179,7 +179,10 @@ class PeopleController(
     fun doPrediction(settings: Settings, superAdmins: MutableIterable<User>?, locale: Locale) {
         Thread {
             val threadFile = FileUtils.createThreadFile(threadExtensionName)
+            logger.log(Level.INFO, "[DEBUG] doPrediction: thread started, checking Argus connection")
+            val debugT0 = System.currentTimeMillis()
             if (!NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())) {
+                logger.log(Level.INFO, "[DEBUG] doPrediction: Argus unreachable after ${System.currentTimeMillis() - debugT0}ms")
                 if (superAdmins != null) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -210,6 +213,8 @@ class PeopleController(
                     duplicateCount = DuplicateImageDetection.findAndStoreDuplicates(duplicatesRepository!!)
                 }
 
+                logger.log(Level.INFO, "[DEBUG] doPrediction: Argus check done in ${System.currentTimeMillis() - debugT0}ms, calling scanAll")
+                val debugT1 = System.currentTimeMillis()
                 val (recognitionCount, scannedIds) = ImageProcessing.Companion.scanAll(
                     metadataRepository,
                     recognitionLabelRepository,
@@ -222,6 +227,7 @@ class PeopleController(
                     messageSource,
                     locale
                 )
+                logger.log(Level.INFO, "[DEBUG] doPrediction: scanAll done in ${System.currentTimeMillis() - debugT1}ms, scanned ${scannedIds.size} photos")
                 if (scannedIds.isNotEmpty()) {
                     metadataRepository?.bulkUpdateLastAccessedAt(getCurrentTimestamp(), scannedIds)
                     ollamaVisionService?.processItems(scannedIds, settings)
