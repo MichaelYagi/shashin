@@ -220,7 +220,7 @@ class Settings {
             }
         }
 
-        let lastCheckedUrl = null;
+        let lastCheckedUrl = $("#ollamaUrl").val().trim();
 
         async function loadOllamaModels() {
             const url = $("#ollamaUrl").val().trim();
