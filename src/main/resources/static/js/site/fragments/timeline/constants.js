@@ -2,12 +2,10 @@
     timelineSettings.ScrollDirection = Object.freeze({"up":1, "down":0});
     timelineSettings.enableScrollSpy = true;
     timelineSettings.isScrolling = true;
-    timelineSettings.prevAnchor = "";
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
     timelineSettings.success = "success";
-    timelineSettings.currentScrollTop = 0;
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
     timelineSettings.timelineDates = [];
@@ -17,9 +15,7 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
-    timelineSettings.heightArray = [];
     timelineSettings.elementTracking = [];
-    timelineSettings.heightCounter = 0;
     timelineSettings.scrollBarIsSliding = false;
     timelineSettings.scrollBar = {};
     timelineSettings.scrollBar.fadeInTime = 100;

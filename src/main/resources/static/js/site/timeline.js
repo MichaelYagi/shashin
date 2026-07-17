@@ -8,6 +8,19 @@
         }
     }
 
+    const isIOSChrome = Util.getOS() === "iOS" && Util.isChrome() === true;
+    const isDesktopAndroid = Util.isMobile() === false && Util.agentOS() === "Android";
+
+    const caps = {
+        useAltRender:            Util.isSafari() || Util.isFirefox() || Util.isMobile() || isIOSChrome || isDesktopAndroid,
+        useFixedWindowDepth:     Util.isSafari() || Util.isFirefox() || isDesktopAndroid || isIOSChrome,
+        needsScrollCompensation: Util.isSafari() || Util.isFirefox() || isDesktopAndroid || isIOSChrome,
+        useSmoothElementScroll:  Util.isFirefox() || isDesktopAndroid || isIOSChrome,
+        skipWhileLoop:           Util.isSafari() || isIOSChrome,
+        hideGalleryOnAbove:      isIOSChrome,
+        adjustScrollOnInsert:    Util.isSafari() || isIOSChrome,
+    };
+
     timelineSettings.once = function(func) {
         let hasRun = false;
         let result;
@@ -134,21 +147,19 @@
                 elements.each(function (index) {
                     let id = $(this).attr("id");
 
-                    if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
+                    if (id.indexOf("tail_") === -1 && index < 2) {
                         shashin.dayHeadingListener(id, "timeline", mediaTypeFilter);
 
                         // Scrolling behavior different on Chrome iOS
-                        if (Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                        if (caps.useAltRender) {
                             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                     timelineSettings.setScrollSpyActive(id);
-                                    // Util.checkErrorImage();
                                 }
                             });
                         }
 
                         // Set the timeline slider while scrolling
-                        //if (Util.isMobile() === false && $("#dateSlider").length > 0) {
                         if ($("#dateSlider").length > 0) {
                             timelineDates.forEach(function (timelineDate, i) {
                                 if (id === timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day) {
@@ -162,7 +173,7 @@
 
                 if (Util.isMobile() === false) {
                     // Scrolling behavior different on Chrome iOS
-                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && Util.isFirefox() === false && (Util.isMobile() === false && Util.agentOS() === "Android") === false && !(Util.getOS() === "iOS" && Util.isChrome() === true) && Util.isSafari() === false) {
+                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && !caps.useAltRender) {
                         timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                             if (msg === timelineSettings.success) {
                                 // Set TOC active element
@@ -180,7 +191,6 @@
                                         return false;
                                     }
                                 });
-                                // Util.checkErrorImage();
                             }
                         });
                     }
@@ -206,7 +216,6 @@
         }
 
         timelineSettings.enableScrollSpy = false;
-        //let deferred = new $.Deferred();
 
         // Depth of results in section of page above and below anchor
         // Dynamic depending on current number of results on page
@@ -221,7 +230,7 @@
             {}
         );
 
-        let depth = (Util.isSafari() === true || Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
+        let depth = caps.useFixedWindowDepth ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
         let depthDown = depth-1;
         let depthUp = depth;
 
@@ -317,9 +326,7 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if ((Util.isSafari() === true || Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true))
-            //&& timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0
-        ) {
+        if (caps.needsScrollCompensation) {
             $("#container").scrollTop(tempScrollTop - topHeight);
         }
 
@@ -392,7 +399,7 @@
             attachPoint = currentId;
         }
 
-        if (Util.isSafari() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+        if (!caps.skipWhileLoop) {
             let rendered = false;
             while (true) {
                 let dateFound = false;
@@ -445,7 +452,6 @@
         }
 
         // Render mid
-        // if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
         action = "new";
         if (attachAboveArray.length > 0) {
             attachPoint = attachAboveArray[attachAboveArray.length - 1];
@@ -474,7 +480,6 @@
                 await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
             }
         }
-        // }
 
         shashin.printMessageToConsole("==============================================",{tag:"timeline"});
         $("#spinner_top").css("display", "none");
@@ -548,7 +553,7 @@
                     Util.isInViewport($("#container_" + element.id)) === false &&
                     Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
                 ) {
-                    if (Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                    if (caps.useSmoothElementScroll) {
                         section.invisible();
                     }
 
@@ -590,7 +595,7 @@
             const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
             const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length - 1] : null;
 
-            if (Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+            if (caps.useSmoothElementScroll) {
                 if (firstVisibleContainer !== null && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                     //$('#container').scrollTop(tempScrollTop - removeHeight);
                     scrollToElementSmoothly(firstVisibleContainer.id);
@@ -643,8 +648,7 @@
                     shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
 
                     if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                        if ($("#" + currentDate).length === 0 && ((Util.isFirefox() === false && (Util.isMobile() === false && Util.agentOS() === "Android") === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
-                            ((Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                        if ($("#" + currentDate).length === 0 && (!caps.useSmoothElementScroll || $.inArray(currentDate, removedElements) === -1)) {
                             // Render currentDate
                             const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
 
@@ -695,14 +699,13 @@
                         if (timelineSettings.currentScrollDirection ===
                             timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 &&
                             ((index - 2) > -1) &&
-                            ((Util.isFirefox() === false && (Util.isMobile() === false && Util.agentOS() === "Android") === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.isMobile() === false && Util.agentOS() === "Android") || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                            (!caps.useSmoothElementScroll || $.inArray(currentDate, removedElements) === -1)) {
                             const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
                             let sectionHeight = 0;
 
                             if (numberOfPhotos !== null && numberOfPhotos > 0) {
                                 sectionHeight = Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5);
-                                //sectionHeight = 11705;
                             }
 
                             let action = "below";
@@ -933,7 +936,6 @@
                                 prevEl = el;
                             }
                         }, 0);
-                        // }
                     } else if (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month)) {
                         if ($('#tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month).length === 0) {
                             // Tick for month/year
@@ -1049,9 +1051,6 @@
                 document.getElementById("dateSliderWrapper").style.cursor = "default";
             });
 
-            // $("#dateSliderWrapper").mousemove(function () {
-            //     $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-            // });
         }
     };
 
@@ -1603,7 +1602,7 @@
             let htmlEl = $(html);
 
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                if (Util.getOS() === "iOS" && Util.isChrome() === true) {
+                if (caps.hideGalleryOnAbove) {
                     $("#infinite-scroll-gallery").invisible();
                 }
             }
@@ -1615,7 +1614,7 @@
                     htmlEl.insertBefore($("#container_" + attachToId));
                     requestAnimationFrame(function () {
                         ret = timelineSettings.success;
-                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                        if (caps.adjustScrollOnInsert) {
                             $("#container").scrollTop(currentScrollTop + Util.getDateGalleryHeight(date));
                             $("#infinite-scroll-gallery").visible();
                         }
@@ -1627,7 +1626,7 @@
                 } else if (action === "new") {
                     $("#infinite-scroll-gallery").prepend(htmlEl);
                     requestAnimationFrame(function () {
-                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                        if (caps.adjustScrollOnInsert) {
                             $("#infinite-scroll-gallery").visible();
                         }
                         ret = timelineSettings.success;
@@ -1643,7 +1642,7 @@
                         htmlEl.insertAfter($("#amp_" + attachToId));
                     }
                     requestAnimationFrame(function () {
-                        if ((Util.getOS() === "iOS" && Util.isChrome() === true) || Util.isSafari() === true) {
+                        if (caps.adjustScrollOnInsert) {
                             $("#infinite-scroll-gallery").visible();
                         }
                         ret = timelineSettings.success;
@@ -1700,7 +1699,6 @@
 
                 return ret;
             });
-        // }
     };
 
     timelineSettings.activateMetadataListeners = function(metadataId) {
