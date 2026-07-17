@@ -338,7 +338,7 @@
         // Pre-fetch all stage 1 data in parallel before the render loops (Fix C)
         timelineSettings._prefetchCache = new Map();
         const prefetchVersion = Util.getMetadataLocalStorage();
-        for (const prefetchDate of [...attachAboveArray, ...($("#"+id).length === 0 ? [id] : []), ...attachBelowArray]) {
+        for (const prefetchDate of [...attachAboveArray, ...($("#"+id).length === 0 ? [id] : [])]) {
             if ($("#" + prefetchDate).length === 0) {
                 timelineSettings._prefetchCache.set(prefetchDate, $.ajax({
                     type: 'get',
