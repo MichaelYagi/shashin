@@ -73,7 +73,7 @@ class TimelineTemplates {
             ${(metadata.year == null || metadata.month == null || metadata.day == null) ?
             `
             <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id }">
-            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
+            <img loading="lazy" draggable="false" decoding="async" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+(uuid === "" ? "" : "?v="+uuid)}">
             ` :
             `
             <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}">
@@ -94,7 +94,7 @@ class TimelineTemplates {
             data-width="${metadata.originalImageWidth}"
             ` : ''}
             >
-                <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
+                <img loading="lazy" draggable="false" decoding="async" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+(uuid === "" ? "" : "?v="+uuid)}">
             </a>
             `}
             
