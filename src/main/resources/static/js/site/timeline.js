@@ -351,10 +351,12 @@
         }
         await Promise.all([...timelineSettings._prefetchCache.values()].map(p => Promise.resolve(p).catch(e => e)));
 
-        // Placeholder above for upward scroll space on browsers without overflow-anchor (Fix D)
+        // Placeholder above for upward scroll space (Fix D)
+        // Inserted for all browsers so the placeholder is visible; scrollTop compensation
+        // is only applied on browsers without overflow-anchor (caps.needsScrollCompensation).
         const containerScrollTopBefore = document.getElementById("container").scrollTop;
         let abovePlaceholderInserted = false;
-        if (caps.needsScrollCompensation && attachAboveArray.some(d => $("#" + d).length === 0)) {
+        if (attachAboveArray.some(d => $("#" + d).length === 0)) {
             let estimatedAboveHeight = 0;
             for (const aboveDate of attachAboveArray) {
                 if ($("#" + aboveDate).length === 0) {
@@ -368,7 +370,10 @@
             }
             if (estimatedAboveHeight > 0) {
                 $('<span id="above-placeholder" style="display:block;height:' + estimatedAboveHeight + 'px"></span>').prependTo($("#infinite-scroll-gallery"));
-                document.getElementById("container").scrollTop += estimatedAboveHeight;
+                if (caps.needsScrollCompensation) {
+                    document.getElementById("container").scrollTop += estimatedAboveHeight;
+                }
+                await new Promise(r => requestAnimationFrame(r));
                 abovePlaceholderInserted = true;
             }
         }
@@ -402,8 +407,6 @@
         }
 
         // Remove above placeholder and restore scroll position (Fix D)
-        // Final scrollTop = original scrollTop + actual rendered height keeps the pre-existing
-        // content anchored at the same viewport position regardless of estimation accuracy.
         if (abovePlaceholderInserted) {
             let actualAboveHeight = 0;
             for (const aboveDate of attachAboveArray) {
@@ -412,7 +415,9 @@
                 }
             }
             $("#above-placeholder").remove();
-            document.getElementById("container").scrollTop = containerScrollTopBefore + actualAboveHeight;
+            if (caps.needsScrollCompensation) {
+                document.getElementById("container").scrollTop = containerScrollTopBefore + actualAboveHeight;
+            }
         }
 
         // Render bottom
@@ -438,6 +443,7 @@
                         : 0;
                     if (sectionHeight > 0) {
                         await timelineSettings.createEmptyContainer(currentId, attachPoint, sectionHeight);
+                        await new Promise(r => requestAnimationFrame(r));
                         currentAction = "emptyContainer";
                     }
                 }
