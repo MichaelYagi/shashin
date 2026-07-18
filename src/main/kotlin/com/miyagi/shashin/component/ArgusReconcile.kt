@@ -63,7 +63,6 @@ class ArgusReconcile(
             // GET /api/identities includes external_ref and supports cursor pagination.
             // GET /api/identities/summary does not include external_ref and has no cursor pagination.
             var cursor: String? = null
-            var identitiesApiSucceeded = false
             do {
                 val uri = buildString {
                     append("api/identities?type=face&limit=200")
@@ -73,7 +72,6 @@ class ArgusReconcile(
                     .uri(uri)
                     .header("X-API-Key", apiKey)
                     .retrieve().bodyToMono(String::class.java).block() ?: break
-                identitiesApiSucceeded = true
 
                 val identitiesObj = mapper.readTree(identitiesJson)
                 val hasMore = identitiesObj["has_more"]?.asBoolean() ?: false
