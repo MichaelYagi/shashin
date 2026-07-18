@@ -6,6 +6,7 @@ import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.repository.RecognitionLabelRepository
+import com.miyagi.shashin.util.TextUtils
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import java.util.logging.Level
@@ -63,6 +64,7 @@ class ArgusReconcile(
             // GET /api/identities includes external_ref and supports cursor pagination.
             // GET /api/identities/summary does not include external_ref and has no cursor pagination.
             var cursor: String? = null
+            var identitiesApiSucceeded = false
             do {
                 val uri = buildString {
                     append("api/identities?type=face&limit=200")
@@ -72,6 +74,7 @@ class ArgusReconcile(
                     .uri(uri)
                     .header("X-API-Key", apiKey)
                     .retrieve().bodyToMono(String::class.java).block() ?: break
+                identitiesApiSucceeded = true
 
                 val identitiesObj = mapper.readTree(identitiesJson)
                 val hasMore = identitiesObj["has_more"]?.asBoolean() ?: false
@@ -226,11 +229,16 @@ class ArgusReconcile(
                 }
             } while (cursor != null)
 
-            // Remove Shashin persons whose linked Argus identity no longer exists,
-            // including those with no Argus link at all (argusIdentityId == null).
+            // Remove Shashin persons whose linked Argus identity no longer exists.
+            // On a complete wipe (Argus has 0 identities), also remove unlinked labels
+            // (argusIdentityId == null) except the internal object-detection label.
+            val isFullWipe = identitiesApiSucceeded && argusIdentityIds.isEmpty()
             val allLabels = recognitionLabelRepository?.findAll() ?: emptyList()
             for (label in allLabels) {
-                if (label != null && label.getArgusIdentityId() !in argusIdentityIds) {
+                if (label == null) continue
+                val linkedAndOrphaned = label.getArgusIdentityId() != null && label.getArgusIdentityId() !in argusIdentityIds
+                val unlinkedOnWipe = isFullWipe && label.getArgusIdentityId() == null && label.getName() != TextUtils.getObjectName()
+                if (linkedAndOrphaned || unlinkedOnWipe) {
                     val photos = recognitionLabelPhotoRepository?.findAllByRecognitionLabelId(label.getId())
                     if (!photos.isNullOrEmpty()) recognitionLabelPhotoRepository?.deleteAll(photos)
                     recognitionLabelRepository?.delete(label)
