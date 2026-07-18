@@ -226,10 +226,11 @@ class ArgusReconcile(
                 }
             } while (cursor != null)
 
-            // Remove Shashin persons whose linked Argus identity no longer exists
+            // Remove Shashin persons whose linked Argus identity no longer exists,
+            // including those with no Argus link at all (argusIdentityId == null).
             val allLabels = recognitionLabelRepository?.findAll() ?: emptyList()
             for (label in allLabels) {
-                if (label != null && label.getArgusIdentityId() != null && label.getArgusIdentityId() !in argusIdentityIds) {
+                if (label != null && label.getArgusIdentityId() !in argusIdentityIds) {
                     val photos = recognitionLabelPhotoRepository?.findAllByRecognitionLabelId(label.getId())
                     if (!photos.isNullOrEmpty()) recognitionLabelPhotoRepository?.deleteAll(photos)
                     recognitionLabelRepository?.delete(label)
