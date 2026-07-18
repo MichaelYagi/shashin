@@ -6,7 +6,6 @@ import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.repository.RecognitionLabelRepository
-import com.miyagi.shashin.util.TextUtils
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import java.util.logging.Level
@@ -230,15 +229,9 @@ class ArgusReconcile(
             } while (cursor != null)
 
             // Remove Shashin persons whose linked Argus identity no longer exists.
-            // On a complete wipe (Argus has 0 identities), also remove unlinked labels
-            // (argusIdentityId == null) except the internal object-detection label.
-            val isFullWipe = identitiesApiSucceeded && argusIdentityIds.isEmpty()
             val allLabels = recognitionLabelRepository?.findAll() ?: emptyList()
             for (label in allLabels) {
-                if (label == null) continue
-                val linkedAndOrphaned = label.getArgusIdentityId() != null && label.getArgusIdentityId() !in argusIdentityIds
-                val unlinkedOnWipe = isFullWipe && label.getArgusIdentityId() == null && label.getName() != TextUtils.getObjectName()
-                if (linkedAndOrphaned || unlinkedOnWipe) {
+                if (label != null && label.getArgusIdentityId() != null && label.getArgusIdentityId() !in argusIdentityIds) {
                     val photos = recognitionLabelPhotoRepository?.findAllByRecognitionLabelId(label.getId())
                     if (!photos.isNullOrEmpty()) recognitionLabelPhotoRepository?.deleteAll(photos)
                     recognitionLabelRepository?.delete(label)
