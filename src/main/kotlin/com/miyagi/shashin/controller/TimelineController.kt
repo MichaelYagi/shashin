@@ -3958,6 +3958,7 @@ class TimelineController(
                                         val imgPath = ImageProcessing.Companion.argusImagePath(metadataObj)
                                         if (imgPath != null) {
                                             b.part("file", org.springframework.core.io.FileSystemResource(imgPath))
+                                            b.part("replace", "true")
                                             val detectRespStr = wc.post().uri("api/detect/faces")
                                                 .header("X-API-Key", settings.getArgusKey())
                                                 .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, org.springframework.http.MediaType.MULTIPART_FORM_DATA.toString())

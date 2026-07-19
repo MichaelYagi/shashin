@@ -1596,6 +1596,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         builder.part("file", FileSystemResource(argusImagePath(metadata!!)!!))
                         builder.part("label", personName)
                         builder.part("external_ref", metadata.getId().toString())
+                        builder.part("replace", "true")
 
                         val response = webClient.post()
                             .uri("api/detect/faces")
@@ -1671,6 +1672,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                         val builder = MultipartBodyBuilder()
                         builder.part("file", FileSystemResource(argusImagePath(metadata)!!))
+                        builder.part("replace", "true")
 
                         response = webClient.post()
                             .uri("api/detect/faces")

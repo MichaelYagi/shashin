@@ -1349,6 +1349,9 @@ class PeopleController(
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
 
+                val settings = model.getAttribute("settings") as Settings
+                val argusConfigured = !settings.getArgusServer().isNullOrBlank() && !settings.getArgusKey().isNullOrBlank()
+
                 for (recognitionLabelString in recognitionLabelArray) {
                     if (recognitionLabelString.trim().isNotBlank() && recognitionLabelString.trim() != "null") {
                         var recognitionLabelPhotoCount: Int
@@ -1356,6 +1359,8 @@ class PeopleController(
 
                         val recognitionLabelRecord =
                             recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabelString.trim())
+
+                        val wasNewlyCreated = recognitionLabelRecord == null
 
                         if (recognitionLabelRecord == null) {
                             recognitionLabelObj.setName(recognitionLabelString.trim())
@@ -1376,7 +1381,7 @@ class PeopleController(
                         if (recognitionLabelPhotoCount == 0) {
                             val uploadResp = mapper.writeValueAsString(
                                 ImageProcessing.Companion.buildPersonUpload(
-                                    model.getAttribute("settings") as Settings,
+                                    settings,
                                     recognitionLabelString.trim(),
                                     metadata?.get(),
                                     argusDetectionIdMap,
@@ -1392,6 +1397,13 @@ class PeopleController(
                                 if (rd.has("detection_id")) detectionId = rd["detection_id"].toString()
                                 if (rd.has("source_image_id") && !rd["source_image_id"].isNull)
                                     sourceImageId = rd["source_image_id"].asInt().toString()
+                            }
+
+                            if (argusConfigured && detectionId == null) {
+                                if (wasNewlyCreated) recognitionLabelRepository?.delete(recognitionLabelObj)
+                                resp["msg"] = "No face detected in this photo. Try a clearer image."
+                                resp["status"] = ApiResponse.FAIL.status
+                                return mapper.writeValueAsString(resp)
                             }
 
                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
@@ -1544,6 +1556,7 @@ class PeopleController(
             val webClient = WebClient.create("$argusServer/")
             val builder = org.springframework.http.client.MultipartBodyBuilder()
             builder.part("file", org.springframework.core.io.FileSystemResource(imagePath))
+            builder.part("replace", "true")
 
             val detectResp = webClient.post().uri("api/detect/faces")
                 .header("X-API-Key", settings.getArgusKey())
@@ -1810,6 +1823,7 @@ class PeopleController(
                 val builder = MultipartBodyBuilder()
                 builder.part("file", resource)
                 builder.part("label", targetName)
+                builder.part("replace", "true")
                 val enrollResp = webClient.post().uri("api/detect/faces")
                     .header("X-API-Key", settings.getArgusKey())
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
