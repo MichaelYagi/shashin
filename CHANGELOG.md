@@ -9,12 +9,15 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
-## [Unreleased]
+## [2.21.1] - 2026-07-19
 ### Added
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+- Argus detect calls now pass `replace=true` on every submission, preventing duplicate detection rows from accumulating when the same photo is re-indexed across multiple scan runs
+- Enrolling a person in a photo where Argus detects no face now returns an error and rolls back the newly created person record, preventing orphaned empty person entries
+- ArgusReconcile cleanup no longer deletes people with a null `argus_identity_id` (regression introduced in a prior commit); only people whose linked Argus identity has been removed are cleaned up
 
 ## [2.21.0] - 2026-07-13
 ### Added
