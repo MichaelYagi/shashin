@@ -1852,7 +1852,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     photo, settings,
                     recognitionLabelRepository, recognitionLabelPhotoRepository,
                     keywordRepository, keywordPhotoRepository, metadataRepository,
-                    doFaces = needsFaces, doObjects = needsObjects,
+                    doFaces = needsFaces, doObjects = needsObjects, replace = true,
                     threadFile = threadFile, messageSource = messageSource, locale = locale
                 )
                 processedIds.add(photo.getId())
