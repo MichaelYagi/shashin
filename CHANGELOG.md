@@ -9,6 +9,15 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.21.2] - 2026-07-20
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+- Match indexing now passes `replace=true` to Argus, preventing duplicate detection rows when the same photo is submitted more than once in a single or concurrent indexing run
+- People page cache is now evicted after Argus sync, so deletions from a wipe are reflected immediately without requiring a server restart
+
 ## [2.21.1] - 2026-07-19
 ### Added
 ### Changed
