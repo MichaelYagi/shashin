@@ -20,6 +20,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.annotation.SubscribeMapping
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -1692,6 +1693,7 @@ class PeopleController(
     @RequestMapping(value = ["/person/argus/reconcile"], method = [RequestMethod.POST], produces = ["application/json"])
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
+    @CacheEvict(value = ["peopleTagCounts"], allEntries = true)
     fun reconcileArgus(model: Model, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
         val settings = model.getAttribute("settings") as Settings
