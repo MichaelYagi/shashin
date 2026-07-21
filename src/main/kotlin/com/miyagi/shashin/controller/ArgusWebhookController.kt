@@ -124,6 +124,16 @@ class ArgusWebhookController(
                     try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
                 }
             }
+            "detection_added" -> {
+                val detectionId = data["detection_id"]?.takeUnless { it.isNull }?.asInt()?.toString() ?: return
+                val person = recognitionLabelRepository?.findByArgusIdentityId(argusId) ?: return
+                val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: return
+                if (record.getRecognitionLabelId() != person.getId() || record.getAutoTagged() != false) {
+                    record.setRecognitionLabelId(person.getId())
+                    record.setAutoTagged(false)
+                    try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+                }
+            }
         }
     }
 
@@ -198,7 +208,18 @@ class ArgusWebhookController(
         stub.setMetadataId(metadata.getId())
         stub.setArgusDetectionId(detectionId)
         stub.setConfidence("0.0")
-        stub.setAutoTagged(true)
+
+        // If the detection already carries an identity (e.g. manually-drawn bbox confirmed at creation),
+        // link it directly — no embedding required for it to count as belonging to that person
+        val identityId = data["identity_id"]?.takeUnless { it.isNull }?.asInt()
+        val person = if (identityId != null) recognitionLabelRepository?.findByArgusIdentityId(identityId) else null
+        if (person != null) {
+            stub.setRecognitionLabelId(person.getId())
+            stub.setAutoTagged(false)
+        } else {
+            stub.setAutoTagged(true)
+        }
+
         try { recognitionLabelPhotoRepository?.save(stub) } catch (_: Exception) {}
     }
 
