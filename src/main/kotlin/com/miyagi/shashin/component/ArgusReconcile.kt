@@ -2,6 +2,7 @@ package com.miyagi.shashin.component
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.RecognitionLabel
+import com.miyagi.shashin.model.RecognitionLabelPhoto
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
@@ -178,7 +179,25 @@ class ArgusReconcile(
                                 val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
                                 val enrolled = item["enrolled"]?.asBoolean() ?: false
 
-                                val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
+                                var record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                                if (record == null) {
+                                    // Gallery item has no Shashin record — create one if source_external_ref
+                                    // (the Shashin metadata ID stored by Argus at detection time) is available
+                                    val sourceExternalRef = item["source_external_ref"]
+                                        ?.takeUnless { it.isNull }?.asText()?.takeIf { it.isNotBlank() }
+                                    if (sourceExternalRef != null) {
+                                        val metadata = metadataRepository?.findById(sourceExternalRef)
+                                            ?.takeIf { it.isPresent }?.get()
+                                        if (metadata != null) {
+                                            val stub = RecognitionLabelPhoto()
+                                            stub.setMetadataId(metadata.getId())
+                                            stub.setArgusDetectionId(detectionId)
+                                            stub.setConfidence("0.0")
+                                            try { record = recognitionLabelPhotoRepository?.save(stub) } catch (_: Exception) {}
+                                        }
+                                    }
+                                    if (record == null) continue
+                                }
 
                                 var recordChanged = false
                                 if (record.getRecognitionLabelId() != person.getId()) {
