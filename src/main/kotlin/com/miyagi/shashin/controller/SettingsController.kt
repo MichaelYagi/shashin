@@ -1605,9 +1605,9 @@ class SettingsController(
             val threadFile = FileUtils.createThreadFile("shashinscan")
             if (threadFile != null) {
                 // Check for deleted original files
-                val metadataList = metadataRepository?.findAll()
+                val metadataPaths = metadataRepository?.findAllForScan()
 
-                if (metadataList != null) {
+                if (metadataPaths != null) {
                     var deleteCount = 0
                     var deletedList = mutableListOf<String>()
 
@@ -1624,45 +1624,39 @@ class SettingsController(
                         it != null && Files.exists(Paths.get(it.getDirectory()!!))
                     }?.map { it!!.getDirectory().toString() } ?: emptyList()
 
-                    for (metadata in metadataList) {
+                    for (metadataPath in metadataPaths) {
                         if (shouldStop.get()) {
                             FileUtils.writeToThreadFileAndLogMessage(messageSource?.getMessage("main.pages.scan.stopped", null, locale).toString(), threadFile)
                             break
                         }
-                        if (metadata != null) {
-                            if (!metadata.getPath().isNullOrBlank()) {
-                                // Check if metadata path still exists, if not, delete media
-                                var basePathExists = false
-                                var excludeBasePathExists = false
+                        val path = metadataPath.getPath() ?: continue
 
-                                if (mediaDirs != null) {
-                                    for (mediaDir in mediaDirs) {
-                                        basePathExists = metadata.getPath()!!
-                                            .startsWith(mediaDir!!.getDirectory().toString())
+                        // Check if metadata path still exists, if not, delete media
+                        var basePathExists = false
+                        var excludeBasePathExists = false
 
-                                        if (basePathExists) {
-                                            break
-                                        }
-                                    }
-                                }
+                        if (mediaDirs != null) {
+                            for (mediaDir in mediaDirs) {
+                                basePathExists = path.startsWith(mediaDir!!.getDirectory().toString())
+                                if (basePathExists) break
+                            }
+                        }
 
-                                if (mediaExcludeDirs != null) {
-                                    for (mediaExcludeDir in mediaExcludeDirs) {
-                                        excludeBasePathExists = metadata.getPath()!!
-                                            .startsWith(mediaExcludeDir?.getDirectory().toString())
+                        if (mediaExcludeDirs != null) {
+                            for (mediaExcludeDir in mediaExcludeDirs) {
+                                excludeBasePathExists = path.startsWith(mediaExcludeDir?.getDirectory().toString())
+                                if (excludeBasePathExists) break
+                            }
+                        }
 
-                                        if (excludeBasePathExists) {
-                                            break
-                                        }
-                                    }
-                                }
+                        val checkFile = File(path)
+                        val baseDirExistsOnDisk = existingMediaDirPaths.any { path.startsWith(it) }
+                        if ((!checkFile.exists() && baseDirExistsOnDisk) || !basePathExists || excludeBasePathExists) {
+                            val metadata = metadataRepository?.findById(metadataPath.getId() ?: "")
+                                ?.takeIf { it.isPresent }?.get() ?: continue
+                            deleteCount++
 
-                                val checkFile = File(metadata.getPath()!!)
-                                val baseDirExistsOnDisk = existingMediaDirPaths.any { metadata.getPath()!!.startsWith(it) }
-                                if ((!checkFile.exists() && baseDirExistsOnDisk) || !basePathExists || excludeBasePathExists) {
-                                    deleteCount++
-
-                                    deletedList.add(metadata.getFileName().toString())
+                            deletedList.add(metadata.getFileName().toString())
 
                                     // Delete side car and metadata files
                                     if (!metadata.getThumbnailPathCentered().isNullOrBlank()) {
@@ -1872,10 +1866,8 @@ class SettingsController(
                                         Level.INFO,
                                         "Removed metadata records for: " + metadata.getId()
                                     )
-                                } else if (!reindexFiles) {
-                                    alreadyScannedFilepaths.add(checkFile.path)
-                                }
-                            }
+                        } else if (!reindexFiles) {
+                            alreadyScannedFilepaths.add(checkFile.path)
                         }
                     }
 

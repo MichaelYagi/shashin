@@ -463,6 +463,14 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE id IN :metadataIds", nativeQuery = true)
    fun findAllByMetadataIds(metadataIds: Array<String>): MutableIterable<Metadata>
 
+   interface MetadataScanProjection {
+      fun getId(): String?
+      fun getPath(): String?
+   }
+
+   @Query("SELECT id, path FROM metadata", nativeQuery = true)
+   fun findAllForScan(): List<MetadataScanProjection>
+
    @Cacheable(value = ["metadataDates"], key = "'yearMonth'")
    @Query("SELECT year, month, COUNT(*) as count FROM metadata WHERE hidden = 0 GROUP BY year, month order by year DESC, month DESC", nativeQuery = true)
    fun countByYearAndMonth(): MutableIterable<MetadataYearMonthCount>
