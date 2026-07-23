@@ -9,6 +9,19 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.21.3] - 2026-07-22
+### Added
+### Changed
+- Argus endpoint updated: `DELETE /api/face_embeddings/{id}` → `DELETE /api/face-embeddings/{id}` to match Argus API rename
+- Dependency update: metadata-extractor version bump
+### Deprecated
+### Removed
+### Fixed
+- Argus webhook now correctly links manually-drawn bounding box detections to the person: `detection.created` events carrying an `identity_id` are linked immediately, and `identity.updated / detection_added` events update the record
+- Argus reconcile sync now creates missing Shashin records for gallery detections that have a `source_external_ref` (detections confirmed in Argus that were never received via webhook or were received before Shashin was running)
+- Media scan deletion-check phase now loads only `id` and `path` per row instead of full entities, making routine scans significantly faster on large libraries
+- Fixed `ConcurrentModificationException` in overlapping scan cycles: `metadataIdArray` is now a `CopyOnWriteArrayList` so the recognition thread's iteration is not corrupted when a second scan starts concurrently
+
 ## [2.21.2] - 2026-07-20
 ### Added
 ### Changed
