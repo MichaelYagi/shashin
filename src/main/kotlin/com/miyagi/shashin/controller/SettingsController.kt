@@ -1837,7 +1837,7 @@ class SettingsController(
                                                 ) {
                                                     try {
                                                         webClient.delete()
-                                                            .uri("api/face_embeddings/${recognitionLabelPhoto.getArgusDetectionId()}")
+                                                            .uri("api/face-embeddings/${recognitionLabelPhoto.getArgusDetectionId()}")
                                                             .header("X-API-Key", settings.getArgusKey())
                                                             .retrieve()
                                                             .bodyToMono(String::class.java)
