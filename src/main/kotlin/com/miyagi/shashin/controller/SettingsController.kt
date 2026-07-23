@@ -67,6 +67,7 @@ import org.springframework.context.MessageSource
 import org.springframework.data.jpa.repository.Modifying
 import java.security.Principal
 import java.util.Locale
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.stream.Collectors
 import kotlin.collections.set
 import kotlin.io.path.isDirectory
@@ -125,7 +126,7 @@ class SettingsController(
 
     private var currentMediaCount: Long = 0
 
-    private var metadataIdArray = mutableListOf<String>()
+    private var metadataIdArray = CopyOnWriteArrayList<String>()
 
     private val userLocaleCache = java.util.concurrent.ConcurrentHashMap<String, Locale>()
 
