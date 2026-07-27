@@ -178,6 +178,8 @@ class ArgusReconcile(
                             for (item in items) {
                                 val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
                                 val enrolled = item["enrolled"]?.asBoolean() ?: false
+                                val reviewStatus = item["review_status"]?.asText()
+                                val isConfirmed = enrolled || reviewStatus == "confirmed" || reviewStatus == "reassigned"
 
                                 var record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
                                 if (record == null) {
@@ -204,13 +206,12 @@ class ArgusReconcile(
                                     record.setRecognitionLabelId(person.getId())
                                     recordChanged = true
                                 }
-                                // enrolled=true → confirm as manually-tagged (auto_tagged=false)
-                                // enrolled=false → only mark auto-tagged if not already manually confirmed;
-                                //   never downgrade a manual tag (auto_tagged=false) to auto-tagged
-                                if (enrolled && record.getAutoTagged() != false) {
+                                // confirmed/reassigned/enrolled → auto_tagged=false (manually confirmed)
+                                // never downgrade a manual tag (auto_tagged=false) to auto-tagged
+                                if (isConfirmed && record.getAutoTagged() != false) {
                                     record.setAutoTagged(false)
                                     recordChanged = true
-                                } else if (!enrolled && record.getAutoTagged() == null) {
+                                } else if (!isConfirmed && record.getAutoTagged() == null) {
                                     record.setAutoTagged(true)
                                     recordChanged = true
                                 }
