@@ -328,7 +328,7 @@ class PeopleController(
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId = recognitionLabel?.get()?.getArgusIdentityId()
-        counts["training"] = getArgusEmbeddingCount(settings, argusIdentityId)
+        counts["training"] = getArgusIdentityCounts(settings, argusIdentityId).embeddingCount
 
         // Pull pending review items from Argus, filtered to this person's argusIdentityId
         val reviewItems = mutableListOf<MutableMap<String, Any>>()
@@ -508,7 +508,8 @@ class PeopleController(
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId2 = recognitionLabel?.takeIf { it.isPresent }?.get()?.getArgusIdentityId()
-        counts["training"] = getArgusEmbeddingCount(settings, argusIdentityId2)
+        val argusCounts = getArgusIdentityCounts(settings, argusIdentityId2)
+        counts["training"] = argusCounts.embeddingCount
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -525,9 +526,7 @@ class PeopleController(
             }
         }
 
-        // Matches badge reflects the Argus review queue (same source the Matches tab renders),
-        // so the count never disagrees with the tab contents.
-        counts["matches"] = if (faceRecogServicesAvailable) countArgusReviewMatches(settings, argusIdentityId2) else 0
+        counts["matches"] = argusCounts.pendingReviewCount
 
         response["counts"] = counts
 
@@ -828,18 +827,25 @@ class PeopleController(
         }
     }
 
-    private fun getArgusEmbeddingCount(settings: Settings, argusIdentityId: Int?): Int {
-        if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return 0
+    private data class ArgusIdentityCounts(val embeddingCount: Int, val pendingReviewCount: Int)
+
+    private fun getArgusIdentityCounts(settings: Settings, argusIdentityId: Int?): ArgusIdentityCounts {
+        if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank())
+            return ArgusIdentityCounts(0, 0)
         return try {
             val json = WebClient.create(settings.getArgusServer()!!)
                 .get()
                 .uri("api/identities/$argusIdentityId")
                 .header("X-API-Key", settings.getArgusKey())
-                .retrieve().bodyToMono(String::class.java).block() ?: return 0
-            mapper.readTree(json)["embedding_count"]?.asInt() ?: 0
+                .retrieve().bodyToMono(String::class.java).block() ?: return ArgusIdentityCounts(0, 0)
+            val node = mapper.readTree(json)
+            ArgusIdentityCounts(
+                embeddingCount = node["embedding_count"]?.asInt() ?: 0,
+                pendingReviewCount = node["pending_review_count"]?.asInt() ?: 0
+            )
         } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error getting Argus embedding count for identity $argusIdentityId: ${e.localizedMessage}")
-            0
+            logger.log(Level.WARNING, "Error getting Argus identity counts for $argusIdentityId: ${e.localizedMessage}")
+            ArgusIdentityCounts(0, 0)
         }
     }
 
@@ -1052,8 +1058,6 @@ class PeopleController(
         val module = "person"
         val page = 0
 
-        syncArgusConfirmedToShashin(personId, model.getAttribute("settings") as Settings)
-
         val response = buildPersonAlbum(model,module,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
         for ((k, v) in response) {
             if (v != null) model[k] = v
@@ -1201,10 +1205,7 @@ class PeopleController(
                 response["personInfo"] = recognitionLabel.get()
             }
 
-            // Matches badge reflects the Argus review queue (same source the Matches tab renders),
-            // so the count never disagrees with the tab contents.
             val argusIdentityId = if (recognitionLabel != null && recognitionLabel.isPresent) recognitionLabel.get().getArgusIdentityId() else null
-            counts["matches"] = countArgusReviewMatches(settings, argusIdentityId)
 
             var metadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
@@ -1240,11 +1241,9 @@ class PeopleController(
             )
             response["faceRecogServicesAvailable"] = faceRecogServicesAvailable
             val argusId = recognitionLabel?.get()?.getArgusIdentityId()
-            val galleryJson2 = getArgusGalleryForIdentity(settings, argusId, enrolled = true)
-            if (!galleryJson2.isNullOrBlank()) {
-                val gJson = mapper.readTree(galleryJson2)
-                if (gJson.has("items")) counts["training"] = gJson["items"].size()
-            }
+            val argusCounts = getArgusIdentityCounts(settings, argusId)
+            counts["training"] = argusCounts.embeddingCount
+            counts["matches"] = argusCounts.pendingReviewCount
 
             if (metadataList != null && metadataList.count() > 0) {
                 var personCount = 0
