@@ -328,7 +328,7 @@ class PeopleController(
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId = recognitionLabel?.get()?.getArgusIdentityId()
-        counts["training"] = getArgusIdentityCounts(settings, argusIdentityId).embeddingCount
+        counts["training"] = getArgusIdentityCounts(settings, argusIdentityId).detectionCount
 
         // Pull pending review items from Argus, filtered to this person's argusIdentityId
         val reviewItems = mutableListOf<MutableMap<String, Any>>()
@@ -509,7 +509,7 @@ class PeopleController(
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId2 = recognitionLabel?.takeIf { it.isPresent }?.get()?.getArgusIdentityId()
         val argusCounts = getArgusIdentityCounts(settings, argusIdentityId2)
-        counts["training"] = argusCounts.embeddingCount
+        counts["training"] = argusCounts.detectionCount
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -697,7 +697,7 @@ class PeopleController(
             response["personInfo"] = recognitionLabel.get()
             val argusIdentityId = recognitionLabel.get().getArgusIdentityId()
 
-            val galleryJson = getArgusGalleryForIdentity(settings, argusIdentityId, limit = size, enrolled = true, cursor = cursor)
+            val galleryJson = getArgusGalleryForIdentity(settings, argusIdentityId, limit = size, cursor = cursor)
             if (galleryJson != null) {
                 val galleryObj = mapper.readTree(galleryJson)
                 val items = if (galleryObj.has("items")) galleryObj["items"].toList() else emptyList()
@@ -827,7 +827,7 @@ class PeopleController(
         }
     }
 
-    private data class ArgusIdentityCounts(val embeddingCount: Int, val pendingReviewCount: Int)
+    private data class ArgusIdentityCounts(val detectionCount: Int, val pendingReviewCount: Int)
 
     private fun getArgusIdentityCounts(settings: Settings, argusIdentityId: Int?): ArgusIdentityCounts {
         if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank())
@@ -840,7 +840,7 @@ class PeopleController(
                 .retrieve().bodyToMono(String::class.java).block() ?: return ArgusIdentityCounts(0, 0)
             val node = mapper.readTree(json)
             ArgusIdentityCounts(
-                embeddingCount = node["embedding_count"]?.asInt() ?: 0,
+                detectionCount = node["detection_count"]?.asInt() ?: 0,
                 pendingReviewCount = node["pending_review_count"]?.asInt() ?: 0
             )
         } catch (e: Exception) {
@@ -1242,7 +1242,7 @@ class PeopleController(
             response["faceRecogServicesAvailable"] = faceRecogServicesAvailable
             val argusId = recognitionLabel?.get()?.getArgusIdentityId()
             val argusCounts = getArgusIdentityCounts(settings, argusId)
-            counts["training"] = argusCounts.embeddingCount
+            counts["training"] = argusCounts.detectionCount
             counts["matches"] = argusCounts.pendingReviewCount
 
             if (metadataList != null && metadataList.count() > 0) {
