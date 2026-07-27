@@ -110,7 +110,7 @@ class ArgusWebhookController(
             }
             "embedding_added" -> {
                 val detectionId = data["detection_id"]?.takeUnless { it.isNull }?.asInt()?.toString() ?: return
-                val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: return
+                val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) ?: return
                 if (record.getAutoTagged() != false) {
                     record.setAutoTagged(false)
                     try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
@@ -118,7 +118,7 @@ class ArgusWebhookController(
             }
             "embedding_removed" -> {
                 val detectionId = data["detection_id"]?.takeUnless { it.isNull }?.asInt()?.toString() ?: return
-                val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: return
+                val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) ?: return
                 if (record.getAutoTagged() == false) {
                     record.setAutoTagged(true)
                     try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
@@ -127,7 +127,7 @@ class ArgusWebhookController(
             "detection_added" -> {
                 val detectionId = data["detection_id"]?.takeUnless { it.isNull }?.asInt()?.toString() ?: return
                 val person = recognitionLabelRepository?.findByArgusIdentityId(argusId) ?: return
-                val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: return
+                val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) ?: return
                 if (record.getRecognitionLabelId() != person.getId() || record.getAutoTagged() != false) {
                     record.setRecognitionLabelId(person.getId())
                     record.setAutoTagged(false)
@@ -164,7 +164,7 @@ class ArgusWebhookController(
     private fun handleDetectionLabeled(data: JsonNode) {
         if (data["type"]?.asText() != "face") return
         val detectionId = data["detection_id"]?.asInt()?.toString() ?: return
-        val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: return
+        val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) ?: return
 
         val identityIdNode = data["identity_id"]
         if (identityIdNode == null || identityIdNode.isNull) {
@@ -188,7 +188,7 @@ class ArgusWebhookController(
         val detectionIds = data["detection_ids"]?.takeUnless { it.isNull } ?: return
         for (node in detectionIds) {
             val detectionId = node?.asInt()?.toString() ?: continue
-            val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
+            val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) ?: continue
             try { recognitionLabelPhotoRepository?.delete(record) } catch (_: Exception) {}
         }
     }
@@ -199,7 +199,7 @@ class ArgusWebhookController(
         val metadataId = data["external_ref"]?.takeUnless { it.isNull }?.asText()?.takeIf { it.isNotBlank() } ?: return
 
         // Skip if we already have a record for this detection
-        if (recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) != null) return
+        if (recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) != null) return
 
         // Verify the source photo exists
         val metadata = metadataRepository?.findById(metadataId)?.takeIf { it.isPresent }?.get() ?: return

@@ -37,7 +37,10 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
 
     fun findByMetadataId(metadataId: String): MutableIterable<RecognitionLabelPhoto>
 
-    fun findByArgusDetectionId(argusDetectionId: String): RecognitionLabelPhoto?
+    fun findFirstByArgusDetectionId(argusDetectionId: String): RecognitionLabelPhoto?
+
+    @Query("SELECT * FROM recognitionlabelphoto WHERE compre_face_image_id IN :detectionIds", nativeQuery = true)
+    fun findAllByArgusDetectionIdIn(@Param("detectionIds") detectionIds: List<String>): List<RecognitionLabelPhoto?>
 
     fun findFirstByArgusSourceImageIdAndMetadataIdIsNotNull(argusSourceImageId: String): RecognitionLabelPhoto?
 

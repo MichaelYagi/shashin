@@ -179,7 +179,7 @@ class ArgusReconcile(
                                 val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
                                 val enrolled = item["enrolled"]?.asBoolean() ?: false
 
-                                var record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                                var record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
                                 if (record == null) {
                                     // Gallery item has no Shashin record — create one if source_external_ref
                                     // (the Shashin metadata ID stored by Argus at detection time) is available

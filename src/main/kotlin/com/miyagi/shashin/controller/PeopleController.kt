@@ -328,7 +328,7 @@ class PeopleController(
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId = recognitionLabel?.get()?.getArgusIdentityId()
-        counts["training"] = getEnrolledGalleryItems(settings, argusIdentityId).size
+        counts["training"] = getArgusEmbeddingCount(settings, argusIdentityId)
 
         // Pull pending review items from Argus, filtered to this person's argusIdentityId
         val reviewItems = mutableListOf<MutableMap<String, Any>>()
@@ -364,7 +364,7 @@ class PeopleController(
                         val suggestedLabel = topMatch["label"]?.textValue() ?: ""
 
                         val sourceImageIdStr = item["source_image_id"]?.takeUnless { it.isNull }?.asInt()?.toString()
-                        val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                        val rlp = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
                             ?: if (sourceImageIdStr != null)
                                 recognitionLabelPhotoRepository?.findFirstByArgusSourceImageIdAndMetadataIdIsNotNull(sourceImageIdStr)
                                else null
@@ -453,7 +453,7 @@ class PeopleController(
                                 .bodyToMono(String::class.java)
                                 .block()
 
-                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
                             if (recognitionLabelPhotoObj != null) {
                                 recognitionLabelPhotoObj.setArgusDetectionId("")
                                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
@@ -483,7 +483,6 @@ class PeopleController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     fun getArgusTrainingImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
         val module = "training"
-        syncArgusConfirmedToShashin(personId, model.getAttribute("settings") as Settings)
         val response = buildArgusGallery(model, personId, null, model.getAttribute("queryLimit").toString().toInt(), locale)
         val counts = HashMap<String,Int>()
         counts["training"] = 0
@@ -509,7 +508,7 @@ class PeopleController(
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val argusIdentityId2 = recognitionLabel?.takeIf { it.isPresent }?.get()?.getArgusIdentityId()
-        counts["training"] = getEnrolledGalleryItems(settings, argusIdentityId2).size
+        counts["training"] = getArgusEmbeddingCount(settings, argusIdentityId2)
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -706,6 +705,18 @@ class PeopleController(
                 response["next_cursor"] = galleryObj["next_cursor"]?.takeUnless { it.isNull }?.textValue()
                 response["has_more"] = galleryObj["has_more"]?.asBoolean() ?: false
                 if (items.isNotEmpty()) {
+                    val detectionIds = items.map { it["detection_id"].asInt().toString() }
+                    val rlpByDetectionId = recognitionLabelPhotoRepository
+                        ?.findAllByArgusDetectionIdIn(detectionIds)
+                        ?.filterNotNull()
+                        ?.associateBy { it.getArgusDetectionId() ?: "" }
+                        ?: emptyMap()
+                    val metadataIds = rlpByDetectionId.values.mapNotNull { it.getMetadataId() }.distinct()
+                    val metadataById = if (metadataIds.isNotEmpty())
+                        metadataRepository?.findAllByMetadataIds(metadataIds.toTypedArray())
+                            ?.associateBy { it.getId() ?: "" } ?: emptyMap()
+                    else emptyMap()
+
                     val resultList = mutableListOf<MutableMap<String, Any>>()
                     for (item in items) {
                         val detectionId = item["detection_id"].asInt().toString()
@@ -713,10 +724,10 @@ class PeopleController(
                         itemMap["id"] = detectionId
                         itemMap["crop_url"] = if (item.has("crop_url") && !item["crop_url"].isNull) item["crop_url"].textValue() else ""
                         itemMap["metadata_date"] = ""
-                        val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
                         itemMap["metadata_id"] = ""
+                        val rlp = rlpByDetectionId[detectionId]
                         if (rlp?.getMetadataId() != null) {
-                            val metadataObj = metadataRepository?.findByMetadataId(rlp.getMetadataId()!!)
+                            val metadataObj = metadataById[rlp.getMetadataId()!!]
                             if (metadataObj != null) {
                                 itemMap["metadata_date"] = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
                                 itemMap["metadata_id"] = metadataObj.getId() ?: ""
@@ -751,7 +762,7 @@ class PeopleController(
 
             for (item in items) {
                 val detectionId = item["detection_id"].asInt().toString()
-                val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: continue
+                val rlp = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) ?: continue
                 if (rlp.getRecognitionLabelId() == null) {
                     rlp.setRecognitionLabelId(personId)
                     rlp.setConfidence("0.0")
@@ -817,6 +828,21 @@ class PeopleController(
         }
     }
 
+    private fun getArgusEmbeddingCount(settings: Settings, argusIdentityId: Int?): Int {
+        if (argusIdentityId == null || settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return 0
+        return try {
+            val json = WebClient.create(settings.getArgusServer()!!)
+                .get()
+                .uri("api/identities/$argusIdentityId")
+                .header("X-API-Key", settings.getArgusKey())
+                .retrieve().bodyToMono(String::class.java).block() ?: return 0
+            mapper.readTree(json)["embedding_count"]?.asInt() ?: 0
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error getting Argus embedding count for identity $argusIdentityId: ${e.localizedMessage}")
+            0
+        }
+    }
+
     private fun getEnrolledGalleryItems(settings: Settings, argusIdentityId: Int?): List<JsonNode> =
         getGalleryItems(settings, argusIdentityId, enrolled = true)
 
@@ -828,7 +854,10 @@ class PeopleController(
             if (cursor != null) append("&cursor=$cursor")
         }
         return try {
-            WebClient.create(settings.getArgusServer()!!)
+            WebClient.builder()
+                .baseUrl(settings.getArgusServer()!!)
+                .codecs { it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024) }
+                .build()
                 .get()
                 .uri(uri)
                 .header("X-API-Key", settings.getArgusKey())
@@ -1585,7 +1614,7 @@ class PeopleController(
                     }
 
                     // Store detection in Shashin if not already recorded
-                    if (recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) == null) {
+                    if (recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) == null) {
                         val rlp = RecognitionLabelPhoto()
                         rlp.setMetadataId(metadataId)
                         rlp.setArgusDetectionId(detectionId)
@@ -1676,7 +1705,7 @@ class PeopleController(
             }
         }
 
-        val rlp = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId) ?: RecognitionLabelPhoto().also {
+        val rlp = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId) ?: RecognitionLabelPhoto().also {
             it.setMetadataId(metadataId)
             it.setArgusDetectionId(detectionId)
         }
@@ -1780,7 +1809,7 @@ class PeopleController(
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Reassign match failed: ${e.localizedMessage}")
         }
-        val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+        val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
         if (record != null) {
             record.setRecognitionLabelId(targetPerson.getId())
             record.setAutoTagged(false)
@@ -1860,7 +1889,7 @@ class PeopleController(
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Reassign training delete old detection failed: ${e.localizedMessage}")
         }
-        val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+        val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
         if (record != null) {
             record.setRecognitionLabelId(targetPerson.getId())
             record.setAutoTagged(false)
@@ -1935,7 +1964,7 @@ class PeopleController(
                             }
                         }
 
-                        val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                        val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
                         if (record != null && personIdParam != null) {
                             record.setRecognitionLabelId(personIdParam)
                             record.setAutoTagged(false)
@@ -1955,7 +1984,7 @@ class PeopleController(
                             .header("X-API-Key", settings.getArgusKey())
                             .retrieve().bodyToMono(String::class.java).block()
 
-                        recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                        recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
                             ?.let { recognitionLabelPhotoRepository?.delete(it) }
                     }
                     "reassign" -> {
@@ -1968,7 +1997,7 @@ class PeopleController(
                                 .body(BodyInserters.fromValue(body))
                                 .retrieve().bodyToMono(String::class.java).block()
 
-                            val record = recognitionLabelPhotoRepository?.findByArgusDetectionId(detectionId)
+                            val record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
                             if (record != null) {
                                 val label = recognitionLabelRepository?.findByArgusIdentityId(identityId)
                                 if (label != null) {
