@@ -1,5 +1,5 @@
 class Person {
-    constructor(metadataList, activePage, personId, canEdit, lastLgIndex) {
+    constructor(metadataList, activePage, personId, canEdit, lastLgIndex, argusManaged = false) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -7,6 +7,7 @@ class Person {
         this.activePage = activePage;
         this.personId = personId;
         this.canEdit = canEdit;
+        this.argusManaged = argusManaged;
         this.eol = false;
         this.lastLgIndex = lastLgIndex;
 
@@ -158,11 +159,14 @@ class Person {
                                 let overlayData;
 
                                 if (this.canEdit === true) {
-                                    overlayData = shashin.getOverlayData(metadata, {
-                                        labelPhotoMap: labelPhotoMap,/*onClickIdPrefix:"propperson"*/
+                                    const blOverlay = this.argusManaged ? {} : {
                                         blOnClickFunction: "personSettings.openPersonModal",
-                                        cOnClickFunction: "shashin.openGallery",
                                         onClickIdPrefix: "personModalEdit",
+                                    };
+                                    overlayData = shashin.getOverlayData(metadata, {
+                                        labelPhotoMap: labelPhotoMap,
+                                        ...blOverlay,
+                                        cOnClickFunction: "shashin.openGallery",
                                         galleryIndex: currentMediaLinkIndex,
                                         favoriteCount: favoriteCount,
                                         favoriteIcon: favoriteIcon,

@@ -132,6 +132,7 @@
         const personName = /*[[${personInfo.name}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'person';
         const canEdit = /*[[${canEdit == "true" || canEdit == true}]]*/ false;
+        const argusManaged = /*[[${faceRecogServicesAvailable and personInfo.argusIdentityId != null}]]*/ false;
         /*]]>*/
         const lastLgIndex = $(".photo-thumbnail-container").length;
 
@@ -140,7 +141,7 @@
         const http = new Http("check notifications");
 
         http.ajax("get", "/person/metadata/"+personId+"/0").then(function (metadataList) {
-            const personInstance = new Person(metadataList, activePage, personId, canEdit, lastLgIndex);
+            const personInstance = new Person(metadataList, activePage, personId, canEdit, lastLgIndex, argusManaged);
             personInstance.init();
             // Util.checkErrorImage();
         });
