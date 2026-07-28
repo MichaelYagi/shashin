@@ -51,8 +51,9 @@
                                     </a>
                                 </div>
 
-                                <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
-                                    <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, 'personModalEdit', 'personSettings.openPersonModal', 'overlayCommentText')}"></div>
+                                <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}"
+                                          th:with="argusManaged=${faceRecogServicesAvailable and personInfo.argusIdentityId != null}">
+                                    <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, ${argusManaged ? null : 'personModalEdit'}, ${argusManaged ? null : 'personSettings.openPersonModal'}, 'overlayCommentText')}"></div>
                                 </th:block>
 
                                 <th:block th:if="${authority == 'ROLE_USER'}">
