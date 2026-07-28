@@ -414,3 +414,12 @@ $("#albumMediaTypeToggleIcon").on("click", function(e) {
         window.location.replace(updatedStr + "/video");
     }
 });
+
+$(document).on("error", ".argus-person-cover", function() {
+    const fallback = $(this).data("fallback");
+    if (fallback && fallback.length > 0) {
+        $(this).removeData("fallback").attr("src", fallback);
+    } else {
+        $(this).attr("src", "/images/fnf.png");
+    }
+});
