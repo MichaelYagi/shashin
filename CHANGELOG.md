@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [2.21.4] - 2026-07-28
 ### Added
-- "Set as album cover" overlay is hidden on the person photo page when Argus is connected and managing that person's cover
+- 'Set as album cover' overlay is hidden on the person photo page when Argus is connected and managing that person's cover
 - Argus person cover image on the People page now falls back to the Shashin thumbnail, then `fnf.png`, when the Argus connection is unavailable
 ### Changed
 - Training Images badge now uses `detection_count` from `GET /api/identities/{id}` (all confirmed + reassigned detections) instead of `embedding_count` (enrolled only), matching the Argus gallery total
