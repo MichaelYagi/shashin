@@ -9,6 +9,21 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.21.4] - 2026-07-28
+### Added
+- "Set as album cover" overlay is hidden on the person photo page when Argus is connected and managing that person's cover
+- Argus person cover image on the People page now falls back to the Shashin thumbnail, then `fnf.png`, when the Argus connection is unavailable
+### Changed
+- Training Images badge now uses `detection_count` from `GET /api/identities/{id}` (all confirmed + reassigned detections) instead of `embedding_count` (enrolled only), matching the Argus gallery total
+- Training Images tab now shows all confirmed detections, not just enrolled ones — `enrolled=true` filter removed from gallery fetch
+- ArgusReconcile gallery sync now promotes detections with `review_status = confirmed` or `reassigned` to `auto_tagged = false`, not only those with `enrolled = true` — fixes Person tab undercounting photos that were confirmed in Argus but not yet enrolled in the model
+### Fixed
+- Person page slow to load: removed `syncArgusConfirmedToShashin` call from page load, and replaced the paginated review-queue walk (used for the Matches badge) with `pending_review_count` from `GET /api/identities/{id}` (requires Argus to expose this field; falls back to 0 until deployed)
+- Training Images count showed 0 for large galleries: replaced 9999-item gallery fetch (which silently failed beyond the 256 KB WebClient buffer) with a single lightweight identity fetch
+- WebClient `maxInMemorySize` increased to 16 MB in the gallery fetch path, preventing silent failures on large gallery responses
+- N+1 DB queries in the Training Images tab eliminated: detection records and metadata are now batch-loaded per page instead of one query per item
+- `findByArgusDetectionId` renamed to `findFirstByArgusDetectionId` everywhere to tolerate pre-`replace=true` duplicate rows without throwing `IncorrectResultSizeDataAccessException`
+
 ## [2.21.3] - 2026-07-22
 ### Added
 ### Changed
