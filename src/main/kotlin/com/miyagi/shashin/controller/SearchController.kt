@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.EmbeddingStore
 import com.miyagi.shashin.component.OllamaVisionService
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.SearchHistory
@@ -49,6 +50,7 @@ class SearchController(
     private val jdbcTemplate: JdbcTemplate,
     private val ollamaVisionService: OllamaVisionService? = null,
     private val settingsRepository: SettingsRepository? = null,
+    private val embeddingStore: EmbeddingStore? = null,
     recognitionLabelRepository: RecognitionLabelRepository? = null,
     albumRepository: AlbumRepository? = null
 ): BaseController(
@@ -59,6 +61,12 @@ class SearchController(
 ) {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
+
+    private val queryEmbedCache: MutableMap<String, FloatArray> = Collections.synchronizedMap(
+        object : LinkedHashMap<String, FloatArray>(32, 0.75f, true) {
+            override fun removeEldestEntry(eldest: Map.Entry<String, FloatArray>) = size > 100
+        }
+    )
 
     @GetMapping("/search")
     fun getSearch(model: Model, request: HttpServletRequest): String {
@@ -404,17 +412,25 @@ class SearchController(
     }
 
     private fun scoredSemanticSearch(query: String, size: Int, settings: Settings): List<Pair<Metadata, Float>> {
-        val queryVec = ollamaVisionService?.embed(query, settings) ?: return emptyList()
-        val rows = jdbcTemplate.queryForList("SELECT id, embedding FROM metadata WHERE hidden = 0 AND embedding IS NOT NULL AND embedding != ''")
-        val scored = rows.mapNotNull { row ->
-            val id = row["id"] as? String ?: return@mapNotNull null
-            val embJson = row["embedding"] as? String ?: return@mapNotNull null
-            try {
-                val node = mapper.readTree(embJson)
-                val vec = FloatArray(node.size()) { node[it].floatValue() }
-                Pair(id, cosineSimilarity(queryVec, vec))
-            } catch (e: Exception) { null }
-        }.sortedByDescending { it.second }.take(size)
+        val queryVec = queryEmbedCache[query] ?: (ollamaVisionService?.embed(query, settings) ?: return emptyList())
+            .also { queryEmbedCache[query] = it }
+
+        val scored: List<Pair<String, Float>> = if (embeddingStore != null && embeddingStore.size() > 0) {
+            embeddingStore.search(queryVec, size)
+        } else {
+            // fallback: full DB scan (used before EmbeddingStore finishes loading at startup)
+            jdbcTemplate.queryForList("SELECT id, embedding FROM metadata WHERE hidden = 0 AND embedding IS NOT NULL AND embedding != ''")
+                .mapNotNull { row ->
+                    val id = row["id"] as? String ?: return@mapNotNull null
+                    val embJson = row["embedding"] as? String ?: return@mapNotNull null
+                    try {
+                        val node = mapper.readTree(embJson)
+                        val vec = FloatArray(node.size()) { node[it].floatValue() }
+                        Pair(id, cosineSimilarity(queryVec, vec))
+                    } catch (_: Exception) { null }
+                }.sortedByDescending { it.second }.take(size)
+        }
+
         val idOrder = scored.map { it.first }
         val byId = metadataRepository.findAllById(idOrder).filterNotNull().associateBy { it.getId() }
         val scoreMap = scored.toMap()

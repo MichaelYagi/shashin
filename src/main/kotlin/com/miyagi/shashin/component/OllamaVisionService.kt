@@ -38,7 +38,8 @@ class OllamaVisionService(
     private val keywordRepository: KeywordRepository,
     private val keywordPhotoRepository: KeywordPhotoRepository,
     private val jdbcTemplate: JdbcTemplate,
-    transactionManager: PlatformTransactionManager
+    transactionManager: PlatformTransactionManager,
+    private val embeddingStore: EmbeddingStore? = null
 ) {
     private val txTemplate = TransactionTemplate(transactionManager)
     private val logger = Logger.getLogger(OllamaVisionService::class.simpleName)
@@ -205,6 +206,7 @@ class OllamaVisionService(
                 if (embeddingDirty) {
                     val desc = metadata.getDescription(); val emb = metadata.getEmbedding(); val id = metadata.getId()
                     txTemplate.execute { jdbcTemplate.update("UPDATE metadata SET description = ?, embedding = ?, modified_at = ? WHERE id = ?", desc, emb, ts, id) }
+                    if (id != null && emb != null) embeddingStore?.update(id, emb)
                 } else {
                     val desc = metadata.getDescription(); val id = metadata.getId()
                     txTemplate.execute { jdbcTemplate.update("UPDATE metadata SET description = ?, modified_at = ? WHERE id = ?", desc, ts, id) }
@@ -328,6 +330,7 @@ class OllamaVisionService(
                         if (vec != null) {
                             val emb = mapper.writeValueAsString(vec.toList()); val ts = TextUtils.getCurrentTimestamp()
                             txTemplate.execute { jdbcTemplate.update("UPDATE metadata SET embedding = ?, modified_at = ? WHERE id = ?", emb, ts, id) }
+                            embeddingStore?.update(id, emb)
                             succeeded = true
                         } else {
                             succeeded = false
