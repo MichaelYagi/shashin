@@ -13,6 +13,25 @@
         <p><strong>Ollama</strong> is a self-hosted service for running large language models locally. Shashin integrates with Ollama for three things: generating captions and keyword tags for your photos, powering the <strong>Ask</strong> tab for conversational Q&amp;A on any photo, and enabling <strong>semantic search</strong> across your entire library.</p>
         <p>Ollama is optional. If it is not configured or not reachable, Shashin falls back to Argus for object detection (if Argus is connected and object detection is enabled).</p>
 
+        <div class="card mb-4">
+            <div class="card-header fw-semibold">TL;DR</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Setup</strong></p>
+                <ol class="mb-3">
+                    <li>Install <a href="https://ollama.com" target="_blank">Ollama</a> and pull a vision model:<br><code>ollama pull qwen3-vl:8b-instruct</code></li>
+                    <li>In <a href="/settings">Settings</a>, enter the Ollama URL and select your vision model. Save.</li>
+                    <li>Run a scan from <a href="/settings/scan">Media Indexing</a> — captions and tags are generated automatically.</li>
+                    <li><em>Optional — semantic search:</em> pull <code>nomic-embed-text</code>, then click <strong>Generate embeddings</strong> in Settings once.</li>
+                </ol>
+                <p class="mb-1"><strong>What each feature does</strong></p>
+                <ul class="mb-0">
+                    <li><strong>Captions &amp; tags</strong> — Ollama writes a short description and keyword tags for each photo at scan time. Both are stored and searchable.</li>
+                    <li><strong>Ask</strong> — Conversational Q&amp;A about a specific photo. Appears as a tab in the photo detail modal when a vision model is connected.</li>
+                    <li><strong>Semantic search</strong> — Find photos by meaning rather than exact words (e.g. search <em>"rainy afternoon"</em> and surface shots tagged <em>"overcast"</em>). Requires <code>nomic-embed-text</code>.</li>
+                </ul>
+            </div>
+        </div>
+
         <h2 id="whatitdoes">
             <div>What Ollama Does in Shashin<a class="anchorjs-link" href="#whatitdoes" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
