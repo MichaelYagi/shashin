@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.Duration
 import java.util.Base64
-import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.sqrt
@@ -49,12 +49,7 @@ class OllamaVisionService(
     val embeddingProcessed = AtomicInteger(0)
     val embeddingTotal = AtomicInteger(0)
 
-    // Option 2: in-memory LRU cache of encoded images (max 50 entries)
-    private val imageCache: MutableMap<String, String> = Collections.synchronizedMap(
-        object : LinkedHashMap<String, String>(64, 0.75f, true) {
-            override fun removeEldestEntry(eldest: Map.Entry<String, String>) = size > 50
-        }
-    )
+    private val imageCache = ConcurrentHashMap<String, String>(64)
 
     fun getVisionModels(ollamaUrl: String): List<String> {
         return try {
@@ -357,10 +352,11 @@ class OllamaVisionService(
         if (!imageFile.exists()) return null
 
         // Option 2: use cached base64, encode from disk only on first access
-        val imageB64 = imageCache[metadataId]
-            ?: try { encodeForOllama(imageFile).also { imageCache[metadataId] = it } } catch (e: Exception) { return null }
+        val imageB64 = imageCache.getOrPut(metadataId) {
+            try { encodeForOllama(imageFile) } catch (e: Exception) { return null }
+        }.also { if (imageCache.size > 50) imageCache.keys.take(imageCache.size - 50).forEach(imageCache::remove) }
 
-        // Option 3: load stored context tokens; discard if model changed
+        // load stored context tokens; discard if model changed
         val storedCtx = contextRepository?.findByMetadataId(metadataId)
         val ctxValid = storedCtx != null && storedCtx.getModel() == settings.getOllamaVisionModel()
 
@@ -426,8 +422,9 @@ class OllamaVisionService(
         val imageFile = File(imagePath)
         if (!imageFile.exists()) return false
 
-        val imageB64 = imageCache[metadataId]
-            ?: try { encodeForOllama(imageFile).also { imageCache[metadataId] = it } } catch (e: Exception) { return false }
+        val imageB64 = imageCache.getOrPut(metadataId) {
+            try { encodeForOllama(imageFile) } catch (e: Exception) { return false }
+        }.also { if (imageCache.size > 50) imageCache.keys.take(imageCache.size - 50).forEach(imageCache::remove) }
 
         val storedCtx = contextRepository?.findByMetadataId(metadataId)
         val ctxValid = storedCtx != null && storedCtx.getModel() == settings.getOllamaVisionModel()

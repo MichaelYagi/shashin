@@ -31,6 +31,7 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import jakarta.servlet.http.HttpServletRequest
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -62,11 +63,7 @@ class SearchController(
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    private val queryEmbedCache: MutableMap<String, FloatArray> = Collections.synchronizedMap(
-        object : LinkedHashMap<String, FloatArray>(32, 0.75f, true) {
-            override fun removeEldestEntry(eldest: Map.Entry<String, FloatArray>) = size > 100
-        }
-    )
+    private val queryEmbedCache = ConcurrentHashMap<String, FloatArray>(32)
 
     @GetMapping("/search")
     fun getSearch(model: Model, request: HttpServletRequest): String {
@@ -412,8 +409,9 @@ class SearchController(
     }
 
     private fun scoredSemanticSearch(query: String, size: Int, settings: Settings): List<Pair<Metadata, Float>> {
-        val queryVec = queryEmbedCache[query] ?: (ollamaVisionService?.embed(query, settings) ?: return emptyList())
-            .also { queryEmbedCache[query] = it }
+        val queryVec = queryEmbedCache.getOrPut(query) {
+            ollamaVisionService?.embed(query, settings) ?: return emptyList()
+        }.also { if (queryEmbedCache.size > 100) queryEmbedCache.keys.take(queryEmbedCache.size - 100).forEach(queryEmbedCache::remove) }
 
         val scored: List<Pair<String, Float>> = if (embeddingStore != null && embeddingStore.size() > 0) {
             embeddingStore.search(queryVec, size)
