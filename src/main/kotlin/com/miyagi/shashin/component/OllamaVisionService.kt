@@ -154,6 +154,7 @@ class OllamaVisionService(
             "model" to settings.getOllamaVisionModel()!!,
             "messages" to messages,
             "stream" to false,
+            "keep_alive" to -1,
             "options" to mapOf("num_predict" to 180, "temperature" to 0.7)
         ))
 
@@ -249,7 +250,7 @@ class OllamaVisionService(
     fun embed(text: String, settings: Settings): FloatArray? {
         val model = settings.getOllamaEmbedModel()?.takeIf { it.isNotBlank() } ?: "nomic-embed-text"
         val url = settings.getOllamaUrl()?.takeIf { it.isNotBlank() } ?: return null
-        val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to text))
+        val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to text, "keep_alive" to -1))
         return try {
             val client = WebClient.builder()
                 .baseUrl(url.trimEnd('/'))
@@ -275,7 +276,7 @@ class OllamaVisionService(
         val model = settings.getOllamaVisionModel()?.takeIf { it.isNotBlank() } ?: return null
         val url = settings.getOllamaUrl()?.takeIf { it.isNotBlank() } ?: return null
         val b64 = try { encodeForOllama(imageFile) } catch (e: Exception) { return null }
-        val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to "", "images" to listOf(b64)))
+        val payload = mapper.writeValueAsString(mapOf("model" to model, "input" to "", "images" to listOf(b64), "keep_alive" to -1))
         return try {
             val client = WebClient.builder()
                 .baseUrl(url.trimEnd('/'))
@@ -369,6 +370,7 @@ class OllamaVisionService(
             "prompt" to "/no_think $question",
             "images" to listOf(imageB64),
             "stream" to false,
+            "keep_alive" to -1,
             "options" to mapOf("num_predict" to 400)
         )
         if (ctxValid) {
@@ -435,6 +437,7 @@ class OllamaVisionService(
             "prompt" to "/no_think $question",
             "images" to listOf(imageB64),
             "stream" to true,
+            "keep_alive" to -1,
             "options" to mapOf("num_predict" to 400)
         )
         if (ctxValid) {
