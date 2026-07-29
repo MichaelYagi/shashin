@@ -85,3 +85,6 @@ Tech Stack
 * [Deep Java Library](https://djl.ai/) - Bundled face/object recognition library (legacy; recognition is now handled by Argus)
 * [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin
 * [Chart.js](https://www.chartjs.org/) - Javascript charting library
+
+# License
+MIT License — see [LICENSE](LICENSE) for details.
