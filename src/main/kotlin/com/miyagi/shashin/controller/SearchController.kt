@@ -86,7 +86,7 @@ class SearchController(
         model["msg"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = term
+        model["titleDescriptor"] = term.replace(Regex("""@"([^"]*)""""), "$1").replace(Regex("""\s+"""), " ").trim()
 
         return module
     }
