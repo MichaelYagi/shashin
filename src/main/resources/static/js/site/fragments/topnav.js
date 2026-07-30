@@ -47,7 +47,11 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
 
     function updateCursorIndicator() {
         $("#searchCursorIndicator").remove();
-        if (cursorPos === null) return;
+        if (cursorPos === null) {
+            $("#appSearchTextInput").css("caret-color", "");
+            return;
+        }
+        $("#appSearchTextInput").css("caret-color", "transparent");
         const pillEls = $("#appSearchPillBox .search-mention-pill");
         if (!pillEls.length) { cursorPos = null; return; }
         const indicator = $('<span id="searchCursorIndicator" aria-hidden="true"></span>');
