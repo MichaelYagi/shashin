@@ -131,7 +131,10 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="flex-grow-1 d-flex align-items-center">
             <form id="appSearch" class="w-100" action="/search" method="post">
-                <input id="appSearchInput" name="appSearchInput" class="form-control rounded-pill border border-secondary-subtle" type="search" th:placeholder="#{main.pages.map.modal.search}" aria-label="Search" th:value="${term}">
+                <input type="hidden" id="appSearchInput" name="appSearchInput" th:value="${term}">
+                <div id="appSearchPillBox" class="form-control rounded-pill border border-secondary-subtle d-flex flex-wrap align-items-center gap-1">
+                    <input id="appSearchTextInput" type="text" autocomplete="off" th:placeholder="#{main.pages.map.modal.search}" aria-label="Search">
+                </div>
                 <input type="submit" id="appSearchSubmit" style="position: absolute; left: -9999px"/>
             </form>
             <th:block th:if="${activePage == 'timeline' || activePage == 'archived' || activePage == 'favorites' || activePage == 'recent' || activePage == 'modified' || activePage == 'taken' || activePage == 'accessed' || activePage == 'folder' || activePage == 'search' || activePage == 'album' || activePage == 'person' || activePage == 'matches' || activePage == 'duplicates'}">

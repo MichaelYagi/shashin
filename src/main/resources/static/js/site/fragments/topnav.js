@@ -39,32 +39,62 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         });
     }, 0);
 
-    $("#appSearch").on("submit", function (e) {
-        const searchTerm = $("#appSearchInput").val().trim();
-        if (searchTerm === "") {
-            e.preventDefault();
-        } else {
-            Util.showSearchSpinner(true);
+    // Pill state — original-cased names of confirmed @mentions
+    const currentPills = new Set();
+
+    function addPill(name) {
+        if ([...currentPills].some(n => n.toLowerCase() === name.toLowerCase())) return;
+        currentPills.add(name);
+        const pill = $('<span class="search-mention-pill"></span>');
+        pill.append(document.createTextNode(name));
+        const btn = $('<button type="button" class="pill-remove" aria-label="Remove">×</button>');
+        btn.on("click", function() {
+            currentPills.delete([...currentPills].find(n => n.toLowerCase() === name.toLowerCase()) || name);
+            pill.remove();
+            $("#appSearchTextInput").focus();
+        });
+        pill.append(btn);
+        $("#appSearchTextInput").before(pill);
+        $("#appSearchTextInput").focus();
+    }
+
+    // Reconstruct full query from pills + free text, set on hidden input, submit
+    function buildAndSubmit() {
+        const pillPart = [...currentPills].map(n => `@"${n}"`).join(" ");
+        const textPart = $("#appSearchTextInput").val().trim();
+        const combined = [pillPart, textPart].filter(Boolean).join(" ");
+        if (!combined) return;
+        $("#appSearchInput").val(combined);
+        Util.showSearchSpinner(true);
+        $("#appSearchSubmit").click();
+    }
+
+    $("#appSearch").on("submit", function(e) {
+        e.preventDefault();
+        buildAndSubmit();
+    });
+
+    // Clicking the pill box outside a pill focuses the text input
+    $("#appSearchPillBox").on("click", function(e) {
+        if (!$(e.target).closest(".search-mention-pill").length) {
+            $("#appSearchTextInput").focus();
         }
     });
 
-    // Focus and select search input
-    $("#appSearchInput").focus(function () {
-        $(this).select();
-    });
+    // Parse initial term (from server-side ${term}) into pills + free text on page load
+    const initialTerm = $("#appSearchInput").val();
+    if (initialTerm) {
+        [...initialTerm.matchAll(/@"([^"]+)"/g)].forEach(m => addPill(m[1]));
+        $("#appSearchTextInput").val(initialTerm.replace(/@"[^"]*"\s*/g, "").trim());
+        $("#appSearchInput").val("");
+    }
 
-    // Returns the active @mention prefix if the caret is inside one, null otherwise.
-    // An active mention is the last @ not already closed as @"Name".
+    // Active @mention detection — simplified since text input never contains completed @"Name" tokens
     function getActiveMentionPrefix(value) {
-        const re = /@(?!"[^"]*")/g;
-        let lastMatch = null, m;
-        while ((m = re.exec(value)) !== null) { lastMatch = m; }
-        if (!lastMatch) return null;
-        const after = value.slice(lastMatch.index + 1);
-        // Strip leading " so @"Al and @Al both match the same names
-        const raw = after.startsWith('"') ? after.slice(1) : after;
-        if (/\s/.test(raw)) return null;
-        return { start: lastMatch.index, prefix: raw };
+        const m = value.match(/@([^@\s]*)$/);
+        if (!m) return null;
+        const raw = m[1].startsWith('"') ? m[1].slice(1) : m[1];
+        return { start: m.index, prefix: raw };
     }
 
     const http = new Http("search history");
@@ -77,14 +107,13 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         }
     }
 
-    $("#appSearchInput").autocomplete({
+    $("#appSearchTextInput").autocomplete({
         minLength: 0,
         source: function(request, response) {
             const val = request.term;
             const mention = getActiveMentionPrefix(val);
             if (mention !== null) {
-                const usedNames = new Set([...val.matchAll(/@"([^"]+)"/g)].map(m => m[1].toLowerCase()));
-                const available = peopleNames.filter(n => !usedNames.has(n.toLowerCase()));
+                const available = peopleNames.filter(n => ![...currentPills].some(p => p.toLowerCase() === n.toLowerCase()));
                 const matches = $.ui.autocomplete.filter(available, mention.prefix);
                 response(shashin.prefixFirstSort(matches, mention.prefix).slice(0, searchHistoryLimit));
             } else if (val.length > 0) {
@@ -98,10 +127,11 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
             const val = $(this).val();
             const mention = getActiveMentionPrefix(val);
             if (mention !== null) {
-                $(this).val(val.slice(0, mention.start) + '@"' + ui.item.value + '" ');
+                $(this).val(val.slice(0, mention.start).trimEnd());
+                addPill(ui.item.value);
             } else {
                 $(this).val(ui.item.value);
-                $("#appSearchSubmit").click();
+                buildAndSubmit();
             }
             return false;
         },
