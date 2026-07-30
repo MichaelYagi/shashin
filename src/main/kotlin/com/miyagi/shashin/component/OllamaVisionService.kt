@@ -202,7 +202,7 @@ class OllamaVisionService(
                 if (embeddingDirty) {
                     val desc = metadata.getDescription(); val emb = metadata.getEmbedding(); val id = metadata.getId()
                     txTemplate.execute { jdbcTemplate.update("UPDATE metadata SET description = ?, embedding = ?, modified_at = ? WHERE id = ?", desc, emb, ts, id) }
-                    if (id != null && emb != null) embeddingStore?.update(id, emb)
+                    embeddingStore?.update(id, emb)
                 } else {
                     val desc = metadata.getDescription(); val id = metadata.getId()
                     txTemplate.execute { jdbcTemplate.update("UPDATE metadata SET description = ?, modified_at = ? WHERE id = ?", desc, ts, id) }
