@@ -438,15 +438,45 @@ class SearchController(
     private fun semanticSearch(query: String, size: Int, settings: Settings): List<Metadata> =
         scoredSemanticSearch(query, size, settings).map { it.first }
 
+    private fun filterByPeople(ids: List<String>, people: List<String>): List<String> {
+        if (people.isEmpty() || ids.isEmpty()) return ids
+        val placeholders = ids.joinToString(",") { "?" }
+        var sql = "SELECT DISTINCT m.id FROM metadata m WHERE m.id IN ($placeholders)"
+        people.forEach { _ ->
+            sql += " AND EXISTS (SELECT 1 FROM recognitionlabelphoto rlp JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rlp.metadata_id = m.id AND lower(rl.name) = lower(?))"
+        }
+        val params: List<Any> = ids + people
+        return jdbcTemplate.queryForList(sql, String::class.java, *params.toTypedArray())
+    }
+
     private fun blendedSearch(query: String, size: Int, settings: Settings, keywordResults: List<Metadata>): List<Metadata> {
+        val (people, remaining) = SearchQueryBuilder.parseMentions(query)
+        // People-only query — no semantic text to embed, return keyword results as-is
+        if (remaining.isBlank()) return keywordResults.take(size)
+
         val blended = LinkedHashMap<String, Pair<Metadata, Float>>()
         // Keyword results ranked 1.0 → 0.999… preserving SQL relevance order
         keywordResults.forEachIndexed { i, m -> blended[m.getId()] = Pair(m, 1.0f - i * 0.001f) }
-        // Semantic-only results fill in below keyword matches
-        scoredSemanticSearch(query, size * 2, settings).forEach { (m, score) ->
-            blended.putIfAbsent(m.getId(), Pair(m, score))
+        // Semantic search on the non-mention remainder, then filter by people
+        val scored = scoredSemanticSearch(remaining, size * 2, settings)
+        val filtered = if (people.isNotEmpty()) {
+            val filteredIds = filterByPeople(scored.map { it.first.getId() }, people).toSet()
+            scored.filter { it.first.getId() in filteredIds }
+        } else {
+            scored
         }
+        filtered.forEach { (m, score) -> blended.putIfAbsent(m.getId(), Pair(m, score)) }
         return blended.values.sortedByDescending { it.second }.take(size).map { it.first }
+    }
+
+    @RequestMapping(value = ["/search/people/names"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPeopleNames(): String {
+        val names = jdbcTemplate.queryForList(
+            "SELECT DISTINCT name FROM recognitionlabel WHERE name IS NOT NULL AND name != '' ORDER BY name ASC",
+            String::class.java
+        )
+        return mapper.writeValueAsString(mapOf("status" to ApiResponse.SUCCESS.status, "names" to names))
     }
 
     @RequestMapping(value = ["/search/semantic"], method = [RequestMethod.GET])

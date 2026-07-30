@@ -68,6 +68,19 @@ object SearchQueryBuilder {
         }
     }
 
+    private val MENTION_REGEX = Regex("""@"([^"]+)"""")
+
+    // Extract @"Name" tokens and the remaining free text from a search term
+    fun parseMentions(term: String): Pair<List<String>, String> {
+        val people = MENTION_REGEX.findAll(term).map { it.groupValues[1].trim() }.filter { it.isNotBlank() }.toList()
+        val remaining = MENTION_REGEX.replace(term, "").trim()
+        return Pair(people, remaining)
+    }
+
+    // EXISTS subquery ensuring a specific person is tagged in the photo (one ? param per call)
+    private fun buildPersonExistsClause(): String =
+        "EXISTS (SELECT 1 FROM recognitionlabelphoto rlp_p JOIN recognitionlabel rl_p ON rl_p.id = rlp_p.recognition_label_id WHERE rlp_p.metadata_id = m.id AND lower(rl_p.name) = lower(?))"
+
     // WHERE filter: token must match somewhere (permissive substring match)
     private fun buildTokenClause(token: String): String = """
         (k.keyword LIKE lower('%' || ? || '%')
@@ -131,6 +144,7 @@ object SearchQueryBuilder {
 
     /**
      * Multi-token search for admin/super roles.
+     * Supports @"Name" mentions for per-person EXISTS filtering.
      */
     fun findByTerm(
         jdbcTemplate: JdbcTemplate,
@@ -138,9 +152,14 @@ object SearchQueryBuilder {
         offset: Int,
         limit: Int
     ): List<Metadata> {
-        val tokens = term.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
-        val whereClauses = tokens.joinToString(" AND ") { buildTokenClause(it) }
-        val relevanceScore = tokens.joinToString(" + ") { buildRelevanceClause(it) }
+        val (people, remaining) = parseMentions(term)
+        val tokens = remaining.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
+        val hasTokens = tokens.isNotEmpty()
+        if (!hasTokens && people.isEmpty()) return emptyList()
+
+        val tokenWhere = if (hasTokens) "AND (${tokens.joinToString(" AND ") { buildTokenClause(it) }})" else ""
+        val peopleWhere = people.joinToString("\n") { "AND ${buildPersonExistsClause()}" }
+        val relevanceScore = if (hasTokens) tokens.joinToString(" + ") { buildRelevanceClause(it) } else "0"
         val sql = """
             SELECT m.*
             FROM metadata m
@@ -149,20 +168,27 @@ object SearchQueryBuilder {
             LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id
             LEFT JOIN keyword k ON kp.keyword_id = k.id
             WHERE m.hidden = false
-            AND ($whereClauses)
+            $tokenWhere
+            $peopleWhere
             GROUP BY m.id
             ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC
             LIMIT $limit OFFSET $offset
         """.trimIndent()
-        return jdbcTemplate.query(sql, metadataRowMapper, *tokenParams(tokens).toTypedArray())
+        val params = (if (hasTokens) tokenParams(tokens) else emptyList()) + people
+        return jdbcTemplate.query(sql, metadataRowMapper, *params.toTypedArray())
     }
 
     fun countByTerm(
         jdbcTemplate: JdbcTemplate,
         term: String
     ): Int {
-        val tokens = term.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
-        val whereClauses = tokens.joinToString(" AND ") { buildTokenClause(it) }
+        val (people, remaining) = parseMentions(term)
+        val tokens = remaining.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
+        val hasTokens = tokens.isNotEmpty()
+        if (!hasTokens && people.isEmpty()) return 0
+
+        val tokenWhere = if (hasTokens) "AND (${tokens.joinToString(" AND ") { buildTokenClause(it) }})" else ""
+        val peopleWhere = people.joinToString("\n") { "AND ${buildPersonExistsClause()}" }
         val sql = """
             SELECT COUNT(DISTINCT m.id)
             FROM metadata m
@@ -171,13 +197,16 @@ object SearchQueryBuilder {
             LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id
             LEFT JOIN keyword k ON kp.keyword_id = k.id
             WHERE m.hidden = false
-            AND ($whereClauses)
+            $tokenWhere
+            $peopleWhere
         """.trimIndent()
-        return jdbcTemplate.queryForObject(sql, Int::class.java, *tokenParams(tokens).toTypedArray()) ?: 0
+        val params = (if (hasTokens) tokenParams(tokens) else emptyList()) + people
+        return jdbcTemplate.queryForObject(sql, Int::class.java, *params.toTypedArray()) ?: 0
     }
 
     /**
      * Multi-token search scoped to a specific user.
+     * Supports @"Name" mentions for per-person EXISTS filtering.
      */
     fun findByTermAndUserId(
         jdbcTemplate: JdbcTemplate,
@@ -186,9 +215,14 @@ object SearchQueryBuilder {
         offset: Int,
         limit: Int
     ): List<Metadata> {
-        val tokens = term.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
-        val whereClauses = tokens.joinToString(" AND ") { buildTokenClause(it) }
-        val relevanceScore = tokens.joinToString(" + ") { buildRelevanceClause(it) }
+        val (people, remaining) = parseMentions(term)
+        val tokens = remaining.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
+        val hasTokens = tokens.isNotEmpty()
+        if (!hasTokens && people.isEmpty()) return emptyList()
+
+        val tokenWhere = if (hasTokens) "AND (${tokens.joinToString(" AND ") { buildTokenClause(it) }})" else ""
+        val peopleWhere = people.joinToString("\n") { "AND ${buildPersonExistsClause()}" }
+        val relevanceScore = if (hasTokens) tokens.joinToString(" + ") { buildRelevanceClause(it) } else "0"
         val sql = """
             SELECT m.*
             FROM metadata m
@@ -199,13 +233,14 @@ object SearchQueryBuilder {
             LEFT JOIN albumphoto a ON m.id = a.metadata_id
             LEFT JOIN useralbum ua ON ua.album_id = a.album_id
             WHERE m.hidden = false
-            AND ($whereClauses)
+            $tokenWhere
+            $peopleWhere
             AND ua.user_id = ?
             GROUP BY m.id
             ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC
             LIMIT $limit OFFSET $offset
         """.trimIndent()
-        val params = tokenParams(tokens) + userId
+        val params = (if (hasTokens) tokenParams(tokens) else emptyList()) + people + userId
         return jdbcTemplate.query(sql, metadataRowMapper, *params.toTypedArray())
     }
 
@@ -214,8 +249,13 @@ object SearchQueryBuilder {
         term: String,
         userId: Int
     ): Int {
-        val tokens = term.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
-        val whereClauses = tokens.joinToString(" AND ") { buildTokenClause(it) }
+        val (people, remaining) = parseMentions(term)
+        val tokens = remaining.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
+        val hasTokens = tokens.isNotEmpty()
+        if (!hasTokens && people.isEmpty()) return 0
+
+        val tokenWhere = if (hasTokens) "AND (${tokens.joinToString(" AND ") { buildTokenClause(it) }})" else ""
+        val peopleWhere = people.joinToString("\n") { "AND ${buildPersonExistsClause()}" }
         val sql = """
             SELECT COUNT(DISTINCT m.id)
             FROM metadata m
@@ -226,10 +266,11 @@ object SearchQueryBuilder {
             LEFT JOIN albumphoto a ON m.id = a.metadata_id
             LEFT JOIN useralbum ua ON ua.album_id = a.album_id
             WHERE m.hidden = false
-            AND ($whereClauses)
+            $tokenWhere
+            $peopleWhere
             AND ua.user_id = ?
         """.trimIndent()
-        val params = tokenParams(tokens) + userId
+        val params = (if (hasTokens) tokenParams(tokens) else emptyList()) + people + userId
         return jdbcTemplate.queryForObject(sql, Int::class.java, *params.toTypedArray()) ?: 0
     }
 }

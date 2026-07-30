@@ -52,24 +52,66 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         $(this).select();
     });
 
+    let peopleNames = [];
+    const peopleHttp = new Http("people names");
+    peopleHttp.ajax("get", "/search/people/names").then(function(pData) {
+        if (pData.status === "success" && Array.isArray(pData.names)) {
+            peopleNames = pData.names;
+        }
+    });
+
+    // Returns the active @mention prefix if the caret is inside one, null otherwise.
+    // An active mention is the last @ not already closed as @"Name".
+    function getActiveMentionPrefix(value) {
+        const re = /@(?!"[^"]*")/g;
+        let lastMatch = null, m;
+        while ((m = re.exec(value)) !== null) { lastMatch = m; }
+        if (!lastMatch) return null;
+        const after = value.slice(lastMatch.index + 1);
+        // Strip leading " so @"Al and @Al both match the same names
+        const raw = after.startsWith('"') ? after.slice(1) : after;
+        if (/\s/.test(raw)) return null;
+        return { start: lastMatch.index, prefix: raw };
+    }
+
     const http = new Http("search history");
     const data = await http.ajax("get", "/search/history");
 
-    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.status === "success" && data.hasOwnProperty("searchHistoryList")) {
-        const searchHistoryList = data.searchHistoryList;
-
-        if (searchHistoryList.length > 0) {
-            let searchHistoryData = [];
-            for (const index in searchHistoryList) {
-                const searchHistoryObj = searchHistoryList[index];
-                searchHistoryData.push(searchHistoryObj.term);
-            }
-
-            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, searchHistoryLimit, function () {
-                $("#appSearchSubmit").click();
-            });
+    let searchHistoryData = [];
+    if (data.hasOwnProperty("status") && data.status === "success" && data.hasOwnProperty("searchHistoryList")) {
+        for (const index in data.searchHistoryList) {
+            searchHistoryData.push(data.searchHistoryList[index].term);
         }
     }
+
+    $("#appSearchInput").autocomplete({
+        minLength: 1,
+        source: function(request, response) {
+            const val = request.term;
+            const mention = getActiveMentionPrefix(val);
+            if (mention !== null) {
+                const prefix = mention.prefix.toLowerCase();
+                const starts = peopleNames.filter(n => n.toLowerCase().startsWith(prefix));
+                const contains = peopleNames.filter(n => !n.toLowerCase().startsWith(prefix) && n.toLowerCase().includes(prefix));
+                response(starts.concat(contains).slice(0, searchHistoryLimit));
+            } else {
+                const filtered = searchHistoryData.filter(t => t.toLowerCase().includes(val.toLowerCase()));
+                response(shashin.prefixFirstSort(filtered, val).slice(0, searchHistoryLimit));
+            }
+        },
+        select: function(event, ui) {
+            const val = $(this).val();
+            const mention = getActiveMentionPrefix(val);
+            if (mention !== null) {
+                $(this).val(val.slice(0, mention.start) + '@"' + ui.item.value + '" ');
+            } else {
+                $(this).val(ui.item.value);
+                $("#appSearchSubmit").click();
+            }
+            return false;
+        },
+        focus: function() { return false; }
+    });
 
     $("#darkModeSwitch").change(async function () {
         let darkMode = this.checked;
