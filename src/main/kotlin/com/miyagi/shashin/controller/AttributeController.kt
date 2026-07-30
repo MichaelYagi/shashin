@@ -4,6 +4,7 @@ import com.miyagi.shashin.component.ApiError
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -54,6 +55,7 @@ class AttributeController(
     private var userRepository: UserRepository,
     private var settingsRepository: SettingsRepository? = null,
     private var metadataRepository: MetadataRepository? = null,
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null,
     private var buildProperties: BuildProperties? = null,
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String,
@@ -326,6 +328,12 @@ class AttributeController(
 
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
+        model["recognitionLabelNames"] = recognitionLabelRepository
+            ?.findAllByNameNotContaining(TextUtils.getObjectName())
+            ?.mapNotNull { it.getName() }
+            ?.filter { it.isNotBlank() }
+            ?.sorted()
+            ?: emptyList<String>()
         model["apiVersion"] = apiVersion
         model["relativeSidecarDir"] = relativeSidecarDir
         model["geocodeUrl"] = geocodeUrl

@@ -24,11 +24,6 @@ class BaseController(
         if (recognitionLabels != null && recognitionLabels.count() > 0) {
             model["recognitionLabels"] = recognitionLabels
         }
-        model["recognitionLabelNames"] = recognitionLabels
-            ?.mapNotNull { it.getName() }
-            ?.filter { it.isNotBlank() }
-            ?.sorted()
-            ?: emptyList<String>()
 
         model["allAlbumList"] = mutableListOf<Album>()
         val allAlbumList = albumRepository?.findAllOrderByAlbumName()
