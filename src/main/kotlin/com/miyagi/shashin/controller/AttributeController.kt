@@ -328,12 +328,17 @@ class AttributeController(
 
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
-        model["recognitionLabelNames"] = recognitionLabelRepository
-            ?.findAllByNameNotContaining(TextUtils.getObjectName())
-            ?.mapNotNull { it.getName() }
-            ?.filter { it.isNotBlank() }
-            ?.sorted()
-            ?: emptyList<String>()
+        val isHtmlRequest = request.getHeader("Accept")?.startsWith("text/html") == true
+        model["recognitionLabelNames"] = if (isHtmlRequest) {
+            recognitionLabelRepository
+                ?.findAllByNameNotContaining(TextUtils.getObjectName())
+                ?.mapNotNull { it.getName() }
+                ?.filter { it.isNotBlank() }
+                ?.sorted()
+                ?: emptyList<String>()
+        } else {
+            emptyList<String>()
+        }
         model["apiVersion"] = apiVersion
         model["relativeSidecarDir"] = relativeSidecarDir
         model["geocodeUrl"] = geocodeUrl
