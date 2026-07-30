@@ -88,7 +88,7 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         if (!combined) return;
         $("#appSearchInput").val(combined);
         Util.showSearchSpinner(true);
-        $("#appSearchSubmit").click();
+        document.getElementById("appSearch").submit();
     }
 
     $("#appSearch").on("submit", function(e) {
