@@ -1,4 +1,5 @@
-async function setGlobalListeners(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, hasMediaUploadDirectory, autoplayVideo, locale) {
+async function setGlobalListeners(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, hasMediaUploadDirectory, autoplayVideo, locale, peopleNames) {
+    peopleNames = peopleNames || [];
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
     shashin.autoplayVideo = autoplayVideo;
@@ -51,10 +52,6 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
     $("#appSearchInput").focus(function () {
         $(this).select();
     });
-
-    const peopleHttp = new Http("people names");
-    const peopleData = await peopleHttp.ajax("get", "/search/people/names");
-    const peopleNames = (peopleData.status === "success" && Array.isArray(peopleData.names)) ? peopleData.names : [];
 
     // Returns the active @mention prefix if the caret is inside one, null otherwise.
     // An active mention is the last @ not already closed as @"Name".

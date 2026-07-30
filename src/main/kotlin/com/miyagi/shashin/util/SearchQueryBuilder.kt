@@ -159,7 +159,10 @@ object SearchQueryBuilder {
 
         val tokenWhere = if (hasTokens) "AND (${tokens.joinToString(" AND ") { buildTokenClause(it) }})" else ""
         val peopleWhere = people.joinToString("\n") { "AND ${buildPersonExistsClause()}" }
-        val relevanceScore = if (hasTokens) tokens.joinToString(" + ") { buildRelevanceClause(it) } else "0"
+        val orderBy = if (hasTokens)
+            "ORDER BY (${tokens.joinToString(" + ") { buildRelevanceClause(it) }}) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC"
+        else
+            "ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC"
         val sql = """
             SELECT m.*
             FROM metadata m
@@ -171,7 +174,7 @@ object SearchQueryBuilder {
             $tokenWhere
             $peopleWhere
             GROUP BY m.id
-            ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC
+            $orderBy
             LIMIT $limit OFFSET $offset
         """.trimIndent()
         val params = (if (hasTokens) tokenParams(tokens) else emptyList()) + people
@@ -222,7 +225,10 @@ object SearchQueryBuilder {
 
         val tokenWhere = if (hasTokens) "AND (${tokens.joinToString(" AND ") { buildTokenClause(it) }})" else ""
         val peopleWhere = people.joinToString("\n") { "AND ${buildPersonExistsClause()}" }
-        val relevanceScore = if (hasTokens) tokens.joinToString(" + ") { buildRelevanceClause(it) } else "0"
+        val orderBy = if (hasTokens)
+            "ORDER BY (${tokens.joinToString(" + ") { buildRelevanceClause(it) }}) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC"
+        else
+            "ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC"
         val sql = """
             SELECT m.*
             FROM metadata m
@@ -237,7 +243,7 @@ object SearchQueryBuilder {
             $peopleWhere
             AND ua.user_id = ?
             GROUP BY m.id
-            ORDER BY ($relevanceScore) DESC, m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC
+            $orderBy
             LIMIT $limit OFFSET $offset
         """.trimIndent()
         val params = (if (hasTokens) tokenParams(tokens) else emptyList()) + people + userId
