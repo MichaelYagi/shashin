@@ -11,9 +11,40 @@
             <div>Search<a class="anchorjs-link" href="#search" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
 
-        <p>Search for keywords, file names, titles, descriptions, place names, by camera or lens, media types, media dimensions, or taken at dates</p>
+        <p>Search across keywords, file names, titles, descriptions, place names, camera or lens model, media type, media dimensions, and taken-at dates.</p>
 
-        <p>There are a few reserved search terms as well.</p>
+        <h3 id="search-people">
+            <div>People<a class="anchorjs-link" href="#search-people" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h3>
+
+        <p>If you have named people through <a href="/articles/argus">Argus</a>, you can search for media that includes specific people.</p>
+
+        <ul>
+            <li>Type <code>@</code> in the search bar to open an autocomplete list of your recognized people</li>
+            <li>Select a name to add it as a chip in the search bar</li>
+            <li>Add multiple people — results will only include media where <strong>all</strong> selected people appear</li>
+            <li>Combine people chips with free text to narrow results further — for example, adding a location or event description</li>
+            <li>Remove a chip with the <code>×</code> button, or select it with the keyboard and press <code>Backspace</code> or <code>Delete</code></li>
+        </ul>
+
+        <p>Keyboard shortcuts in the search bar:</p>
+
+        <ul>
+            <li>Press <code>←</code> when the cursor is at the start of the text to select the last chip</li>
+            <li><code>←</code> / <code>→</code> moves between chips</li>
+            <li><code>Backspace</code> or <code>Delete</code> removes the selected chip</li>
+            <li><code>Escape</code> deselects the current chip and returns focus to the text input</li>
+        </ul>
+
+        <h3 id="search-semantic">
+            <div>Semantic search<a class="anchorjs-link" href="#search-semantic" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h3>
+
+        <p>If <a href="/articles/ollama">Ollama</a> is configured and your media has been analysed, search understands natural language descriptions. You can describe what you're looking for — a scene, a mood, an activity — rather than relying on exact keywords. Semantic results are blended with keyword results so you get the best of both.</p>
+
+        <h3 id="search-reserved">
+            <div>Reserved terms<a class="anchorjs-link" href="#search-reserved" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h3>
 
         <ul>
             <li><code>/search?term=nolatlng</code> filters media that don't have coordinates</li>
