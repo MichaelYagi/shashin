@@ -52,13 +52,9 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         $(this).select();
     });
 
-    let peopleNames = [];
     const peopleHttp = new Http("people names");
-    peopleHttp.ajax("get", "/search/people/names").then(function(pData) {
-        if (pData.status === "success" && Array.isArray(pData.names)) {
-            peopleNames = pData.names;
-        }
-    });
+    const peopleData = await peopleHttp.ajax("get", "/search/people/names");
+    const peopleNames = (peopleData.status === "success" && Array.isArray(peopleData.names)) ? peopleData.names : [];
 
     // Returns the active @mention prefix if the caret is inside one, null otherwise.
     // An active mention is the last @ not already closed as @"Name".
@@ -85,18 +81,18 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
     }
 
     $("#appSearchInput").autocomplete({
-        minLength: 1,
+        minLength: 0,
         source: function(request, response) {
             const val = request.term;
             const mention = getActiveMentionPrefix(val);
             if (mention !== null) {
-                const prefix = mention.prefix.toLowerCase();
-                const starts = peopleNames.filter(n => n.toLowerCase().startsWith(prefix));
-                const contains = peopleNames.filter(n => !n.toLowerCase().startsWith(prefix) && n.toLowerCase().includes(prefix));
-                response(starts.concat(contains).slice(0, searchHistoryLimit));
+                const matches = $.ui.autocomplete.filter(peopleNames, mention.prefix);
+                response(shashin.prefixFirstSort(matches, mention.prefix).slice(0, searchHistoryLimit));
+            } else if (val.length > 0) {
+                const matches = $.ui.autocomplete.filter(searchHistoryData, val);
+                response(shashin.prefixFirstSort(matches, val).slice(0, searchHistoryLimit));
             } else {
-                const filtered = searchHistoryData.filter(t => t.toLowerCase().includes(val.toLowerCase()));
-                response(shashin.prefixFirstSort(filtered, val).slice(0, searchHistoryLimit));
+                response([]);
             }
         },
         select: function(event, ui) {
@@ -111,6 +107,8 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
             return false;
         },
         focus: function() { return false; }
+    }).focus(function() {
+        $(this).autocomplete("search");
     });
 
     $("#darkModeSwitch").change(async function () {
