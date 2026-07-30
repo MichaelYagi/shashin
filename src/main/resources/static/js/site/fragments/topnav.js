@@ -83,7 +83,9 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
             const val = request.term;
             const mention = getActiveMentionPrefix(val);
             if (mention !== null) {
-                const matches = $.ui.autocomplete.filter(peopleNames, mention.prefix);
+                const usedNames = new Set([...val.matchAll(/@"([^"]+)"/g)].map(m => m[1].toLowerCase()));
+                const available = peopleNames.filter(n => !usedNames.has(n.toLowerCase()));
+                const matches = $.ui.autocomplete.filter(available, mention.prefix);
                 response(shashin.prefixFirstSort(matches, mention.prefix).slice(0, searchHistoryLimit));
             } else if (val.length > 0) {
                 const matches = $.ui.autocomplete.filter(searchHistoryData, val);
