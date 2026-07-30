@@ -41,30 +41,20 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
 
     // Pill state — original-cased names of confirmed @mentions
     const currentPills = new Set();
-    // cursorPos: null = inside text input; integer 0..N = virtual cursor among N pills
-    //   0 = before all pills, N = after last pill (one step before text input)
-    let cursorPos = null;
+    // selectedPillIndex: null = text input active, 0..N-1 = which pill is highlighted
+    let selectedPillIndex = null;
 
-    function updateCursorIndicator() {
-        $("#searchCursorIndicator").remove();
-        if (cursorPos === null) {
-            $("#appSearchTextInput").css("caret-color", "");
+    function setSelectedPill(index) {
+        $("#appSearchPillBox .search-mention-pill").removeClass("pill-selected");
+        if (index === null || currentPills.size === 0) {
+            selectedPillIndex = null;
             return;
         }
-        $("#appSearchTextInput").css("caret-color", "transparent");
-        const pillEls = $("#appSearchPillBox .search-mention-pill");
-        if (!pillEls.length) { cursorPos = null; return; }
-        const indicator = $('<span id="searchCursorIndicator" aria-hidden="true"></span>');
-        if (cursorPos === 0) {
-            pillEls.first().before(indicator);
-        } else if (cursorPos >= pillEls.length) {
-            $("#appSearchTextInput").before(indicator);
-        } else {
-            pillEls.eq(cursorPos - 1).after(indicator);
-        }
+        selectedPillIndex = Math.max(0, Math.min(index, currentPills.size - 1));
+        $("#appSearchPillBox .search-mention-pill").eq(selectedPillIndex).addClass("pill-selected");
     }
 
-    // Remove pill at DOM/Set index without touching cursorPos — caller adjusts
+    // Remove pill at DOM/Set index — caller updates selectedPillIndex afterward
     function deletePillAt(index) {
         const pillEls = $("#appSearchPillBox .search-mention-pill");
         if (index < 0 || index >= pillEls.length) return;
@@ -81,14 +71,12 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         btn.on("click", function() {
             currentPills.delete([...currentPills].find(n => n.toLowerCase() === name.toLowerCase()) || name);
             pill.remove();
-            cursorPos = null;
-            updateCursorIndicator();
+            setSelectedPill(null);
             $("#appSearchTextInput").focus();
         });
         pill.append(btn);
         $("#appSearchTextInput").before(pill);
-        cursorPos = null;
-        updateCursorIndicator();
+        setSelectedPill(null);
         $("#appSearchTextInput").focus();
     }
 
@@ -108,11 +96,10 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
         buildAndSubmit();
     });
 
-    // Clicking the pill box outside a pill returns cursor to text input
+    // Clicking the pill box outside a pill returns focus to text input
     $("#appSearchPillBox").on("click", function(e) {
         if (!$(e.target).closest(".search-mention-pill").length) {
-            cursorPos = null;
-            updateCursorIndicator();
+            setSelectedPill(null);
             $("#appSearchTextInput").focus();
         }
     });
@@ -121,58 +108,42 @@ async function setGlobalListeners(darkMode, placeNames, timezone, notificationAl
     $("#appSearchTextInput").on("keydown", function(e) {
         const n = currentPills.size;
         if (e.key === "ArrowLeft") {
-            if (cursorPos === null) {
+            if (selectedPillIndex === null) {
                 if (this.selectionStart === 0 && n > 0) {
-                    cursorPos = n;
-                    updateCursorIndicator();
+                    setSelectedPill(n - 1);
                     e.preventDefault();
                 }
             } else {
-                cursorPos = Math.max(0, cursorPos - 1);
-                updateCursorIndicator();
+                setSelectedPill(selectedPillIndex - 1);
                 e.preventDefault();
             }
         } else if (e.key === "ArrowRight") {
-            if (cursorPos !== null) {
-                cursorPos++;
-                if (cursorPos > n) cursorPos = n;
-                if (cursorPos === n) { cursorPos = null; }
-                updateCursorIndicator();
+            if (selectedPillIndex !== null) {
+                if (selectedPillIndex >= n - 1) {
+                    setSelectedPill(null);
+                } else {
+                    setSelectedPill(selectedPillIndex + 1);
+                }
                 e.preventDefault();
             }
-        } else if (e.key === "Backspace") {
-            if (cursorPos === null) {
-                if ($(this).val() === "" && n > 0) {
-                    deletePillAt(n - 1);
-                    updateCursorIndicator();
-                    e.preventDefault();
-                }
-            } else if (cursorPos > 0) {
-                deletePillAt(cursorPos - 1);
-                cursorPos = Math.min(cursorPos - 1, currentPills.size);
-                updateCursorIndicator();
+        } else if (e.key === "Backspace" || e.key === "Delete") {
+            if (selectedPillIndex !== null) {
+                const idx = selectedPillIndex;
+                deletePillAt(idx);
+                setSelectedPill(currentPills.size > 0 ? Math.min(idx, currentPills.size - 1) : null);
                 e.preventDefault();
-            } else {
-                e.preventDefault();
-            }
-        } else if (e.key === "Delete") {
-            if (cursorPos !== null) {
-                if (cursorPos < n) {
-                    deletePillAt(cursorPos);
-                    cursorPos = Math.min(cursorPos, currentPills.size);
-                    updateCursorIndicator();
-                }
+            } else if (e.key === "Backspace" && $(this).val() === "" && n > 0) {
+                deletePillAt(n - 1);
+                setSelectedPill(null);
                 e.preventDefault();
             }
         } else if (e.key === "Escape") {
-            if (cursorPos !== null) {
-                cursorPos = null;
-                updateCursorIndicator();
+            if (selectedPillIndex !== null) {
+                setSelectedPill(null);
                 e.preventDefault();
             }
-        } else if (cursorPos !== null && !e.metaKey && !e.ctrlKey && !e.altKey && e.key.length === 1) {
-            cursorPos = null;
-            updateCursorIndicator();
+        } else if (selectedPillIndex !== null && !e.metaKey && !e.ctrlKey && !e.altKey && e.key.length === 1) {
+            setSelectedPill(null);
         }
     });
 

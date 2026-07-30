@@ -195,19 +195,9 @@ header {
   opacity: 1;
 }
 
-#searchCursorIndicator {
-  display: inline-block;
-  width: 2px;
-  height: 1.1em;
-  background-color: currentColor;
-  vertical-align: middle;
-  margin: 0 1px;
-  animation: pill-cursor-blink 1.1s step-end infinite;
-}
-
-@keyframes pill-cursor-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+.search-mention-pill.pill-selected {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 1px;
 }
 
 /*
