@@ -49,6 +49,7 @@
                                     <div class="card-body d-flex flex-column">
                                         <h6 class="card-title mb-1" th:text="${memory.title}"></h6>
                                         <p class="card-text text-muted small flex-grow-1" th:text="${memory.caption}"></p>
+                                        <p class="card-text text-muted small mb-0" th:text="${#lists.size(memory.photoIds)} + ' photos'"></p>
                                         <div class="d-flex gap-2 mt-2">
                                             <button type="button" class="btn btn-sm btn-primary memories-view-btn"
                                                     th:data-memory-index="${iterStat.index}"
