@@ -56,7 +56,7 @@ class OllamaVisionService(
             val client = WebClient.create(ollamaUrl.trimEnd('/'))
             val resp = client.get().uri("/api/tags")
                 .retrieve().bodyToMono(String::class.java)
-                .block(Duration.ofSeconds(5)) ?: return emptyList()
+                .block(Duration.ofSeconds(15)) ?: return emptyList()
             val json = mapper.readTree(resp)
             json["models"]?.filter { model ->
                 model["capabilities"]?.any { it.asText() == "vision" } == true
@@ -538,7 +538,11 @@ class OllamaVisionService(
             val imagePath = ImageProcessing.Companion.argusImagePath(metadata) ?: return@mapNotNull null
             val imageFile = File(imagePath)
             if (!imageFile.exists()) return@mapNotNull null
-            try { encodeForOllama(imageFile) } catch (e: Exception) { null }
+            try {
+                val buf = ByteArrayOutputStream()
+                Thumbnails.of(imageFile).size(256, 256).keepAspectRatio(true).outputFormat("jpg").toOutputStream(buf)
+                Base64.getEncoder().encodeToString(buf.toByteArray())
+            } catch (e: Exception) { null }
         }
         if (images.isEmpty()) return null
 
@@ -563,7 +567,7 @@ class OllamaVisionService(
             "stream" to false,
             "format" to "json",
             "keep_alive" to -1,
-            "options" to mapOf("num_predict" to 120, "temperature" to 0.7, "num_ctx" to 8192)
+            "options" to mapOf("num_predict" to 120, "temperature" to 0.7)
         ))
 
         return try {

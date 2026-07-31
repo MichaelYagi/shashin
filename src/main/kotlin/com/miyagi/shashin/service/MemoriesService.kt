@@ -134,7 +134,7 @@ class MemoriesService(
             val usedTitles = mutableListOf<String>()
             for (cluster in selected) {
                 val description = ollamaVisionService.describeCluster(
-                    sampleIds(cluster.photoIds.take(20), 6),
+                    sampleIds(cluster.photoIds.take(20), 4),
                     cluster.hint,
                     settings,
                     usedTitles.toList()
