@@ -529,6 +529,70 @@ class OllamaVisionService(
         }
     }
 
+    fun describeCluster(sampleIds: List<String>, hint: String, settings: Settings, avoidTitles: List<String> = emptyList()): Pair<String, String>? {
+        val model = settings.getOllamaVisionModel() ?: return null
+        val ollamaUrl = settings.getOllamaUrl()?.trimEnd('/') ?: return null
+
+        val images = sampleIds.mapNotNull { id ->
+            val metadata = metadataRepository.findById(id).orElse(null) ?: return@mapNotNull null
+            val imagePath = ImageProcessing.Companion.argusImagePath(metadata) ?: return@mapNotNull null
+            val imageFile = File(imagePath)
+            if (!imageFile.exists()) return@mapNotNull null
+            try { encodeForOllama(imageFile) } catch (e: Exception) { null }
+        }
+        if (images.isEmpty()) return null
+
+        val messages = listOf(
+            mapOf("role" to "system", "content" to
+                "You are labeling a personal photo memory. Write a short, direct title (2-5 words) and one plain sentence as a caption. " +
+                "Use the date, place, or person name in the title when it fits. " +
+                "Be honest and specific — do not use flowery, poetic, or metaphorical language. " +
+                "Bad titles: \"Tiny Explorer's Day\", \"Sunlit Beach Adventure\", \"Whispers of the Deep\". " +
+                "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Michael at the Park\", \"Heartfelt Hugs\", \"At the Show\". " +
+                "The caption should describe what is actually happening in the photos, plainly. " +
+                "Respond ONLY with JSON: {\"title\": \"...\", \"caption\": \"...\"}"),
+            mapOf("role" to "user", "content" to buildString {
+                append("/no_think Context: $hint.")
+                if (avoidTitles.isNotEmpty()) append(" Avoid titles similar to: ${avoidTitles.joinToString(", ")}.")
+                append(" Write a direct, honest title and caption.")
+            }, "images" to images)
+        )
+        val payload = mapper.writeValueAsString(mapOf(
+            "model" to model,
+            "messages" to messages,
+            "stream" to false,
+            "format" to "json",
+            "keep_alive" to -1,
+            "options" to mapOf("num_predict" to 120, "temperature" to 0.7, "num_ctx" to 8192)
+        ))
+
+        return try {
+            val client = WebClient.builder()
+                .baseUrl(ollamaUrl)
+                .codecs { it.defaultCodecs().maxInMemorySize(20 * 1024 * 1024) }
+                .build()
+            val response = client.post()
+                .uri("/api/chat")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block(Duration.ofSeconds(120)) ?: return null
+            var content = mapper.readTree(response)["message"]?.get("content")?.asText() ?: return null
+            content = content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
+            val node = mapper.readTree(content)
+            val title = node["title"]?.asText()?.trim()?.takeIf { it.isNotBlank() } ?: return null
+            val caption = node["caption"]?.asText()?.trim() ?: ""
+            Pair(title, caption)
+        } catch (e: org.springframework.web.reactive.function.client.WebClientResponseException) {
+            logger.log(Level.WARNING, "Ollama describeCluster error for \"$hint\": ${e.localizedMessage} — body: ${e.responseBodyAsString}")
+            null
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Ollama describeCluster error for \"$hint\": ${e.localizedMessage}")
+            null
+        }
+    }
+
     fun chatText(systemPrompt: String, userPrompt: String, settings: Settings): String? {
         val ollamaUrl = settings.getOllamaUrl()?.trimEnd('/') ?: return null
         val model = settings.getOllamaVisionModel() ?: return null

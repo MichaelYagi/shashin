@@ -165,7 +165,6 @@
         activePageLower == 'accessed' or
         activePageLower == 'duplicates' or
         activePageLower == 'folder' or
-        activePageLower == 'memories' or
         activePageLower == 'training'}">
             <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
@@ -206,6 +205,47 @@
 <!--                <script src="/js/justifiedGallery.explore.min.js" th:nonce="${cspNonce}"></script>-->
 <!--                <link rel="stylesheet" href="/css/justifiedGallery.explore.min.css">-->
 <!--            </th:block>-->
+        </th:block>
+        <th:block th:if="${activePageLower == 'memories'}">
+            <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/lg-fullscreen.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/lg-autoplay.js" th:nonce="${cspNonce}"></script>
+            <link rel="stylesheet" href="/css/lightgallery.min.css">
+            <link rel="stylesheet" href="/css/lg-zoom.min.css">
+            <link rel="stylesheet" href="/css/lg-fullscreen.min.css">
+            <style th:nonce="${cspNonce}">
+                .lg-autoplay-button::after {
+                    font-family: "bootstrap-icons";
+                    content: "\f4f4";
+                    font-size: 1.1em;
+                }
+                .lg-show-autoplay .lg-autoplay-button::after {
+                    content: "\f4c3";
+                }
+                .lg-progress-bar {
+                    background-color: rgba(255,255,255,0.15);
+                    height: 2px;
+                    left: 0;
+                    position: absolute;
+                    top: 0;
+                    width: 100%;
+                    z-index: 1083;
+                    opacity: 0;
+                    transition: opacity 0.1s ease;
+                }
+                .lg-show-autoplay .lg-progress-bar {
+                    opacity: 1;
+                }
+                .lg-progress {
+                    background-color: rgba(255,255,255,0.65);
+                    height: 2px;
+                    width: 0;
+                }
+                .lg-progress-bar.lg-start .lg-progress {
+                    width: 100%;
+                }
+            </style>
         </th:block>
         <th:block th:if="${activePageLower == 'timeline'}">
             <style>

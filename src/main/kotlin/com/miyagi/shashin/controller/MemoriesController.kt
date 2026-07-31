@@ -49,7 +49,10 @@ class MemoriesController(
         }
 
         model["memoriesDisabled"] = false
-        val views = memoriesService.getMemoryViews()
+        val views = memoriesService.getMemoryViews().map { view ->
+            val album = albumRepository.findAlbumByNameIgnoreCase(view.title)
+            if (album != null) view.copy(savedAlbumId = album.getId()) else view
+        }
         model["memoriesList"] = views
         model["memoriesJson"] = mapper.writeValueAsString(
             views.map { mapOf("id" to it.id, "photoIds" to it.photoIds) }
@@ -73,6 +76,10 @@ class MemoriesController(
         if (photoIds.isEmpty()) return mapOf("status" to "error", "msg" to "Memory has no photos")
 
         val title = memory.getTitle() ?: "Memory"
+        val existingAlbum = albumRepository.findAlbumByNameIgnoreCase(title)
+        if (existingAlbum != null) {
+            return mapOf("status" to "success", "msg" to "", "albumId" to (existingAlbum.getId() ?: 0), "albumName" to (existingAlbum.getName() ?: title))
+        }
         val existingName = findUniqueName(title)
 
         val album = Album()
@@ -105,7 +112,7 @@ class MemoriesController(
         }
 
         logger.log(Level.INFO, "Memory \"$title\" saved as album #$albumId with ${photoIds.size} photos")
-        return mapOf("status" to "success", "albumId" to albumId, "albumName" to existingName)
+        return mapOf("status" to "success", "msg" to "", "albumId" to albumId, "albumName" to existingName)
     }
 
     @Secured("ROLE_ADMIN", "ROLE_SUPER")
@@ -113,7 +120,7 @@ class MemoriesController(
     @ResponseBody
     fun triggerGenerate(): Map<String, Any> {
         if (memoriesService.generationRunning.get()) {
-            return mapOf("status" to "already_running")
+            return mapOf("status" to "already_running", "msg" to "")
         }
         val settings = settingsRepository.findFirstByOrderByIdAsc()
             ?: return mapOf("status" to "error", "msg" to "Settings not found")
@@ -121,7 +128,7 @@ class MemoriesController(
             return mapOf("status" to "error", "msg" to "Memories is disabled")
         }
         Thread { memoriesService.generateMemories(settings) }.start()
-        return mapOf("status" to "started")
+        return mapOf("status" to "started", "msg" to "")
     }
 
     @Secured("ROLE_ADMIN", "ROLE_SUPER")
