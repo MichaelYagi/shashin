@@ -46,6 +46,7 @@ class DataLoader(
             settingsObj.setSidecarSizeK(0)
             settingsObj.setScheduledMatching(false)
             settingsObj.setScheduledTime(scheduledTime)
+            settingsObj.setShowMemories(false)
             settingsObj.setCreatedAt(TextUtils.getCurrentTimestamp())
             settingsObj.setModifiedAt(TextUtils.getCurrentTimestamp())
             settingsRepository.save(settingsObj)

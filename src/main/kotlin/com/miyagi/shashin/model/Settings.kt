@@ -45,6 +45,7 @@ class Settings {
     private var ollamaUrl: String? = null
     private var ollamaVisionModel: String? = null
     private var ollamaEmbedModel: String? = null
+    private var showMemories: Boolean? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -183,6 +184,9 @@ class Settings {
     fun getOllamaEmbedModel(): String? = this.ollamaEmbedModel
     fun setOllamaEmbedModel(v: String?) { this.ollamaEmbedModel = v }
 
+    fun getShowMemories(): Boolean? = this.showMemories
+    fun setShowMemories(showMemories: Boolean?) { this.showMemories = showMemories }
+
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -229,6 +233,7 @@ class Settings {
         map["ollamaUrl"] = this.ollamaUrl
         map["ollamaVisionModel"] = this.ollamaVisionModel
         map["ollamaEmbedModel"] = this.ollamaEmbedModel
+        map["showMemories"] = this.showMemories
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

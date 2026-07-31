@@ -6,6 +6,7 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.ImageProcessing
+import com.miyagi.shashin.service.MemoriesService
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Value
@@ -90,7 +91,8 @@ class ScheduledTasks(
     private val relativeSidecarDir: String? = null,
     var messageSource: MessageSource? = null,
     private var argusReconcile: ArgusReconcile? = null,
-    private var ollamaVisionService: OllamaVisionService? = null
+    private var ollamaVisionService: OllamaVisionService? = null,
+    private var memoriesService: MemoriesService? = null
 ) {
 
     private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
@@ -144,10 +146,14 @@ class ScheduledTasks(
     // Configured hour to scan faces
     @Scheduled(cron = "#{cronProperties.expression()}", zone="GMT")
     fun scanSubjectsAndObjectsJob() {
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val settings = settingsRepository?.findFirstByOrderByIdAsc() ?: return
 
-        if (settings != null && settings.getScheduledMatching()!!) {
+        if (settings.getScheduledMatching() == true) {
             scheduledScan(settings)
+        }
+
+        if (settings.getShowMemories() == true) {
+            Thread { memoriesService?.generateMemories(settings) }.start()
         }
     }
 

@@ -361,6 +361,28 @@ CREATE TABLE IF NOT EXISTS `ollama_context` (
                                 `updated_at` VARCHAR(32)
 );
 
+DROP TABLE IF EXISTS `memory`;
+CREATE TABLE `memory` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                                `title` VARCHAR(255),
+                                `caption` TEXT,
+                                `generated_date` DATETIME DEFAULT NULL,
+                                `strategy_type` VARCHAR(64),
+                                `createdAt` DATETIME DEFAULT NULL,
+                                `modifiedAt` DATETIME DEFAULT NULL
+);
+
+DROP TABLE IF EXISTS `memoryphoto`;
+CREATE TABLE `memoryphoto` (
+                                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                                `memory_id` INTEGER NOT NULL,
+                                `metadata_id` VARCHAR(36) NOT NULL,
+                                `display_order` INTEGER DEFAULT 0,
+                                `createdAt` DATETIME DEFAULT NULL,
+                                `modifiedAt` DATETIME DEFAULT NULL,
+                                UNIQUE(`memory_id`, `metadata_id`)
+);
+
 INSERT INTO `hibernate_sequence` VALUES (362);
 
 CREATE INDEX `idx_rlp_metadata_id` ON recognitionlabelphoto (`metadata_id`);

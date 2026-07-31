@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
+<html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
+
+<div id="memories-gallery" style="display:none;"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
+
+            <div class="p-3">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <h4 class="mb-0">Memories</h4>
+                    <th:block th:if="${not memoriesDisabled}">
+                        <button id="memories-regenerate-btn" type="button" class="btn btn-sm btn-outline-secondary">
+                            <span class="bi-arrow-counterclockwise"></span> Regenerate
+                        </button>
+                        <span id="memories-regenerate-status" class="small text-muted" style="display:none;"></span>
+                    </th:block>
+                </div>
+
+                <th:block th:if="${memoriesDisabled}">
+                    <p class="text-muted">Memories is disabled. Enable it in <a href="/settings">Settings</a>.</p>
+                </th:block>
+
+                <th:block th:if="${not memoriesDisabled and #lists.isEmpty(memoriesList)}">
+                    <p class="text-muted">No memories yet. Click Regenerate to generate them now, or they will be generated overnight during the scheduled scan when Ollama is configured.</p>
+                </th:block>
+
+                <th:block th:if="${not memoriesDisabled and not #lists.isEmpty(memoriesList)}">
+                    <div class="row g-3">
+                        <th:block th:each="memory, iterStat: ${memoriesList}">
+                            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                                <div class="card h-100 shadow-sm">
+                                    <div style="position:relative;overflow:hidden;height:200px;background:#222;">
+                                        <img loading="lazy" draggable="false"
+                                             th:src="'/api/v1/thumbnails/centered/' + ${memory.photoIds[0]}"
+                                             style="width:100%;height:200px;object-fit:cover;opacity:0.85;">
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="card-title mb-1" th:text="${memory.title}"></h6>
+                                        <p class="card-text text-muted small flex-grow-1" th:text="${memory.caption}"></p>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <button type="button" class="btn btn-sm btn-primary memories-view-btn"
+                                                    th:data-memory-index="${iterStat.index}"
+                                                    title="View slideshow">
+                                                <span class="bi-play-circle"></span> View
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary memories-save-btn"
+                                                    th:data-memory-id="${memory.id}"
+                                                    th:data-memory-title="${memory.title}"
+                                                    title="Save as album">
+                                                <span class="bi-bookmark-plus"></span> Save
+                                            </button>
+                                        </div>
+                                        <div class="memories-save-status small text-muted mt-1" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </th:block>
+            </div>
+
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
+        </main>
+    </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+    $(document).ready(function() {
+        /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const memoriesJsonStr = /*[[${memoriesJson}]]*/ '[]';
+        /*]]>*/
+
+        const memoryPhotoIds = JSON.parse(memoriesJsonStr).map(function(m) { return m.photoIds || []; });
+
+        var lgInitialised = false;
+
+        // View slideshow
+        $(document).on('click', '.memories-view-btn', function() {
+            const idx = parseInt($(this).data('memory-index'), 10);
+            const photoIds = memoryPhotoIds[idx] || [];
+            if (photoIds.length === 0) return;
+
+            const mediaContentList = photoIds.map(function(id) {
+                return {
+                    src: '/api/v1/thumbnails/original/' + id,
+                    downloadUrl: '/api/v1/thumbnails/original/' + id,
+                    metadataId: id
+                };
+            });
+
+            if (!lgInitialised) {
+                shashin.setLightGalleryElement('memories-gallery');
+                shashin.setLightGallery({});
+                lgInitialised = true;
+            }
+
+            shashin.refreshAndActivateLgListener(mediaContentList);
+            shashin.getLightGallery().openGallery(0);
+        });
+
+        // Regenerate button + polling
+        var regeneratePollInterval = null;
+        var regeneratePreviousCount = null;
+
+        function startRegeneratePoll() {
+            if (regeneratePollInterval) return;
+            regeneratePollInterval = setInterval(function() {
+                $.getJSON('/memories/status', function(data) {
+                    if (!data.running) {
+                        clearInterval(regeneratePollInterval);
+                        regeneratePollInterval = null;
+                        if (regeneratePreviousCount !== null && data.count !== regeneratePreviousCount) {
+                            window.location.reload();
+                        } else {
+                            $('#memories-regenerate-btn').prop('disabled', false);
+                            $('#memories-regenerate-status').text('Done.').show();
+                        }
+                    }
+                });
+            }, 4000);
+        }
+
+        $('#memories-regenerate-btn').on('click', function() {
+            const btn = $(this);
+            const statusEl = $('#memories-regenerate-status');
+            btn.prop('disabled', true);
+            statusEl.text('Starting…').show();
+
+            $.getJSON('/memories/status', function(data) {
+                regeneratePreviousCount = data.count;
+                const http = new Http('regenerate memories');
+                http.ajax('post', '/memories/generate', '{}').then(function(resp) {
+                    if (resp.status === 'started' || resp.status === 'already_running') {
+                        statusEl.text('Generating… this may take a few minutes.');
+                        startRegeneratePoll();
+                    } else {
+                        statusEl.text('Error: ' + (resp.msg || resp.status));
+                        btn.prop('disabled', false);
+                    }
+                }).catch(function() {
+                    statusEl.text('Request failed');
+                    btn.prop('disabled', false);
+                });
+            });
+        });
+
+        // Check on load if generation is already running
+        $.getJSON('/memories/status', function(data) {
+            if (data.running) {
+                regeneratePreviousCount = data.count;
+                $('#memories-regenerate-btn').prop('disabled', true);
+                $('#memories-regenerate-status').text('Generating… this may take a few minutes.').show();
+                startRegeneratePoll();
+            }
+        });
+
+        // Save as album
+        $(document).on('click', '.memories-save-btn', function() {
+            const btn = $(this);
+            const memoryId = btn.data('memory-id');
+            const statusEl = btn.closest('.card-body').find('.memories-save-status');
+            btn.prop('disabled', true);
+            statusEl.text('Saving…').show();
+
+            const http = new Http('save memory');
+            http.ajax('post', '/memories/' + memoryId + '/save', '{}').then(function(data) {
+                if (data.status === 'success') {
+                    statusEl.html('Saved as <a href="/album/' + data.albumId + '">' + data.albumName + '</a>');
+                } else {
+                    statusEl.text('Error: ' + (data.msg || 'unknown error'));
+                    btn.prop('disabled', false);
+                }
+            }).catch(function() {
+                statusEl.text('Request failed');
+                btn.prop('disabled', false);
+            });
+        });
+    });
+</script>
+
+
+</body>
+</html>

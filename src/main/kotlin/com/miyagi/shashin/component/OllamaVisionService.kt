@@ -529,6 +529,45 @@ class OllamaVisionService(
         }
     }
 
+    fun chatText(systemPrompt: String, userPrompt: String, settings: Settings): String? {
+        val ollamaUrl = settings.getOllamaUrl()?.trimEnd('/') ?: return null
+        val model = settings.getOllamaVisionModel() ?: return null
+        if (ollamaUrl.isBlank() || model.isBlank()) return null
+
+        val messages = listOf(
+            mapOf("role" to "system", "content" to systemPrompt),
+            mapOf("role" to "user", "content" to "/no_think $userPrompt")
+        )
+        val payload = mapper.writeValueAsString(mapOf(
+            "model" to model,
+            "messages" to messages,
+            "stream" to false,
+            "format" to "json",
+            "keep_alive" to -1,
+            "options" to mapOf("num_predict" to 2048, "temperature" to 0.8)
+        ))
+
+        return try {
+            val client = WebClient.builder()
+                .baseUrl(ollamaUrl)
+                .codecs { it.defaultCodecs().maxInMemorySize(5 * 1024 * 1024) }
+                .build()
+            val response = client.post()
+                .uri("/api/chat")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block(Duration.ofSeconds(120)) ?: return null
+            var content = mapper.readTree(response)["message"]?.get("content")?.asText() ?: return null
+            content = content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
+            content
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Ollama chatText error: ${e.localizedMessage}")
+            null
+        }
+    }
+
     fun processItems(metadataIds: List<String>, settings: Settings) {
         val ollamaReady = isOllamaAvailable(settings)
         val argusReady = settings.getObjectDetection() == true &&

@@ -112,7 +112,8 @@ class SettingsController(
     private val appName: String? = null,
     var messageSource: MessageSource? = null,
     private var argusReconcile: com.miyagi.shashin.component.ArgusReconcile? = null,
-    private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null
+    private var ollamaVisionService: com.miyagi.shashin.component.OllamaVisionService? = null,
+    private var memoriesService: com.miyagi.shashin.service.MemoriesService? = null
 ) {
     private var shouldStop = AtomicBoolean(false)
 
@@ -354,7 +355,8 @@ class SettingsController(
         @RequestParam("uploadMediaDirectory") uploadMediaDirectory: String?,
         @RequestParam("ollamaUrl") ollamaUrl: String?,
         @RequestParam("ollamaVisionModel") ollamaVisionModel: String?,
-        @RequestParam("ollamaEmbedModel") ollamaEmbedModel: String?
+        @RequestParam("ollamaEmbedModel") ollamaEmbedModel: String?,
+        @RequestParam("showMemories") showMemories: String?
     ): String {
         var resetServer = false
         var mediaDirs: List<String>? = null
@@ -545,6 +547,15 @@ class SettingsController(
             settings?.setScheduledMatching(true)
         } else {
             settings?.setScheduledMatching(false)
+        }
+        val previousShowMemories = settings?.getShowMemories()
+        if (showMemories == "on") {
+            settings?.setShowMemories(true)
+        } else {
+            settings?.setShowMemories(false)
+            if (previousShowMemories == true) {
+                memoriesService?.deleteAllMemories()
+            }
         }
 
         if (settings != null) {

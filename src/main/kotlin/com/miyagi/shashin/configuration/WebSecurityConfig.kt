@@ -132,6 +132,7 @@ class MultiSecurityConfig {
         )
 
         private val adminApiList = arrayOf(
+            "/api/v1/memories/**",
             "/api/v1/timeline",
             "/api/v1/timeline/**",
             "/api/v1/update/**",
@@ -159,6 +160,8 @@ class MultiSecurityConfig {
         )
 
         var adminList = adminApiList + arrayOf(
+            "/memories",
+            "/memories/**",
             "/timeline",
             "/timeline/**",
             "/actuator/**",
