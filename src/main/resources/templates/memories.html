@@ -150,6 +150,11 @@
                 });
             }
 
+            // Kick off all image downloads now so browser cache has them before autoplay reaches each slide
+            photoIds.forEach(function(id) {
+                new Image().src = '/api/v1/thumbnails/original/' + id;
+            });
+
             shashin.refreshAndActivateLgListener(mediaContentList);
             shashin.getLightGallery().openGallery(0);
             lgOpen = true;
