@@ -195,7 +195,7 @@ class MemoriesService(
             for (cluster in clusters) {
                 if (cluster.size < 5) continue
                 val kws = topKeywords(cluster)
-                val hint = "Photos from ${monthName(month)} $day, $year" +
+                val hint = "Photos from ${monthName(month)} $year" +
                     if (kws.isNotBlank()) " ($kws)" else ""
                 result.add(PhotoCluster("occasion", hint, cluster))
             }

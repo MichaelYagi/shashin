@@ -576,15 +576,17 @@ class OllamaVisionService(
             "Write a short, direct title (2-5 words) that describes what ALL the photos share in common — the overall occasion, setting, or people. " +
             "Do NOT base the title on a single distinctive element from one photo (a rainbow, a sunset, one landmark). " +
             "If a rainbow appears in only some photos, the memory is not about a rainbow — find what connects all of them. " +
-            "Use the date, place, or person name in the title when it fits. " +
+            "Prefer a descriptive title based on place, activity, or occasion. " +
+            "Only include the date (month and year only, never the day) when there is no better way to title the memory. Most titles should NOT include a date. " +
+            "Good uses of a date: 'Christmas 2019', 'Halloween 2022'. Bad uses: 'July 2016 Outings', 'February 2022 Playtime'. " +
             "Do NOT assume the photographer's point of view or activity. Only describe what is visible in the photos. " +
             "If photos show ferries from shore, do not say 'Ferry Ride' — say something like 'Ferries at the Harbour'. " +
             "IMPORTANT: Never use generic labels for people. Forbidden words: boy, girl, man, woman, child, children, kid, kids, baby, babies, person, people, toddler, teen, teenager, infant. " +
             "Only refer to people by their actual name if a name is provided in the context. " +
             "If no name is given, describe the place, occasion, or activity instead. " +
             "Do not use flowery, poetic, or metaphorical language. " +
-            "Bad titles: \"Tiny Explorer's Day\", \"Boy Playing Outside\", \"Baby's First Christmas\", \"Rainbow Viewing Day\", \"Ferry Ride\". " +
-            "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Noah at the Park\", \"Wedding Day\", \"March 2016 Afternoon\". " +
+            "Bad titles: \"Tiny Explorer's Day\", \"Boy Playing Outside\", \"Baby's First Christmas\", \"Rainbow Viewing Day\", \"July 2016 Outings\". " +
+            "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Noah at the Park\", \"Wedding Day\", \"Water Park Visit\", \"Science Centre\". " +
             "Respond ONLY with JSON: {\"title\": \"...\"}"
 
         val userContent = buildString {
