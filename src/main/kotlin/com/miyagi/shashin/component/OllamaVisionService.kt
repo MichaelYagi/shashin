@@ -544,17 +544,20 @@ class OllamaVisionService(
 
         val messages = listOf(
             mapOf("role" to "system", "content" to
-                "You are labeling a personal photo memory. Write a short, direct title (2-5 words) and one plain sentence as a caption. " +
+                "You are labeling a personal photo memory made up of multiple photos. " +
+                "Write a short, direct title (2-5 words) and one plain sentence as a caption. " +
+                "The title and caption must describe what the photos share in common — the overall occasion, setting, or people — not any single photo. " +
                 "Use the date, place, or person name in the title when it fits. " +
-                "Be honest and specific — do not use flowery, poetic, or metaphorical language. " +
-                "Bad titles: \"Tiny Explorer's Day\", \"Sunlit Beach Adventure\", \"Whispers of the Deep\". " +
-                "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Michael at the Park\", \"Heartfelt Hugs\", \"At the Show\". " +
-                "The caption should describe what is actually happening in the photos, plainly. " +
+                "Do not use flowery, poetic, or metaphorical language. " +
+                "Bad titles: \"Tiny Explorer's Day\", \"Sunlit Beach Adventure\", \"Boy Playing Outside\". " +
+                "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Michael at the Park\", \"Wedding Day\". " +
+                "Bad captions: \"A young boy in pajamas plays on the deck.\" (describes one photo). " +
+                "Good captions: \"Photos of the kids playing outside over the summer.\" (describes the whole set). " +
                 "Respond ONLY with JSON: {\"title\": \"...\", \"caption\": \"...\"}"),
             mapOf("role" to "user", "content" to buildString {
                 append("/no_think Context: $hint.")
                 if (avoidTitles.isNotEmpty()) append(" Avoid titles similar to: ${avoidTitles.joinToString(", ")}.")
-                append(" Write a direct, honest title and caption.")
+                append(" Describe what all these photos have in common, not any single one.")
             }, "images" to images)
         )
         val payload = mapper.writeValueAsString(mapOf(
