@@ -251,6 +251,10 @@
                 .lg-progress-bar.lg-start .lg-progress {
                     width: 100%;
                 }
+                /* Show images immediately during fade — avoids fading into a spinner */
+                .lg-show-after-load .lg-item .lg-object {
+                    opacity: 1 !important;
+                }
             </style>
         </th:block>
         <th:block th:if="${activePageLower == 'timeline'}">
