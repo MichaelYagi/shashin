@@ -194,10 +194,12 @@ class MemoriesService(
 
             for (cluster in clusters) {
                 if (cluster.size < 5) continue
-                val kws = topKeywords(cluster)
+                val coherent = filterByCoherence(cluster, vecs)
+                if (coherent.size < 5) continue
+                val kws = topKeywords(coherent)
                 val hint = "Photos from ${monthName(month)} $year" +
                     if (kws.isNotBlank()) " ($kws)" else ""
-                result.add(PhotoCluster("occasion", hint, cluster))
+                result.add(PhotoCluster("occasion", hint, coherent))
             }
         }
         return result
@@ -315,6 +317,32 @@ class MemoriesService(
         val len = minOf(a.size, b.size)
         for (i in 0 until len) dot += a[i] * b[i]
         return 1f - dot  // vectors are pre-normalized in EmbeddingStore
+    }
+
+    // Remove photos that are outliers relative to the cluster centroid.
+    // DBSCAN chaining can pull in bridging photos that connect two unrelated groups;
+    // filtering by centroid distance catches those after the fact.
+    private fun filterByCoherence(ids: List<String>, vecs: Map<String, FloatArray>, threshold: Float = 0.35f): List<String> {
+        if (ids.size < 2) return ids
+        val dim = vecs.values.first().size
+        val centroid = FloatArray(dim)
+        var count = 0
+        for (id in ids) {
+            val v = vecs[id] ?: continue
+            for (i in 0 until minOf(dim, v.size)) centroid[i] += v[i]
+            count++
+        }
+        if (count == 0) return ids
+        for (i in 0 until dim) centroid[i] /= count
+        var norm = 0f
+        for (x in centroid) norm += x * x
+        norm = kotlin.math.sqrt(norm)
+        if (norm == 0f) return ids
+        val normCentroid = FloatArray(dim) { centroid[it] / norm }
+        return ids.filter { id ->
+            val v = vecs[id] ?: return@filter false
+            cosineDist(normCentroid, v) <= threshold
+        }
     }
 
     private fun topKeywords(ids: List<String>, limit: Int = 3): String {
