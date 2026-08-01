@@ -197,8 +197,12 @@ class MemoriesService(
                 val coherent = filterByCoherence(cluster, vecs)
                 if (coherent.size < 5) continue
                 val kws = topKeywords(coherent)
-                val hint = "Photos from ${monthName(month)} $year" +
-                    if (kws.isNotBlank()) " ($kws)" else ""
+                val place = topPlaceName(coherent)
+                val hint = buildString {
+                    append("Photos from ${monthName(month)} $year")
+                    if (place != null) append(" at $place")
+                    if (kws.isNotBlank()) append(" ($kws)")
+                }
                 result.add(PhotoCluster("occasion", hint, coherent))
             }
         }
@@ -343,6 +347,18 @@ class MemoriesService(
             val v = vecs[id] ?: return@filter false
             cosineDist(normCentroid, v) <= threshold
         }
+    }
+
+    private fun topPlaceName(ids: List<String>): String? {
+        if (ids.isEmpty()) return null
+        val sample = ids.take(50)
+        val placeholders = sample.joinToString(",") { "?" }
+        return try {
+            jdbcTemplate.queryForList(
+                "SELECT place_name FROM metadata WHERE id IN ($placeholders) AND place_name IS NOT NULL AND place_name != '' GROUP BY place_name ORDER BY COUNT(*) DESC LIMIT 1",
+                String::class.java, *sample.toTypedArray()
+            ).firstOrNull()
+        } catch (_: Exception) { null }
     }
 
     private fun topKeywords(ids: List<String>, limit: Int = 3): String {
