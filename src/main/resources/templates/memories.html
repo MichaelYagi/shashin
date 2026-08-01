@@ -119,13 +119,14 @@
             });
 
             if (!lgInitialised) {
-                var lgPlugins = [lgZoom, lgFullscreen, lgAutoplay];
+                var lgPlugins = [lgZoom, lgFullscreen];
                 var lgExtraConfig = {};
                 if (typeof lgMetadataDetail !== 'undefined') {
                     lgPlugins.push(lgMetadataDetail);
                     lgExtraConfig.metadataDetail = true;
                     lgExtraConfig.metadataDetailFun = shashin.openEditMetadataModal;
                 }
+                lgPlugins.push(lgAutoplay);
                 shashin.setLightGalleryElement('memories-gallery');
                 shashin.setLightGallery(Object.assign({
                     overrideBaseConfigs: true,
