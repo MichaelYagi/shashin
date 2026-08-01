@@ -548,11 +548,14 @@ class OllamaVisionService(
                 "Write a short, direct title (2-5 words) and one plain sentence as a caption. " +
                 "The title and caption must describe what the photos share in common — the overall occasion, setting, or people — not any single photo. " +
                 "Use the date, place, or person name in the title when it fits. " +
+                "IMPORTANT: Never use generic person labels such as boy, girl, man, woman, child, kid, baby, person, toddler, teen, or similar. " +
+                "Only refer to people by their actual name if a name is provided in the context. " +
+                "If no name is given, describe what is happening or where it is, not who the people are. " +
                 "Do not use flowery, poetic, or metaphorical language. " +
-                "Bad titles: \"Tiny Explorer's Day\", \"Sunlit Beach Adventure\", \"Boy Playing Outside\". " +
-                "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Michael at the Park\", \"Wedding Day\". " +
-                "Bad captions: \"A young boy in pajamas plays on the deck.\" (describes one photo). " +
-                "Good captions: \"Photos of the kids playing outside over the summer.\" (describes the whole set). " +
+                "Bad titles: \"Tiny Explorer's Day\", \"Sunlit Beach Adventure\", \"Boy Playing Outside\", \"Baby's First Christmas\". " +
+                "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Noah at the Park\", \"Wedding Day\". " +
+                "Bad captions: \"A young boy in pajamas plays on the deck.\" (generic label, describes one photo). " +
+                "Good captions: \"Photos from Christmas morning at home.\" (no generic labels, describes the whole set). " +
                 "Respond ONLY with JSON: {\"title\": \"...\", \"caption\": \"...\"}"),
             mapOf("role" to "user", "content" to buildString {
                 append("/no_think Context: $hint.")
