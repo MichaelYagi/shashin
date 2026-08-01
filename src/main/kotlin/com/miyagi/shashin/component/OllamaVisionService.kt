@@ -529,6 +529,36 @@ class OllamaVisionService(
         }
     }
 
+    private val genericPersonLabels = setOf(
+        "boy", "girl", "man", "woman", "child", "children", "kid", "kids",
+        "baby", "babies", "person", "people", "toddler", "teen", "teenager", "infant"
+    )
+
+    private fun containsGenericLabel(text: String): Boolean {
+        val lower = text.lowercase()
+        return genericPersonLabels.any { label -> Regex("\\b${Regex.escape(label)}('s)?\\b").containsMatchIn(lower) }
+    }
+
+    private fun chatForCluster(client: WebClient, model: String, messages: List<Map<String, Any>>): String? {
+        val payload = mapper.writeValueAsString(mapOf(
+            "model" to model,
+            "messages" to messages,
+            "stream" to false,
+            "format" to "json",
+            "keep_alive" to -1,
+            "options" to mapOf("num_predict" to 120, "temperature" to 0.7, "num_ctx" to 8192)
+        ))
+        val response = client.post()
+            .uri("/api/chat")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .bodyValue(payload)
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block(Duration.ofSeconds(120)) ?: return null
+        var content = mapper.readTree(response)["message"]?.get("content")?.asText() ?: return null
+        return content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
+    }
+
     fun describeCluster(sampleIds: List<String>, hint: String, settings: Settings, avoidTitles: List<String> = emptyList()): Pair<String, String>? {
         val model = settings.getOllamaVisionModel() ?: return null
         val ollamaUrl = settings.getOllamaUrl()?.trimEnd('/') ?: return null
@@ -542,53 +572,63 @@ class OllamaVisionService(
         }
         if (images.isEmpty()) return null
 
-        val messages = listOf(
-            mapOf("role" to "system", "content" to
-                "You are labeling a personal photo memory made up of multiple photos. " +
-                "Write a short, direct title (2-5 words) and one plain sentence as a caption. " +
-                "The title and caption must describe what the photos share in common — the overall occasion, setting, or people — not any single photo. " +
-                "Use the date, place, or person name in the title when it fits. " +
-                "IMPORTANT: Never use generic person labels such as boy, girl, man, woman, child, kid, baby, person, toddler, teen, or similar. " +
-                "Only refer to people by their actual name if a name is provided in the context. " +
-                "If no name is given, describe what is happening or where it is, not who the people are. " +
-                "Do not use flowery, poetic, or metaphorical language. " +
-                "Bad titles: \"Tiny Explorer's Day\", \"Sunlit Beach Adventure\", \"Boy Playing Outside\", \"Baby's First Christmas\". " +
-                "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Noah at the Park\", \"Wedding Day\". " +
-                "Bad captions: \"A young boy in pajamas plays on the deck.\" (generic label, describes one photo). " +
-                "Good captions: \"Photos from Christmas morning at home.\" (no generic labels, describes the whole set). " +
-                "Respond ONLY with JSON: {\"title\": \"...\", \"caption\": \"...\"}"),
-            mapOf("role" to "user", "content" to buildString {
-                append("/no_think Context: $hint.")
-                if (avoidTitles.isNotEmpty()) append(" Avoid titles similar to: ${avoidTitles.joinToString(", ")}.")
-                append(" Describe what all these photos have in common, not any single one.")
-            }, "images" to images)
+        val systemPrompt = "You are labeling a personal photo memory made up of multiple photos. " +
+            "Write a short, direct title (2-5 words) and one plain sentence as a caption. " +
+            "The title and caption must describe what the photos share in common — the overall occasion, setting, or people — not any single photo. " +
+            "Use the date, place, or person name in the title when it fits. " +
+            "IMPORTANT: Never use generic labels for people. Forbidden words: boy, girl, man, woman, child, children, kid, kids, baby, babies, person, people, toddler, teen, teenager, infant. " +
+            "Only refer to people by their actual name if a name is provided in the context. " +
+            "If no name is given, describe the place, occasion, or activity instead. " +
+            "Do not use flowery, poetic, or metaphorical language. " +
+            "Bad titles: \"Tiny Explorer's Day\", \"Boy Playing Outside\", \"Baby's First Christmas\", \"Baby at Home\". " +
+            "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Noah at the Park\", \"Wedding Day\". " +
+            "Bad captions: \"A young boy in pajamas plays on the deck.\" (uses a generic label). " +
+            "Good captions: \"Photos from Christmas morning at home.\" (no generic labels, describes the whole set). " +
+            "Respond ONLY with JSON: {\"title\": \"...\", \"caption\": \"...\"}"
+
+        val userContent = buildString {
+            append("/no_think Context: $hint.")
+            if (avoidTitles.isNotEmpty()) append(" Avoid titles similar to: ${avoidTitles.joinToString(", ")}.")
+            append(" Describe what all these photos have in common, not any single one.")
+        }
+
+        val messages = mutableListOf<Map<String, Any>>(
+            mapOf("role" to "system", "content" to systemPrompt),
+            mapOf("role" to "user", "content" to userContent, "images" to images)
         )
-        val payload = mapper.writeValueAsString(mapOf(
-            "model" to model,
-            "messages" to messages,
-            "stream" to false,
-            "format" to "json",
-            "keep_alive" to -1,
-            "options" to mapOf("num_predict" to 120, "temperature" to 0.7, "num_ctx" to 8192)
-        ))
 
         return try {
             val client = WebClient.builder()
                 .baseUrl(ollamaUrl)
                 .codecs { it.defaultCodecs().maxInMemorySize(20 * 1024 * 1024) }
                 .build()
-            val response = client.post()
-                .uri("/api/chat")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .bodyValue(payload)
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block(Duration.ofSeconds(120)) ?: return null
-            var content = mapper.readTree(response)["message"]?.get("content")?.asText() ?: return null
-            content = content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
-            val node = mapper.readTree(content)
-            val title = node["title"]?.asText()?.trim()?.takeIf { it.isNotBlank() } ?: return null
-            val caption = node["caption"]?.asText()?.trim() ?: ""
+
+            var content = chatForCluster(client, model, messages) ?: return null
+            var node = mapper.readTree(content)
+            var title = node["title"]?.asText()?.trim()?.takeIf { it.isNotBlank() } ?: return null
+            var caption = node["caption"]?.asText()?.trim() ?: ""
+
+            if (containsGenericLabel(title) || containsGenericLabel(caption)) {
+                logger.log(Level.INFO, "Retrying cluster description — generic label detected in \"$title\"")
+                val retryMessages = messages + listOf(
+                    mapOf("role" to "assistant", "content" to content),
+                    mapOf("role" to "user", "content" to
+                        "Your title \"$title\" uses a forbidden generic person label (boy, girl, baby, child, kid, man, woman, etc.). " +
+                        "Rewrite the title and caption. Do NOT use any of these words. " +
+                        "Focus on the place, date, or activity instead of who the people are. " +
+                        "Respond ONLY with JSON: {\"title\": \"...\", \"caption\": \"...\"}")
+                )
+                val retryContent = chatForCluster(client, model, retryMessages)
+                if (retryContent != null) {
+                    try {
+                        val retryNode = mapper.readTree(retryContent)
+                        val retryTitle = retryNode["title"]?.asText()?.trim()?.takeIf { it.isNotBlank() }
+                        val retryCaption = retryNode["caption"]?.asText()?.trim() ?: ""
+                        if (retryTitle != null) { title = retryTitle; caption = retryCaption }
+                    } catch (_: Exception) {}
+                }
+            }
+
             Pair(title, caption)
         } catch (e: org.springframework.web.reactive.function.client.WebClientResponseException) {
             logger.log(Level.WARNING, "Ollama describeCluster error for \"$hint\": ${e.localizedMessage} — body: ${e.responseBodyAsString}")
