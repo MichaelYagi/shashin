@@ -93,12 +93,7 @@ class MemoriesService(
                 return
             }
 
-            // occasion=6, person=5, pair=4 → proportional targets sum to 15
-            val typeWeights = mapOf("occasion" to 6, "person" to 5, "pair" to 4)
             val totalTarget = 15
-            val totalWeight = typeWeights.values.sum().toDouble()
-            val typeTargets = typeWeights.mapValues { (_, w) -> kotlin.math.round((w / totalWeight) * totalTarget).toInt() }
-            val typeCounts = mutableMapOf("occasion" to 0, "person" to 0, "pair" to 0)
 
             // Exclude photos already shown so each regeneration surfaces fresh content.
             // Fall back to empty exclusion if not enough fresh clusters exist.
@@ -114,30 +109,13 @@ class MemoriesService(
                 usedMetadataIds = mutableSetOf()
             }
 
-            val overflowClusters = mutableListOf<PhotoCluster>()
             val selected = mutableListOf<PhotoCluster>()
 
-            // Pass 1: fill to proportional targets
             for (cluster in allClusters) {
                 if (selected.size >= totalTarget) break
                 val availableIds = cluster.photoIds.filter { it !in usedMetadataIds }
                 if (availableIds.size < 5) continue
-                val target = typeTargets[cluster.type] ?: 0
-                if ((typeCounts[cluster.type] ?: 0) >= target) {
-                    overflowClusters.add(cluster.copy(photoIds = availableIds))
-                    continue
-                }
-                usedMetadataIds.addAll(availableIds.take(20))
-                typeCounts[cluster.type] = (typeCounts[cluster.type] ?: 0) + 1
-                selected.add(cluster.copy(photoIds = availableIds))
-            }
-
-            // Pass 2: fill remaining slots from overflow
-            for (cluster in overflowClusters) {
-                if (selected.size >= totalTarget) break
-                val availableIds = cluster.photoIds.filter { it !in usedMetadataIds }
-                if (availableIds.size < 5) continue
-                usedMetadataIds.addAll(availableIds.take(20))
+                usedMetadataIds.addAll(availableIds.take(12))
                 selected.add(cluster.copy(photoIds = availableIds))
             }
 
@@ -150,7 +128,7 @@ class MemoriesService(
             val generated = mutableListOf<GeneratedMemory>()
             val usedTitles = mutableListOf<String>()
             for (cluster in selected) {
-                val memoryPhotos = sampleIds(cluster.photoIds, 12)
+                val memoryPhotos = sampleIds(cluster.photoIds, (6..12).random())
                 val ollamaPhotos = sampleIds(memoryPhotos, 6)
                 val description = ollamaVisionService.describeCluster(
                     ollamaPhotos,
