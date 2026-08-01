@@ -573,24 +573,19 @@ class OllamaVisionService(
         if (images.isEmpty()) return null
 
         val systemPrompt = "You are labeling a personal photo memory made up of multiple photos. " +
-            "Write a short, direct title (2-5 words) and one plain sentence as a caption. " +
-            "The title and caption must describe what ALL the photos share in common — the overall occasion, setting, or people. " +
+            "Write a short, direct title (2-5 words) that describes what ALL the photos share in common — the overall occasion, setting, or people. " +
             "Do NOT base the title on a single distinctive element from one photo (a rainbow, a sunset, one landmark). " +
             "If a rainbow appears in only some photos, the memory is not about a rainbow — find what connects all of them. " +
             "Use the date, place, or person name in the title when it fits. " +
             "Do NOT assume the photographer's point of view or activity. Only describe what is visible in the photos. " +
-            "If photos show ferries from shore, say 'Photos of ferries' — not 'Ferry ride' or 'Ferry trip'. " +
-            "If photos show a building, do not say 'we visited' or 'a trip to' unless the context explicitly says so. " +
+            "If photos show ferries from shore, do not say 'Ferry Ride' — say something like 'Ferries at the Harbour'. " +
             "IMPORTANT: Never use generic labels for people. Forbidden words: boy, girl, man, woman, child, children, kid, kids, baby, babies, person, people, toddler, teen, teenager, infant. " +
             "Only refer to people by their actual name if a name is provided in the context. " +
             "If no name is given, describe the place, occasion, or activity instead. " +
             "Do not use flowery, poetic, or metaphorical language. " +
             "Bad titles: \"Tiny Explorer's Day\", \"Boy Playing Outside\", \"Baby's First Christmas\", \"Rainbow Viewing Day\", \"Ferry Ride\". " +
             "Good titles: \"Trip to Cultus Lake\", \"Christmas 2019\", \"Noah at the Park\", \"Wedding Day\", \"March 2016 Afternoon\". " +
-            "Bad captions: \"A young boy in pajamas plays on the deck.\" (uses a generic label, one photo only). " +
-            "Bad captions: \"Photos from a ferry ride.\" (assumes point of view not shown). " +
-            "Good captions: \"Photos from Christmas morning at home.\" (no generic labels, describes the whole set). " +
-            "Respond ONLY with JSON: {\"title\": \"...\", \"caption\": \"...\"}"
+            "Respond ONLY with JSON: {\"title\": \"...\"}"
 
         val userContent = buildString {
             append("/no_think Context: $hint.")
@@ -612,31 +607,28 @@ class OllamaVisionService(
             var content = chatForCluster(client, model, messages) ?: return null
             var node = mapper.readTree(content)
             var title = node["title"]?.asText()?.trim()?.takeIf { it.isNotBlank() } ?: return null
-            var caption = node["caption"]?.asText()?.trim() ?: ""
 
-            if (containsGenericLabel(title) || containsGenericLabel(caption)) {
+            if (containsGenericLabel(title)) {
                 logger.log(Level.INFO, "Retrying cluster description — generic label detected in \"$title\"")
                 val retryMessages = messages + listOf(
                     mapOf("role" to "assistant", "content" to content),
                     mapOf("role" to "user", "content" to
                         "Your title \"$title\" uses a forbidden generic person label (boy, girl, baby, child, kid, man, woman, etc.). " +
-                        "Rewrite the title and caption. Do NOT use any of these words. " +
+                        "Rewrite the title. Do NOT use any of these words. " +
                         "Do NOT assume point of view — only describe what is visible in the photos. " +
                         "Focus on the place, date, or activity instead of who the people are. " +
-                        "Respond ONLY with JSON: {\"title\": \"...\", \"caption\": \"...\"}")
+                        "Respond ONLY with JSON: {\"title\": \"...\"}")
                 )
                 val retryContent = chatForCluster(client, model, retryMessages)
                 if (retryContent != null) {
                     try {
-                        val retryNode = mapper.readTree(retryContent)
-                        val retryTitle = retryNode["title"]?.asText()?.trim()?.takeIf { it.isNotBlank() }
-                        val retryCaption = retryNode["caption"]?.asText()?.trim() ?: ""
-                        if (retryTitle != null) { title = retryTitle; caption = retryCaption }
+                        val retryTitle = mapper.readTree(retryContent)["title"]?.asText()?.trim()?.takeIf { it.isNotBlank() }
+                        if (retryTitle != null) title = retryTitle
                     } catch (_: Exception) {}
                 }
             }
 
-            Pair(title, caption)
+            Pair(title, "")
         } catch (e: org.springframework.web.reactive.function.client.WebClientResponseException) {
             logger.log(Level.WARNING, "Ollama describeCluster error for \"$hint\": ${e.localizedMessage} — body: ${e.responseBodyAsString}")
             null
