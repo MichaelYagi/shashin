@@ -133,8 +133,10 @@ class MemoriesService(
             val generated = mutableListOf<GeneratedMemory>()
             val usedTitles = mutableListOf<String>()
             for (cluster in selected) {
+                val memoryPhotos = sampleIds(cluster.photoIds, 12)
+                val ollamaPhotos = sampleIds(memoryPhotos, 6)
                 val description = ollamaVisionService.describeCluster(
-                    sampleIds(cluster.photoIds.take(20), 6),
+                    ollamaPhotos,
                     cluster.hint,
                     settings,
                     usedTitles.toList()
@@ -143,9 +145,9 @@ class MemoriesService(
                     logger.log(Level.WARNING, "Ollama returned null for cluster \"${cluster.hint}\" — skipping")
                     continue
                 }
-                logger.log(Level.INFO, "Memory \"${description.first}\" (${cluster.type}): ${cluster.photoIds.size} photos")
+                logger.log(Level.INFO, "Memory \"${description.first}\" (${cluster.type}): ${memoryPhotos.size} photos")
                 usedTitles.add(description.first)
-                generated.add(GeneratedMemory(cluster, cluster.photoIds, description.first, description.second))
+                generated.add(GeneratedMemory(cluster, memoryPhotos, description.first, description.second))
             }
 
             if (generated.isEmpty()) {
@@ -194,13 +196,14 @@ class MemoriesService(
 
     private fun buildPersonPlaceClusters(): List<PhotoCluster> {
         val rows = jdbcTemplate.queryForList(
-            """SELECT rl.name, m.place_name, GROUP_CONCAT(DISTINCT rlp.metadata_id) as ids, COUNT(DISTINCT rlp.metadata_id) as cnt
+            """SELECT rl.name, m.place_name, m.year, GROUP_CONCAT(DISTINCT rlp.metadata_id) as ids, COUNT(DISTINCT rlp.metadata_id) as cnt
                FROM recognitionlabel rl
                JOIN recognitionlabelphoto rlp ON rl.id = rlp.recognition_label_id
                JOIN metadata m ON rlp.metadata_id = m.id
                WHERE CAST(rlp.confidence AS REAL) >= 70 AND m.hidden = 0
                  AND m.place_name IS NOT NULL AND m.place_name != ''
-               GROUP BY rl.id, m.place_name
+                 AND m.year IS NOT NULL AND m.year > 1970
+               GROUP BY rl.id, m.place_name, m.year
                HAVING cnt >= 5
                ORDER BY cnt DESC
                LIMIT 40"""
@@ -208,9 +211,10 @@ class MemoriesService(
         return rows.mapNotNull { row ->
             val name = row["name"]?.toString() ?: return@mapNotNull null
             val place = row["place_name"]?.toString() ?: return@mapNotNull null
+            val year = row["year"]?.toString() ?: return@mapNotNull null
             val ids = row["ids"]?.toString()?.split(",")?.filter { it.isNotBlank() } ?: return@mapNotNull null
             if (ids.size < 5) return@mapNotNull null
-            PhotoCluster("person", "Photos of $name at $place", ids)
+            PhotoCluster("person", "Photos of $name at $place in $year", ids)
         }
     }
 
@@ -237,11 +241,11 @@ class MemoriesService(
 
     private fun buildPlaceYearClusters(): List<PhotoCluster> {
         val rows = jdbcTemplate.queryForList(
-            """SELECT place_name, year, GROUP_CONCAT(id) as ids, COUNT(*) as cnt
+            """SELECT place_name, year, month, GROUP_CONCAT(id) as ids, COUNT(*) as cnt
                FROM metadata
                WHERE hidden = 0 AND place_name IS NOT NULL AND place_name != ''
-                 AND year IS NOT NULL AND year > 1970
-               GROUP BY place_name, year
+                 AND year IS NOT NULL AND year > 1970 AND month IS NOT NULL
+               GROUP BY place_name, year, month
                HAVING cnt >= 5
                ORDER BY cnt DESC
                LIMIT 30"""
@@ -249,9 +253,10 @@ class MemoriesService(
         return rows.mapNotNull { row ->
             val place = row["place_name"]?.toString() ?: return@mapNotNull null
             val year = row["year"]?.toString() ?: return@mapNotNull null
+            val month = row["month"]?.toString()?.toIntOrNull() ?: return@mapNotNull null
             val ids = row["ids"]?.toString()?.split(",")?.filter { it.isNotBlank() } ?: return@mapNotNull null
             if (ids.size < 5) return@mapNotNull null
-            PhotoCluster("location", "Photos from $place in $year", ids)
+            PhotoCluster("location", "Photos from $place in ${monthName(month)} $year", ids)
         }
     }
 
