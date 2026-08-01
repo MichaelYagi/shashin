@@ -158,11 +158,16 @@ class MemoriesService(
     }
 
     private fun buildClusters(): List<PhotoCluster> {
-        // Occasion clusters: shuffle photos (any sample is representative within a day).
-        // Longitudinal clusters: keep date-sorted order so sampleIds spreads across years.
-        val occasion = buildOccasionClusters().map { it.copy(photoIds = it.photoIds.shuffled()) }
-        val longitudinal = buildSoloLongitudinalClusters() + buildPairLongitudinalClusters()
-        return (occasion + longitudinal).shuffled()
+        val occasion = buildOccasionClusters().map { it.copy(photoIds = it.photoIds.shuffled()) }.shuffled().toMutableList()
+        val longitudinal = (buildSoloLongitudinalClusters() + buildPairLongitudinalClusters()).shuffled().toMutableList()
+        // Interleave 1:1 so person/pair memories always compete on equal footing with occasion.
+        // Longitudinal is naturally capped by how many qualify; occasion fills the rest.
+        val result = mutableListOf<PhotoCluster>()
+        while (occasion.isNotEmpty() || longitudinal.isNotEmpty()) {
+            if (longitudinal.isNotEmpty()) result.add(longitudinal.removeFirst())
+            if (occasion.isNotEmpty()) result.add(occasion.removeFirst())
+        }
+        return result
     }
 
     // DBSCAN on per-day embedding groups. Each cluster = a coherent occasion within a day.
@@ -222,7 +227,7 @@ class MemoriesService(
                GROUP BY rl.id
                HAVING cnt >= 10 AND year_span >= 2
                ORDER BY RANDOM()
-               LIMIT 20"""
+               LIMIT 40"""
         )
         return rows.mapNotNull { row ->
             val name = row["name"]?.toString() ?: return@mapNotNull null
@@ -258,7 +263,7 @@ class MemoriesService(
                GROUP BY rl1.id, rl2.id
                HAVING cnt >= 8 AND year_span >= 2
                ORDER BY RANDOM()
-               LIMIT 20"""
+               LIMIT 40"""
         )
         return rows.mapNotNull { row ->
             val name1 = row["name1"]?.toString() ?: return@mapNotNull null
