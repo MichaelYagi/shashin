@@ -74,7 +74,7 @@ class MemoriesService(
                 strategyType = memory.getStrategyType() ?: "",
                 photoIds = photoIds
             )
-        }
+        }.sortedBy { if (it.strategyType == "occasion") 1 else 0 }
     }
 
     fun generateMemories(settings: Settings) {
