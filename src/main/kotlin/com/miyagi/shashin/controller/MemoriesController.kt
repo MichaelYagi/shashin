@@ -26,7 +26,15 @@ class MemoriesController(
     private val albumPhotoRepository: AlbumPhotoRepository,
     private val userAlbumRepository: UserAlbumRepository,
     private val userRepository: UserRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val keywordRepository: KeywordRepository? = null,
+    private val recognitionLabelRepository: RecognitionLabelRepository? = null,
+    private val metadataRepository: MetadataRepository? = null
+): BaseController(
+    recognitionLabelRepository = recognitionLabelRepository,
+    albumRepository = albumRepository,
+    keywordRepository = keywordRepository,
+    metadataRepository = metadataRepository
 ) {
     private val logger = Logger.getLogger(MemoriesController::class.simpleName)
     private val mapper = ObjectMapper()
@@ -42,12 +50,14 @@ class MemoriesController(
         model["titleDescriptor"] = "Memories"
 
         if (settings?.getShowMemories() != true) {
+            getAllAttributeData(model)
             model["memoriesList"] = emptyList<MemoryView>()
             model["memoriesJson"] = "[]"
             model["memoriesDisabled"] = true
             return "memories"
         }
 
+        getAllAttributeData(model)
         model["memoriesDisabled"] = false
         val views = memoriesService.getMemoryViews().map { view ->
             val album = albumRepository.findAlbumByNameIgnoreCase(view.title)

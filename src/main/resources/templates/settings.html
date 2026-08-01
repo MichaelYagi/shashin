@@ -156,6 +156,12 @@
                             </div>
                             </th:block>
                             <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="showMemories" name="showMemories" th:checked="${settings.showMemories}">
+                                <label class="form-check-label" for="showMemories">
+                                    <strong>Enable Memories</strong>&nbsp;<span style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Generate a curated Memories section nightly using Ollama. Requires Ollama to be configured."></span>
+                                </label>
+                            </div>
+                            <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="duplicateDetection" name="duplicateDetection" th:checked="${settings.duplicateDetection}">
                                 <label class="form-check-label" for="duplicateDetection">
                                     <strong><th:block th:text="#{main.pages.settings.enableduplicate}"></th:block></strong>
@@ -190,12 +196,6 @@
                                 <input class="form-check-input" type="checkbox" id="scanAutomatically" name="scanAutomatically" th:checked="${settings.scanAutomatically}">
                                 <label class="form-check-label" for="scanAutomatically">
                                     <strong><th:block th:text="#{main.pages.settings.autoscanning}"></th:block></strong>&nbsp;<span id="scanAutomaticallyInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.autoscanning.tooltip}"></span>
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="showMemories" name="showMemories" th:checked="${settings.showMemories}">
-                                <label class="form-check-label" for="showMemories">
-                                    <strong>Enable Memories</strong>&nbsp;<span style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Generate a curated Memories section nightly using Ollama. Requires Ollama to be configured."></span>
                                 </label>
                             </div>
                         </div>

@@ -7,6 +7,7 @@
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
 <div id="memories-gallery" style="display:none;"></div>
+<div th:replace="~{fragments/metadatamodal :: metadatamodal(${currentUser})}"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
@@ -112,15 +113,23 @@
                 return {
                     src: '/api/v1/thumbnails/original/' + id,
                     downloadUrl: '/api/v1/thumbnails/original/' + id,
-                    metadataId: id
+                    metadataId: id,
+                    metadataDetailFun: shashin.openEditMetadataModal
                 };
             });
 
             if (!lgInitialised) {
+                var lgPlugins = [lgZoom, lgFullscreen, lgAutoplay];
+                var lgExtraConfig = {};
+                if (typeof lgMetadataDetail !== 'undefined') {
+                    lgPlugins.push(lgMetadataDetail);
+                    lgExtraConfig.metadataDetail = true;
+                    lgExtraConfig.metadataDetailFun = shashin.openEditMetadataModal;
+                }
                 shashin.setLightGalleryElement('memories-gallery');
-                shashin.setLightGallery({
+                shashin.setLightGallery(Object.assign({
                     overrideBaseConfigs: true,
-                    plugins: [lgZoom, lgFullscreen, lgAutoplay],
+                    plugins: lgPlugins,
                     counter: true,
                     download: false,
                     slideShowAutoplay: true,
@@ -131,9 +140,14 @@
                     speed: 500,
                     preload: 2,
                     licenseKey: Util.lgApiKey()
-                });
+                }, lgExtraConfig));
                 lgInitialised = true;
                 $('#memories-gallery').on('lgBeforeClose', function() { lgOpen = false; });
+                $('#propMetadata').on('show.bs.modal', function() {
+                    if (lgOpen && $('.lg-outer').hasClass('lg-show-autoplay')) {
+                        $('.lg-autoplay-button').first().trigger('click');
+                    }
+                });
             }
 
             shashin.refreshAndActivateLgListener(mediaContentList);
