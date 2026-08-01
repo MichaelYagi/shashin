@@ -93,6 +93,7 @@
 
         var lgInitialised = false;
         var lgOpen = false;
+        var currentMemoryPhotoIds = [];
 
         $(document).on('keydown.memoriesAutoplay', function(e) {
             if (lgOpen && (e.code === 'Space' || e.keyCode === 32)) {
@@ -137,12 +138,23 @@
                     autoplayControls: true,
                     progressBar: true,
                     zoomFromOrigin: false,
-                    speed: 500,
-                    preload: 5,
+                    showAfterLoad: false,
+                    mode: 'lg-fade',
+                    speed: 700,
+                    preload: 1,
                     licenseKey: Util.lgApiKey()
                 }, lgExtraConfig));
                 lgInitialised = true;
                 $('#memories-gallery').on('lgBeforeClose', function() { lgOpen = false; });
+                $('#memories-gallery').on('lgAfterSlide', function(event, detail) {
+                    var idx = detail && detail.index != null ? detail.index : 0;
+                    for (var i = 1; i <= 3; i++) {
+                        var next = idx + i;
+                        if (next < currentMemoryPhotoIds.length) {
+                            new Image().src = '/api/v1/thumbnails/original/' + currentMemoryPhotoIds[next];
+                        }
+                    }
+                });
                 $('#propMetadata').on('show.bs.modal', function() {
                     if (lgOpen && $('.lg-outer').hasClass('lg-show-autoplay')) {
                         $('.lg-autoplay-button').first().trigger('click');
@@ -150,11 +162,7 @@
                 });
             }
 
-            // Kick off all image downloads now so browser cache has them before autoplay reaches each slide
-            photoIds.forEach(function(id) {
-                new Image().src = '/api/v1/thumbnails/original/' + id;
-            });
-
+            currentMemoryPhotoIds = photoIds;
             shashin.refreshAndActivateLgListener(mediaContentList);
             shashin.getLightGallery().openGallery(0);
             lgOpen = true;
