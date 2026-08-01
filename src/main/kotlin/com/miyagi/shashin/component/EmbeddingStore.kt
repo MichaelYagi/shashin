@@ -46,6 +46,9 @@ class EmbeddingStore(private val jdbcTemplate: JdbcTemplate) {
 
     fun size(): Int = store.size
 
+    fun getAll(ids: Collection<String>): Map<String, FloatArray> =
+        ids.mapNotNull { id -> store[id]?.let { id to it } }.toMap()
+
     fun search(queryVec: FloatArray, size: Int): List<Pair<String, Float>> {
         val normQ = normalize(queryVec) ?: return emptyList()
         return store.entries
