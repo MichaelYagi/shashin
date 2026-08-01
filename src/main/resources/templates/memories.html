@@ -145,15 +145,6 @@
                 }, lgExtraConfig));
                 lgInitialised = true;
                 $('#memories-gallery').on('lgBeforeClose', function() { lgOpen = false; });
-                $('#memories-gallery').on('lgAfterSlide', function(event, detail) {
-                    var idx = detail && detail.index != null ? detail.index : 0;
-                    for (var i = 1; i <= 3; i++) {
-                        var next = idx + i;
-                        if (next < currentMemoryPhotoIds.length) {
-                            new Image().src = '/api/v1/thumbnails/original/' + currentMemoryPhotoIds[next];
-                        }
-                    }
-                });
                 $('#propMetadata').on('show.bs.modal', function() {
                     if (lgOpen && $('.lg-outer').hasClass('lg-show-autoplay')) {
                         $('.lg-autoplay-button').first().trigger('click');
@@ -162,9 +153,24 @@
             }
 
             currentMemoryPhotoIds = photoIds;
-            shashin.refreshAndActivateLgListener(mediaContentList);
-            shashin.getLightGallery().openGallery(0);
-            lgOpen = true;
+
+            // Preload all images into browser cache before opening — guarantees no spinner on any slide
+            var viewBtn = $('button.memories-view-btn[data-memory-index="' + idx + '"]');
+            viewBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Loading');
+
+            Promise.all(photoIds.map(function(id) {
+                return new Promise(function(resolve) {
+                    var img = new Image();
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                    img.src = '/api/v1/thumbnails/original/' + id;
+                });
+            })).then(function() {
+                viewBtn.prop('disabled', false).html('<span class="bi-play-circle"></span> View');
+                shashin.refreshAndActivateLgListener(mediaContentList);
+                shashin.getLightGallery().openGallery(0);
+                lgOpen = true;
+            });
         });
 
         // Regenerate button + polling
