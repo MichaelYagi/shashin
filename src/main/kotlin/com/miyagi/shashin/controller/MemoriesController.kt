@@ -64,8 +64,15 @@ class MemoriesController(
             if (album != null) view.copy(savedAlbumId = album.getId()) else view
         }
         model["memoriesList"] = views
+        val allPhotoIds = views.flatMap { it.photoIds }
+        val metaMap = metadataRepository?.findAllById(allPhotoIds)?.associateBy { it.getId() } ?: emptyMap()
         model["memoriesJson"] = mapper.writeValueAsString(
-            views.map { mapOf("id" to it.id, "photoIds" to it.photoIds) }
+            views.map { view ->
+                mapOf("id" to view.id, "photos" to view.photoIds.map { id ->
+                    val meta = metaMap[id]
+                    mapOf("id" to id, "type" to (meta?.getType() ?: ""), "videoUrl" to (meta?.getVideoUrl() ?: ""))
+                })
+            }
         )
         return "memories"
     }

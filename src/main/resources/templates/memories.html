@@ -91,7 +91,7 @@
         const memoriesJsonStr = /*[[${memoriesJson}]]*/ '[]';
         /*]]>*/
 
-        const memoryPhotoIds = JSON.parse(memoriesJsonStr).map(function(m) { return m.photoIds || []; });
+        const memoryPhotos = JSON.parse(memoriesJsonStr).map(function(m) { return m.photos || []; });
 
         var lgInitialised = false;
         var lgOpen = false;
@@ -108,20 +108,24 @@
         // View slideshow
         $(document).on('click', '.memories-view-btn', function() {
             const idx = parseInt($(this).data('memory-index'), 10);
-            const photoIds = memoryPhotoIds[idx] || [];
-            if (photoIds.length === 0) return;
+            const photoData = memoryPhotos[idx] || [];
+            if (photoData.length === 0) return;
 
-            const mediaContentList = photoIds.map(function(id) {
-                return {
-                    src: '/api/v1/thumbnails/original/' + id,
-                    downloadUrl: '/api/v1/thumbnails/original/' + id,
-                    metadataId: id,
-                    metadataDetailFun: shashin.openEditMetadataModal
-                };
+            const mediaContentList = photoData.map(function(p) {
+                var item = { metadataId: p.id, metadataDetailFun: shashin.openEditMetadataModal };
+                if (p.type && p.type.includes('video')) {
+                    item.video = { source: [{ src: p.videoUrl, type: 'video/mp4' }], attributes: { preload: 'auto', controls: true } };
+                    item.poster = '/api/v1/thumbnails/original/' + p.id;
+                    item.downloadUrl = p.videoUrl;
+                } else {
+                    item.src = '/api/v1/thumbnails/original/' + p.id;
+                    item.downloadUrl = '/api/v1/thumbnails/original/' + p.id;
+                }
+                return item;
             });
 
             if (!lgInitialised) {
-                var lgPlugins = [lgZoom, lgFullscreen];
+                var lgPlugins = [lgZoom, lgVideo, lgFullscreen];
                 var lgExtraConfig = {};
                 if (typeof lgMetadataDetail !== 'undefined') {
                     lgPlugins.push(lgMetadataDetail);
@@ -154,18 +158,19 @@
                 });
             }
 
-            currentMemoryPhotoIds = photoIds;
+            currentMemoryPhotoIds = photoData.map(function(p) { return p.id; });
 
-            // Preload all images into browser cache before opening — guarantees no spinner on any slide
+            // Preload image items into browser cache before opening — guarantees no spinner on any slide
             var viewBtn = $('button.memories-view-btn[data-memory-index="' + idx + '"]');
             viewBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Loading');
 
-            Promise.all(photoIds.map(function(id) {
+            var imageItems = photoData.filter(function(p) { return !p.type || !p.type.includes('video'); });
+            Promise.all(imageItems.map(function(p) {
                 return new Promise(function(resolve) {
                     var img = new Image();
                     img.onload = resolve;
                     img.onerror = resolve;
-                    img.src = '/api/v1/thumbnails/original/' + id;
+                    img.src = '/api/v1/thumbnails/original/' + p.id;
                 });
             })).then(function() {
                 viewBtn.prop('disabled', false).html('<span class="bi-play-circle"></span> View');
