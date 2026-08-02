@@ -146,7 +146,9 @@ class MemoriesController(
         if (settings.getShowMemories() != true) {
             return mapOf("status" to "error", "msg" to "Memories is disabled")
         }
-        Thread { memoriesService.generateMemories(settings) }.start()
+        val t = Thread { memoriesService.generateMemories(settings) }
+        t.priority = Thread.MIN_PRIORITY
+        t.start()
         return mapOf("status" to "started", "msg" to "")
     }
 
