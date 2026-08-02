@@ -96,6 +96,9 @@
         var lgInitialised = false;
         var lgOpen = false;
         var currentMemoryPhotoIds = [];
+        var memoriesVideoPoller = null;
+        var memoriesVideoAutoplay = false;
+        var memoriesStoppingAutoplay = false;
 
         $(document).on('keydown.memoriesAutoplay', function(e) {
             if (lgOpen && (e.code === 'Space' || e.keyCode === 32)) {
@@ -152,11 +155,86 @@
                     licenseKey: Util.lgApiKey()
                 }, lgExtraConfig));
                 lgInitialised = true;
-                $('#memories-gallery').on('lgBeforeClose', function() { lgOpen = false; });
+                $('#memories-gallery').on('lgBeforeClose', function() {
+                    lgOpen = false;
+                    memoriesVideoAutoplay = false;
+                    memoriesStoppingAutoplay = false;
+                    if (memoriesVideoPoller) { clearInterval(memoriesVideoPoller); memoriesVideoPoller = null; }
+                });
                 $('#propMetadata').on('show.bs.modal', function() {
                     if (lgOpen && $('.lg-outer').hasClass('lg-show-autoplay')) {
                         $('.lg-autoplay-button').first().trigger('click');
                     }
+                });
+
+                // Video-aware autoplay: when autoplay hits a video slide, pause the timer,
+                // play the video, then advance on ended.
+                $('#memories-gallery').on('lgAutoplayStop', function() {
+                    if (memoriesStoppingAutoplay) {
+                        memoriesStoppingAutoplay = false;
+                        return;
+                    }
+                    memoriesVideoAutoplay = false;
+                });
+
+                $('#memories-gallery').on('lgBeforeSlide', function() {
+                    if (memoriesVideoPoller) { clearInterval(memoriesVideoPoller); memoriesVideoPoller = null; }
+                });
+
+                $('#memories-gallery').on('lgAfterSlide', function(event) {
+                    var idx = event.detail.index;
+                    var lg = shashin.getLightGallery();
+                    if (!lg) return;
+                    var item = lg.galleryItems[idx];
+                    var isAutoPlaying = $('.lg-outer').hasClass('lg-show-autoplay');
+
+                    if (!item || !item.__slideVideoInfo) {
+                        // Image slide: if we came here from a video-ended advance, restart autoplay
+                        if (memoriesVideoAutoplay && !isAutoPlaying) {
+                            memoriesVideoAutoplay = false;
+                            setTimeout(function() {
+                                $('.lg-autoplay-button').first().trigger('click');
+                            }, 100);
+                        } else {
+                            memoriesVideoAutoplay = false;
+                        }
+                        return;
+                    }
+
+                    // Video slide: only act if autoplay is (or was) driving us
+                    if (!isAutoPlaying && !memoriesVideoAutoplay) return;
+
+                    memoriesVideoAutoplay = true;
+
+                    // Pause the autoplay timer (progress bar irrelevant for variable-length video)
+                    if (isAutoPlaying) {
+                        memoriesStoppingAutoplay = true;
+                        $('.lg-autoplay-button').first().trigger('click');
+                    }
+
+                    // Trigger the video to load and play (same as clicking the play button)
+                    setTimeout(function() {
+                        $('.lg-current .lg-video-play-button').trigger('click');
+                    }, 50);
+
+                    // Poll for the <video> element, then listen for ended
+                    var slideIdx = idx;
+                    if (memoriesVideoPoller) clearInterval(memoriesVideoPoller);
+                    var attempts = 0;
+                    memoriesVideoPoller = setInterval(function() {
+                        attempts++;
+                        var video = $('.lg-current .lg-video-object')[0];
+                        if (video || attempts > 50) {
+                            clearInterval(memoriesVideoPoller);
+                            memoriesVideoPoller = null;
+                            if (!video) return;
+                            $(video).one('ended', function() {
+                                if (!lg || lg.index !== slideIdx || !memoriesVideoAutoplay) return;
+                                var nextIdx = (lg.index + 1) < lg.galleryItems.length ? lg.index + 1 : 0;
+                                lg.slide(nextIdx, false, false, 'next');
+                            });
+                        }
+                    }, 100);
                 });
             }
 
