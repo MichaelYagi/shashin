@@ -188,6 +188,7 @@ class MemoriesService(
 
         val result = mutableListOf<PhotoCluster>()
         for (row in days) {
+            if (result.size >= 25) break
             val year = row["year"]?.toString() ?: continue
             val month = row["month"]?.toString()?.toIntOrNull() ?: continue
             val day = row["day"]?.toString() ?: continue
@@ -196,7 +197,10 @@ class MemoriesService(
             val vecs = embeddingStore.getAll(ids)
             if (vecs.size < 5) continue
 
-            val idsWithVecs = ids.filter { it in vecs }
+            val idsWithVecs = ids.filter { it in vecs }.let {
+                if (it.size > 40) it.shuffled().take(40) else it
+            }
+            try { Thread.sleep(100) } catch (_: InterruptedException) {}
             val clusters = dbscan(idsWithVecs, vecs, epsilon = 0.35f, minPts = 3)
 
             for (cluster in clusters) {
