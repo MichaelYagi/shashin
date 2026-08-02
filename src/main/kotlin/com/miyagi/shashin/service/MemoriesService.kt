@@ -143,6 +143,7 @@ class MemoriesService(
                 logger.log(Level.INFO, "Memory \"${description.first}\" (${cluster.type}): ${memoryPhotos.size} photos")
                 usedTitles.add(description.first)
                 generated.add(GeneratedMemory(cluster, memoryPhotos, description.first, description.second))
+                try { Thread.sleep(1000) } catch (_: InterruptedException) {}
             }
 
             if (generated.isEmpty()) {

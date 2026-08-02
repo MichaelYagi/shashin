@@ -548,15 +548,25 @@ class OllamaVisionService(
             "keep_alive" to -1,
             "options" to mapOf("num_predict" to 120, "temperature" to 0.7, "num_ctx" to 8192)
         ))
-        val response = client.post()
-            .uri("/api/chat")
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .bodyValue(payload)
-            .retrieve()
-            .bodyToMono(String::class.java)
-            .block(Duration.ofSeconds(120)) ?: return null
-        var content = mapper.readTree(response)["message"]?.get("content")?.asText() ?: return null
-        return content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
+        repeat(3) { attempt ->
+            try {
+                val response = client.post()
+                    .uri("/api/chat")
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .bodyValue(payload)
+                    .retrieve()
+                    .bodyToMono(String::class.java)
+                    .block(Duration.ofSeconds(120)) ?: return null
+                val content = mapper.readTree(response)["message"]?.get("content")?.asText() ?: return null
+                return content.replace(Regex("<think>[\\s\\S]*?</think>", RegexOption.IGNORE_CASE), "").trim()
+            } catch (e: Exception) {
+                if (attempt < 2) {
+                    logger.log(Level.WARNING, "Ollama chat attempt ${attempt + 1} failed (${e.localizedMessage}), retrying in 3s")
+                    try { Thread.sleep(3000) } catch (_: InterruptedException) {}
+                }
+            }
+        }
+        return null
     }
 
     fun describeCluster(sampleIds: List<String>, hint: String, settings: Settings, avoidTitles: List<String> = emptyList()): Pair<String, String>? {
