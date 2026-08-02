@@ -93,7 +93,7 @@ class MemoriesService(
                 return
             }
 
-            val totalTarget = 15
+            val totalTarget = 16
 
             // Exclude photos already shown so each regeneration surfaces fresh content.
             // Fall back to empty exclusion if not enough fresh clusters exist.
