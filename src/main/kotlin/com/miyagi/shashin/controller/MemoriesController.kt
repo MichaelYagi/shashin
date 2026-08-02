@@ -65,7 +65,9 @@ class MemoriesController(
         }
         model["memoriesList"] = views
         val allPhotoIds = views.flatMap { it.photoIds }
-        val metaMap = metadataRepository?.findAllById(allPhotoIds)?.associateBy { it.getId() } ?: emptyMap()
+        val metaMap = metadataRepository?.findAllById(allPhotoIds)
+            ?.mapNotNull { meta -> meta?.getId()?.let { id -> id to meta } }
+            ?.toMap() ?: emptyMap()
         model["memoriesJson"] = mapper.writeValueAsString(
             views.map { view ->
                 mapOf("id" to view.id, "photos" to view.photoIds.map { id ->
