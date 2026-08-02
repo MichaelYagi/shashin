@@ -116,6 +116,7 @@
                 if (p.type && p.type.includes('video')) {
                     item.video = { source: [{ src: p.videoUrl, type: 'video/mp4' }], attributes: { preload: 'auto', controls: true } };
                     item.poster = '/api/v1/thumbnails/original/' + p.id;
+                    if (p.w && p.h) item.lgSize = p.w + '-' + p.h;
                     item.downloadUrl = p.videoUrl;
                 } else {
                     item.src = '/api/v1/thumbnails/original/' + p.id;

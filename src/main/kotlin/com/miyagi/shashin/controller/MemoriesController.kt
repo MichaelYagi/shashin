@@ -72,7 +72,7 @@ class MemoriesController(
             views.map { view ->
                 mapOf("id" to view.id, "photos" to view.photoIds.map { id ->
                     val meta = metaMap[id]
-                    mapOf("id" to id, "type" to (meta?.getType() ?: ""), "videoUrl" to (meta?.getVideoUrl() ?: ""))
+                    mapOf("id" to id, "type" to (meta?.getType() ?: ""), "videoUrl" to (meta?.getVideoUrl() ?: ""), "w" to (meta?.getOriginalImageWidth() ?: ""), "h" to (meta?.getOriginalImageHeight() ?: ""))
                 })
             }
         )
