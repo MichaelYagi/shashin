@@ -9,6 +9,25 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.22.0] - 2026-08-02
+### Added
+- Memories module: AI-curated slideshows grouping photos by occasion and by person/pair over time; generated nightly when Ollama is configured, or on demand via the Regenerate button
+- Memories: video items play in the slideshow with poster thumbnail and play button (via lgVideo plugin)
+- Memories: place names incorporated into cluster hints for more contextually accurate titles
+- Memories: photo count shown on each memory card
+- Memories: 1:1 interleaving of longitudinal (person/pair histories) and occasion clusters so person memories appear throughout, not only at the end
+### Changed
+- Memories: centroid-based coherence filter removes outlier photos from mixed clusters, keeping each memory thematically consistent
+- Memories: Ollama titles are generated without captions; dates used sparingly (month and year only, never the day)
+- Memories: generic person labels (Baby, Boy, Girl, Man, Woman, etc.) trigger an automatic retry prompt to Ollama, forcing a place- or activity-based title instead
+- Memories: duplicate titles are removed before display
+- Memories: memories sorted with longitudinal first, then occasion
+- Memories: default memory count increased to 16
+- Memories: cluster photo exclusion samples ~12 photos per cluster (random) rather than marking the entire cluster as used
+### Fixed
+- Memories slideshow: media no longer shifts down to accommodate the toolbar (`allowMediaOverlap: true`)
+- Memories slideshow: preload spinner eliminated — all images are loaded into browser cache before the gallery opens
+
 ## [2.21.4] - 2026-07-28
 ### Added
 - 'Set as album cover' overlay is hidden on the person photo page when Argus is connected and managing that person's cover

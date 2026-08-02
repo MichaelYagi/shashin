@@ -5,6 +5,7 @@ A self-hosted media gallery with AI-powered photo understanding.
 
 Scan local directories, browse your library, and let AI describe, tag, and answer questions about your photos — all on your own hardware.
 
+- **Memories** — AI-curated slideshows grouping photos by occasion and by person/pair over time; generated nightly via Ollama or on demand
 - **AI captions & keywords** — connect [Ollama](https://ollama.com/) to auto-generate descriptions and tags for every photo
 - **Ask your photos** — conversational Q&A on any photo; ask follow-up questions and pick up where you left off; conversation history saved per photo
 - **Semantic search** — find photos by meaning, not just keywords; powered by `nomic-embed-text` embeddings via Ollama
