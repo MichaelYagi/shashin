@@ -239,6 +239,19 @@ class OllamaVisionService(
     fun isOllamaConfigured(settings: Settings): Boolean =
         !settings.getOllamaUrl().isNullOrBlank() && !settings.getOllamaVisionModel().isNullOrBlank()
 
+    fun isOllamaReachable(settings: Settings): Boolean {
+        val url = settings.getOllamaUrl()?.trimEnd('/') ?: return false
+        return try {
+            val client = WebClient.create(url)
+            client.get().uri("/api/tags")
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block(Duration.ofSeconds(5)) != null
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun isEmbedConfigured(settings: Settings): Boolean =
         !settings.getOllamaUrl().isNullOrBlank()
 

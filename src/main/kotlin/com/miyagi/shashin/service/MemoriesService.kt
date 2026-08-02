@@ -80,6 +80,10 @@ class MemoriesService(
     fun generateMemories(settings: Settings) {
         if (settings.getShowMemories() != true) return
         if (!ollamaVisionService.isOllamaConfigured(settings)) return
+        if (!ollamaVisionService.isOllamaReachable(settings)) {
+            logger.log(Level.WARNING, "Memories generation skipped — Ollama is not reachable")
+            return
+        }
         if (!generationRunning.compareAndSet(false, true)) return
 
         try {
