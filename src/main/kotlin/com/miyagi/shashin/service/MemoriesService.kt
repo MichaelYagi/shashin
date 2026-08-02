@@ -143,7 +143,6 @@ class MemoriesService(
                 logger.log(Level.INFO, "Memory \"${description.first}\" (${cluster.type}): ${memoryPhotos.size} photos")
                 usedTitles.add(description.first)
                 generated.add(GeneratedMemory(cluster, memoryPhotos, description.first, description.second))
-                Thread.sleep(500)
             }
 
             if (generated.isEmpty()) {
@@ -188,7 +187,6 @@ class MemoriesService(
 
         val result = mutableListOf<PhotoCluster>()
         for (row in days) {
-            if (result.size >= 25) break
             val year = row["year"]?.toString() ?: continue
             val month = row["month"]?.toString()?.toIntOrNull() ?: continue
             val day = row["day"]?.toString() ?: continue
@@ -197,10 +195,7 @@ class MemoriesService(
             val vecs = embeddingStore.getAll(ids)
             if (vecs.size < 5) continue
 
-            val idsWithVecs = (ids.filter { it in vecs }).let {
-                if (it.size > 40) it.shuffled().take(40) else it
-            }
-            Thread.sleep(100)
+            val idsWithVecs = ids.filter { it in vecs }
             val clusters = dbscan(idsWithVecs, vecs, epsilon = 0.35f, minPts = 3)
 
             for (cluster in clusters) {
