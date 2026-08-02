@@ -380,7 +380,7 @@ class OllamaVisionService(
             "images" to listOf(imageB64),
             "stream" to false,
             "keep_alive" to -1,
-            "options" to mapOf("num_predict" to 400)
+            "options" to mapOf("num_predict" to -1)
         )
         if (ctxValid) {
             payload["context"] = mapper.readTree(storedCtx!!.getContext())
@@ -448,7 +448,7 @@ class OllamaVisionService(
             "images" to listOf(imageB64),
             "stream" to true,
             "keep_alive" to -1,
-            "options" to mapOf("num_predict" to 400)
+            "options" to mapOf("num_predict" to -1)
         )
         if (ctxValid) {
             payload["context"] = mapper.readTree(storedCtx!!.getContext())
