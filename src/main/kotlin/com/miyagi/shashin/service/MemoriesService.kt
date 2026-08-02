@@ -150,8 +150,9 @@ class MemoriesService(
                 return
             }
 
-            swapMemories(generated)
-            logger.log(Level.INFO, "Memories generation complete — ${generated.size} memories stored")
+            val deduplicated = generated.distinctBy { it.title.trim().lowercase() }
+            swapMemories(deduplicated)
+            logger.log(Level.INFO, "Memories generation complete — ${deduplicated.size} memories stored")
         } finally {
             generationRunning.set(false)
         }
