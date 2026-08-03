@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
+import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -164,20 +165,77 @@ class MemoriesService(
     }
 
     private fun buildClusters(): List<PhotoCluster> {
-        val occasion = buildOccasionClusters().map { it.copy(photoIds = it.photoIds.shuffled()) }.shuffled().toMutableList()
-        val longitudinal = (buildSoloLongitudinalClusters() + buildPairLongitudinalClusters()).shuffled().toMutableList()
-        // Interleave 1:1 so person/pair memories always compete on equal footing with occasion.
-        // Longitudinal is naturally capped by how many qualify; occasion fills the rest.
-        val result = mutableListOf<PhotoCluster>()
-        while (occasion.isNotEmpty() || longitudinal.isNotEmpty()) {
-            if (longitudinal.isNotEmpty()) result.add(longitudinal.removeFirst())
-            if (occasion.isNotEmpty()) result.add(occasion.removeFirst())
+        val today = LocalDate.now()
+        val onThisDay = buildOnThisDayClusters(today).take(2)
+        val onThisDayIds = onThisDay.flatMap { it.photoIds }.toSet()
+
+        val occasion = buildOccasionClusters(onThisDayIds)
+            .map { it.copy(photoIds = it.photoIds.shuffled()) }
+            .shuffled()
+            .toMutableList()
+
+        // Person/pair clusters exclude occasion and on-this-day photos
+        val occasionIds = occasion.flatMap { it.photoIds }.toSet()
+        val excludeFromPerson = onThisDayIds + occasionIds
+
+        val pairs = buildPairLongitudinalClusters(excludeFromPerson).shuffled().toMutableList()
+        val solos = buildSoloLongitudinalClusters(excludeFromPerson).shuffled().toMutableList()
+
+        // 50/50 pairs and solos, up to 3 total
+        val personClusters = mutableListOf<PhotoCluster>()
+        while (personClusters.size < 3 && (pairs.isNotEmpty() || solos.isNotEmpty())) {
+            if (pairs.isNotEmpty() && personClusters.size < 3) personClusters.add(pairs.removeFirst())
+            if (solos.isNotEmpty() && personClusters.size < 3) personClusters.add(solos.removeFirst())
         }
-        return result
+
+        val occasionTarget = 16 - onThisDay.size - personClusters.size
+        val occasionSelected = occasion.take(occasionTarget)
+
+        // Spread person/pair and on-this-day evenly through occasion so they don't clump
+        return spreadSpecial(occasionSelected, personClusters + onThisDay)
+    }
+
+    // Spread special clusters (person/pair, on-this-day) evenly through filler (occasion)
+    private fun spreadSpecial(filler: List<PhotoCluster>, special: List<PhotoCluster>): List<PhotoCluster> {
+        if (special.isEmpty()) return filler
+        val total = filler.size + special.size
+        val result = arrayOfNulls<PhotoCluster>(total)
+        val specialShuffled = special.shuffled()
+        for (i in specialShuffled.indices) {
+            val pos = ((i + 1) * total / (specialShuffled.size + 1)).coerceIn(0, total - 1)
+            result[pos] = specialShuffled[i]
+        }
+        val fillerQueue = filler.toMutableList()
+        for (i in result.indices) {
+            if (result[i] == null && fillerQueue.isNotEmpty()) result[i] = fillerQueue.removeFirst()
+        }
+        return result.filterNotNull()
+    }
+
+    private fun buildOnThisDayClusters(today: LocalDate): List<PhotoCluster> {
+        val month = today.monthValue
+        val day = today.dayOfMonth
+        val rows = jdbcTemplate.queryForList(
+            """SELECT year, GROUP_CONCAT(id) as ids
+               FROM metadata
+               WHERE hidden = 0 AND month = ? AND day = ?
+                 AND year IS NOT NULL AND year > 1970
+               GROUP BY year
+               HAVING COUNT(*) >= 2
+               ORDER BY year""",
+            month, day
+        )
+        if (rows.size < 2) return emptyList()
+        val allIds = rows.flatMap { row ->
+            row["ids"]?.toString()?.split(",")?.filter { it.isNotBlank() } ?: emptyList()
+        }
+        if (allIds.size < 5) return emptyList()
+        val hint = "On this day — ${monthName(month)} $day across the years"
+        return listOf(PhotoCluster("onthisday", hint, allIds.shuffled()))
     }
 
     // DBSCAN on per-day embedding groups. Each cluster = a coherent occasion within a day.
-    private fun buildOccasionClusters(): List<PhotoCluster> {
+    private fun buildOccasionClusters(excludeIds: Set<String> = emptySet()): List<PhotoCluster> {
         val days = jdbcTemplate.queryForList(
             """SELECT year, month, day, GROUP_CONCAT(id) as ids
                FROM metadata
@@ -209,7 +267,7 @@ class MemoriesService(
 
             for (cluster in clusters) {
                 if (cluster.size < 5) continue
-                val coherent = filterByCoherence(cluster, vecs)
+                val coherent = filterByCoherence(cluster, vecs).filter { it !in excludeIds }
                 if (coherent.size < 5) continue
                 val kws = topKeywords(coherent)
                 val place = topPlaceName(coherent)
@@ -225,7 +283,7 @@ class MemoriesService(
     }
 
     // One recognized person appearing across ≥ 2 years.
-    private fun buildSoloLongitudinalClusters(): List<PhotoCluster> {
+    private fun buildSoloLongitudinalClusters(excludeIds: Set<String> = emptySet()): List<PhotoCluster> {
         val rows = jdbcTemplate.queryForList(
             """SELECT rl.id as label_id, rl.name,
                  COUNT(DISTINCT rlp.metadata_id) as cnt,
@@ -249,18 +307,17 @@ class MemoriesService(
                      AND m.hidden = 0
                    ORDER BY m.year, m.month, m.day""",
                 String::class.java, labelId
-            )
-            if (ids.size < 10) return@mapNotNull null
+            ).filter { it !in excludeIds }
+            if (ids.size < 5) return@mapNotNull null
             PhotoCluster("person", "$name over the years", ids)
         }
     }
 
-    // Two recognized people co-occurring across ≥ 2 years.
-    private fun buildPairLongitudinalClusters(): List<PhotoCluster> {
+    // Two recognized people co-occurring in ≥ 5 photos.
+    private fun buildPairLongitudinalClusters(excludeIds: Set<String> = emptySet()): List<PhotoCluster> {
         val rows = jdbcTemplate.queryForList(
             """SELECT rl1.id as id1, rl1.name as name1, rl2.id as id2, rl2.name as name2,
-                 COUNT(DISTINCT rlp1.metadata_id) as cnt,
-                 COUNT(DISTINCT m.year) as year_span
+                 COUNT(DISTINCT rlp1.metadata_id) as cnt
                FROM recognitionlabel rl1
                JOIN recognitionlabelphoto rlp1 ON rl1.id = rlp1.recognition_label_id
                JOIN recognitionlabelphoto rlp2 ON rlp1.metadata_id = rlp2.metadata_id
@@ -269,7 +326,7 @@ class MemoriesService(
                WHERE rl1.id < rl2.id
                  AND m.hidden = 0
                GROUP BY rl1.id, rl2.id
-               HAVING cnt >= 8 AND year_span >= 2
+               HAVING cnt >= 5
                ORDER BY RANDOM()
                LIMIT 40"""
         )
@@ -286,8 +343,8 @@ class MemoriesService(
                      AND m.hidden = 0
                    ORDER BY m.year, m.month, m.day""",
                 String::class.java, id1, id2
-            )
-            if (ids.size < 8) return@mapNotNull null
+            ).filter { it !in excludeIds }
+            if (ids.size < 5) return@mapNotNull null
             PhotoCluster("pair", "$name1 and $name2 over the years", ids)
         }
     }
