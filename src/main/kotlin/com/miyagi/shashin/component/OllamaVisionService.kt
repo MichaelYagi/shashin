@@ -596,9 +596,10 @@ class OllamaVisionService(
         if (images.isEmpty()) return null
 
         val systemPrompt = "You are labeling a personal photo memory made up of multiple photos. " +
-            "Write a short, direct title (2-5 words) that describes what ALL the photos share in common — the overall occasion, setting, or people. " +
-            "Do NOT base the title on a single distinctive element from one photo (a rainbow, a sunset, one landmark). " +
-            "If a rainbow appears in only some photos, the memory is not about a rainbow — find what connects all of them. " +
+            "Write a short, direct title (2-5 words) that describes what the MAJORITY of photos share in common — the overall occasion, setting, or people. " +
+            "Do NOT base the title on a single distinctive element from one photo (a rainbow, a sunset, one landmark, a night shot). " +
+            "If one photo looks very different from the rest (different time of day, different location, different activity), treat it as an outlier and ignore it when choosing the title. " +
+            "If a rainbow appears in only some photos, the memory is not about a rainbow — find what connects most of them. " +
             "Prefer a descriptive title based on place, activity, or occasion. " +
             "Only include the date (month and year only, never the day) when there is no better way to title the memory. Most titles should NOT include a date. " +
             "Good uses of a date: 'Christmas 2019', 'Halloween 2022'. Bad uses: 'July 2016 Outings', 'February 2022 Playtime'. " +

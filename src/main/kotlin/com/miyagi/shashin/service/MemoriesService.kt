@@ -134,7 +134,8 @@ class MemoriesService(
             val usedTitles = mutableListOf<String>()
             for (cluster in selected) {
                 val memoryPhotos = sampleIds(cluster.photoIds, (6..12).random())
-                val ollamaPhotos = sampleIds(memoryPhotos, 6)
+                val memoryVecs = embeddingStore.getAll(memoryPhotos)
+                val ollamaPhotos = if (memoryVecs.size >= 3) centroidSample(memoryPhotos, memoryVecs, 6) else sampleIds(memoryPhotos, 6)
                 val description = ollamaVisionService.describeCluster(
                     ollamaPhotos,
                     cluster.hint,
@@ -439,6 +440,18 @@ class MemoriesService(
                 String::class.java, *sample.toTypedArray()
             ).joinToString(", ")
         } catch (_: Exception) { "" }
+    }
+
+    private fun centroidSample(ids: List<String>, vecs: Map<String, FloatArray>, n: Int): List<String> {
+        val available = ids.filter { it in vecs }
+        if (available.size <= n) return available
+        val dim = vecs.values.first().size
+        val centroid = FloatArray(dim)
+        for (id in available) { val v = vecs[id] ?: continue; for (i in 0 until minOf(dim, v.size)) centroid[i] += v[i] }
+        for (i in 0 until dim) centroid[i] /= available.size
+        var norm = 0f; for (x in centroid) norm += x * x; norm = kotlin.math.sqrt(norm)
+        if (norm > 0f) for (i in 0 until dim) centroid[i] /= norm
+        return available.sortedBy { id -> vecs[id]?.let { cosineDist(centroid, it) } ?: Float.MAX_VALUE }.take(n)
     }
 
     private fun sampleIds(ids: List<String>, n: Int): List<String> {
