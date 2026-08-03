@@ -282,7 +282,7 @@
                         return;
                     }
                     var item = lg.galleryItems[lg.index];
-                    if (!item || !item.__slideVideoInfo) return;
+                    if (!item || !(item.__slideVideoInfo || item.video)) return;
                     memoriesEnterVideoMode(lg, lg.index);
                 });
 
@@ -359,6 +359,17 @@
             })).then(function() {
                 viewBtn.prop('disabled', false).html('<span class="bi-play-circle"></span> View');
                 shashin.refreshAndActivateLgListener(mediaContentList);
+                // After refresh(), gallery items are new objects with no __slideVideoInfo.
+                // LG may not re-fire lgHasVideo for slides it considers already-loaded from a
+                // previous session. Seed __slideVideoInfo so getVideoHtml can build video HTML.
+                var lgInst = shashin.getLightGallery();
+                if (lgInst) {
+                    lgInst.galleryItems.forEach(function(item) {
+                        if (item.video && !item.__slideVideoInfo) {
+                            item.__slideVideoInfo = { html5: true };
+                        }
+                    });
+                }
                 shashin.getLightGallery().openGallery(0);
                 lgOpen = true;
                 setTimeout(function() {
