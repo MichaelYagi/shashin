@@ -197,9 +197,13 @@
                             clearInterval(memoriesVideoPoller);
                             memoriesVideoPoller = null;
                             memoriesAttachEndedHandler(video, lg, slideIdx);
-                            // If browser blocks autoplay, try muted after 2s; if still blocked, advance
+                            var videoStarted = false;
+                            $(video).one('playing.memoriesMuted', function() { videoStarted = true; });
                             setTimeout(function() {
-                                if (video.paused && memoriesVideoAutoplay && lg.index === slideIdx) {
+                                $(video).off('playing.memoriesMuted');
+                                // Only apply muted fallback if browser blocked autoplay (never played).
+                                // If videoStarted is true, the user manually paused — leave it alone.
+                                if (video.paused && !videoStarted && memoriesVideoAutoplay && lg.index === slideIdx) {
                                     video.muted = true;
                                     video.play().catch(function() { memoriesAdvanceFromVideo(lg, slideIdx); });
                                 }
@@ -217,9 +221,12 @@
                     if (video) {
                         memoriesAttachEndedHandler(video, lg, slideIdx);
                         if (!video.paused) return; // already playing — don't disturb it
+                        var videoStarted = false;
+                        $(video).one('playing.memoriesMuted', function() { videoStarted = true; });
                         video.play().catch(function() {});
                         setTimeout(function() {
-                            if (video.paused && memoriesVideoAutoplay && lg.index === slideIdx) {
+                            $(video).off('playing.memoriesMuted');
+                            if (video.paused && !videoStarted && memoriesVideoAutoplay && lg.index === slideIdx) {
                                 video.muted = true;
                                 video.play().catch(function() { memoriesAdvanceFromVideo(lg, slideIdx); });
                             }
@@ -233,9 +240,12 @@
                 function memoriesEnterVideoMode(lg, idx) {
                     memoriesVideoAutoplay = true;
                     if ($('.lg-outer').hasClass('lg-show-autoplay') && !memoriesVideoFakeActive) {
-                        // Timer is genuinely running — stop it; lgAutoplayStop restores the button active state
+                        // Defer the button click so it runs after startAutoPlay() finishes setting
+                        // this.interval. lgAutoplayStart fires *before* the interval is assigned,
+                        // so a synchronous click here would hit stopAutoPlay() with interval=false,
+                        // which skips lgAutoplayStop and leaves memoriesStoppingAutoplay stuck true.
                         memoriesStoppingAutoplay = true;
-                        $('.lg-autoplay-button').first().trigger('click');
+                        setTimeout(function() { $('.lg-autoplay-button').first().trigger('click'); }, 0);
                     }
                     memoriesStartVideoPlayback(lg, idx);
                 }
