@@ -230,10 +230,10 @@
 
                 function memoriesEnterVideoMode(lg, idx) {
                     memoriesVideoAutoplay = true;
-                    if ($('.lg-outer').hasClass('lg-show-autoplay')) {
+                    if ($('.lg-outer').hasClass('lg-show-autoplay') && !memoriesVideoFakeActive) {
+                        // Timer is genuinely running — stop it; lgAutoplayStop restores the button active state
                         memoriesStoppingAutoplay = true;
                         $('.lg-autoplay-button').first().trigger('click');
-                        // lgAutoplayStop restores lg-show-autoplay so button stays active
                     }
                     memoriesStartVideoPlayback(lg, idx);
                 }
