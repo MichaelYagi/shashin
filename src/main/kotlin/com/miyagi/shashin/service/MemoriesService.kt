@@ -167,7 +167,9 @@ class MemoriesService(
                 return
             }
 
-            val deduplicated = generated.distinctBy { it.title.trim().lowercase() }
+            val deduplicated = deduplicateByPhotoOverlap(
+                generated.distinctBy { it.title.trim().lowercase() }
+            )
             swapMemories(deduplicated)
             logger.log(Level.INFO, "Memories generation complete — ${deduplicated.size} memories stored")
         } finally {
@@ -475,6 +477,20 @@ class MemoriesService(
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ).getOrElse(month - 1) { "$month" }
+
+    private fun deduplicateByPhotoOverlap(memories: List<GeneratedMemory>, threshold: Float = 0.6f): List<GeneratedMemory> {
+        val kept = mutableListOf<GeneratedMemory>()
+        for (candidate in memories) {
+            val candidateSet = candidate.photoIds.toSet()
+            val duplicate = kept.any { existing ->
+                val overlap = existing.photoIds.count { it in candidateSet }
+                val minSize = minOf(existing.photoIds.size, candidate.photoIds.size)
+                minSize > 0 && overlap.toFloat() / minSize >= threshold
+            }
+            if (!duplicate) kept.add(candidate)
+        }
+        return kept
+    }
 
     private fun swapMemories(memories: List<GeneratedMemory>) {
         val ts = TextUtils.getCurrentTimestamp()
