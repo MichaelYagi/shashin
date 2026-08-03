@@ -145,7 +145,7 @@
                     plugins: lgPlugins,
                     counter: true,
                     download: false,
-                    slideShowAutoplay: true,
+                    slideShowAutoplay: false,
                     slideShowInterval: 7000,
                     autoplayControls: true,
                     progressBar: true,
@@ -292,11 +292,15 @@
                     var isAutoPlaying = $('.lg-outer').hasClass('lg-show-autoplay');
 
                     if (!item || !item.__slideVideoInfo) {
-                        if (memoriesVideoAutoplay && !isAutoPlaying) {
+                        if (memoriesVideoAutoplay || memoriesVideoFakeActive) {
+                            // Coming from video mode — restart the real autoplay timer
                             memoriesVideoAutoplay = false;
+                            memoriesVideoFakeActive = false;
+                            $('.lg-outer').removeClass('lg-show-autoplay');
                             setTimeout(function() { $('.lg-autoplay-button').first().trigger('click'); }, 100);
                         } else {
                             memoriesVideoAutoplay = false;
+                            memoriesVideoFakeActive = false;
                         }
                         return;
                     }
@@ -325,6 +329,11 @@
                 shashin.refreshAndActivateLgListener(mediaContentList);
                 shashin.getLightGallery().openGallery(0);
                 lgOpen = true;
+                setTimeout(function() {
+                    if (!$('.lg-outer').hasClass('lg-show-autoplay')) {
+                        $('.lg-autoplay-button').first().trigger('click');
+                    }
+                }, 500);
             });
         });
 
