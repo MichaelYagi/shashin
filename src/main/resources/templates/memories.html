@@ -99,6 +99,8 @@
         var memoriesVideoPoller = null;
         var memoriesVideoAutoplay = false;
         var memoriesStoppingAutoplay = false;
+        var memoriesVideoAdvancing = false;
+        var memoriesVideoFakeActive = false;
 
         $(document).on('keydown.memoriesAutoplay', function(e) {
             if (lgOpen && (e.code === 'Space' || e.keyCode === 32)) {
@@ -160,6 +162,7 @@
                     memoriesVideoAutoplay = false;
                     memoriesStoppingAutoplay = false;
                     memoriesVideoAdvancing = false;
+                    memoriesVideoFakeActive = false;
                     if (memoriesVideoPoller) { clearInterval(memoriesVideoPoller); memoriesVideoPoller = null; }
                 });
                 $('#propMetadata').on('show.bs.modal', function() {
@@ -235,10 +238,20 @@
                     memoriesStartVideoPlayback(lg, idx);
                 }
 
-                // User starts autoplay while already on a video slide — restart video and enter mode
+                // lgAutoplayStart fires when LG starts the timer.
+                // If we're in fake-active state (video playing, timer stopped), user is actually pausing —
+                // stop the newly started timer and exit video mode. Otherwise enter video mode.
                 $('#memories-gallery').on('lgAutoplayStart', function() {
                     var lg = shashin.getLightGallery();
                     if (!lg) return;
+                    if (memoriesVideoFakeActive) {
+                        // User clicked to pause while video was playing — honour it
+                        memoriesVideoFakeActive = false;
+                        memoriesVideoAutoplay = false;
+                        memoriesStoppingAutoplay = true;
+                        $('.lg-autoplay-button').first().trigger('click');
+                        return;
+                    }
                     var item = lg.galleryItems[lg.index];
                     if (!item || !item.__slideVideoInfo) return;
                     memoriesEnterVideoMode(lg, lg.index);
@@ -249,19 +262,24 @@
                     if (memoriesStoppingAutoplay) {
                         memoriesStoppingAutoplay = false;
                         setTimeout(function() {
-                            if (memoriesVideoAutoplay) $('.lg-outer').addClass('lg-show-autoplay');
+                            if (memoriesVideoAutoplay) {
+                                $('.lg-outer').addClass('lg-show-autoplay');
+                                memoriesVideoFakeActive = true;
+                            }
                         }, 0);
                         return;
                     }
                     memoriesVideoAutoplay = false;
+                    memoriesVideoFakeActive = false;
                 });
 
                 $('#memories-gallery').on('lgBeforeSlide', function() {
                     if (memoriesVideoPoller) { clearInterval(memoriesVideoPoller); memoriesVideoPoller = null; }
                     if (!memoriesVideoAdvancing) {
                         // Manual navigation — exit video autoplay mode
-                        if (memoriesVideoAutoplay) $('.lg-outer').removeClass('lg-show-autoplay');
+                        if (memoriesVideoAutoplay || memoriesVideoFakeActive) $('.lg-outer').removeClass('lg-show-autoplay');
                         memoriesVideoAutoplay = false;
+                        memoriesVideoFakeActive = false;
                     }
                     memoriesVideoAdvancing = false;
                 });
