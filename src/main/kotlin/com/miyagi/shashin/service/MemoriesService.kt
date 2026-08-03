@@ -26,7 +26,8 @@ data class MemoryView(
 private data class PhotoCluster(
     val type: String,
     val hint: String,
-    val photoIds: List<String>
+    val photoIds: List<String>,
+    val precomputedTitle: String? = null
 )
 
 private data class GeneratedMemory(
@@ -134,22 +135,31 @@ class MemoriesService(
             val usedTitles = mutableListOf<String>()
             for (cluster in selected) {
                 val memoryPhotos = sampleIds(cluster.photoIds, (6..12).random())
-                val memoryVecs = embeddingStore.getAll(memoryPhotos)
-                val ollamaPhotos = if (memoryVecs.size >= 3) centroidSample(memoryPhotos, memoryVecs, 6) else sampleIds(memoryPhotos, 6)
-                val description = ollamaVisionService.describeCluster(
-                    ollamaPhotos,
-                    cluster.hint,
-                    settings,
-                    usedTitles.toList()
-                )
-                if (description == null) {
-                    logger.log(Level.WARNING, "Ollama returned null for cluster \"${cluster.hint}\" — skipping")
-                    continue
+                val title: String
+                val caption: String
+                if (cluster.precomputedTitle != null) {
+                    title = cluster.precomputedTitle
+                    caption = ""
+                } else {
+                    val memoryVecs = embeddingStore.getAll(memoryPhotos)
+                    val ollamaPhotos = if (memoryVecs.size >= 3) centroidSample(memoryPhotos, memoryVecs, 6) else sampleIds(memoryPhotos, 6)
+                    val description = ollamaVisionService.describeCluster(
+                        ollamaPhotos,
+                        cluster.hint,
+                        settings,
+                        usedTitles.toList()
+                    )
+                    if (description == null) {
+                        logger.log(Level.WARNING, "Ollama returned null for cluster \"${cluster.hint}\" — skipping")
+                        continue
+                    }
+                    title = description.first
+                    caption = description.second
                 }
-                logger.log(Level.INFO, "Memory \"${description.first}\" (${cluster.type}): ${memoryPhotos.size} photos")
-                usedTitles.add(description.first)
-                generated.add(GeneratedMemory(cluster, memoryPhotos, description.first, description.second))
-                try { Thread.sleep(1000) } catch (_: InterruptedException) {}
+                logger.log(Level.INFO, "Memory \"$title\" (${cluster.type}): ${memoryPhotos.size} photos")
+                usedTitles.add(title)
+                generated.add(GeneratedMemory(cluster, memoryPhotos, title, caption))
+                if (cluster.precomputedTitle == null) try { Thread.sleep(1000) } catch (_: InterruptedException) {}
             }
 
             if (generated.isEmpty()) {
@@ -232,7 +242,8 @@ class MemoriesService(
         }
         if (allIds.size < 5) return emptyList()
         val hint = "On this day — ${monthName(month)} $day across the years"
-        return listOf(PhotoCluster("onthisday", hint, allIds.shuffled()))
+        val title = "${monthName(month)} Across the Years"
+        return listOf(PhotoCluster("onthisday", hint, allIds.shuffled(), precomputedTitle = title))
     }
 
     // DBSCAN on per-day embedding groups. Each cluster = a coherent occasion within a day.
@@ -264,7 +275,7 @@ class MemoriesService(
                 if (it.size > 40) it.shuffled().take(40) else it
             }
             try { Thread.sleep(100) } catch (_: InterruptedException) {}
-            val clusters = dbscan(idsWithVecs, vecs, epsilon = 0.35f, minPts = 3)
+            val clusters = dbscan(idsWithVecs, vecs, epsilon = 0.28f, minPts = 3)
 
             for (cluster in clusters) {
                 if (cluster.size < 5) continue
@@ -395,7 +406,7 @@ class MemoriesService(
     // Remove photos that are outliers relative to the cluster centroid.
     // DBSCAN chaining can pull in bridging photos that connect two unrelated groups;
     // filtering by centroid distance catches those after the fact.
-    private fun filterByCoherence(ids: List<String>, vecs: Map<String, FloatArray>, threshold: Float = 0.35f): List<String> {
+    private fun filterByCoherence(ids: List<String>, vecs: Map<String, FloatArray>, threshold: Float = 0.28f): List<String> {
         if (ids.size < 2) return ids
         val dim = vecs.values.first().size
         val centroid = FloatArray(dim)

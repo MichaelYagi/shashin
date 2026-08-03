@@ -603,7 +603,8 @@ class OllamaVisionService(
             "Prefer a descriptive title based on place, activity, or occasion. " +
             "Only include the date (month and year only, never the day) when there is no better way to title the memory. Most titles should NOT include a date. " +
             "Good uses of a date: 'Christmas 2019', 'Halloween 2022'. Bad uses: 'July 2016 Outings', 'February 2022 Playtime'. " +
-            "Do NOT assume the photographer's point of view or activity. Only describe what is visible in the photos. " +
+            "Do NOT assume the photographer's point of view or activity. Only describe what is literally visible in the photos. " +
+            "Do NOT infer the destination, purpose, or reason for any activity. If photos show someone on a train, say 'Train Ride' not 'Train Ride to Work' or 'Train Ride to School'. " +
             "If photos show ferries from shore, do not say 'Ferry Ride' — say something like 'Ferries at the Harbour'. " +
             "IMPORTANT: Never use generic labels for people. Forbidden words: boy, girl, man, woman, child, children, kid, kids, baby, babies, person, people, toddler, teen, teenager, infant. " +
             "Only refer to people by their actual name if a name is provided in the context. " +
