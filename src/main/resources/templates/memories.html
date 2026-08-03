@@ -221,6 +221,7 @@
                     if (video) {
                         memoriesAttachEndedHandler(video, lg, slideIdx);
                         if (!video.paused) return; // already playing — don't disturb it
+                        if (video.ended) video.currentTime = 0; // ended videos need a seek before play
                         var videoStarted = false;
                         $(video).one('playing.memoriesMuted', function() { videoStarted = true; });
                         video.play().catch(function() {});
@@ -232,10 +233,7 @@
                             }
                         }, 2000);
                     } else {
-                        // Trigger lgPosterClick directly — this is what lgVideo listens for.
-                        // Clicking the DOM play button relies on the click bubbling through LG's
-                        // container handler, which is fragile (e.g. after lg.refresh() on second open).
-                        setTimeout(function() { $('#memories-gallery').trigger('lgPosterClick'); }, 50);
+                        setTimeout(function() { $('.lg-current .lg-video-play-button').trigger('click'); }, 50);
                         memoriesStartVideoPoller(lg, slideIdx);
                     }
                 }
