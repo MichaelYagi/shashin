@@ -232,7 +232,10 @@
                             }
                         }, 2000);
                     } else {
-                        setTimeout(function() { $('.lg-current .lg-video-play-button').trigger('click'); }, 50);
+                        // Trigger lgPosterClick directly — this is what lgVideo listens for.
+                        // Clicking the DOM play button relies on the click bubbling through LG's
+                        // container handler, which is fragile (e.g. after lg.refresh() on second open).
+                        setTimeout(function() { $('#memories-gallery').trigger('lgPosterClick'); }, 50);
                         memoriesStartVideoPoller(lg, slideIdx);
                     }
                 }
@@ -319,7 +322,10 @@
                     var item = lg.galleryItems[idx];
                     var isAutoPlaying = $('.lg-outer').hasClass('lg-show-autoplay');
 
-                    if (!item || !item.__slideVideoInfo) {
+                    // item.video is set by us on gallery items; __slideVideoInfo is set by lgVideo
+                    // after it processes each slide. On second open after lg.refresh(), __slideVideoInfo
+                    // may not be populated yet when lgAfterSlide fires, so fall back to item.video.
+                    if (!item || !(item.__slideVideoInfo || item.video)) {
                         if (memoriesVideoAutoplay || memoriesVideoFakeActive) {
                             // Coming from video mode — restart the real autoplay timer
                             memoriesVideoAutoplay = false;
