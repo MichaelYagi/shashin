@@ -159,6 +159,7 @@
                     lgOpen = false;
                     memoriesVideoAutoplay = false;
                     memoriesStoppingAutoplay = false;
+                    memoriesVideoAdvancing = false;
                     if (memoriesVideoPoller) { clearInterval(memoriesVideoPoller); memoriesVideoPoller = null; }
                 });
                 $('#propMetadata').on('show.bs.modal', function() {
@@ -167,11 +168,89 @@
                     }
                 });
 
-                // Video-aware autoplay: when autoplay hits a video slide, pause the timer,
-                // play the video, then advance on ended.
+                // Video-aware autoplay helpers
+                function memoriesAdvanceFromVideo(lg, slideIdx) {
+                    if (!lg || lg.index !== slideIdx || !memoriesVideoAutoplay) return;
+                    memoriesVideoAdvancing = true;
+                    var nextIdx = (lg.index + 1) < lg.galleryItems.length ? lg.index + 1 : 0;
+                    lg.slide(nextIdx, false, false, 'next');
+                }
+
+                function memoriesAttachEndedHandler(video, lg, slideIdx) {
+                    $(video).off('ended.memories').on('ended.memories', function() {
+                        memoriesAdvanceFromVideo(lg, slideIdx);
+                    });
+                }
+
+                function memoriesStartVideoPoller(lg, slideIdx) {
+                    if (memoriesVideoPoller) clearInterval(memoriesVideoPoller);
+                    var attempts = 0;
+                    memoriesVideoPoller = setInterval(function() {
+                        attempts++;
+                        var video = $('.lg-current .lg-video-object')[0];
+                        if (video) {
+                            clearInterval(memoriesVideoPoller);
+                            memoriesVideoPoller = null;
+                            memoriesAttachEndedHandler(video, lg, slideIdx);
+                            // If browser blocks autoplay, try muted after 2s; if still blocked, advance
+                            setTimeout(function() {
+                                if (video.paused && memoriesVideoAutoplay && lg.index === slideIdx) {
+                                    video.muted = true;
+                                    video.play().catch(function() { memoriesAdvanceFromVideo(lg, slideIdx); });
+                                }
+                            }, 2000);
+                        } else if (attempts > 50) {
+                            clearInterval(memoriesVideoPoller);
+                            memoriesVideoPoller = null;
+                            memoriesAdvanceFromVideo(lg, slideIdx);
+                        }
+                    }, 100);
+                }
+
+                function memoriesStartVideoPlayback(lg, slideIdx) {
+                    var video = $('.lg-current .lg-video-object')[0];
+                    if (video) {
+                        video.currentTime = 0;
+                        video.play().catch(function() {});
+                        memoriesAttachEndedHandler(video, lg, slideIdx);
+                        setTimeout(function() {
+                            if (video.paused && memoriesVideoAutoplay && lg.index === slideIdx) {
+                                video.muted = true;
+                                video.play().catch(function() { memoriesAdvanceFromVideo(lg, slideIdx); });
+                            }
+                        }, 2000);
+                    } else {
+                        setTimeout(function() { $('.lg-current .lg-video-play-button').trigger('click'); }, 50);
+                        memoriesStartVideoPoller(lg, slideIdx);
+                    }
+                }
+
+                function memoriesEnterVideoMode(lg, idx) {
+                    memoriesVideoAutoplay = true;
+                    if ($('.lg-outer').hasClass('lg-show-autoplay')) {
+                        memoriesStoppingAutoplay = true;
+                        $('.lg-autoplay-button').first().trigger('click');
+                        // lgAutoplayStop restores lg-show-autoplay so button stays active
+                    }
+                    memoriesStartVideoPlayback(lg, idx);
+                }
+
+                // User starts autoplay while already on a video slide — restart video and enter mode
+                $('#memories-gallery').on('lgAutoplayStart', function() {
+                    var lg = shashin.getLightGallery();
+                    if (!lg) return;
+                    var item = lg.galleryItems[lg.index];
+                    if (!item || !item.__slideVideoInfo) return;
+                    memoriesEnterVideoMode(lg, lg.index);
+                });
+
+                // Internal stop: keep button showing active. User stop: exit video mode.
                 $('#memories-gallery').on('lgAutoplayStop', function() {
                     if (memoriesStoppingAutoplay) {
                         memoriesStoppingAutoplay = false;
+                        setTimeout(function() {
+                            if (memoriesVideoAutoplay) $('.lg-outer').addClass('lg-show-autoplay');
+                        }, 0);
                         return;
                     }
                     memoriesVideoAutoplay = false;
@@ -179,6 +258,12 @@
 
                 $('#memories-gallery').on('lgBeforeSlide', function() {
                     if (memoriesVideoPoller) { clearInterval(memoriesVideoPoller); memoriesVideoPoller = null; }
+                    if (!memoriesVideoAdvancing) {
+                        // Manual navigation — exit video autoplay mode
+                        if (memoriesVideoAutoplay) $('.lg-outer').removeClass('lg-show-autoplay');
+                        memoriesVideoAutoplay = false;
+                    }
+                    memoriesVideoAdvancing = false;
                 });
 
                 $('#memories-gallery').on('lgAfterSlide', function(event) {
@@ -189,52 +274,17 @@
                     var isAutoPlaying = $('.lg-outer').hasClass('lg-show-autoplay');
 
                     if (!item || !item.__slideVideoInfo) {
-                        // Image slide: if we came here from a video-ended advance, restart autoplay
                         if (memoriesVideoAutoplay && !isAutoPlaying) {
                             memoriesVideoAutoplay = false;
-                            setTimeout(function() {
-                                $('.lg-autoplay-button').first().trigger('click');
-                            }, 100);
+                            setTimeout(function() { $('.lg-autoplay-button').first().trigger('click'); }, 100);
                         } else {
                             memoriesVideoAutoplay = false;
                         }
                         return;
                     }
 
-                    // Video slide: only act if autoplay is (or was) driving us
                     if (!isAutoPlaying && !memoriesVideoAutoplay) return;
-
-                    memoriesVideoAutoplay = true;
-
-                    // Pause the autoplay timer (progress bar irrelevant for variable-length video)
-                    if (isAutoPlaying) {
-                        memoriesStoppingAutoplay = true;
-                        $('.lg-autoplay-button').first().trigger('click');
-                    }
-
-                    // Trigger the video to load and play (same as clicking the play button)
-                    setTimeout(function() {
-                        $('.lg-current .lg-video-play-button').trigger('click');
-                    }, 50);
-
-                    // Poll for the <video> element, then listen for ended
-                    var slideIdx = idx;
-                    if (memoriesVideoPoller) clearInterval(memoriesVideoPoller);
-                    var attempts = 0;
-                    memoriesVideoPoller = setInterval(function() {
-                        attempts++;
-                        var video = $('.lg-current .lg-video-object')[0];
-                        if (video || attempts > 50) {
-                            clearInterval(memoriesVideoPoller);
-                            memoriesVideoPoller = null;
-                            if (!video) return;
-                            $(video).one('ended', function() {
-                                if (!lg || lg.index !== slideIdx || !memoriesVideoAutoplay) return;
-                                var nextIdx = (lg.index + 1) < lg.galleryItems.length ? lg.index + 1 : 0;
-                                lg.slide(nextIdx, false, false, 'next');
-                            });
-                        }
-                    }, 100);
+                    memoriesEnterVideoMode(lg, idx);
                 });
             }
 
