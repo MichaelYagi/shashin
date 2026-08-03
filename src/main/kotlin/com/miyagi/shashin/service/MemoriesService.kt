@@ -134,15 +134,17 @@ class MemoriesService(
             val generated = mutableListOf<GeneratedMemory>()
             val usedTitles = mutableListOf<String>()
             for (cluster in selected) {
-                val memoryPhotos = sampleIds(cluster.photoIds, (6..12).random())
+                val memoryPhotosRaw = sampleIds(cluster.photoIds, (6..12).random())
+                val memoryVecs = embeddingStore.getAll(memoryPhotosRaw)
+                // Sort by centroid distance so the most representative photos are first (used as cover images)
+                val memoryPhotos = if (memoryVecs.size >= 3) centroidSample(memoryPhotosRaw, memoryVecs, memoryPhotosRaw.size) else memoryPhotosRaw
                 val title: String
                 val caption: String
                 if (cluster.precomputedTitle != null) {
                     title = cluster.precomputedTitle
                     caption = ""
                 } else {
-                    val memoryVecs = embeddingStore.getAll(memoryPhotos)
-                    val ollamaPhotos = if (memoryVecs.size >= 3) centroidSample(memoryPhotos, memoryVecs, 6) else sampleIds(memoryPhotos, 6)
+                    val ollamaPhotos = memoryPhotos.take(6)
                     val description = ollamaVisionService.describeCluster(
                         ollamaPhotos,
                         cluster.hint,
