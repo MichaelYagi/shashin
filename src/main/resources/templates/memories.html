@@ -215,9 +215,9 @@
                 function memoriesStartVideoPlayback(lg, slideIdx) {
                     var video = $('.lg-current .lg-video-object')[0];
                     if (video) {
-                        video.currentTime = 0;
-                        video.play().catch(function() {});
                         memoriesAttachEndedHandler(video, lg, slideIdx);
+                        if (!video.paused) return; // already playing — don't disturb it
+                        video.play().catch(function() {});
                         setTimeout(function() {
                             if (video.paused && memoriesVideoAutoplay && lg.index === slideIdx) {
                                 video.muted = true;
@@ -239,6 +239,22 @@
                     }
                     memoriesStartVideoPlayback(lg, idx);
                 }
+
+                // Capture-phase listener so we intercept the autoplay button click before
+                // lgAutoplay's jQuery handler runs. When video is playing (fake-active state),
+                // lgAutoplay's stopAutoPlay() is a no-op (interval already false), so the button
+                // appears broken. We handle it here instead: remove the active class, stop
+                // auto-advance tracking, and leave the video alone.
+                document.addEventListener('click', function(e) {
+                    if (!lgOpen || !memoriesVideoFakeActive) return;
+                    var btn = document.querySelector('.lg-autoplay-button');
+                    if (!btn || (e.target !== btn && !btn.contains(e.target))) return;
+                    e.stopImmediatePropagation();
+                    memoriesVideoFakeActive = false;
+                    memoriesVideoAutoplay = false;
+                    var outer = document.querySelector('.lg-outer');
+                    if (outer) outer.classList.remove('lg-show-autoplay');
+                }, true);
 
                 // lgAutoplayStart fires when LG starts the timer.
                 // If we're in fake-active state (video playing, timer stopped), user is actually pausing —
