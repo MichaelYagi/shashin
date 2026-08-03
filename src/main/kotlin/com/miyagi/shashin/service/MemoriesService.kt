@@ -233,7 +233,7 @@ class MemoriesService(
                FROM recognitionlabel rl
                JOIN recognitionlabelphoto rlp ON rl.id = rlp.recognition_label_id
                JOIN metadata m ON rlp.metadata_id = m.id
-               WHERE CAST(rlp.confidence AS REAL) >= 70 AND m.hidden = 0
+               WHERE m.hidden = 0
                GROUP BY rl.id
                HAVING cnt >= 10 AND year_span >= 2
                ORDER BY RANDOM()
@@ -246,7 +246,7 @@ class MemoriesService(
                 """SELECT rlp.metadata_id FROM recognitionlabelphoto rlp
                    JOIN metadata m ON rlp.metadata_id = m.id
                    WHERE rlp.recognition_label_id = ?
-                     AND CAST(rlp.confidence AS REAL) >= 70 AND m.hidden = 0
+                     AND m.hidden = 0
                    ORDER BY m.year, m.month, m.day""",
                 String::class.java, labelId
             )
@@ -267,8 +267,6 @@ class MemoriesService(
                JOIN recognitionlabel rl2 ON rlp2.recognition_label_id = rl2.id
                JOIN metadata m ON rlp1.metadata_id = m.id
                WHERE rl1.id < rl2.id
-                 AND CAST(rlp1.confidence AS REAL) >= 70
-                 AND CAST(rlp2.confidence AS REAL) >= 70
                  AND m.hidden = 0
                GROUP BY rl1.id, rl2.id
                HAVING cnt >= 8 AND year_span >= 2
@@ -285,8 +283,6 @@ class MemoriesService(
                    JOIN recognitionlabelphoto rlp2 ON rlp1.metadata_id = rlp2.metadata_id
                    JOIN metadata m ON rlp1.metadata_id = m.id
                    WHERE rlp1.recognition_label_id = ? AND rlp2.recognition_label_id = ?
-                     AND CAST(rlp1.confidence AS REAL) >= 70
-                     AND CAST(rlp2.confidence AS REAL) >= 70
                      AND m.hidden = 0
                    ORDER BY m.year, m.month, m.day""",
                 String::class.java, id1, id2
