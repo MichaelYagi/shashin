@@ -43,6 +43,15 @@
     margin-right: 0;
 }
 
+/* timeline: rows need full margin/padding reset so justified gallery fills the container */
+.dateContainer .row {
+    font-size: 0;
+    line-height: 0;
+    margin-right: 0;
+    margin-left: 0;
+    padding-left: 0 !important;
+}
+
 /* --- Thumbnail Containers --- */
 /* Apply to containers inside either gallery id, and also keep the .dateSection rule */
 :is(#scroll-gallery, #infinite-scroll-gallery) .photo-thumbnail-container,
@@ -79,7 +88,7 @@
     padding-left: 13px !important;
 }
 
-.dateHeader {
+.dateSection .dateHeader {
     margin-bottom: -10px;
 }
 
