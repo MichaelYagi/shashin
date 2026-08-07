@@ -139,6 +139,11 @@
             shashin._selectorClickHandler = null;
         }
 
+        if (!shashin.getLightGalleryElement()) {
+            shashin.lg = null;
+            return;
+        }
+
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
 
         // Extract selector before Shoji sees it — we emulate LG's selector mode ourselves

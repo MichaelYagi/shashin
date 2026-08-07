@@ -23,14 +23,31 @@ const appjs = require('../../../main/resources/static/js/site/app.js');
 
 global.shashin = { ...constantsjs, ...toastjs, ...modaljs, ...batchjs, ...lightgalleryjs, ...mapjs, ...metadatajs, ...overlayjs, ...utiljs, ...appjs };
 global.Castjs = require('../../../main/resources/static/js/cast.min');
-global.lightGallery = require('../../../main/resources/static/js/lightgallery.min');
-global.lgZoom = require('../../../main/resources/static/js/lg-zoom.min');
-global.lgVideo = require('../../../main/resources/static/js/lg-video.min');
 global.lgCastMedia = require('../../../main/resources/static/js/lg-cast-media');
-global.lgRelativeCaption = require('../../../main/resources/static/js/lg-relative-caption.min');
-global.lgFullscreen = require('../../../main/resources/static/js/lg-fullscreen');
-global.lgRotate = require('../../../main/resources/static/js/lg-rotate.min');
+global.lgDownload = require('../../../main/resources/static/js/lg-download');
 global.lgShashinEditor = require('../../../main/resources/static/js/lg-shashin-editor');
+
+const shojiPlugin = function(name) { return { name: name, init: function() {} }; };
+function MockShoji(el, options) {
+    this.element = el;
+    this.options = options || {};
+    this.items = (options && options.items) ? options.items : [];
+    this.currentIndex = 0;
+}
+MockShoji.prototype.open = function() {};
+MockShoji.prototype.close = function() { return 0; };
+MockShoji.prototype.goTo = function() {};
+MockShoji.prototype.updateSlides = function(items) { this.items = items || []; };
+MockShoji.prototype.on = function() { return function() {}; };
+MockShoji.prototype.reinit = function() {};
+MockShoji.prototype.destroy = function() {};
+MockShoji.Zoom = shojiPlugin('zoom');
+MockShoji.Fullscreen = shojiPlugin('fullscreen');
+MockShoji.RotateFlip = shojiPlugin('rotateFlip');
+MockShoji.Autoplay = shojiPlugin('autoplay');
+MockShoji.Layout = shojiPlugin('layout');
+MockShoji.ActiveThumbnail = shojiPlugin('activeThumbnail');
+global.Shoji = MockShoji;
 global.Worker = require('../../../main/resources/static/js/subworkers');
 global.ol = require('../../../main/resources/static/js/ol.min');
 global.Util = require('../../../main/resources/static/js/site/util');
@@ -108,13 +125,15 @@ describe('#shashin app tests', function() {
         document.body.appendChild(div);
 
         const additionalConfig = {
-            selector: ".mediaLink",
-            overrideBaseConfigs: true
+            overrideBaseConfigs: true,
+            plugins: []
         };
         shashin.initLightGallery('someElement', additionalConfig, ".mediaLink");
-        const lightGallery = shashin.getLightGallery();
-        assert.equal(lightGallery.settings.licenseKey,'A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3');
-        assert.equal(lightGallery.settings.selector,".mediaLink");
+        const gallery = shashin.getLightGallery();
+        assert.isNotNull(gallery);
+        assert.isFunction(gallery.open);
+        assert.isFunction(gallery.openGallery);
+        assert.isFunction(gallery.refresh);
     });
 
     it('gallery element', function () {
@@ -136,17 +155,20 @@ describe('#shashin app tests', function() {
 
         shashin.setLightGalleryElement('someElement');
         shashin.setLightGallery();
-        let lightGallery = shashin.getLightGallery();
-        assert.equal(lightGallery.settings.licenseKey,'A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3');
+        let gallery = shashin.getLightGallery();
+        assert.isNotNull(gallery);
+        assert.isFunction(gallery.open);
+        assert.isFunction(gallery.openGallery);
 
         shashin.setLightGalleryElement('asdf');
         shashin.setLightGallery();
-        lightGallery = shashin.getLightGallery();
-        assert.isFalse(lightGallery.hasOwnProperty("settings"));
+        gallery = shashin.getLightGallery();
+        assert.isNull(gallery);
 
         shashin.setLightGalleryElement('someElement');
         shashin.setLightGallery({"selector":".mediaLink"});
-        lightGallery = shashin.getLightGallery();
-        assert.equal(lightGallery.settings.selector,".mediaLink");
+        gallery = shashin.getLightGallery();
+        assert.isNotNull(gallery);
+        assert.isFunction(gallery.refresh);
     });
 });
