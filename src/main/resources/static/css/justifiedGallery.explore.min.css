@@ -24,6 +24,9 @@
 
 /* --- Each Date Group --- */
 .dateSection {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     width: 100%;
     margin-bottom: 24px;
 }

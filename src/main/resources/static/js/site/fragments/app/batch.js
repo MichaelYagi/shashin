@@ -562,34 +562,30 @@
                                     $("#select"+date).removeClass("bi-circle-fill").addClass("bi-circle");
                                 }
 
-                                const thumbnails = [];
                                 for (let i = 0; i < metadataList.length; i++) {
                                     const metadataId = metadataList[i].id;
+
+                                    // Pre-add/remove from list so items not yet rendered are tracked
                                     if (isSelecting) {
                                         shashin.addToMetadataIdList(metadataId);
-                                        thumbnails.push("/api/v1/thumbnails/centered/" + metadataId);
                                     } else {
                                         shashin.removeFromMetadataIdList(metadataId);
                                     }
-                                    // Visually update any item already rendered in the DOM
+
+                                    // Visually update items already in the DOM via the proven selectClick path
                                     const $icon = $("#tlicon" + metadataId);
                                     if ($icon.length > 0) {
                                         const iconClass = $icon.attr("class");
                                         const needsUpdate = (isSelecting && iconClass === "bi-circle") || (!isSelecting && iconClass === "bi-circle-fill");
                                         if (needsUpdate) {
-                                            shashin.updateSelectionUI(metadataId, isSelecting, opaque, transparent, false);
+                                            shashin.selectClick(metadataId, activePage, opaque, transparent, [], false);
                                         }
                                     }
                                 }
 
-                                if (isSelecting) {
-                                    shashin.addAllToThumbnailList(thumbnails, true);
-                                } else {
-                                    shashin.removeMetadataThumbnailsListWithArray(
-                                        metadataList.map(m => "/api/v1/thumbnails/centered/" + m.id)
-                                    );
-                                }
-
+                                shashin.stopRendering = false;
+                                $('.photo-thumbnail-container').removeClass("border border-3 border-primary");
+                                $('.photo-thumbnail-image').removeClass("pb-1");
                                 const currentList = shashin.getMetadataIdList();
                                 shashin.updateToolbarUI(activePage, currentList);
                                 shashin.updateSelectionCount(currentList);
