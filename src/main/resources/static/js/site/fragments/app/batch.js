@@ -549,32 +549,52 @@
                     http.ajax("get", url).then(function (data) {
                         if (data.hasOwnProperty("status")) {
                             setTimeout(function () {
-                                let firstMetadataId = null;
-                                for (let index in data.metadataList) {
-                                    index = parseInt(index);
+                                const metadataList = data.metadataList;
+                                if (!metadataList || metadataList.length === 0) return;
 
-                                    if (isNaN(index) === false) {
-                                        const metadataId = data.metadataList[index].id;
+                                const opaque = 0.3;
+                                const transparent = 1.0;
+                                const isSelecting = !$("#select"+date).hasClass("bi-circle-fill");
 
-                                        if (index === 0) {
-                                            shashin.lastSelectedMetadataId = metadataId;
-                                        } else if (index === data.metadataList.length-1) {
-                                            firstMetadataId = metadataId;
-                                        }
+                                if (isSelecting) {
+                                    $("#select"+date).addClass("bi-circle-fill").removeClass("bi-circle");
+                                } else {
+                                    $("#select"+date).removeClass("bi-circle-fill").addClass("bi-circle");
+                                }
 
+                                const thumbnails = [];
+                                for (let i = 0; i < metadataList.length; i++) {
+                                    const metadataId = metadataList[i].id;
+                                    if (isSelecting) {
                                         shashin.addToMetadataIdList(metadataId);
+                                        thumbnails.push("/api/v1/thumbnails/centered/" + metadataId);
+                                    } else {
+                                        shashin.removeFromMetadataIdList(metadataId);
+                                    }
+                                    // Visually update any item already rendered in the DOM
+                                    const $icon = $("#tlicon" + metadataId);
+                                    if ($icon.length > 0) {
+                                        const iconClass = $icon.attr("class");
+                                        const needsUpdate = (isSelecting && iconClass === "bi-circle") || (!isSelecting && iconClass === "bi-circle-fill");
+                                        if (needsUpdate) {
+                                            shashin.updateSelectionUI(metadataId, isSelecting, opaque, transparent, false);
+                                        }
                                     }
                                 }
 
-                                if ($("#select"+date).hasClass("bi-circle-fill")) {
-                                    $("#select"+date).removeClass("bi-circle-fill").addClass("bi-circle");
-                                    shashin.lastSelectedMetadataSelected = false;
+                                if (isSelecting) {
+                                    shashin.addAllToThumbnailList(thumbnails, true);
                                 } else {
-                                    $("#select"+date).addClass("bi-circle-fill").removeClass("bi-circle");
-                                    shashin.lastSelectedMetadataSelected = true;
+                                    shashin.removeMetadataThumbnailsListWithArray(
+                                        metadataList.map(m => "/api/v1/thumbnails/centered/" + m.id)
+                                    );
                                 }
 
-                                shashin.batchSelect(firstMetadataId, activePage, false);
+                                const currentList = shashin.getMetadataIdList();
+                                shashin.updateToolbarUI(activePage, currentList);
+                                shashin.updateSelectionCount(currentList);
+                                shashin.lastSelectedMetadataId = "";
+                                shashin.lastSelectedMetadataSelected = isSelecting;
                             });
                         }
                     });
