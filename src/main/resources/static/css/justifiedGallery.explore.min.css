@@ -17,32 +17,27 @@
     box-sizing: border-box;
 }
 
-/* --- Multiple sections in a row --- */
 /* --- Gallery Containers --- */
-/*padding: 24px 24px 24px 0;*/
-/* Use :is() so rules apply to either gallery container ID */
 :is(#scroll-gallery, #infinite-scroll-gallery) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
     padding: 24px 0 24px 0;
-    align-items: flex-start;
 }
 
 /* --- Each Date Group --- */
 .dateSection {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 0 0 auto;        /* keep sections side-by-side when there's room */
-    max-width: fit-content;/* allow shrink-wrapping, JS falls back to section width when needed */
-    margin-right: 20px;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.dateSection:last-child {
+    margin-bottom: 0;
 }
 
 /* ensure the date-body row collapses inline-block whitespace so tiny gaps don't push items */
+/* reset Bootstrap's negative gutter margin so the row doesn't exceed the section width */
 .dateSection .row {
     font-size: 0;
     line-height: 0;
+    margin-right: 0;
 }
 
 /* --- Thumbnail Containers --- */
