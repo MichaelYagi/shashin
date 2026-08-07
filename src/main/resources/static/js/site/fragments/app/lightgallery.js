@@ -355,7 +355,7 @@
             configs = {
                 plugins: [Shoji.Zoom, Shoji.Fullscreen, ...rotateFlipPlugin, ...downloadPlugin, ...castPlugin, ...editorPlugin],
                 counter: false,
-                preload: 0,
+                preload: 1,
                 autoHideDelay: 5000,
                 mode: 'fade',
                 download: (typeof lgDownload !== 'undefined'),
