@@ -93,22 +93,8 @@
 
         const memoryPhotos = JSON.parse(memoriesJsonStr).map(function(m) { return m.photos || []; });
 
-        var lgInitialised = false;
-        var lgOpen = false;
-        var currentMemoryPhotoIds = [];
-        var memoriesVideoPoller = null;
-        var memoriesVideoAutoplay = false;
-        var memoriesStoppingAutoplay = false;
-        var memoriesVideoAdvancing = false;
-        var memoriesVideoFakeActive = false;
-
-        $(document).on('keydown.memoriesAutoplay', function(e) {
-            if (lgOpen && (e.code === 'Space' || e.keyCode === 32)) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                $('.lg-autoplay-button').first().trigger('click');
-            }
-        });
+        var galleryInitialised = false;
+        var galleryOpen = false;
 
         // View slideshow
         $(document).on('click', '.memories-view-btn', function() {
@@ -116,12 +102,12 @@
             const photoData = memoryPhotos[idx] || [];
             if (photoData.length === 0) return;
 
-            const mediaContentList = photoData.map(function(p) {
-                var item = { metadataId: p.id, metadataDetailFun: shashin.openEditMetadataModal };
+            const items = photoData.map(function(p) {
+                var item = { metadataId: p.id };
                 if (p.type && p.type.includes('video')) {
-                    item.video = { source: [{ src: p.videoUrl, type: 'video/mp4' }], attributes: { preload: 'auto', controls: true } };
+                    item.src = p.videoUrl;
+                    item.video = { provider: 'html5' };
                     item.poster = '/api/v1/thumbnails/original/' + p.id;
-                    if (p.w && p.h) item.lgSize = p.w + '-' + p.h;
                     item.downloadUrl = p.videoUrl;
                 } else {
                     item.src = '/api/v1/thumbnails/original/' + p.id;
@@ -130,221 +116,40 @@
                 return item;
             });
 
-            if (!lgInitialised) {
-                var lgPlugins = [lgZoom, lgVideo, lgFullscreen];
-                var lgExtraConfig = {};
+            if (!galleryInitialised) {
+                var plugins = [Shoji.Zoom, Shoji.Fullscreen, Shoji.Autoplay];
                 if (typeof lgMetadataDetail !== 'undefined') {
-                    lgPlugins.push(lgMetadataDetail);
-                    lgExtraConfig.metadataDetail = true;
-                    lgExtraConfig.metadataDetailFun = shashin.openEditMetadataModal;
+                    plugins.push(lgMetadataDetail);
                 }
-                lgPlugins.push(lgAutoplay);
                 shashin.setLightGalleryElement('memories-gallery');
-                shashin.setLightGallery(Object.assign({
+                shashin.setLightGallery({
                     overrideBaseConfigs: true,
-                    plugins: lgPlugins,
+                    plugins: plugins,
                     counter: true,
-                    download: false,
-                    slideShowAutoplay: false,
-                    slideShowInterval: 7000,
-                    autoplayControls: true,
-                    progressBar: true,
-                    gotoNextSlideOnVideoEnd: false,
-                    autoplayFirstVideo: false,
-                    zoomFromOrigin: false,
-                    allowMediaOverlap: true,
-                    mode: 'lg-fade',
-                    speed: 700,
+                    mode: 'fade',
                     preload: 1,
-                    licenseKey: Util.lgApiKey()
-                }, lgExtraConfig));
-                lgInitialised = true;
-                $('#memories-gallery').on('lgBeforeClose', function() {
-                    lgOpen = false;
-                    memoriesVideoAutoplay = false;
-                    memoriesStoppingAutoplay = false;
-                    memoriesVideoAdvancing = false;
-                    memoriesVideoFakeActive = false;
-                    if (memoriesVideoPoller) { clearInterval(memoriesVideoPoller); memoriesVideoPoller = null; }
+                    interval: 7000,
+                    autoHideDelay: 5000,
+                    metadataDetail: (typeof lgMetadataDetail !== 'undefined'),
+                    metadataDetailFun: shashin.openEditMetadataModal,
+                    download: false,
+                    shashinEditor: false
                 });
+                galleryInitialised = true;
+
+                shashin.getLightGallery().on('close', function() {
+                    galleryOpen = false;
+                });
+
                 $('#propMetadata').on('show.bs.modal', function() {
-                    if (lgOpen && $('.lg-outer').hasClass('lg-show-autoplay')) {
-                        $('.lg-autoplay-button').first().trigger('click');
+                    if (galleryOpen) {
+                        var btn = document.querySelector('.shoji-toolbar-button[title="Pause slideshow"]');
+                        if (btn) btn.click();
                     }
-                });
-
-                // Video-aware autoplay helpers
-                function memoriesAdvanceFromVideo(lg, slideIdx) {
-                    if (!lg || lg.index !== slideIdx || !memoriesVideoAutoplay) return;
-                    memoriesVideoAdvancing = true;
-                    var nextIdx = (lg.index + 1) < lg.galleryItems.length ? lg.index + 1 : 0;
-                    lg.slide(nextIdx, false, false, 'next');
-                }
-
-                function memoriesAttachEndedHandler(video, lg, slideIdx) {
-                    $(video).off('ended.memories').on('ended.memories', function() {
-                        memoriesAdvanceFromVideo(lg, slideIdx);
-                    });
-                }
-
-                function memoriesStartVideoPoller(lg, slideIdx) {
-                    if (memoriesVideoPoller) clearInterval(memoriesVideoPoller);
-                    var attempts = 0;
-                    memoriesVideoPoller = setInterval(function() {
-                        attempts++;
-                        var video = $('.lg-current .lg-video-object')[0];
-                        if (video) {
-                            clearInterval(memoriesVideoPoller);
-                            memoriesVideoPoller = null;
-                            memoriesAttachEndedHandler(video, lg, slideIdx);
-                            var videoStarted = false;
-                            $(video).one('playing.memoriesMuted', function() { videoStarted = true; });
-                            setTimeout(function() {
-                                $(video).off('playing.memoriesMuted');
-                                // Only apply muted fallback if browser blocked autoplay (never played).
-                                // If videoStarted is true, the user manually paused — leave it alone.
-                                if (video.paused && !videoStarted && memoriesVideoAutoplay && lg.index === slideIdx) {
-                                    video.muted = true;
-                                    video.play().catch(function() { memoriesAdvanceFromVideo(lg, slideIdx); });
-                                }
-                            }, 2000);
-                        } else if (attempts > 50) {
-                            clearInterval(memoriesVideoPoller);
-                            memoriesVideoPoller = null;
-                            memoriesAdvanceFromVideo(lg, slideIdx);
-                        }
-                    }, 100);
-                }
-
-                function memoriesStartVideoPlayback(lg, slideIdx) {
-                    var video = $('.lg-current .lg-video-object')[0];
-                    if (video) {
-                        memoriesAttachEndedHandler(video, lg, slideIdx);
-                        if (!video.paused) return; // already playing — don't disturb it
-                        if (video.ended) video.currentTime = 0; // ended videos need a seek before play
-                        var videoStarted = false;
-                        $(video).one('playing.memoriesMuted', function() { videoStarted = true; });
-                        video.play().catch(function() {});
-                        setTimeout(function() {
-                            $(video).off('playing.memoriesMuted');
-                            if (video.paused && !videoStarted && memoriesVideoAutoplay && lg.index === slideIdx) {
-                                video.muted = true;
-                                video.play().catch(function() { memoriesAdvanceFromVideo(lg, slideIdx); });
-                            }
-                        }, 2000);
-                    } else {
-                        setTimeout(function() { $('.lg-current .lg-video-play-button').trigger('click'); }, 50);
-                        memoriesStartVideoPoller(lg, slideIdx);
-                    }
-                }
-
-                function memoriesEnterVideoMode(lg, idx) {
-                    memoriesVideoAutoplay = true;
-                    if ($('.lg-outer').hasClass('lg-show-autoplay') && !memoriesVideoFakeActive) {
-                        // Defer the button click so it runs after startAutoPlay() finishes setting
-                        // this.interval. lgAutoplayStart fires *before* the interval is assigned,
-                        // so a synchronous click here would hit stopAutoPlay() with interval=false,
-                        // which skips lgAutoplayStop and leaves memoriesStoppingAutoplay stuck true.
-                        memoriesStoppingAutoplay = true;
-                        setTimeout(function() { $('.lg-autoplay-button').first().trigger('click'); }, 0);
-                    }
-                    memoriesStartVideoPlayback(lg, idx);
-                }
-
-                // Capture-phase listener so we intercept the autoplay button click before
-                // lgAutoplay's jQuery handler runs. When video is playing (fake-active state),
-                // lgAutoplay's stopAutoPlay() is a no-op (interval already false), so the button
-                // appears broken. We handle it here instead: remove the active class, stop
-                // auto-advance tracking, and leave the video alone.
-                document.addEventListener('click', function(e) {
-                    if (!lgOpen || !memoriesVideoFakeActive) return;
-                    var btn = document.querySelector('.lg-autoplay-button');
-                    if (!btn || (e.target !== btn && !btn.contains(e.target))) return;
-                    e.stopImmediatePropagation();
-                    memoriesVideoFakeActive = false;
-                    memoriesVideoAutoplay = false;
-                    var outer = document.querySelector('.lg-outer');
-                    if (outer) outer.classList.remove('lg-show-autoplay');
-                }, true);
-
-                // lgAutoplayStart fires when LG starts the timer.
-                // If we're in fake-active state (video playing, timer stopped), user is actually pausing —
-                // stop the newly started timer and exit video mode. Otherwise enter video mode.
-                $('#memories-gallery').on('lgAutoplayStart', function() {
-                    var lg = shashin.getLightGallery();
-                    if (!lg) return;
-                    if (memoriesVideoFakeActive) {
-                        // User clicked to pause while video was playing — honour it
-                        memoriesVideoFakeActive = false;
-                        memoriesVideoAutoplay = false;
-                        memoriesStoppingAutoplay = true;
-                        $('.lg-autoplay-button').first().trigger('click');
-                        return;
-                    }
-                    var item = lg.galleryItems[lg.index];
-                    if (!item || !(item.__slideVideoInfo || item.video)) return;
-                    memoriesEnterVideoMode(lg, lg.index);
-                });
-
-                // Internal stop: keep button showing active. User stop: exit video mode.
-                $('#memories-gallery').on('lgAutoplayStop', function() {
-                    if (memoriesStoppingAutoplay) {
-                        memoriesStoppingAutoplay = false;
-                        setTimeout(function() {
-                            if (memoriesVideoAutoplay) {
-                                $('.lg-outer').addClass('lg-show-autoplay');
-                                memoriesVideoFakeActive = true;
-                            }
-                        }, 0);
-                        return;
-                    }
-                    memoriesVideoAutoplay = false;
-                    memoriesVideoFakeActive = false;
-                });
-
-                $('#memories-gallery').on('lgBeforeSlide', function() {
-                    if (memoriesVideoPoller) { clearInterval(memoriesVideoPoller); memoriesVideoPoller = null; }
-                    if (!memoriesVideoAdvancing) {
-                        // Manual navigation — exit video autoplay mode
-                        if (memoriesVideoAutoplay || memoriesVideoFakeActive) $('.lg-outer').removeClass('lg-show-autoplay');
-                        memoriesVideoAutoplay = false;
-                        memoriesVideoFakeActive = false;
-                    }
-                    memoriesVideoAdvancing = false;
-                });
-
-                $('#memories-gallery').on('lgAfterSlide', function(event) {
-                    var idx = event.detail.index;
-                    var lg = shashin.getLightGallery();
-                    if (!lg) return;
-                    var item = lg.galleryItems[idx];
-                    var isAutoPlaying = $('.lg-outer').hasClass('lg-show-autoplay');
-
-                    // item.video is set by us on gallery items; __slideVideoInfo is set by lgVideo
-                    // after it processes each slide. On second open after lg.refresh(), __slideVideoInfo
-                    // may not be populated yet when lgAfterSlide fires, so fall back to item.video.
-                    if (!item || !(item.__slideVideoInfo || item.video)) {
-                        if (memoriesVideoAutoplay || memoriesVideoFakeActive) {
-                            // Coming from video mode — restart the real autoplay timer
-                            memoriesVideoAutoplay = false;
-                            memoriesVideoFakeActive = false;
-                            $('.lg-outer').removeClass('lg-show-autoplay');
-                            setTimeout(function() { $('.lg-autoplay-button').first().trigger('click'); }, 100);
-                        } else {
-                            memoriesVideoAutoplay = false;
-                            memoriesVideoFakeActive = false;
-                        }
-                        return;
-                    }
-
-                    if (!isAutoPlaying && !memoriesVideoAutoplay) return;
-                    memoriesEnterVideoMode(lg, idx);
                 });
             }
 
-            currentMemoryPhotoIds = photoData.map(function(p) { return p.id; });
-
-            // Preload image items into browser cache before opening — guarantees no spinner on any slide
+            // Preload image items into browser cache before opening
             var viewBtn = $('button.memories-view-btn[data-memory-index="' + idx + '"]');
             viewBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Loading');
 
@@ -358,24 +163,18 @@
                 });
             })).then(function() {
                 viewBtn.prop('disabled', false).html('<span class="bi-play-circle"></span> View');
-                shashin.refreshAndActivateLgListener(mediaContentList);
-                // After refresh(), gallery items are new objects with no __slideVideoInfo.
-                // LG may not re-fire lgHasVideo for slides it considers already-loaded from a
-                // previous session. Seed __slideVideoInfo so getVideoHtml can build video HTML.
-                var lgInst = shashin.getLightGallery();
-                if (lgInst) {
-                    lgInst.galleryItems.forEach(function(item) {
-                        if (item.video && !item.__slideVideoInfo) {
-                            item.__slideVideoInfo = { html5: true };
-                        }
-                    });
+                shashin.refreshAndActivateLgListener(items);
+                var gallery = shashin.getLightGallery();
+                if (!galleryOpen) {
+                    gallery.open(0);
+                    galleryOpen = true;
+                } else {
+                    gallery.goTo(0);
                 }
-                shashin.getLightGallery().openGallery(0);
-                lgOpen = true;
+                // Auto-start slideshow (no-op if already playing)
                 setTimeout(function() {
-                    if (!$('.lg-outer').hasClass('lg-show-autoplay')) {
-                        $('.lg-autoplay-button').first().trigger('click');
-                    }
+                    var btn = document.querySelector('.shoji-toolbar-button[title="Play slideshow"]');
+                    if (btn) btn.click();
                 }, 500);
             });
         });

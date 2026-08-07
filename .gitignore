@@ -49,7 +49,6 @@ build/
 /node_modules/
 /jdk-11.0.12/
 .nyc_output
-/src/main/resources/lib/
 /src/main/resources/static/css/site/min/
 /src/main/resources/static/js/site/min/
 /process.yml

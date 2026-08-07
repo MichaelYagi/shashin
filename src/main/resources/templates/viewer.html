@@ -52,67 +52,43 @@
         <script src="/js/site/min/fragments/app/util.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/app.min.js" th:nonce="${cspNonce}"></script>
     </th:block>
-    <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
-    <script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
-    <script src="/js/lg-rotate.min.js" th:nonce="${cspNonce}"></script>
-    <script src="/js/lg-fullscreen.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/shoji.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-download.js" th:nonce="${cspNonce}"></script>
 
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/lightgallery.min.css">
-    <link rel="stylesheet" href="/css/lg-zoom.min.css">
-    <link rel="stylesheet" href="/css/lg-rotate.min.css">
-    <link rel="stylesheet" href="/css/lg-fullscreen.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/shoji.min.css">
     <title th:text="${metadataObj.title + ' - ' + @environment.getProperty('app.build.properties.name')}"></title>
 </head>
 <body>
 
+<span th:replace="~{fragments/translations.html :: translations()}"></span>
 <div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>
 
-<div id="photo" style="display: none;">
-    <a th:href="'/api/v1/thumbnails/original/'+${metadataObj.id}+'?v='+${uuid}"
-       th:data-lg-size="${(metadataObj.originalImageWidth == null || metadataObj.originalImageWidth == '') ? (metadataObj.thumbnailSmallWidth + '-' + metadataObj.thumbnailSmallHeight) : (metadataObj.originalImageWidth) + '-' + (metadataObj.originalImageHeight)}"
-       th:data-metadata-id="${metadataObj.id}"
-       th:data-src="'/api/v1/thumbnails/original/'+${metadataObj.id}+'?v='+${uuid}"
-       th:data-download-url="${'/api/v1/image/'+ metadataObj.id + '/download?v=' + randomString}">
-        <img id="photoImage" th:src="'/api/v1/thumbnails/225/'+${metadataObj.id}+'?v='+${uuid}" />
-    </a>
-</div>
+<div id="viewer-gallery" style="display:none;"></div>
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     (function() {
         /*<![CDATA[*/
         const description = /*[[${metadataObj.description}]]*/ '';
+        const src = /*[[${'/api/v1/thumbnails/original/' + metadataObj.id + '?v=' + uuid}]]*/ '';
+        const downloadUrl = /*[[${'/api/v1/image/' + metadataObj.id + '/download?v=' + randomString}]]*/ '';
+        const metadataId = /*[[${metadataObj.id}]]*/ 0;
         /*]]>*/
 
-        // Check if lg toolbar is hidden
-        Util.subHtmlObserver("viewerSubhtml", description);
+        var plugins = [Shoji.Zoom, Shoji.Fullscreen, Shoji.RotateFlip];
+        if (typeof lgDownload !== 'undefined') plugins.push(lgDownload);
 
-        const photoImageEl = $("#photoImage");
-
-        lightGallery(document.getElementById("photo"), {
-            plugins: [lgZoom, lgFullscreen, lgRotate],
-            hideBarsDelay: 5000,
-            showBarsAfter: 5000,
-            counter: false,
-            swipeToClose: false,
-            closeOnTap: false,
+        var gallery = new Shoji(document.getElementById('viewer-gallery'), {
+            items: [{ src: src, downloadUrl: downloadUrl, metadataId: metadataId, caption: description || undefined }],
+            plugins: plugins,
             closable: false,
-            allowMediaOverlap: true,
-            fullScreen: true,
+            counter: false,
             download: true,
-            rotate: true,
-            rotateLeft: true,
-            rotateRight: true,
-            flipHorizontal: true,
-            flipVertical: false,
-            licenseKey: Util.lgApiKey()
+            autoHideDelay: 5000
         });
 
-        photoImageEl.click();
-        photoImageEl.attr("style", "display:block");
-        photoImageEl.on("click", function(e) {
-            e.preventDefault();
-        });
+        gallery.open(0);
     })();
 </script>
 </body>

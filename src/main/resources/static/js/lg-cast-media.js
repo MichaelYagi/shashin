@@ -1,231 +1,164 @@
-/**
- * MY - Added Dec 6 2021
- * - Created this module to cast media using castjs
- */
+(function(global) {
+    // Module-level Castjs instance — initialised once regardless of how many gallery instances open
+    var cjs = null;
 
-! function(e, l) {
-    "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgCastMedia = l()
-}(this, (function() {
-    "use strict";
-
-    // Create new Castjs instance
-    let cjs = null;
-
-    if (typeof Castjs != "undefined") {
+    if (typeof Castjs !== 'undefined') {
         cjs = new Castjs();
 
-        cjs.on('available', () => {
-            $("#chromecasting").css({"display": "block", "font-size": "1rem"});
+        cjs.on('available', function() {
+            var el = document.getElementById('chromecasting');
+            if (el) el.style.display = 'block';
         });
 
-        cjs.on('event', (e) => {
+        cjs.on('event', function(e) {
             if (shashin) {
-                shashin.printMessageToConsole("Castjs Event: " + e, {
-                    tag: "cast"
-                });
+                shashin.printMessageToConsole("Castjs Event: " + e, {tag: "cast"});
             }
-
-            if (e === "connect" && $("#chromecasting").hasClass("bi-cast")) {
-                $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
+            if (e === 'connect') {
+                var el = document.getElementById('chromecasting');
+                if (el && el.classList.contains('bi-cast')) {
+                    el.classList.add('bi-stop-circle');
+                    el.classList.remove('bi-cast');
+                }
             }
         });
 
-        cjs.on('error', (e) => {
+        cjs.on('error', function(e) {
             if (shashin) {
-                shashin.printMessageToConsole("Castjs Error: " + e, {
-                    tag: "cast",
-                    consoleType: shashin.consoleTypes.error
-                });
+                shashin.printMessageToConsole("Castjs Error: " + e, {tag: "cast", consoleType: shashin.consoleTypes && shashin.consoleTypes.error});
             }
-
-            if (e !== "invalid_parameter") {
-                $("#chromecasting").css({"display": "none", "font-size": "1rem"});
+            if (e !== 'invalid_parameter') {
+                var el = document.getElementById('chromecasting');
+                if (el) el.style.display = 'none';
             }
         });
-    } else {
-        if (shashin) {
-            shashin.printMessageToConsole("Castjs Error: Object DNE", {
-                tag: "cast"
-            });
-        }
+    } else if (shashin) {
+        shashin.printMessageToConsole("Castjs Error: Object DNE", {tag: "cast"});
     }
 
-    var e = function() {
-            return (e = Object.assign || function(e) {
-                for (var l, n = 1, t = arguments.length; n < t; n++)
-                    for (var c in l = arguments[n])
-                        Object.prototype.hasOwnProperty.call(l, c) && (e[c] = l[c]);
-                return e
-            }).apply(this, arguments)
-        },
-        l = {
-            castMedia: !0
-        };
-    return function() {
-        function n(n, t) {
-            return this.core = n,
-                this.$LG = t,
-                this.settings = e(e({}, l), this.core.settings),
-                this
-        }
-        return n.prototype.init = function() {
-            var e = "";
-            if (cjs !== null && this.settings.castMedia) {
-                e = '<button type="button" aria-label="Cast Media" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.cast.msg")+'" id="chromecasting" class="bi-cast lg-icon" style="font-size: 1rem;display: none;"></button>',
-                    this.core.$toolbar.append(e),
-                    this.castMedia()
+    global.lgCastMedia = {
+        name: 'castMedia',
+        init: function(ctx) {
+            if (!cjs || !ctx.gallery.options.castMedia) return;
 
-                if (cjs.available) {
-                    $("#chromecasting").css({"display": "block", "font-size": "1rem"});
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'chromecasting';
+            btn.className = 'shoji-toolbar-button bi-cast';
+            btn.style.fontSize = '1rem';
+            btn.style.display = 'none';
+            btn.title = shashin.getTranslatedValue("main.pages.lg.plugins.cast.msg");
+            btn.setAttribute('aria-label', 'Cast Media');
+
+            if (cjs.available) btn.style.display = 'block';
+            if (cjs.connected && btn.classList.contains('bi-cast')) {
+                btn.classList.add('bi-stop-circle');
+                btn.classList.remove('bi-cast');
+            }
+
+            var offBeforeSlide = null;
+            var offBeforeClose = null;
+
+            btn.addEventListener('click', function() {
+                if (!cjs || !cjs.available) return;
+
+                if (btn.classList.contains('bi-stop-circle')) {
+                    btn.classList.add('bi-cast');
+                    btn.classList.remove('bi-stop-circle');
+                    cjs.disconnect();
+                    return;
                 }
 
-                if (cjs.connected && $("#chromecasting").hasClass('bi-cast')) {
-                    $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
+                var idx = ctx.gallery.currentIndex;
+
+                // Wire slide-change and close handlers for the casting session
+                if (offBeforeSlide) { offBeforeSlide(); offBeforeSlide = null; }
+                if (offBeforeClose) { offBeforeClose(); offBeforeClose = null; }
+
+                offBeforeSlide = ctx.on('beforeSlide', function(detail) {
+                    if (cjs.state === 'connected' || cjs.state === 'paused' || cjs.state === 'playing' || cjs.state === 'ended') {
+                        if (shashin) shashin.printMessageToConsole("lgBeforeSlide state: " + cjs.state, {tag: "cast"});
+                        getMediaMetadata(ctx.gallery.items, detail.to);
+                    }
+                });
+
+                offBeforeClose = ctx.on('beforeClose', function() {
+                    cjs.disconnect();
+                    if (offBeforeSlide) { offBeforeSlide(); offBeforeSlide = null; }
+                });
+
+                getMediaMetadata(ctx.gallery.items, idx);
+            });
+
+            function getMediaMetadata(items, index) {
+                var item = items[index];
+                var metadataId = item && (item.metadataId || item.args);
+
+                if (shashin && metadataId && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)) {
+                    $("#metadataId").val(metadataId);
+                    shashin.getMetadata(metadataId).then(function(metadata) {
+                        castMetadataMedia(metadata);
+                    });
+                } else if (shashin) {
+                    shashin.showToastMessage(
+                        shashin.getTranslatedValue("main.toast.lgcast.media.title"),
+                        shashin.getTranslatedValue("main.toast.lgcast.media.message"),
+                        {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor: "danger"}
+                    );
                 }
             }
 
-            this.core.outer
-                .find('.bi-cast, .bi-stop-circle')
-                .first()
-                .off('click.lg')
-                .on('click.lg', () => {
-                    if (cjs !== null && cjs.available) {
-                        if ($("#chromecasting").hasClass("bi-stop-circle")) {
-                            $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
-                            cjs.disconnect();
-                        } else {
+            function castMetadataMedia(metadata) {
+                if (!metadata || !metadata.id) return;
 
-                            let index = this.core.index;
+                var loc = window.location;
+                var baseUrl = metadata.baseUrl || (loc.protocol + '//' + loc.host);
+                var cjsMeta = {title: metadata.title};
 
-                            let currentDynamicEl = this.settings.dynamicEl[index] && this.settings.dynamicEl[index].hasOwnProperty("args") ?
-                                this.settings.dynamicEl : this.core.galleryItems;
+                if (metadata.description) cjsMeta.description = metadata.description;
 
-                            // Play slide show too if casting and playing
-                            this.core.LGel.off('lgBeforeSlide').on('lgBeforeSlide', (e) => {
-                                if (shashin) {
-                                    shashin.printMessageToConsole("lgBeforeSlide state: "+cjs.state, {
-                                        tag: "cast"
-                                    });
-                                }
-                                if (cjs.state === "connected" || cjs.state === "paused" || cjs.state === "playing" || cjs.state === "ended") {
-                                    currentDynamicEl = this.settings.dynamicEl[e.detail.index] && this.settings.dynamicEl[e.detail.index].hasOwnProperty("args") ?
-                                        this.settings.dynamicEl : this.core.galleryItems;
-                                    if (shashin) {
-                                        shashin.printMessageToConsole("currentDynamicEl null: "+(currentDynamicEl === null), {
-                                            tag: "cast"
-                                        });
-                                        shashin.printMessageToConsole("currentDynamicEl index: "+e.detail.index, {
-                                            tag: "cast"
-                                        });
-                                    }
-                                    getMediaMetadata(currentDynamicEl, e.detail.index, this.core);
-                                }
-                            });
-
-                            this.core.LGel.off('lgBeforeClose').on('lgBeforeClose', (e) => {
-                                cjs.disconnect();
-                                this.core.LGel.off('lgBeforeSlide');
-                            });
-
-                            getMediaMetadata(currentDynamicEl, index, this.core);
-                        }
+                try {
+                    if (metadata.videoUrl) {
+                        cjsMeta.poster = baseUrl + (metadata.thumbnailUrlOriginal
+                            ? '/api/v1/image/original/' + metadata.id
+                            : '/api/v1/thumbnails/225/' + metadata.id);
+                        cjs.src = baseUrl + metadata.videoUrl;
+                        cjs.cast(baseUrl + metadata.videoUrl, cjsMeta);
+                        cjs.seek(0);
+                        if (shashin) shashin.printMessageToConsole("Castjs casting video: " + baseUrl + metadata.videoUrl, {tag: "cast"});
+                    } else if (metadata.thumbnailUrlOriginal) {
+                        cjs.src = baseUrl + '/api/v1/image/original/' + metadata.id + '.jpg';
+                        cjs.cast(baseUrl + '/api/v1/image/original/' + metadata.id + '.jpg', cjsMeta);
+                        if (shashin) shashin.printMessageToConsole("Castjs casting image: " + cjs.src, {tag: "cast"});
                     }
-
-                    function getMediaMetadata(currentDynamicEl, index, lgCore) {
-                        let metadataId = "";
-                        let currentDynamicElIndex = currentDynamicEl[index];
-
-                        if (typeof currentDynamicElIndex !== 'undefined' && currentDynamicElIndex !== null) {
-                            if (currentDynamicElIndex.hasOwnProperty("args")) {
-                                metadataId = currentDynamicElIndex.args;
-                            } else if (currentDynamicElIndex.hasOwnProperty("metadataId")) {
-                                metadataId = currentDynamicElIndex.metadataId;
-                            }
-                        }
-
-                        if (shashin &&
-                            /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)
-                        ) {
-                            $("#metadataId").val(metadataId);
-                            shashin.getMetadata(metadataId).then(function (metadata) {
-                                castMetadataMedia(metadata, cjs, lgCore);
-                            });
-                        } else {
-                            if (shashin) {
-                                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.media.message"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
-                            }
-                        }
+                } catch(e) {
+                    if (shashin) {
+                        shashin.showToastMessage(
+                            shashin.getTranslatedValue("main.toast.lgcast.media.title"),
+                            shashin.getTranslatedValue("main.toast.lgcast.media.message") + ': ' + e.message,
+                            {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor: "danger"}
+                        );
                     }
+                    var el = document.getElementById('chromecasting');
+                    if (el) el.style.display = 'none';
+                }
 
-                    function castMetadataMedia(metadata, cjs, lgCore) {
-                        if (metadata !== null && metadata.hasOwnProperty("id")) {
-                            const getUrl = window.location;
-                            let baseUrl = getUrl.protocol + "//" + getUrl.host;
-                            if (metadata.hasOwnProperty("baseUrl")) {
-                                baseUrl = metadata.baseUrl;
-                            }
-
-                            const cjsMetadata = {
-                                title: metadata.title
-                            }
-
-                            if (metadata.description !== null && metadata.description !== "") {
-                                cjsMetadata["description"] = metadata.description;
-                            }
-
-                            if (metadata.videoUrl !== null) {
-                                try {
-                                    cjsMetadata["poster"] = baseUrl + ((metadata.thumbnailUrlOriginal !== undefined && metadata.thumbnailUrlOriginal !== null) ? "/api/v1/image/original/"+metadata.id : "/api/v1/thumbnails/225/"+metadata.id);
-                                    cjs.src = baseUrl + metadata.videoUrl;
-
-                                    cjs.cast(baseUrl + metadata.videoUrl, cjsMetadata);
-                                    cjs.seek(0);
-
-                                    if (shashin) {
-                                        shashin.printMessageToConsole("Castjs casting video: " + baseUrl + metadata.videoUrl, {
-                                            tag: "cast"
-                                        });
-                                    }
-                                } catch(e) {
-                                    // Error
-                                    if (shashin) {
-                                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.video.message", (baseUrl + metadata.videoUrl))+baseUrl +": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
-                                    }
-                                    $("#chromecasting").css({"display": "none", "font-size": "1rem"});
-                                }
-                            } else if (metadata.thumbnailUrlOriginal !== null) {
-                                try {
-                                    cjs.src = baseUrl + "/api/v1/image/original/"+metadata.id+".jpg";
-
-                                    cjs.cast(baseUrl + "/api/v1/image/original/"+metadata.id+".jpg", cjsMetadata);
-
-                                    if (shashin) {
-                                        shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/image/original/"+metadata.id+".jpg", {
-                                            tag: "cast"
-                                        });
-                                    }
-                                } catch(e) {
-                                    // Error
-                                    if (shashin) {
-                                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.image.message", (baseUrl + "/api/v1/image/"+metadata.id+".jpg"))+baseUrl +": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
-                                    }
-                                    $("#chromecasting").css({"display": "none", "font-size": "1rem"});
-                                }
-                            }
-
-                            cjs.on('disconnect', () => {
-                                // lgCore.closeGallery();
-                                $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
-                            });
-                        }
+                cjs.on('disconnect', function() {
+                    var el = document.getElementById('chromecasting');
+                    if (el) {
+                        el.classList.add('bi-cast');
+                        el.classList.remove('bi-stop-circle');
                     }
                 });
-        },
-            n.prototype.castMedia = function() {
-                // Chromecast
-                return ""
-            },
-            n.prototype.destroy = function() {},
-            n
-    }()
-}));
+            }
+
+            var removeBtn = ctx.ui.toolbar('right', btn);
+
+            return function() {
+                if (offBeforeSlide) offBeforeSlide();
+                if (offBeforeClose) offBeforeClose();
+                removeBtn();
+            };
+        }
+    };
+})(typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this);

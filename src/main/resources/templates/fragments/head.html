@@ -166,12 +166,7 @@
         activePageLower == 'duplicates' or
         activePageLower == 'folder' or
         activePageLower == 'training'}">
-            <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-relative-caption.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-rotate.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-fullscreen.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/shoji.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/ol.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/ol-contextmenu.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-metadata-detail.js" th:nonce="${cspNonce}"></script>
@@ -180,13 +175,9 @@
             </th:block>
             <script src="/js/lg-cast-media.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-shashin-editor.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/lg-download.js" th:nonce="${cspNonce}"></script>
 
-            <link rel="stylesheet" href="/css/lightgallery.min.css">
-            <link rel="stylesheet" href="/css/lg-video.min.css">
-            <link rel="stylesheet" href="/css/lg-zoom.min.css">
-            <link rel="stylesheet" href="/css/lg-relative-caption.min.css">
-            <link rel="stylesheet" href="/css/lg-rotate.min.css">
-            <link rel="stylesheet" href="/css/lg-fullscreen.min.css">
+            <link rel="stylesheet" href="/css/shoji.min.css">
             <link rel="stylesheet" href="/css/ol.min.css">
             <link rel="stylesheet" href="/css/ol-contextmenu.css">
             <link rel="stylesheet" href="/css/lg-metadata-detail.css">
@@ -207,57 +198,14 @@
 <!--            </th:block>-->
         </th:block>
         <th:block th:if="${activePageLower == 'memories'}">
-            <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-fullscreen.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/lg-autoplay.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/shoji.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-metadata-detail.js" th:nonce="${cspNonce}"></script>
             <script src="/js/ol.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/ol-contextmenu.js" th:nonce="${cspNonce}"></script>
-            <link rel="stylesheet" href="/css/lightgallery.min.css">
-            <link rel="stylesheet" href="/css/lg-zoom.min.css">
-            <link rel="stylesheet" href="/css/lg-video.min.css">
-            <link rel="stylesheet" href="/css/lg-fullscreen.min.css">
+            <link rel="stylesheet" href="/css/shoji.min.css">
             <link rel="stylesheet" href="/css/lg-metadata-detail.css">
             <link rel="stylesheet" href="/css/ol.min.css">
             <link rel="stylesheet" href="/css/ol-contextmenu.css">
-            <style th:nonce="${cspNonce}">
-                .lg-autoplay-button::after {
-                    font-family: "bootstrap-icons";
-                    content: "\f4f4";
-                    font-size: 1.1em;
-                }
-                .lg-show-autoplay .lg-autoplay-button::after {
-                    content: "\f4c3";
-                }
-                .lg-progress-bar {
-                    background-color: rgba(255,255,255,0.15);
-                    height: 2px;
-                    left: 0;
-                    position: absolute;
-                    top: 0;
-                    width: 100%;
-                    z-index: 1083;
-                    opacity: 0;
-                    transition: opacity 0.1s ease;
-                }
-                .lg-show-autoplay .lg-progress-bar {
-                    opacity: 1;
-                }
-                .lg-progress {
-                    background-color: rgba(255,255,255,0.65);
-                    height: 2px;
-                    width: 0;
-                }
-                .lg-progress-bar.lg-start .lg-progress {
-                    width: 100%;
-                }
-                /* Show images immediately during fade — avoids fading into a spinner */
-                .lg-show-after-load .lg-item .lg-object {
-                    opacity: 1 !important;
-                }
-            </style>
         </th:block>
         <th:block th:if="${activePageLower == 'timeline'}">
             <style>

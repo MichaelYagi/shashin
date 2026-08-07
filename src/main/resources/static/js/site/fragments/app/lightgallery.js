@@ -18,24 +18,23 @@
     }, true);
 
     document.addEventListener('mousemove', function() {
-        const video = document.querySelector('.lg-outer video');
+        const video = document.querySelector('.shoji-dialog video');
         if (!video || video.paused || video.ended) return;
         requestAnimationFrame(function() {
-            const subHtml = document.querySelector('.lg-outer .lg-sub-html');
-            if (subHtml) {
-                subHtml.style.setProperty('opacity', '0', 'important');
-                subHtml.style.setProperty('visibility', 'hidden', 'important');
+            const caption = document.querySelector('.shoji-dialog .shoji-caption');
+            if (caption) {
+                caption.style.setProperty('opacity', '0', 'important');
+                caption.style.setProperty('visibility', 'hidden', 'important');
             }
             shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
         });
     });
 
-    shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {
+    shashin.initLightGallery = function(lgElement, additionalLgConfigs, mediaElement) {
         shashin.setLightGalleryElement(lgElement);
         shashin.setLightGallery(additionalLgConfigs);
 
         let mediaContentList = shashin.getInitMediaContent(mediaElement);
-
         shashin.initMediaContent(mediaContentList);
 
         return mediaContentList;
@@ -51,20 +50,39 @@
             try {
                 mediaContent.args = $(this).attr("tag");
             } catch(e) {}
-            let subHtmlAttr = $(this).attr("data-sub-html");
+
+            const metadataId = $(this).attr("data-metadata-id");
+            mediaContent.metadataId = metadataId;
+            mediaContent.id = metadataId;
+
+            const subHtmlAttr = $(this).attr("data-sub-html");
             if (typeof subHtmlAttr !== 'undefined' && subHtmlAttr !== false) {
-                mediaContent.subHtml = subHtmlAttr;
+                mediaContent.caption = { dangerouslySetInnerHTML: subHtmlAttr };
             }
+
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
                 mediaContent.downloadUrl = $(this).attr("data-download-url");
             } else if ($(this).attr("data-video")) {
-                mediaContent.video = $(this).attr("data-video");
+                try {
+                    const videoConfig = JSON.parse($(this).attr("data-video"));
+                    if (videoConfig.source && videoConfig.source.length > 0) {
+                        mediaContent.src = videoConfig.source[0].src;
+                    }
+                } catch(e) {}
+                mediaContent.video = { provider: 'html5' };
                 mediaContent.poster = $(this).attr("data-poster");
-                mediaContent.lgSize = $(this).attr("data-lg-size");
+                const lgSize = $(this).attr("data-lg-size");
+                if (lgSize) {
+                    const parts = lgSize.split('-');
+                    if (parts.length === 2) {
+                        mediaContent.width = parseInt(parts[0], 10);
+                        mediaContent.height = parseInt(parts[1], 10);
+                    }
+                }
                 mediaContent.downloadUrl = $(this).attr("data-download-url");
             }
-            mediaContent.metadataId = $(this).attr("data-metadata-id");
+
             mediaContentList.push(mediaContent);
         });
 
@@ -77,8 +95,7 @@
         }
     };
 
-    shashin.updateMediaContent = function(mediaContentList,additionalMediaContentList,activePage = "") {
-        // Remove place name if date headings too long
+    shashin.updateMediaContent = function(mediaContentList, additionalMediaContentList, activePage = "") {
         if (activePage !== 'timeline' && activePage !== 'person' && activePage !== 'matches') {
             Util.truncateHeading();
         }
@@ -91,142 +108,223 @@
         return mediaContentList;
     };
 
-    shashin.refreshAndActivateLgListener = function (mediaContentList) {
+    shashin.refreshAndActivateLgListener = function(mediaContentList) {
         if (shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
             shashin.getLightGallery().refresh(mediaContentList);
         }
     };
 
-    shashin.setLightGalleryElement = function (name) {
+    shashin.setLightGalleryElement = function(name) {
         shashin.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
             shashin.infiniteScrollGallery = document.getElementById(name);
+        }
 
-            // Event listeners for light gallery
-
-            // Close gallery on browser/mobile back button
-            shashin.infiniteScrollGallery.addEventListener('lgAfterOpen', function () {
-                if (window.history && window.history.pushState) {
-                    window.history.pushState('forward', null, "");
-
-                    $(window).on('popstate', function() {
-                        if (shashin.lg !== null) {
-                            shashin.lg.closeGallery();
-                        }
-                    });
-
-                }
-            });
-
-
-            shashin.infiniteScrollGallery.addEventListener('lgAfterClose', _ => {
-                if (Util.sessionStorageAvailable() === true) {
-                    sessionStorage.removeItem("metadata");
-                } else if (Util.localStorageAvailable() === true) {
-                    localStorage.removeItem("metadata");
-                } else {
-                    $("#metadata").val("");
-                }
-                shashin.videoPlaying = false;
-                shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml"]});
-            });
-
-            // Hide sidebar when going to next slide
-            shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', e => {
+        // Escape key in info sidebar closes only the sidebar, not the lightbox
+        $("#propInfoSidebar").on('keydown', function(e) {
+            if (e.key === "Escape" || e.code === "Escape" || e.which === 27 || e.keyCode === 27) {
+                e.stopPropagation();
                 const bsOffcanvasEl = document.getElementById('propInfoSidebar');
                 const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
-                if (bsOffcanvas !== null) {
-                    bsOffcanvas.hide();
-                }
+                bsOffcanvas.hide();
+                return false;
+            }
+        });
+    };
 
-                if (shashin.lg !== null && shashin.lg.hasOwnProperty("galleryItems")) {
-                    const galleryItems = shashin.lg.galleryItems;
-                    const currentIndex = e.detail.index;
-                    const galleryItem = galleryItems[currentIndex];
+    shashin.setLightGallery = function(additionalConfigs) {
+        // Remove any previous selector-mode delegated click handler before replacing the gallery
+        if (shashin._selectorClickHandler && shashin.getLightGalleryElement()) {
+            shashin.getLightGalleryElement().removeEventListener('click', shashin._selectorClickHandler);
+            shashin._selectorClickHandler = null;
+        }
 
-                    if (galleryItem.hasOwnProperty("metadataId")) {
-                        const metadataId = galleryItem.metadataId;
-                        $("#metadataId").val(metadataId);
-                        $("#lgIndex").val(currentIndex);
+        let configs = shashin.getLightGalleryConfigs(additionalConfigs);
 
-                        if ($("#image"+metadataId).length > 0 && ($("#image"+metadataId).attr("src")).indexOf("?v=") < 0) {
-                            $("#image"+metadataId).attr("src", $("#image"+metadataId).attr("src")+"?v="+uuidv4());
-                        }
+        // Extract selector before Shoji sees it — we emulate LG's selector mode ourselves
+        // so that timeline's `setLightGallery({ selector: ".mediaLink" })` flow keeps working.
+        const gallerySelector = configs.selector || null;
+        delete configs.selector;
 
-                        if (galleryItem.hasOwnProperty("src")) {
-                            const src = Util.deleteAfterSubstring(shashin.lg.galleryItems[currentIndex].src, "?v=");
-                            shashin.lg.galleryItems[currentIndex].src = src+"?v="+uuidv4();
-                        }
+        // Force dynamic mode — items are loaded via updateSlides after construction
+        if (!configs.items) {
+            configs.items = [];
+        }
+        shashin.lg = new Shoji(shashin.getLightGalleryElement(), configs);
 
-                        if (galleryItem.hasOwnProperty("metadataId")) {
-                            const metadataId = galleryItem.metadataId;
-                            $("#metadataId").val(metadataId);
-                            $("#lgIndex").val(currentIndex);
+        // Backward-compat aliases so existing callers of shashin.getLightGallery() keep working
+        Object.defineProperty(shashin.lg, 'galleryItems', {
+            get: function() { return shashin.lg.items; },
+            configurable: true
+        });
+        Object.defineProperty(shashin.lg, 'index', {
+            get: function() { return shashin.lg.currentIndex; },
+            configurable: true
+        });
+        shashin.lg.openGallery = function(index) { shashin.lg.open(index); };
+        shashin.lg.closeGallery = function() { shashin.lg.close(); return 0; };
+        // refresh with items → updateSlides; no args in selector mode → rescan DOM
+        shashin.lg.refresh = function(items) {
+            if (items !== undefined) {
+                shashin.lg.updateSlides(items);
+            } else if (gallerySelector && shashin.getLightGalleryElement()) {
+                const allEls = shashin.getLightGalleryElement().querySelectorAll(gallerySelector);
+                shashin.lg.updateSlides(shashin.getInitMediaContent(allEls));
+            }
+        };
+        shashin.lg.destroyModules = function() {};
+        shashin.lg.invalidateItems = function() {};
+        shashin.lg.lgId = '';
+        shashin.lg.LGel = { off: function() {} };
 
-                            if ($("#image"+metadataId).length > 0 && ($("#image"+metadataId).attr("src")).indexOf("?v=") < 0) {
-                                $("#image"+metadataId).attr("src", $("#image"+metadataId).attr("src")+"?v="+uuidv4());
-                            }
-                        }
+        // Close gallery on browser/mobile back button
+        shashin.lg.on('afterOpen', function(detail) {
+            const initialIndex = detail ? detail.index : 0;
+            const initialItem = shashin.lg.items[initialIndex];
+            if (initialItem && initialItem.metadataId) {
+                $("#metadataId").val(initialItem.metadataId);
+                $("#lgIndex").val(initialIndex);
+            }
 
-                        if (metadataId !== undefined && metadataId !== null) {
-                            shashin.getMetadata(metadataId).then(function (metadata) {
-                                if (Util.sessionStorageAvailable() === true) {
-                                    sessionStorage.setItem("metadata", JSON.stringify(metadata));
-                                } else if (Util.localStorageAvailable() === true) {
-                                    localStorage.setItem("metadata", JSON.stringify(metadata));
-                                } else {
-                                    $("#metadata").val(JSON.stringify(metadata));
-                                }
+            // Hide any page-level custom scrollbar (e.g. timeline date slider) while lightbox is open
+            $("#dateSliderWrapper").hide();
 
-                                if (metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
-                                    $("#shashineditor").css("display", "block");
-                                } else {
-                                    $("#shashineditor").css("display", "none");
-                                }
-
-                                if (metadata.type.indexOf("video") >= 0) {
-                                    $("#captureThumbnail").css("display", "block");
-                                } else {
-                                    $("#captureThumbnail").css("display", "none");
-                                }
-                            });
-                        }
+            // Shoji doesn't fire beforeSlide on open(), so trigger the metadata/button update for the first slide here
+            if (initialItem && initialItem.metadataId) {
+                shashin.getMetadata(initialItem.metadataId).then(function(metadata) {
+                    if (Util.sessionStorageAvailable() === true) {
+                        sessionStorage.setItem("metadata", JSON.stringify(metadata));
+                    } else if (Util.localStorageAvailable() === true) {
+                        localStorage.setItem("metadata", JSON.stringify(metadata));
+                    } else {
+                        $("#metadata").val(JSON.stringify(metadata));
                     }
-                }
-            });
+                    if (metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
+                        $("#shashineditor").css("display", "block");
+                    } else {
+                        $("#shashineditor").css("display", "none");
+                    }
+                    if (metadata.type.indexOf("video") >= 0) {
+                        $("#captureThumbnail").css("display", "block");
+                    } else {
+                        $("#captureThumbnail").css("display", "none");
+                    }
+                });
+            }
 
-            // If info sidebar open, pressing escape key closes only the sidebar
-            $("#propInfoSidebar").on('keydown', function(e) {
-                // escape
-                if (e.key === "Escape" || e.code === "Escape" || e.which === 27 || e.keyCode === 27) {
-                    e.stopPropagation();
-                    const bsOffcanvasEl = document.getElementById('propInfoSidebar');
-                    const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
-                    bsOffcanvas.hide();
-                    return false;
+            if (window.history && window.history.pushState) {
+                window.history.pushState('forward', null, "");
+                $(window).on('popstate', function() {
+                    if (shashin.lg !== null) {
+                        shashin.lg.close();
+                    }
+                });
+            }
+        });
+
+        shashin.lg.on('afterClose', function() {
+            if (Util.sessionStorageAvailable() === true) {
+                sessionStorage.removeItem("metadata");
+            } else if (Util.localStorageAvailable() === true) {
+                localStorage.removeItem("metadata");
+            } else {
+                $("#metadata").val("");
+            }
+            shashin.videoPlaying = false;
+            shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml"]});
+            // Restore page-level custom scrollbar
+            $("#dateSliderWrapper").show();
+        });
+
+        // Hide info sidebar when navigating; cache-bust image src; prefetch metadata
+        shashin.lg.on('beforeSlide', function(detail) {
+            if (!detail) return;
+            const toIndex = detail.to;
+
+            const bsOffcanvasEl = document.getElementById('propInfoSidebar');
+            const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
+            if (bsOffcanvas !== null) {
+                bsOffcanvas.hide();
+            }
+
+            if (shashin.lg === null) return;
+            const galleryItems = shashin.lg.items;
+            const galleryItem = galleryItems[toIndex];
+            if (!galleryItem || galleryItem.metadataId === undefined || galleryItem.metadataId === null) return;
+
+            const metadataId = galleryItem.metadataId;
+            $("#metadataId").val(metadataId);
+            $("#lgIndex").val(toIndex);
+
+            if ($("#image"+metadataId).length > 0) {
+                const imgSrc = $("#image"+metadataId).attr("src") || "";
+                if (imgSrc.indexOf("?v=") < 0) {
+                    $("#image"+metadataId).attr("src", imgSrc + "?v=" + uuidv4());
+                }
+            }
+
+            // Cache-bust image src on slide navigation (skip for video items)
+            if (galleryItem.src && !galleryItem.video) {
+                const src = Util.deleteAfterSubstring(galleryItems[toIndex].src, "?v=");
+                galleryItems[toIndex].src = src + "?v=" + uuidv4();
+            }
+
+            shashin.getMetadata(metadataId).then(function(metadata) {
+                if (Util.sessionStorageAvailable() === true) {
+                    sessionStorage.setItem("metadata", JSON.stringify(metadata));
+                } else if (Util.localStorageAvailable() === true) {
+                    localStorage.setItem("metadata", JSON.stringify(metadata));
+                } else {
+                    $("#metadata").val(JSON.stringify(metadata));
+                }
+
+                if (metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
+                    $("#shashineditor").css("display", "block");
+                } else {
+                    $("#shashineditor").css("display", "none");
+                }
+
+                if (metadata.type.indexOf("video") >= 0) {
+                    $("#captureThumbnail").css("display", "block");
+                } else {
+                    $("#captureThumbnail").css("display", "none");
                 }
             });
+        });
+
+        // Emulate LG's selector mode via a delegated click handler on the container.
+        // This fires for pages (like timeline) that call setLightGallery({ selector: ".mediaLink" })
+        // rather than initLightGallery, and where Shoji's own selector-mode scan isn't viable
+        // (items are dynamic DOM descendants, not static direct children).
+        if (gallerySelector && shashin.getLightGalleryElement()) {
+            const containerEl = shashin.getLightGalleryElement();
+            shashin._selectorClickHandler = function(e) {
+                const el = e.target.closest(gallerySelector);
+                if (!el || !containerEl.contains(el)) return;
+                e.preventDefault();
+                const allEls = containerEl.querySelectorAll(gallerySelector);
+                const index = Array.from(allEls).indexOf(el);
+                if (index < 0) return;
+                const items = shashin.getInitMediaContent(allEls);
+                shashin.lg.updateSlides(items);
+                shashin.lg.open(index);
+            };
+            containerEl.addEventListener('click', shashin._selectorClickHandler);
         }
     };
 
-    // Close gallery on browser/mobile back button
-    shashin.setLightGallery = function (additionalConfigs) {
-        let configs = shashin.getLightGalleryConfigs(additionalConfigs);
-        shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
-    };
-
-    shashin.getLightGalleryElement = function () {
+    shashin.getLightGalleryElement = function() {
         return shashin.infiniteScrollGallery;
     };
 
-    shashin.getLightGallery = function () {
+    shashin.getLightGallery = function() {
         return shashin.lg;
     };
 
-    shashin.openGallery = function (e, index) {
+    shashin.openGallery = function(e, index) {
         e.preventDefault();
         if (shashin.getLightGallery() !== null) {
-            shashin.getLightGallery().openGallery(index);
+            shashin.getLightGallery().open(index);
         }
     };
 
@@ -234,45 +332,42 @@
         shashin.autoplayVideo = $("#autoplayVideo").val() === "true";
 
         let configs = {};
-        if (additionalConfigs !== undefined && additionalConfigs !== null && additionalConfigs.hasOwnProperty("overrideBaseConfigs") && additionalConfigs.overrideBaseConfigs === true) {
-            configs = additionalConfigs;
-            configs.licenseKey = Util.lgApiKey();
+        if (additionalConfigs !== undefined && additionalConfigs !== null &&
+            additionalConfigs.hasOwnProperty("overrideBaseConfigs") &&
+            additionalConfigs.overrideBaseConfigs === true) {
+            configs = Object.assign({}, additionalConfigs);
+            // Filter out LG-format plugins (constructors) — only pass { name, init } Shoji plugins
+            if (Array.isArray(configs.plugins)) {
+                configs.plugins = configs.plugins.filter(function(p) {
+                    return p && typeof p === 'object' && typeof p.init === 'function' && typeof p.name === 'string';
+                });
+            }
         } else {
+            const downloadPlugin = (typeof lgDownload !== 'undefined') ? [lgDownload] : [];
+            const castPlugin = (typeof lgCastMedia !== 'undefined') ? [lgCastMedia] : [];
+            const editorPlugin = (typeof lgShashinEditor !== 'undefined') ? [lgShashinEditor] : [];
+            const rotateFlipPlugin = (typeof lgShashinEditor === 'undefined') ? [Shoji.RotateFlip] : [];
             configs = {
-                plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgCastMedia, lgShashinEditor],
-                videojs: false,
-                hideBarsDelay: 5000,
-                showBarsAfter: 5000,
-                allowMediaOverlap: true,
+                plugins: [Shoji.Zoom, Shoji.Fullscreen, ...rotateFlipPlugin, ...downloadPlugin, ...castPlugin, ...editorPlugin],
                 counter: false,
-                castMedia: true,
-                shashinEditor: true,
-                fullScreen: true,
-                download: true,
-                zoomFromOrigin: true,
-                speed: 0,
                 preload: 0,
-                autoplayFirstVideo: shashin.autoplayVideo,
-                autoplayVideoOnSlide: shashin.autoplayVideo,
-                gotoNextSlideOnVideoEnd: false,
-                rotate: true,
-                rotateLeft: true,
-                rotateRight: true,
-                flipHorizontal: true,
-                flipVertical: false,
-                licenseKey: Util.lgApiKey()
+                autoHideDelay: 5000,
+                mode: 'fade',
+                download: (typeof lgDownload !== 'undefined'),
+                castMedia: (typeof lgCastMedia !== 'undefined'),
+                shashinEditor: (typeof lgShashinEditor !== 'undefined')
             };
 
             for (const key in additionalConfigs) {
                 if (key === "plugins") {
-                    if ($.isArray(additionalConfigs[key])) {
-                        $.each(additionalConfigs[key], function (index, val) {
-                            configs.plugins.push(val);
-                        });
-                    } else {
-                        configs.plugins.push(additionalConfigs[key]);
-                    }
-                } else {
+                    const pluginList = Array.isArray(additionalConfigs[key]) ? additionalConfigs[key] : [additionalConfigs[key]];
+                    pluginList.forEach(function(p) {
+                        // Only Shoji plugins: plain objects with name (string) + init (function)
+                        if (p && typeof p === 'object' && typeof p.init === 'function' && typeof p.name === 'string') {
+                            configs.plugins.push(p);
+                        }
+                    });
+                } else if (key !== 'overrideBaseConfigs') {
                     configs[key] = additionalConfigs[key];
                 }
             }
@@ -281,9 +376,9 @@
         return configs;
     };
 
-    shashin.jumpToLightGalleryIndex = function (index) {
+    shashin.jumpToLightGalleryIndex = function(index) {
         const url = location.href;
-        location.href = '#lightGalleryIndex'+index;
-        history.replaceState(null,null,url);
+        location.href = '#lightGalleryIndex' + index;
+        history.replaceState(null, null, url);
     };
 }( window.shashin = window.shashin || {}, jQuery ));

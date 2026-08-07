@@ -956,7 +956,11 @@ class MediaServiceController(
             }
 
             metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model, request))
-            metadataRepository.save(metadata)
+            try {
+                metadataRepository.save(metadata)
+            } catch (e: org.springframework.dao.DataAccessException) {
+                logger.log(Level.WARNING, "Could not update last_accessed_at for $metadataId: ${e.message}")
+            }
 
             // Check if an edited file
             var tempFile: File? = null

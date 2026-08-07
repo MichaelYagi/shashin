@@ -774,53 +774,29 @@ async function showMap(mapdata, keywordMap, locale) {
                     metadataDetailFun: editLocation,
                     args: [
                         featureProperties.metadataId
-                    ]
+                    ],
+                    metadataId: featureProperties.metadataId
                 };
 
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = "/api/v1/thumbnails/original/"+featureProperties.metadataId;
                     mediaContent.downloadUrl = "/api/v1/image/"+featureProperties.metadataId + "/download?v=" + uuidv4();
                 } else if (featureProperties.type.includes("video")) {
-                    mediaContent.video = {
-                        "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
-                        "attributes": {
-                            "preload": "auto",
-                            "controls": true,
-                            "autoplay": shashin.autoplayVideo,
-                            "id": featureProperties.metadataId
-                        }
-                    };
-
+                    mediaContent.src = featureProperties.videoUrl;
+                    mediaContent.video = { provider: 'html5' };
                     mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+featureProperties.metadataId : "/api/v1/thumbnails/original/"+featureProperties.metadataId) + "?v=" + Util.getMetadataLocalStorage();
-                    mediaContent.lgSize = featureProperties.originalImageWidth+"-"+featureProperties.originalImageHeight;
+                    mediaContent.width = featureProperties.originalImageWidth;
+                    mediaContent.height = featureProperties.originalImageHeight;
                     mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl).replace(";", "%3B") + "/download?v=" + uuidv4();
                 }
-                mediaContent.metadataId = featureProperties.metadataId;
-                mediaContent.subHtml = featureProperties.description;
+                if (featureProperties.description) {
+                    mediaContent.caption = { dangerouslySetInnerHTML: featureProperties.description };
+                }
                 mediaContentList.push(mediaContent);
             }
 
-            // Destroy gallery instance hack
-            dynamicGallery.closeGallery(true);
-            dynamicGallery.destroyModules(true);
-            dynamicGallery.invalidateItems();
-            $(window).off(`.lg.global${dynamicGallery.lgId}`);
-            dynamicGallery.LGel.off('.lg');
-            setTimeout(() => {
-                // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
-                // Hack because lg.destroy() errors out
-                // when photos appear slower than destroy called, then there's an error
-                try {
-                    dynamicGallery.$container.remove();
-                } catch (e) {
-                    shashin.printMessageToConsole("Error removing lightGallery instance: "+e.message, {
-                        consoleType: shashin.consoleTypes.error
-                    });
-                }
-                lightGalleryConfigs.dynamicEl = mediaContentList;
-                dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
-                dynamicGallery.openGallery(0);
-            }, 500);
+            shashin.getLightGallery().refresh(mediaContentList);
+            shashin.getLightGallery().open(0);
         }
 
         clicked = false;
@@ -833,19 +809,20 @@ async function showMap(mapdata, keywordMap, locale) {
         zoom: initialZoom
     });
 
-    const lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    lightGalleryConfigs.plugins.push(lgMetadataDetail);
-    lightGalleryConfigs.plugins.push(lgCastMedia);
-    lightGalleryConfigs.controls = true;
-    lightGalleryConfigs.dynamic = true;
-    lightGalleryConfigs.counter = true;
-    lightGalleryConfigs.metadataDetail = true;
-    // lightGalleryConfigs.editLocation = true;
-    // lightGalleryConfigs.showControls = showControls;
-    lightGalleryConfigs.castMedia = true;
+    const mapLgConfig = {
+        plugins: [],
+        counter: true,
+        metadataDetail: true,
+        metadataDetailFun: editLocation,
+        castMedia: true
+    };
+    if (typeof lgMetadataDetail !== 'undefined') mapLgConfig.plugins.push(lgMetadataDetail);
+    if (typeof lgCastMedia !== 'undefined') mapLgConfig.plugins.push(lgCastMedia);
 
     const $dynamicGallery = document.getElementById('light-gallery-photo');
-    let dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
+    shashin.setLightGalleryElement('light-gallery-photo');
+    shashin.setLightGallery(mapLgConfig);
+    let dynamicGallery = shashin.getLightGallery();
 
     const duration = 400;
     const interactions = [
@@ -1069,25 +1046,13 @@ async function showMap(mapdata, keywordMap, locale) {
         filterInputs.visible();
     });
 
-    // After closing lightgallery, clear select interaction
-    $dynamicGallery.addEventListener('lgAfterClose', function () {
-        map.getInteractions().forEach(function (interaction) {
+    // After closing lightbox, clear map select interaction
+    shashin.getLightGallery().on('afterClose', function() {
+        map.getInteractions().forEach(function(interaction) {
             if (interaction instanceof ol.interaction.Select) {
                 interaction.getFeatures().clear();
             }
         });
-    });
-
-    // Close gallery on browser/mobile back button
-    $dynamicGallery.addEventListener('lgAfterOpen', function () {
-        if (window.history && window.history.pushState) {
-            window.history.pushState('forward', null, "");
-
-            $(window).off("click").on('popstate', function() {
-                dynamicGallery.closeGallery();
-            });
-
-        }
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()));

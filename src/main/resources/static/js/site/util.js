@@ -900,11 +900,13 @@ class Util {
                                         let src = Util.deleteAfterSubstring($(mediaLinkId).attr("data-src"), "?v=");
                                         $(mediaLinkId).attr("data-src", encodeURI(src).replace(";", "%3B") + "?v=" + Util.getMetadataLocalStorage());
 
-                                        const activeImageEl = $('[data-index="'+lightGalleryIndex+'"]');
-                                        const activeImageUrl = activeImageEl.attr("src");
-                                        if (activeImageUrl.length > 0) {
-                                            src = Util.deleteAfterSubstring(activeImageUrl, "?v=");
-                                            activeImageEl.attr("src", (src + "?v=" + uuidv4()));
+                                        // Shoji doesn't use data-index; refresh active slide image via getActiveMedia()
+                                        const activeMedia = shashin.getLightGallery() && typeof shashin.getLightGallery().getActiveMedia === 'function'
+                                            ? shashin.getLightGallery().getActiveMedia() : null;
+                                        const activeImg = activeMedia ? activeMedia.querySelector('img') : null;
+                                        if (activeImg && activeImg.src) {
+                                            src = Util.deleteAfterSubstring(activeImg.src, "?v=");
+                                            activeImg.src = src + "?v=" + uuidv4();
                                         }
                                     }
                                 }

@@ -1039,10 +1039,6 @@ function initializeEditor(editMetadataObj, lgIndex) {
     }
 
     function hideModule() {
-        // Show lightgallery toolbar
-        $(".lg-toolbar").css("display", "block");
-        $(".lg-outer").removeClass("lg-hide-items");
-
         // $(".lg-object.lg-image").on('load', function() {
         $("#editorContainer").css("display", "none");
         $("#editorToolContainer").css("display", "none");

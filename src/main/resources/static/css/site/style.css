@@ -630,3 +630,13 @@ body.shashin-video-playing .lg-sub-html {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+/* Shoji lightbox must clear #blocker (9999) and the timeline date-slider (9998).
+   Bootstrap modals/offcanvas that need to appear while the lightbox is open sit at 10001+. */
+:root {
+  --shoji-z-base: 10000;
+}
+.modal         { z-index: 10001 !important; }
+.modal-backdrop { z-index: 10000 !important; }
+.offcanvas     { z-index: 10001 !important; }
+.offcanvas-backdrop { z-index: 10000 !important; }

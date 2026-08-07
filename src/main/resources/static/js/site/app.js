@@ -24,17 +24,14 @@
         mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
         mediaContent.metadataId = metadata.id;
+        mediaContent.id = metadata.id;
 
         if (metadata.type.includes("video")) {
-            mediaContent.video = {
-                "source": [{"src": metadata.videoUrl, "type": "video/mp4"}],
-                "attributes": {
-                    "preload": "auto",
-                    "controls": true,
-                    "autoplay": shashin.autoplayVideo
-                }
-            };
+            mediaContent.src = metadata.videoUrl;
+            mediaContent.video = { provider: 'html5' };
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
+            mediaContent.width = metadata.originalImageWidth;
+            mediaContent.height = metadata.originalImageHeight;
             mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/225/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download?v="+uuidv4();
         } else {
@@ -43,7 +40,7 @@
         }
 
         if (metadata.description !== null && metadata.description !== "") {
-            mediaContent.subHtml = metadata.description;
+            mediaContent.caption = { dangerouslySetInnerHTML: metadata.description };
         }
 
         return mediaContent;
@@ -395,6 +392,7 @@
                         mediaContentList[lightGalleryIndex].width = metadata.originalImageWidth;
                         mediaContentList[lightGalleryIndex].height = metadata.originalImageHeight;
 
+
                         const mediaLinkId = "#mediaLink"+metadataId;
                         if ($(mediaLinkId).length > 0) {
                             src = Util.deleteAfterSubstring(encodeURI($(mediaLinkId).attr("data-src")).replace(";", "%3B"), "?v=");
@@ -403,11 +401,13 @@
                             $(mediaLinkId).attr("data-width", metadata.originalImageWidth);
                             $(mediaLinkId).attr("data-height", metadata.originalImageHeight);
 
-                            const activeImageEl = $('[data-index="'+lightGalleryIndex+'"]');
-                            const activeImageUrl = activeImageEl.attr("src");
-                            if (activeImageUrl.length > 0) {
-                                src = Util.deleteAfterSubstring(activeImageUrl, "?v=");
-                                activeImageEl.attr("src", (src + "?v=" + uuidv4()));
+                            // Shoji doesn't use data-index; refresh active slide image via getActiveMedia()
+                            const activeMedia = shashin.getLightGallery() && typeof shashin.getLightGallery().getActiveMedia === 'function'
+                                ? shashin.getLightGallery().getActiveMedia() : null;
+                            const activeImg = activeMedia ? activeMedia.querySelector('img') : null;
+                            if (activeImg && activeImg.src) {
+                                src = Util.deleteAfterSubstring(activeImg.src, "?v=");
+                                activeImg.src = src + "?v=" + uuidv4();
                             }
                         }
                     }
@@ -415,12 +415,8 @@
                     shashin.getLightGallery().refresh(mediaContentList);
                 }
 
-                $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
-
                 callback(true);
             } else {
-                $(".lg-current").css("background-color", "transparent");
-
                 callback(false);
             }
         });
@@ -428,21 +424,19 @@
 
     shashin.processVideoThumbnail = function(metadataId, lightGalleryId, lightGalleryIndex) {
         const mediaContentList = shashin.getLightGallery().galleryItems;
-        const lgItem = $("#lg-item-" + lightGalleryId + "-" + lightGalleryIndex);
+        // Capture active media at click time — Shoji appends its DOM at init so getActiveMedia() is always live
+        const activeMedia = shashin.getLightGallery() && typeof shashin.getLightGallery().getActiveMedia === 'function'
+            ? shashin.getLightGallery().getActiveMedia()
+            : null;
 
         shashin.getMetadata(metadataId).then(function (data) {
             let metadata = data;
-
-            $(".lg-current").css("background-color", "#FFFFFF");
 
             if (metadata.type.indexOf("video") !== -1) {
                 let canvas = document.createElement('canvas');
                 $(canvas).attr("id", "videoCanvas");
 
-                let video = null;
-                if (lgItem.length > 0) {
-                    video = lgItem.find(".lg-video-object")[0];
-                }
+                let video = activeMedia ? activeMedia.querySelector('video') : null;
 
                 let image = "";
 
@@ -504,24 +498,20 @@
 
                                 shashin.getLightGallery().refresh(mediaContentList);
                             }
-
-                            $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
                         } else {
                             shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000",
                                 borderColor: "danger"
                             });
-                            $(".lg-current").css("background-color", "transparent");
                         }
                         $("#captureThumbnail").show();
                         $("#captureThumbnailSpinner").hide();
                         $("#captureThumbnail").prop("disabled", false);
                         $("#captureThumbnailSpinner").prop("disabled", false);
                     });
-                } else if (parseInt(lgItem.find(".lg-video-play-button").css("opacity")) === 1) {
-                    // noop - center play button is visible
-                    $(".lg-current").css("background-color", "transparent");
+                } else if (video === null || (video.paused && video.currentTime === 0)) {
+                    // Video element not loaded or not yet played — noop, restore button state
                     $("#captureThumbnail").show();
                     $("#captureThumbnailSpinner").hide();
                     $("#captureThumbnail").prop("disabled", false);
@@ -532,15 +522,12 @@
                         iconColor: "#FF0000",
                         borderColor:"danger"
                     });
-
-                    $(".lg-current").css("background-color", "transparent");
                     $("#captureThumbnail").show();
                     $("#captureThumbnailSpinner").hide();
                     $("#captureThumbnail").prop( "disabled", false);
                     $("#captureThumbnailSpinner").prop( "disabled", false);
                 }
             } else {
-                $(".lg-current").css("background-color", "transparent");
                 shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notvideo"), {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",

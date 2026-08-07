@@ -1,95 +1,69 @@
-/**
- * MY - Added Oct 1 2023
- * - Created this module to capture video thumbnails
- */
+(function(global) {
+    global.lgVideoThumbnail = {
+        name: 'videoThumbnail',
+        init: function(ctx) {
+            if (!ctx.gallery.options.videoThumbnail) return;
 
-! function(_window, pluginFunction) {
-    let pluginName = "lgVideoThumbnail";
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'captureThumbnail';
+            btn.className = 'shoji-toolbar-button bi-lightning';
+            btn.style.fontSize = '1rem';
+            btn.style.display = 'none';
+            var title = shashin.getTranslatedValue("main.pages.lg.plugins.video.msg");
+            btn.title = title;
+            btn.setAttribute('aria-label', 'Capture Video Poster');
 
-    if ("object" == typeof exports && "undefined" != typeof module) {
-        module.exports = l();
-    } else if ("function" == typeof define && define.amd) {
-        define(pluginFunction);
-    } else {
-        (_window = "undefined" != typeof globalThis ? globalThis : _window || self)[pluginName] = pluginFunction();
-    }
-} (this, (function() {
-    "use strict";
-    let __assign = function () {
-        __assign = Object.assign || function __assign(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
-                s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-            }
-            return t;
-        };
-        return __assign.apply(this, arguments);
-    };
+            var spinner = document.createElement('div');
+            spinner.id = 'captureThumbnailSpinner';
+            spinner.className = 'spinner-border spinner-border-sm float-end mt-3 me-3';
+            spinner.setAttribute('role', 'status');
+            spinner.style.display = 'none';
 
-    const videoThumbnailSettings = {
-        videoThumbnail: true
-    };
+            btn.addEventListener('click', function() {
+                var idx = ctx.gallery.currentIndex;
+                var item = ctx.gallery.items[idx];
+                if (!item) return;
 
-    return (function() {
-        function VideoThumbnail(instance, $LG) {
-            // get lightGallery core plugin instance
-            this.core = instance;
-            this.$LG = $LG;
-            // extend module default settings with lightGallery core settings
-            this.settings = __assign(__assign({}, videoThumbnailSettings), this.core.settings);
-            return this;
-        }
+                var fn = null;
+                var args = null;
 
-        VideoThumbnail.prototype.init = function () {
-            const captureIcon = "bi-lightning";
+                if (typeof item.videoThumbnailFun === 'function' && item.args != null && String(item.args).length > 0) {
+                    fn = item.videoThumbnailFun;
+                    args = item.args;
+                } else if (item.metadataId && typeof ctx.gallery.options.videoThumbnailFun === 'function') {
+                    fn = ctx.gallery.options.videoThumbnailFun;
+                    args = item.metadataId;
+                }
 
-            if (this.settings.videoThumbnail) {
-                const videoThumbnailMenuItem = '<button type="button" aria-label="Capture Video Poster" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.video.msg")+'" id="captureThumbnail" class="'+captureIcon+' lg-icon" style="font-size: 1rem;display: none"></button>' +
-                    '<div class="spinner-border spinner-border-sm float-end mt-3 me-3" role="status" id="captureThumbnailSpinner"></div>';
-
-                this.core.$toolbar.append(videoThumbnailMenuItem);
-
-                this.videoThumbnail();
-            }
-
-            this.core.outer
-                .find('.'+captureIcon)
-                .first()
-                .on('click.lg', () => {
+                if (fn && args) {
                     $("#captureThumbnail").hide();
                     $("#captureThumbnailSpinner").show();
-                    $("#captureThumbnail").prop( "disabled", true);
-                    $("#captureThumbnailSpinner").prop( "disabled", true);
+                    $("#captureThumbnail").prop("disabled", true);
+                    $("#metadataId").val(args);
+                    fn(args, '', idx);
+                } else if (shashin) {
+                    shashin.showToastMessage(
+                        shashin.getTranslatedValue("main.toast.lgvideothumb.title"),
+                        shashin.getTranslatedValue("main.toast.lgvideothumb.body"),
+                        {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor: "danger"}
+                    );
+                    $("#captureThumbnail").show();
+                    $("#captureThumbnailSpinner").hide();
+                    $("#captureThumbnail").prop("disabled", false);
+                }
+            });
 
-                    // shashin.processVideoThumbnail
-                    const funObject = Util.getLgFunction(this, "videoThumbnailFun");
+            var removeBtn = ctx.ui.toolbar('right', btn);
 
-                    // Execute function
-                    if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
-                        $("#metadataId").val(funObject.args);
-                        funObject.fn(funObject.args, this.core.lgId, this.core.index);
-                    } else {
-                        if (shashin) {
-                            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgvideothumb.title"), shashin.getTranslatedValue("main.toast.lgvideothumb.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
-                        }
-                        $("#captureThumbnail").show();
-                        $("#captureThumbnailSpinner").hide();
-                        $("#captureThumbnail").prop( "disabled", false);
-                        $("#captureThumbnailSpinner").prop( "disabled", false);
-                    }
-                });
+            var outer = ctx.ui.outer();
+            var slot = outer.querySelector('.shoji-toolbar-right');
+            if (slot) slot.appendChild(spinner);
+
+            return function() {
+                removeBtn();
+                if (spinner.parentNode) spinner.parentNode.removeChild(spinner);
+            };
         }
-
-        // Call after button element attached
-        VideoThumbnail.prototype.videoThumbnail = function (e) {
-            $("#captureThumbnailSpinner").hide();
-
-            // Edit video thumbnail
-            return ""
-        }
-
-        VideoThumbnail.prototype.destroy = function() {}
-
-        return VideoThumbnail;
-    }());
-}));
+    };
+})(typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this);

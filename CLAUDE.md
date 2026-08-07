@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What Is This
 
-Shashin is a self-hosted media gallery — a Spring Boot / Kotlin web app that scans local directories for photos and videos, extracts EXIF metadata, generates thumbnails, and serves a browsable gallery UI. It supports face recognition (via CompreFace or Deep Java Library), object detection, albums, maps, timelines, RSS/Atom feeds, and multi-user access control.
+Shashin is a self-hosted media gallery — a Spring Boot / Kotlin web app that scans local directories for photos and videos, extracts EXIF metadata, generates thumbnails, and serves a browsable gallery UI. It supports face recognition (via Argus), object detection, albums, maps, timelines, RSS/Atom feeds, and multi-user access control.
 
 ## Build Commands
 
@@ -51,14 +51,14 @@ The app runs on port **6624** by default. The dev profile loads `shashin_dev.db`
 **Sidecar files:** Thumbnails and YAML metadata sidecars are stored in `sidecar_dev/` (dev) or `sidecar_test/` (test) relative to the project root. The sidecar path is set by `app.sidecar.path` in the profile-specific properties file.
 
 **AI / recognition:**
-- DJL (Deep Java Library) with bundled PyTorch models (`src/main/resources/lib/vggface2.pt`, `retinaface.pt`) for on-device face recognition.
-- CompreFace integration (optional external service) for cloud/server-based face recognition.
-- DJL model zoo for object detection.
-- The `.pt` model files are downloaded during `mvn clean install` by the `download-maven-plugin`.
+- [Argus](https://github.com/MichaelYagi/argus) (external service) for face detection, clustering, recognition, and object detection; synced via webhook.
+- [Ollama](https://ollama.com/) for vision AI: photo captions, keyword tagging, semantic search embeddings, conversational Q&A, and Memories generation. When a vision model is available, Ollama is used for object detection in place of Argus.
 
 ### Frontend
 
 Thymeleaf templates in `src/main/resources/templates/`. JavaScript lives in `src/main/resources/static/js/`. The `app.js.useMinified` property (false in dev/test) switches between minified and unminified JS bundles.
+
+The gallery lightbox is [Shoji](https://github.com/MichaelYagi/shoji) (`shoji.min.js` / `shoji.min.css`). Custom Shoji plugins live at `static/js/lg-*.js`: `lg-download.js`, `lg-cast-media.js`, `lg-metadata-detail.js`, `lg-video-thumbnail.js`, `lg-shashin-editor.js`. The Shashin gallery wrapper (`site/fragments/app/lightgallery.js`) wraps Shoji construction and provides `shashin.initLightGallery`, `shashin.setLightGallery`, and related helpers used by every gallery page.
 
 JS tests use Mocha + Chai + Sinon + jsdom and live in `src/test/js/`.
 
@@ -81,7 +81,7 @@ Integration and e2e tests use `@ActiveProfiles("test")` which activates `applica
 |---|---|---|
 | `server.port` | 6624 | |
 | `app.sidecar.path` | `/sidecar_dev/` (dev) | Relative to working dir |
-| `app.endpoint.url.compreface` | `http://127.0.0.1:8000/` | CompreFace REST API |
+| `app.endpoint.url.argus` | `http://127.0.0.1:8100/` | Argus REST API |
 | `app.endpoint.url.geocode` | Nominatim URL | Reverse geocoding |
 | `app.role.super` / `.admin` / `.user` | `ROLE_SUPER` etc. | Role constants |
 

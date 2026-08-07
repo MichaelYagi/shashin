@@ -76,14 +76,13 @@ Tech Stack
 * Javascript
 
 3rd Party Libraries used:
-* [lightGallery](https://www.lightgalleryjs.com/) and [plugins](https://cdnjs.com/libraries/lightgallery) - Image and video lightbox
+* [Shoji](https://github.com/MichaelYagi/shoji) - Image and video lightbox
 * [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor) - Extracts Exif, IPTC, XMP, ICC and other metadata from image, video and audio files
 * [JQuery](https://jquery.com/) - JavaScript library
 * [OpenLayers](https://openlayers.org/) - Display map tiles, vector data and markers loaded from multiple map sources, like [OpenStreetMap](https://www.openstreetmap.org/), [ArcGIS](https://www.arcgis.com/index.html) and [MapTiler](https://www.maptiler.com/)
 * [Nominatim](https://nominatim.org/) - Open-source geocoding with OpenStreetMap data
 * [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
 * [Argus](https://github.com/MichaelYagi/argus) - Self hosted REST API for face and object recognition
-* [Deep Java Library](https://djl.ai/) - Bundled face/object recognition library (legacy; recognition is now handled by Argus)
 * [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin
 * [Chart.js](https://www.chartjs.org/) - Javascript charting library
 

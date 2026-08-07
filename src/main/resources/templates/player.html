@@ -54,71 +54,55 @@
         <script src="/js/site/min/fragments/app/util.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/app.min.js" th:nonce="${cspNonce}"></script>
     </th:block>
-    <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
-    <script src="/js/lg-rotate.min.js" th:nonce="${cspNonce}"></script>
-    <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
-    <script src="/js/lg-relative-caption.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/shoji.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-download.js" th:nonce="${cspNonce}"></script>
 
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/lightgallery.min.css">
-    <link rel="stylesheet" href="/css/lg-rotate.min.css">
-    <link rel="stylesheet" href="/css/lg-video.min.css">
-    <link rel="stylesheet" href="/css/lg-relative-caption.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/shoji.min.css">
     <title th:text="${metadataObj.title + ' - ' + @environment.getProperty('app.build.properties.name')}"></title>
 </head>
 <body>
 
+<span th:replace="~{fragments/translations.html :: translations()}"></span>
 <div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>
 
-<div id="video" style="display: none;">
-    <a
-        th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadataObj.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true, &quot;autoplay&quot;: true}}'}"
-        th:data-lg-size="${(metadataObj.originalImageWidth == null || metadataObj.originalImageWidth == '') ? (metadataObj.thumbnailSmallWidth + '-' + metadataObj.thumbnailSmallHeight) : (metadataObj.originalImageWidth + '-' + metadataObj.originalImageHeight)}"
-        th:data-poster="${(metadataObj.thumbnailUrlOriginal == null || metadataObj.thumbnailUrlOriginal == '') ? '/api/v1/thumbnails/225/'+metadataObj.id : '/api/v1/thumbnails/original/' + metadataObj.id}"
-        th:data-metadata-id="${metadataObj.id}"
-        th:data-download-url="${metadataObj.videoUrl + '/download?v=' + randomString}"
-    >
-        <img id="photoImage" th:src="'/api/v1/thumbnails/225/'+${metadataObj.id}" />
-    </a>
-</div>
+<div id="player-gallery" style="display:none;"></div>
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     (function() {
         /*<![CDATA[*/
         const description = /*[[${metadataObj.description}]]*/ '';
+        const videoSrc = /*[[${metadataObj.videoUrl}]]*/ '';
+        const downloadUrl = /*[[${metadataObj.videoUrl + '/download?v=' + randomString}]]*/ '';
+        const thumbnailUrlOriginal = /*[[${metadataObj.thumbnailUrlOriginal}]]*/ '';
+        const metadataId = /*[[${metadataObj.id}]]*/ 0;
         /*]]>*/
 
-        Util.subHtmlObserver("playerSubhtml", description);
+        const poster = (thumbnailUrlOriginal == null || thumbnailUrlOriginal === '')
+            ? '/api/v1/thumbnails/225/' + metadataId
+            : '/api/v1/thumbnails/original/' + metadataId;
 
-        const photoImageEl = $("#photoImage");
+        var plugins = [Shoji.RotateFlip];
+        if (typeof lgDownload !== 'undefined') plugins.push(lgDownload);
 
-        const videoEl = document.getElementById("video");
-
-        lightGallery(videoEl, {
-            plugins: [lgVideo, lgRelativeCaption, lgRotate],
-            hideBarsDelay: 5000,
-            showBarsAfter: 5000,
-            counter: false,
-            swipeToClose: false,
-            closeOnTap: false,
+        var gallery = new Shoji(document.getElementById('player-gallery'), {
+            items: [{
+                src: videoSrc,
+                video: { provider: 'html5' },
+                poster: poster,
+                downloadUrl: downloadUrl,
+                metadataId: metadataId,
+                caption: description || undefined
+            }],
+            plugins: plugins,
             closable: false,
-            allowMediaOverlap: true,
-            videoMaxSize: "7680-4320",
+            counter: false,
             download: true,
-            rotate: true,
-            rotateLeft: true,
-            rotateRight: true,
-            flipHorizontal: true,
-            flipVertical: false,
-            licenseKey: Util.lgApiKey()
+            autoHideDelay: 5000
         });
 
-
-        photoImageEl.click();
-        photoImageEl.attr("style", "display:block");
-        photoImageEl.on("click", function(e) {
-            e.preventDefault();
-        });
+        gallery.open(0);
     })();
 </script>
 </body>

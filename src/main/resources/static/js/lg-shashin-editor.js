@@ -1,92 +1,53 @@
-/**
- * MY - Added Oct 2 2025
- * - Created this module to edit media
- */
+(function(global) {
+    global.lgShashinEditor = {
+        name: 'shashinEditor',
+        init: function(ctx) {
+            if (!ctx.gallery.options.shashinEditor) return;
 
-! function(e, l) {
-    "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgShashinEditor = l()
-}(this, (function() {
-    "use strict";
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.id = 'shashineditor';
+            btn.className = 'shoji-toolbar-button bi-sliders';
+            btn.style.fontSize = '1rem';
+            btn.style.display = 'none';
+            var title = shashin.getTranslatedValue("main.pages.lg.plugins.editor.msg");
+            btn.title = title;
+            btn.setAttribute('aria-label', 'Edit Media');
 
-    var e = function() {
-            return (e = Object.assign || function(e) {
-                for (var l, n = 1, t = arguments.length; n < t; n++)
-                    for (var c in l = arguments[n])
-                        Object.prototype.hasOwnProperty.call(l, c) && (e[c] = l[c]);
-                return e
-            }).apply(this, arguments)
-        },
-        l = {
-            shashinEditor: !0
-        };
+            btn.addEventListener('click', function() {
+                var idx = ctx.gallery.currentIndex;
+                var metadataObj = null;
 
-    return function() {
-        function editMedia(metadata, lgIndex) {
-            if (metadata !== null && metadata.hasOwnProperty("id")) {
-                // Open editor
-                initializeEditor(metadata, lgIndex);
-            }
-        }
+                if (Util.sessionStorageAvailable()) {
+                    metadataObj = JSON.parse(sessionStorage.getItem("metadata"));
+                } else if (Util.localStorageAvailable()) {
+                    metadataObj = JSON.parse(localStorage.getItem("metadata"));
+                } else {
+                    metadataObj = JSON.parse($("#metadata").val());
+                }
 
-        function n(n, t) {
-            return this.core = n,
-                this.$LG = t,
-                this.settings = e(e({}, l), this.core.settings),
-                this
-        }
+                if (metadataObj && metadataObj.id) {
+                    shashin.getMetadata(metadataObj.id).then(function(metadata) {
+                        if (Util.sessionStorageAvailable()) {
+                            sessionStorage.setItem("metadata", JSON.stringify(metadata));
+                        } else if (Util.localStorageAvailable()) {
+                            localStorage.setItem("metadata", JSON.stringify(metadata));
+                        } else {
+                            $("#metadata").val(JSON.stringify(metadata));
+                        }
 
-        return n.prototype.init = function() {
-            var e = "";
-            if (this.settings.shashinEditor) {
-                e = '<button type="button" aria-label="Edit Media" title="'+shashin.getTranslatedValue("main.pages.lg.plugins.editor.msg")+'" id="shashineditor" class="bi-sliders lg-icon" style="font-size: 1rem;display: none;"></button>',
-                    this.core.$toolbar.append(e),
-                    this.shashinEditor()
-            }
-
-            this.core.outer
-                .find('.bi-sliders')
-                .first()
-                .off('click.lg')
-                .on('click.lg', () => {
-                    let lgIndex = parseInt(this.core.index);
-                    let metadataObj = {};
-
-                    if (Util.sessionStorageAvailable() === true) {
-                        metadataObj = JSON.parse(sessionStorage.getItem("metadata"));
-                    } else if (Util.localStorageAvailable() === true) {
-                        metadataObj = JSON.parse(localStorage.getItem("metadata"));
-                    } else {
-                        metadataObj = JSON.parse($("#metadata").val());
-                    }
-
-                    // In case it was refreshed and no slide number change, getMetadata
-                    if (metadataObj !== undefined && metadataObj !== null && metadataObj.id !== "") {
-                        const metadataId = metadataObj.id;
-                        shashin.getMetadata(metadataId).then(function (metadata) {
-                            if (Util.sessionStorageAvailable() === true) {
-                                sessionStorage.setItem("metadata", JSON.stringify(metadata));
-                            } else if (Util.localStorageAvailable() === true) {
-                                localStorage.setItem("metadata", JSON.stringify(metadata));
-                            } else {
-                                $("#metadata").val(JSON.stringify(metadata));
+                        if (metadata && metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
+                            var lgIndex = idx;
+                            if ((lgIndex === undefined || lgIndex === null || lgIndex < 0) && $("#lgIndex").val().length > 0) {
+                                lgIndex = parseInt($("#lgIndex").val());
                             }
+                            initializeEditor(metadata, lgIndex);
+                        }
+                    });
+                }
+            });
 
-                            if (metadata !== null && metadata.type.indexOf("image") >= 0 && metadata.type.indexOf("gif") < 0) {
-                                if ((lgIndex === undefined || lgIndex === null || lgIndex < 0) && $("#lgIndex").val().length > 0) {
-                                    lgIndex = parseInt($("#lgIndex").val());
-                                }
-
-                                editMedia(metadata, lgIndex);
-                            }
-                        });
-                    }
-                });
-        },
-            n.prototype.shashinEditor = function() {
-                // Chromecast
-                return ""
-            },
-            n.prototype.destroy = function() {},
-            n
-    }()
-}));
+            return ctx.ui.toolbar('right', btn);
+        }
+    };
+})(typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : this);
