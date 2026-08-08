@@ -90,6 +90,9 @@
 
 .dateSection .dateHeader {
     margin-bottom: -10px;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: nowrap;
 }
 
 /* Overlay positioning */
