@@ -9,6 +9,18 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.22.1] - 2026-08-08
+### Changed
+- Updated Shoji: caption block no longer overlaps native HTML5 video controls
+### Fixed
+- Explore gallery: date sections now display side-by-side when horizontal space permits (layout was inadvertently broken in a prior commit)
+- Explore gallery: date header text no longer wraps within the header line
+- Explore gallery: justified layout now sizes each section to its own content width rather than the full container, preventing overflow when sections sit side-by-side
+- Info sidebar close-guard now targets `#metadataDetail` instead of the removed `.bi-info-circle.lg-icon` element
+### Removed
+- Dead `.lg-components` CSS rule (leftover from lightGallery migration)
+- Dead `Util.subHtmlObserver()` function (leftover from lightGallery migration)
+
 ## [2.22.0] - 2026-08-02
 ### Added
 - Memories module: AI-curated slideshows grouping photos by occasion and by person/pair over time; generated nightly when Ollama is configured, or on demand via the Regenerate button
