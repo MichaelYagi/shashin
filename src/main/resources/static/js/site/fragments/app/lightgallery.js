@@ -20,14 +20,7 @@
     document.addEventListener('mousemove', function() {
         const video = document.querySelector('.shoji-dialog video');
         if (!video || video.paused || video.ended) return;
-        requestAnimationFrame(function() {
-            const caption = document.querySelector('.shoji-dialog .shoji-caption');
-            if (caption) {
-                caption.style.setProperty('opacity', '0', 'important');
-                caption.style.setProperty('visibility', 'hidden', 'important');
-            }
-            shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
-        });
+        shashin.closeToastMessages({tags:["subhtml", "lgSubhtml", "shashinSubhtml", "viewerSubhtml", "playerSubhtml"]});
     });
 
     shashin.initLightGallery = function(lgElement, additionalLgConfigs, mediaElement) {

@@ -625,11 +625,6 @@ footer {
   }
 }
 
-body.shashin-video-playing .lg-sub-html {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
 
 /* Shoji lightbox must clear #blocker (9999) and the timeline date-slider (9998).
    Bootstrap modals/offcanvas that need to appear while the lightbox is open sit at 10001+. */
