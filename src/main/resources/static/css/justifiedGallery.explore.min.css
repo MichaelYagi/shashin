@@ -93,6 +93,7 @@
     display: flex;
     align-items: baseline;
     flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
 /* Overlay positioning */
