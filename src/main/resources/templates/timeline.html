@@ -168,6 +168,7 @@
                            th:data-download-url="${metadata.type.contains('video') ? (metadata.videoUrl + '/download?v=' + randomString) : ('/api/v1/image/' + metadata.id + '/download?v=' + randomString)}"
                            th:data-metadata-id="${metadata.id}"
                            th:data-shoji-id="${metadata.id}"
+                           th:data-shoji-thumb="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}"
                            th:data-lg-size="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? (metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight) : (metadata.originalImageWidth + '-' + metadata.originalImageHeight)}"
                            th:attr="
                              data-sub-html=${metadata.description != null ? metadata.description : null},

@@ -47,6 +47,7 @@
             const metadataId = $(this).attr("data-metadata-id");
             mediaContent.metadataId = metadataId;
             mediaContent.id = metadataId;
+            mediaContent.thumb = $(this).attr('data-shoji-thumb');
 
             const subHtmlAttr = $(this).attr("data-sub-html");
             if (typeof subHtmlAttr !== 'undefined' && subHtmlAttr !== false) {
