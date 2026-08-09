@@ -25,7 +25,6 @@
         mediaContent.args = metadata.id;
         mediaContent.metadataId = metadata.id;
         mediaContent.id = metadata.id;
-        mediaContent.thumb = "/api/v1/thumbnails/225/" + metadata.id + "?v=" + Util.getMetadataLocalStorage();
 
         if (metadata.type.includes("video")) {
             mediaContent.src = metadata.videoUrl;
