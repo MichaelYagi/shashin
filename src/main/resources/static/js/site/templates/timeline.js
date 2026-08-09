@@ -77,10 +77,11 @@ class TimelineTemplates {
             ` :
             `
             <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}">
-            <a class="mediaLink" 
+            <a class="mediaLink"
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuid}"
             data-metadata-id="${metadata.id}"
+            data-shoji-id="${metadata.id}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(videoData)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
@@ -179,10 +180,11 @@ class TimelineTemplates {
     `}
 
     static TimelineGalleryCenterOverlay({metadata, mediaContent, uuid, isMobile, thumbnailType, thumbnailHeight}) { return `
-        <a class="mediaLink" 
+        <a class="mediaLink"
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuidv4()}"
             data-metadata-id="${metadata.id}"
+            data-shoji-id="${metadata.id}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
@@ -201,10 +203,11 @@ class TimelineTemplates {
     `}
 
     static TimelineGalleryImageOverlay({metadata, mediaContent, uuid, isMobile, thumbnailType, thumbnailHeight}) { return `
-        <a class="mediaLink" 
+        <a class="mediaLink"
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download?v=${uuidv4()}"
             data-metadata-id="${metadata.id}"
+            data-shoji-id="${metadata.id}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
