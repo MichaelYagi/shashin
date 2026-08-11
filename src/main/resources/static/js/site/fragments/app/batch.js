@@ -562,16 +562,15 @@
                                     $("#select"+date).removeClass("bi-circle-fill").addClass("bi-circle");
                                 }
 
-                                // Bulk state update for all items (no DOM reads — just list ops)
-                                for (let j = 0; j < metadataList.length; j++) {
-                                    const id = metadataList[j].id;
-                                    if (isSelecting) {
-                                        shashin.addToMetadataIdList(id);
-                                        shashin.addToMetadataThumbnailsList("/api/v1/thumbnails/centered/" + id);
-                                    } else {
-                                        shashin.removeFromMetadataIdList(id);
-                                        shashin.removeFromMetadataThumbnailsList("/api/v1/thumbnails/centered/" + id);
-                                    }
+                                // Build arrays first (plain JS — no storage ops), then write once
+                                const ids = metadataList.map(function(m) { return m.id; });
+                                const thumbs = ids.map(function(id) { return "/api/v1/thumbnails/centered/" + id; });
+                                if (isSelecting) {
+                                    shashin.addAllToMetadataIdList(ids, true);
+                                    shashin.addAllToThumbnailList(thumbs, true);
+                                } else {
+                                    shashin.removeMetadataIdListWithArray(ids);
+                                    shashin.removeMetadataThumbnailsListWithArray(thumbs);
                                 }
 
                                 // Chunked RAF for visual DOM updates — keeps the page responsive
