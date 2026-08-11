@@ -533,7 +533,7 @@
         let clickEl = "#select"+date;
 
         $(clickEl).off("click").on("click", function () {
-            if ($("#" + date).length > 0 && $("#select" + date).css("display") === "inline-block") {
+            if ($("#" + date).length > 0 && $("#select" + date).hasClass("show-day-select")) {
                 setTimeout(function () {
                     const http = new Http("get month data");
                     const queryDate = shashin.getDateFromSectionId(date);
