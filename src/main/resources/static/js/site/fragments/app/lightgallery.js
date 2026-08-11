@@ -347,7 +347,7 @@
             const editorPlugin = (typeof lgShashinEditor !== 'undefined') ? [lgShashinEditor] : [];
             const rotateFlipPlugin = (typeof lgShashinEditor === 'undefined') ? [Shoji.RotateFlip] : [];
             configs = {
-                plugins: [Shoji.Zoom, Shoji.Fullscreen, ...rotateFlipPlugin, ...downloadPlugin, ...castPlugin, ...editorPlugin],
+                plugins: [Shoji.Zoom, Shoji.Fullscreen, Shoji.ActiveThumbnail, ...rotateFlipPlugin, ...downloadPlugin, ...castPlugin, ...editorPlugin],
                 counter: false,
                 preload: 2,
                 autoHideDelay: 5000,
