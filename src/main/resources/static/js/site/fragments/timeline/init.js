@@ -50,7 +50,7 @@
         });
         timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
         timelineSettings.setScrollSpyActive($(firstElem));
-        Util.reinitLightGalleryInstance();
+        Util.reinitLightGalleryInstance({ activeThumbnail: false });
     };
 
     let scrollStopRAF;
@@ -306,7 +306,7 @@
                 $("#dateSlider").append(tickEl);
             }
 
-            Util.reinitLightGalleryInstance();
+            Util.reinitLightGalleryInstance({ activeThumbnail: false });
         });
 
         function renderViewport() {

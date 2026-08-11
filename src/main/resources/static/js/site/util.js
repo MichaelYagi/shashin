@@ -1413,6 +1413,9 @@ class Util {
                             "selector":selector,
                             plugins:[]
                         };
+                        if (options.activeThumbnail === false) {
+                            lgConfig.activeThumbnail = false;
+                        }
                         if (typeof lgMetadataDetail !== "undefined") {
                             lgConfig.plugins.push(lgMetadataDetail);
                             lgConfig.metadataDetail = true;
