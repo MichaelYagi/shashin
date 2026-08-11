@@ -116,7 +116,8 @@
 
         const lgConfig = {
             "selector":".mediaLink",
-            plugins:[]
+            plugins:[],
+            activeThumbnail: false
         };
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
