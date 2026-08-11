@@ -562,35 +562,61 @@
                                     $("#select"+date).removeClass("bi-circle-fill").addClass("bi-circle");
                                 }
 
-                                for (let i = 0; i < metadataList.length; i++) {
-                                    const metadataId = metadataList[i].id;
-
-                                    // Pre-add/remove from list so items not yet rendered are tracked
+                                // Bulk state update for all items (no DOM reads — just list ops)
+                                for (let j = 0; j < metadataList.length; j++) {
+                                    const id = metadataList[j].id;
                                     if (isSelecting) {
-                                        shashin.addToMetadataIdList(metadataId);
+                                        shashin.addToMetadataIdList(id);
+                                        shashin.addToMetadataThumbnailsList("/api/v1/thumbnails/centered/" + id);
                                     } else {
-                                        shashin.removeFromMetadataIdList(metadataId);
-                                    }
-
-                                    // Visually update items already in the DOM via the proven selectClick path
-                                    const $icon = $("#tlicon" + metadataId);
-                                    if ($icon.length > 0) {
-                                        const iconClass = $icon.attr("class");
-                                        const needsUpdate = (isSelecting && iconClass === "bi-circle") || (!isSelecting && iconClass === "bi-circle-fill");
-                                        if (needsUpdate) {
-                                            shashin.selectClick(metadataId, activePage, opaque, transparent, [], false);
-                                        }
+                                        shashin.removeFromMetadataIdList(id);
+                                        shashin.removeFromMetadataThumbnailsList("/api/v1/thumbnails/centered/" + id);
                                     }
                                 }
 
-                                shashin.stopRendering = false;
-                                $('.photo-thumbnail-container').removeClass("border border-3 border-primary");
-                                $('.photo-thumbnail-image').removeClass("pb-1");
-                                const currentList = shashin.getMetadataIdList();
-                                shashin.updateToolbarUI(activePage, currentList);
-                                shashin.updateSelectionCount(currentList);
-                                shashin.lastSelectedMetadataId = "";
-                                shashin.lastSelectedMetadataSelected = isSelecting;
+                                // Chunked RAF for visual DOM updates — keeps the page responsive
+                                const chunkSize = 50;
+                                let i = 0;
+                                function processChunk() {
+                                    let processed = 0;
+                                    while (processed < chunkSize && i < metadataList.length) {
+                                        const metadataId = metadataList[i].id;
+                                        const $icon = $("#tlicon" + metadataId);
+                                        if ($icon.length > 0) {
+                                            const needsUpdate = isSelecting
+                                                ? $icon.attr("class") === "bi-circle"
+                                                : $icon.attr("class") === "bi-circle-fill";
+                                            if (needsUpdate) {
+                                                shashin.updateSelectionUI(metadataId, isSelecting, opaque, transparent, false);
+                                                if (!Util.isMobile()) {
+                                                    const $img = $("#image" + metadataId);
+                                                    if ($img.length > 0) {
+                                                        if (isSelecting) {
+                                                            $img.attr("src", $img.attr("src").replace("/gif/" + metadataId, "/225/" + metadataId));
+                                                        } else if ($("#photoThumbnailContainer" + metadataId).hasClass("is-video")) {
+                                                            $img.attr("src", $img.attr("src").replace("/225/" + metadataId, "/gif/" + metadataId));
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        i++;
+                                        processed++;
+                                    }
+                                    if (i < metadataList.length) {
+                                        requestAnimationFrame(processChunk);
+                                    } else {
+                                        shashin.stopRendering = false;
+                                        $('.photo-thumbnail-container').removeClass("border border-3 border-primary");
+                                        $('.photo-thumbnail-image').removeClass("pb-1");
+                                        const currentList = shashin.getMetadataIdList();
+                                        shashin.updateToolbarUI(activePage, currentList);
+                                        shashin.updateSelectionCount(currentList);
+                                        shashin.lastSelectedMetadataId = "";
+                                        shashin.lastSelectedMetadataSelected = isSelecting;
+                                    }
+                                }
+                                requestAnimationFrame(processChunk);
                             });
                         }
                     });
