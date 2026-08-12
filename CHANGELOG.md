@@ -9,6 +9,21 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.23.0] - 2026-08-11
+### Added
+- ActiveThumbnail plugin enabled on all pages except timeline — thumbnail grid stays in sync with whichever slide is open in the lightbox
+### Changed
+- Updated Shoji
+- Lightbox zoom-from-thumbnail animation enabled on open and close
+### Fixed
+- Lightbox: image opened from the details modal now renders above the modal instead of behind it (z-index)
+- Lightbox: blank gap before the low-res placeholder eliminated — cache key mismatch between `item.thumb` and the grid `<img>` src removed
+- Explore pages: date header text no longer runs together (e.g. "TakenThu, Jul 23") — flex formatting removed from `.dateSection .dateHeader`
+- Explore pages: date heading batch select circle now responds to clicks — display check replaced with class check, which is unaffected by flex container blockification
+- Explore pages: date heading batch select is now instant — IDs read directly from the DOM instead of an AJAX round-trip
+- All pages: date heading batch select visual updates are now chunked via `requestAnimationFrame`, keeping the page responsive during large selections
+- All pages: date heading batch select uses a single bulk storage write instead of one write per item
+
 ## [2.22.1] - 2026-08-08
 ### Changed
 - Updated Shoji: caption block no longer overlaps native HTML5 video controls
