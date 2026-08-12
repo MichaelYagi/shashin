@@ -618,9 +618,8 @@
                     } else {
                         // All items in a visible explore section are already in the DOM — no AJAX needed
                         const ids = [];
-                        $("#dateBody" + date + " .photo-thumbnail-container").each(function() {
-                            const id = $(this).attr("data-metadata-id");
-                            if (id) ids.push(id);
+                        $("#dateBody" + date + " .mediaLink[data-metadata-id]").each(function() {
+                            ids.push($(this).attr("data-metadata-id"));
                         });
                         applyDaySelection(ids);
                     }
