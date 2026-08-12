@@ -535,90 +535,96 @@
         $(clickEl).off("click").on("click", function () {
             if ($("#" + date).length > 0 && $("#select" + date).hasClass("show-day-select")) {
                 setTimeout(function () {
-                    const http = new Http("get month data");
-                    const queryDate = shashin.getDateFromSectionId(date);
 
-                    let url = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/metadata";
-                    if (activePage === "album") {
-                        const albumId = $("#albumId").val();
-                        url = "/album/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/" + albumId;
-                    } else if (activePage === "accessed" || activePage === "modified" || activePage === "recent" || activePage === "taken") {
-                        url = "/browse/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/" + activePage;
-                    }
+                    function applyDaySelection(ids) {
+                        if (!ids || ids.length === 0) return;
 
-                    http.ajax("get", url).then(function (data) {
-                        if (data.hasOwnProperty("status")) {
-                            setTimeout(function () {
-                                const metadataList = data.metadataList;
-                                if (!metadataList || metadataList.length === 0) return;
+                        const opaque = 0.3;
+                        const transparent = 1.0;
+                        const isSelecting = !$("#select"+date).hasClass("bi-circle-fill");
 
-                                const opaque = 0.3;
-                                const transparent = 1.0;
-                                const isSelecting = !$("#select"+date).hasClass("bi-circle-fill");
+                        if (isSelecting) {
+                            $("#select"+date).addClass("bi-circle-fill").removeClass("bi-circle");
+                        } else {
+                            $("#select"+date).removeClass("bi-circle-fill").addClass("bi-circle");
+                        }
 
-                                if (isSelecting) {
-                                    $("#select"+date).addClass("bi-circle-fill").removeClass("bi-circle");
-                                } else {
-                                    $("#select"+date).removeClass("bi-circle-fill").addClass("bi-circle");
-                                }
+                        const thumbs = ids.map(function(id) { return "/api/v1/thumbnails/centered/" + id; });
+                        if (isSelecting) {
+                            shashin.addAllToMetadataIdList(ids, true);
+                            shashin.addAllToThumbnailList(thumbs, true);
+                        } else {
+                            shashin.removeMetadataIdListWithArray(ids);
+                            shashin.removeMetadataThumbnailsListWithArray(thumbs);
+                        }
 
-                                // Build arrays first (plain JS — no storage ops), then write once
-                                const ids = metadataList.map(function(m) { return m.id; });
-                                const thumbs = ids.map(function(id) { return "/api/v1/thumbnails/centered/" + id; });
-                                if (isSelecting) {
-                                    shashin.addAllToMetadataIdList(ids, true);
-                                    shashin.addAllToThumbnailList(thumbs, true);
-                                } else {
-                                    shashin.removeMetadataIdListWithArray(ids);
-                                    shashin.removeMetadataThumbnailsListWithArray(thumbs);
-                                }
-
-                                // Chunked RAF for visual DOM updates — keeps the page responsive
-                                const chunkSize = 50;
-                                let i = 0;
-                                function processChunk() {
-                                    let processed = 0;
-                                    while (processed < chunkSize && i < metadataList.length) {
-                                        const metadataId = metadataList[i].id;
-                                        const $icon = $("#tlicon" + metadataId);
-                                        if ($icon.length > 0) {
-                                            const needsUpdate = isSelecting
-                                                ? $icon.attr("class") === "bi-circle"
-                                                : $icon.attr("class") === "bi-circle-fill";
-                                            if (needsUpdate) {
-                                                shashin.updateSelectionUI(metadataId, isSelecting, opaque, transparent, false);
-                                                if (!Util.isMobile()) {
-                                                    const $img = $("#image" + metadataId);
-                                                    if ($img.length > 0) {
-                                                        if (isSelecting) {
-                                                            $img.attr("src", $img.attr("src").replace("/gif/" + metadataId, "/225/" + metadataId));
-                                                        } else if ($("#photoThumbnailContainer" + metadataId).hasClass("is-video")) {
-                                                            $img.attr("src", $img.attr("src").replace("/225/" + metadataId, "/gif/" + metadataId));
-                                                        }
-                                                    }
+                        const chunkSize = 50;
+                        let i = 0;
+                        function processChunk() {
+                            let processed = 0;
+                            while (processed < chunkSize && i < ids.length) {
+                                const metadataId = ids[i];
+                                const $icon = $("#tlicon" + metadataId);
+                                if ($icon.length > 0) {
+                                    const needsUpdate = isSelecting
+                                        ? $icon.attr("class") === "bi-circle"
+                                        : $icon.attr("class") === "bi-circle-fill";
+                                    if (needsUpdate) {
+                                        shashin.updateSelectionUI(metadataId, isSelecting, opaque, transparent, false);
+                                        if (!Util.isMobile()) {
+                                            const $img = $("#image" + metadataId);
+                                            if ($img.length > 0) {
+                                                if (isSelecting) {
+                                                    $img.attr("src", $img.attr("src").replace("/gif/" + metadataId, "/225/" + metadataId));
+                                                } else if ($("#photoThumbnailContainer" + metadataId).hasClass("is-video")) {
+                                                    $img.attr("src", $img.attr("src").replace("/225/" + metadataId, "/gif/" + metadataId));
                                                 }
                                             }
                                         }
-                                        i++;
-                                        processed++;
-                                    }
-                                    if (i < metadataList.length) {
-                                        requestAnimationFrame(processChunk);
-                                    } else {
-                                        shashin.stopRendering = false;
-                                        $('.photo-thumbnail-container').removeClass("border border-3 border-primary");
-                                        $('.photo-thumbnail-image').removeClass("pb-1");
-                                        const currentList = shashin.getMetadataIdList();
-                                        shashin.updateToolbarUI(activePage, currentList);
-                                        shashin.updateSelectionCount(currentList);
-                                        shashin.lastSelectedMetadataId = "";
-                                        shashin.lastSelectedMetadataSelected = isSelecting;
                                     }
                                 }
+                                i++;
+                                processed++;
+                            }
+                            if (i < ids.length) {
                                 requestAnimationFrame(processChunk);
-                            });
+                            } else {
+                                shashin.stopRendering = false;
+                                $('.photo-thumbnail-container').removeClass("border border-3 border-primary");
+                                $('.photo-thumbnail-image').removeClass("pb-1");
+                                const currentList = shashin.getMetadataIdList();
+                                shashin.updateToolbarUI(activePage, currentList);
+                                shashin.updateSelectionCount(currentList);
+                                shashin.lastSelectedMetadataId = "";
+                                shashin.lastSelectedMetadataSelected = isSelecting;
+                            }
                         }
-                    });
+                        requestAnimationFrame(processChunk);
+                    }
+
+                    if (activePage === "timeline") {
+                        const queryDate = shashin.getDateFromSectionId(date);
+                        const url = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/metadata";
+                        const http = new Http("get month data");
+                        http.ajax("get", url).then(function (data) {
+                            if (data.hasOwnProperty("status")) {
+                                setTimeout(function () {
+                                    const metadataList = data.metadataList;
+                                    if (!metadataList || metadataList.length === 0) return;
+                                    applyDaySelection(metadataList.map(function(m) { return m.id; }));
+                                });
+                            }
+                        });
+                    } else {
+                        // All items in a visible explore section are already in the DOM — no AJAX needed
+                        const ids = [];
+                        $("#dateBody" + date + " .photo-thumbnail-container").each(function() {
+                            const id = $(this).attr("data-metadata-id");
+                            if (id) ids.push(id);
+                        });
+                        applyDaySelection(ids);
+                    }
+
                 }, 0);
             }
         });
