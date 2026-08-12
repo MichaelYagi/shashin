@@ -128,7 +128,7 @@
                     counter: true,
                     mode: 'fade',
                     preload: 1,
-                    interval: 7000,
+                    autoplay: { interval: 7000, autoStart: true },
                     autoHideDelay: 5000,
                     metadataDetail: (typeof lgMetadataDetail !== 'undefined'),
                     metadataDetailFun: shashin.openEditMetadataModal,
@@ -143,7 +143,7 @@
 
                 $('#propMetadata').on('show.bs.modal', function() {
                     if (galleryOpen) {
-                        var btn = document.querySelector('.shoji-toolbar-button[title="Pause slideshow"]');
+                        var btn = document.querySelector('.shoji-autoplay-toggle');
                         if (btn) btn.click();
                     }
                 });
@@ -170,12 +170,9 @@
                     galleryOpen = true;
                 } else {
                     gallery.goTo(0);
+                    var btn = document.querySelector('.shoji-autoplay-toggle');
+                    if (btn && btn.getAttribute('aria-label') !== 'Pause slideshow') btn.click();
                 }
-                // Auto-start slideshow (no-op if already playing)
-                setTimeout(function() {
-                    var btn = document.querySelector('.shoji-toolbar-button[title="Play slideshow"]');
-                    if (btn) btn.click();
-                }, 500);
             });
         });
 
