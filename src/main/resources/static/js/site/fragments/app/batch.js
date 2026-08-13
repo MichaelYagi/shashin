@@ -530,6 +530,23 @@
         enterAction(date, activePage);
         leaveAction(date, activePage);
 
+        if (activePage === "timeline") {
+            if (!shashin._daySelectionCache) shashin._daySelectionCache = {};
+            const prefetchDate = shashin.getDateFromSectionId(date);
+            if (!shashin._daySelectionCache[prefetchDate]) {
+                const prefetchUrl = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + prefetchDate + "/metadata";
+                const prefetchHttp = new Http("prefetch day data");
+                prefetchHttp.ajax("get", prefetchUrl).then(function (data) {
+                    if (data.hasOwnProperty("status")) {
+                        const metadataList = data.metadataList;
+                        if (metadataList && metadataList.length > 0) {
+                            shashin._daySelectionCache[prefetchDate] = metadataList.map(function(m) { return m.id; });
+                        }
+                    }
+                });
+            }
+        }
+
         let clickEl = "#select"+date;
 
         $(clickEl).off("click").on("click", function () {
@@ -592,17 +609,24 @@
 
                     if (activePage === "timeline") {
                         const queryDate = shashin.getDateFromSectionId(date);
-                        const url = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/metadata";
-                        const http = new Http("get month data");
-                        http.ajax("get", url).then(function (data) {
-                            if (data.hasOwnProperty("status")) {
-                                setTimeout(function () {
-                                    const metadataList = data.metadataList;
-                                    if (!metadataList || metadataList.length === 0) return;
-                                    applyDaySelection(metadataList.map(function(m) { return m.id; }));
-                                });
-                            }
-                        });
+                        if (!shashin._daySelectionCache) shashin._daySelectionCache = {};
+                        if (shashin._daySelectionCache[queryDate]) {
+                            applyDaySelection(shashin._daySelectionCache[queryDate]);
+                        } else {
+                            const url = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/metadata";
+                            const http = new Http("get month data");
+                            http.ajax("get", url).then(function (data) {
+                                if (data.hasOwnProperty("status")) {
+                                    setTimeout(function () {
+                                        const metadataList = data.metadataList;
+                                        if (!metadataList || metadataList.length === 0) return;
+                                        const ids = metadataList.map(function(m) { return m.id; });
+                                        shashin._daySelectionCache[queryDate] = ids;
+                                        applyDaySelection(ids);
+                                    });
+                                }
+                            });
+                        }
                     } else {
                         // All items in a visible explore section are already in the DOM — no AJAX needed
                         const ids = [];
