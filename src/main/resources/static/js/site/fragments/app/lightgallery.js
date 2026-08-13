@@ -66,17 +66,15 @@
                 } catch(e) {}
                 mediaContent.video = { provider: 'html5' };
                 mediaContent.poster = $(this).attr("data-poster");
-                const lgSize = $(this).attr("data-lg-size");
-                if (lgSize) {
-                    const parts = lgSize.split('-');
-                    if (parts.length === 2) {
-                        mediaContent.width = parseInt(parts[0], 10);
-                        mediaContent.height = parseInt(parts[1], 10);
-                    }
-                }
                 mediaContent.downloadUrl = $(this).attr("data-download-url");
             }
 
+            const shojiW = $(this).attr("data-shoji-width");
+            const shojiH = $(this).attr("data-shoji-height");
+            if (shojiW && shojiH) {
+                mediaContent.width = parseInt(shojiW, 10);
+                mediaContent.height = parseInt(shojiH, 10);
+            }
             mediaContentList.push(mediaContent);
         });
 

@@ -30,13 +30,15 @@
             mediaContent.src = metadata.videoUrl;
             mediaContent.video = { provider: 'html5' };
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
-            mediaContent.width = metadata.originalImageWidth;
-            mediaContent.height = metadata.originalImageHeight;
+            mediaContent.width = (metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? metadata.thumbnailSmallWidth : metadata.originalImageWidth;
+            mediaContent.height = (metadata.originalImageHeight === null || metadata.originalImageHeight === "") ? metadata.thumbnailSmallHeight : metadata.originalImageHeight;
             mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/225/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download?v="+uuidv4();
         } else {
             mediaContent.src = "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuidv4();
             mediaContent.downloadUrl = "/api/v1/image/"+metadata.id + "/download?v=" + uuidv4();
+            mediaContent.width = (metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? metadata.thumbnailSmallWidth : metadata.originalImageWidth;
+            mediaContent.height = (metadata.originalImageHeight === null || metadata.originalImageHeight === "") ? metadata.thumbnailSmallHeight : metadata.originalImageHeight;
         }
 
         if (metadata.description !== null && metadata.description !== "") {

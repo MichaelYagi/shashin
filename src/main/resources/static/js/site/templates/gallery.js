@@ -216,6 +216,8 @@ class GalleryTemplates {
                 data-metadata-id="${data.metadata.id}"
                 data-shoji-id="${data.metadata.id}"
                 data-shoji-thumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}"
+                data-shoji-width="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? data.metadata.thumbnailSmallWidth : data.metadata.originalImageWidth}"
+                data-shoji-height="${(data.metadata.originalImageHeight === null || data.metadata.originalImageHeight === "") ? data.metadata.thumbnailSmallHeight : data.metadata.originalImageHeight}"
                 data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : "/api/v1/thumbnails/original/"+data.metadata.id}?v=${uuid}"
                 data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                 data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
@@ -229,6 +231,8 @@ class GalleryTemplates {
                 data-metadata-id="${data.metadata.id}"
                 data-shoji-id="${data.metadata.id}"
                 data-shoji-thumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}"
+                data-shoji-width="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? data.metadata.thumbnailSmallWidth : data.metadata.originalImageWidth}"
+                data-shoji-height="${(data.metadata.originalImageHeight === null || data.metadata.originalImageHeight === "") ? data.metadata.thumbnailSmallHeight : data.metadata.originalImageHeight}"
                 ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
                 <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+data.metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${data.metadata.id}" width="${isMobile?Util.thumbnailHeight():data.metadata.thumbnailSmallWidth}" height="${isMobile?Util.thumbnailHeight():data.metadata.thumbnailSmallHeight}" data-aspect="${(data.metadata.originalImageWidth && data.metadata.originalImageHeight && data.metadata.originalImageHeight > 0) ? (data.metadata.originalImageWidth / data.metadata.originalImageHeight).toFixed(4) : ((data.metadata.thumbnailSmallWidth && data.metadata.thumbnailSmallHeight && data.metadata.thumbnailSmallHeight > 0) ? (data.metadata.thumbnailSmallWidth / data.metadata.thumbnailSmallHeight).toFixed(4) : '1.3333')}" style="background-color:lightgray;">
             </a>

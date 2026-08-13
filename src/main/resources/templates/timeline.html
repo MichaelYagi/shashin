@@ -169,6 +169,8 @@
                            th:data-metadata-id="${metadata.id}"
                            th:data-shoji-id="${metadata.id}"
                            th:data-shoji-thumb="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}"
+                           th:data-shoji-width="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? metadata.thumbnailSmallWidth : metadata.originalImageWidth}"
+                           th:data-shoji-height="${(metadata.originalImageHeight == null || metadata.originalImageHeight == '') ? metadata.thumbnailSmallHeight : metadata.originalImageHeight}"
                            th:data-lg-size="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? (metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight) : (metadata.originalImageWidth + '-' + metadata.originalImageHeight)}"
                            th:attr="
                              data-sub-html=${metadata.description != null ? metadata.description : null},

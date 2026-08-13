@@ -83,6 +83,8 @@ class TimelineTemplates {
             data-metadata-id="${metadata.id}"
             data-shoji-id="${metadata.id}"
             data-shoji-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+(uuid===""?"":"?v="+uuid)}"
+            data-shoji-width="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? metadata.thumbnailSmallWidth : metadata.originalImageWidth}"
+            data-shoji-height="${(metadata.originalImageHeight === null || metadata.originalImageHeight === "") ? metadata.thumbnailSmallHeight : metadata.originalImageHeight}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(videoData)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
@@ -187,10 +189,12 @@ class TimelineTemplates {
             data-metadata-id="${metadata.id}"
             data-shoji-id="${metadata.id}"
             data-shoji-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id+(uuid===""?"":"?v="+uuid)}"
+            data-shoji-width="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? metadata.thumbnailSmallWidth : metadata.originalImageWidth}"
+            data-shoji-height="${(metadata.originalImageHeight === null || metadata.originalImageHeight === "") ? metadata.thumbnailSmallHeight : metadata.originalImageHeight}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
-    
+
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
             `
@@ -211,6 +215,8 @@ class TimelineTemplates {
             data-metadata-id="${metadata.id}"
             data-shoji-id="${metadata.id}"
             data-shoji-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}"
+            data-shoji-width="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? metadata.thumbnailSmallWidth : metadata.originalImageWidth}"
+            data-shoji-height="${(metadata.originalImageHeight === null || metadata.originalImageHeight === "") ? metadata.thumbnailSmallHeight : metadata.originalImageHeight}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/image/"+metadata.id+"?v="+uuid : "/api/v1/thumbnails/original/"+metadata.id+"?v="+uuid}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
