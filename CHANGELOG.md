@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.23.1] - 2026-08-13
+### Fixed
+- Timeline: lightbox zoom-from-thumbnail animation now opens and closes correctly — `display: block` applied to `.mediaLink` so `getBoundingClientRect()` returns the thumbnail's real dimensions instead of the inline height
+- Timeline: day heading batch select is now instant — IDs read directly from the DOM instead of an AJAX round-trip, and visual updates run synchronously in a single paint
+- Timeline: infinite scroll section-load performance restored — CSS simplified to `display: block` only, removing `height: 100%` which forced height resolution on every link element in each newly-loaded section
+
 ## [2.23.0] - 2026-08-11
 ### Added
 - ActiveThumbnail plugin enabled on all pages except timeline — thumbnail grid stays in sync with whichever slide is open in the lightbox
