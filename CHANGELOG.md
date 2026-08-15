@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.23.2] - 2026-08-15
+### Changed
+- Updated Shoji
+### Fixed
+- Lightbox: zoom buttons (magnifying glass and actual-size) now hidden on video slides — they already did nothing on video, this removes the dead UI
+
 ## [2.23.1] - 2026-08-13
 ### Fixed
 - Timeline: lightbox zoom-from-thumbnail animation now opens and closes correctly — `display: block` applied to `.mediaLink` so `getBoundingClientRect()` returns the thumbnail's real dimensions instead of the inline height
