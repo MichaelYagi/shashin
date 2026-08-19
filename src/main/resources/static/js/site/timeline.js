@@ -462,23 +462,12 @@
             while (true) {
                 let dateFound = false;
                 let currentId = attachPoint;
-                $("#offcanvasTocBody").children().each(function () {
-                    if ($(this).attr('class') === 'list-group') {
-                        $(this).children().each(function () {
-                            const attr = $(this).attr("id");
-                            if (typeof attr !== 'undefined' && attr !== false) {
-                                const dateParts = attr.split("offcanvas_");
-                                const date = dateParts[1];
-                                const nextattr = $(this).next().attr("id");
-                                if (typeof nextattr !== 'undefined' && nextattr !== false && $(this).next().length > 0 && currentId === date) {
-                                    currentId = nextattr.split("offcanvas_")[1];
-                                    dateFound = true;
-                                    return false;
-                                }
-                            }
-                        });
-                    }
-                });
+                const currentIndex = timelineSettings.timelineDatesHash[currentId];
+                if (typeof currentIndex !== 'undefined' && currentIndex + 1 < timelineSettings.timelineDates.length) {
+                    const next = timelineSettings.timelineDates[currentIndex + 1];
+                    currentId = next.year + "-" + next.month + "-" + next.day;
+                    dateFound = true;
+                }
 
                 if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
                     if (action === "new") {
@@ -1414,32 +1403,26 @@
         }
 
         if (metadata.type.indexOf("video") >= 0) {
-            setTimeout(function () {
-                if ($("#video" + metadata.id).length === 0) {
-                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
-                }
-                if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                    $("#tntr" + metadata.id).addClass("thumbnail-tr");
-                }
-            }, 0);
+            if ($("#video" + metadata.id).length === 0) {
+                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
+            }
+            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                $("#tntr" + metadata.id).addClass("thumbnail-tr");
+            }
         } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
-            setTimeout(function () {
-                if ($("#panorama" + metadata.id).length === 0) {
-                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
-                }
-                if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                    $("#tntr" + metadata.id).addClass("thumbnail-tr");
-                }
-            }, 0);
+            if ($("#panorama" + metadata.id).length === 0) {
+                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
+            }
+            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                $("#tntr" + metadata.id).addClass("thumbnail-tr");
+            }
         } else if (metadata.expectedExtension === "gif") {
-            setTimeout(function () {
-                if ($("#gif" + metadata.id).length === 0) {
-                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
-                }
-                if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                    $("#tntr" + metadata.id).addClass("thumbnail-tr");
-                }
-            }, 0);
+            if ($("#gif" + metadata.id).length === 0) {
+                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
+            }
+            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                $("#tntr" + metadata.id).addClass("thumbnail-tr");
+            }
         }
     };
 
