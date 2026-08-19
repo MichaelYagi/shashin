@@ -338,7 +338,7 @@
         // Pre-fetch all stage 1 data in parallel before the render loops (Fix C)
         timelineSettings._prefetchCache = new Map();
         const prefetchVersion = Util.getMetadataLocalStorage();
-        for (const prefetchDate of [...attachAboveArray, ...($("#"+id).length === 0 ? [id] : [])]) {
+        for (const prefetchDate of [...attachAboveArray, ...attachBelowArray, ...($("#"+id).length === 0 ? [id] : [])]) {
             if ($("#" + prefetchDate).length === 0) {
                 timelineSettings._prefetchCache.set(prefetchDate, $.ajax({
                     type: 'get',
@@ -783,25 +783,10 @@
                             // Stage 2 - network call to create image placeholders and UI skeleton for month
                             const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
 
-                            // Stage 3 - network call to embed the image URL and complete the process
-                            if (timelineSettings.initialized === false) {
-                                if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                                    await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                                    timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
-                                }
-                            } else {
-                                // 1 sec delay for smoother scrolling
-                                let toValue = 1000;
-                                if (timelineSettings.dbOperationComplete === true) {
-                                    toValue = 0;
-                                }
-
-                                setTimeout(async() => {
-                                    if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                                        await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                                        timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
-                                    }
-                                }, toValue);
+                            // Stage 3 - embed the image URL and complete the process
+                            if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                                await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                                timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
                             }
 
                             timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
@@ -1491,37 +1476,19 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
-        const dateArray = date.split("-");
-        if (timelineSettings.dbOperationComplete === true && dateArray.length === 3) {
-            const year = parseInt(dateArray[0]);
-            const month = parseInt(dateArray[1]);
-            const day = parseInt(dateArray[2]);
-
-            if (mediaTypeFilter === "all" || mediaTypeFilter === "") {
-                timelineSettings.db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataList) {
-                    display(metadataList);
-                });
-            } else {
-                timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter)).reverse().sortBy("time", function (metadataList) {
-                    display(metadataList);
-                });
-            }
-
-            shashin.printMessageToConsole("attachAssociatedMetadata using dexie with media type " + mediaTypeFilter + " for " + date, {tags: ["timelineQuery","dexie"]});
-
-            const display = function(metadataList) {
-                const favoritesMap = timelineSettings.favoritesMap;
-
-                if (metadataList.length > 0) {
-                    for (const index in metadataList) {
-                        const metadata = metadataList[index];
-
-                        setTimeout(function () {
-                            if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                                timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                            }
-                        }, 0);
-                    }
+        if (timelineSettings._firstCallCache && timelineSettings._firstCallCache.has(date)) {
+            const cached = timelineSettings._firstCallCache.get(date);
+            timelineSettings._firstCallCache.delete(date);
+            const metadataList = cached.metadataList;
+            const favoritesMap = cached.favorites;
+            if (metadataList.length > 0) {
+                for (const index in metadataList) {
+                    const metadata = metadataList[index];
+                    setTimeout(function () {
+                        if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                            timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                        }
+                    }, 0);
                 }
             }
         } else {
@@ -1623,21 +1590,24 @@
                 countSoFar = 0;
             }
             
+            const yearTakenEls = $(".yearTaken");
+            const monthTakenEls = $(".monthTaken");
+            const dayTakenEls = $(".dayTaken");
+            const yearTakenCount = yearTakenEls.length;
+            const monthTakenCount = monthTakenEls.length;
+            const dayTakenCount = dayTakenEls.length;
+            let lastYearTaken = yearTakenCount === 0 ? (metadataList[0].year === null ? "" : metadataList[0].year) : yearTakenEls.get(yearTakenCount - 1).innerText;
+            let lastMonthTaken = monthTakenCount === 0 ? (metadataList[0].month === null ? "" : metadataList[0].month) : monthTakenEls.get(monthTakenCount - 1).innerText;
+            let lastDayTaken = dayTakenCount === 0 ? (metadataList[0].day === null ? "" : metadataList[0].day) : dayTakenEls.get(dayTakenCount - 1).innerText;
+            lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+            lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+            lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+            const autoplayVideo = $("#autoplayVideo").val();
+
             for (let index in metadataList) {
                 index = parseInt(index);
                 const metadata = metadataList[index];
 
-                const yearTakenCount = $(".yearTaken").length;
-                const monthTakenCount = $(".monthTaken").length;
-                const dayTakenCount = $(".dayTaken").length;
-                let lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0].year === null ? "" : metadataList[0].year) : $(".yearTaken").get(yearTakenCount - 1).innerText;
-                let lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0].month === null ? "" : metadataList[0].month) : $(".monthTaken").get(monthTakenCount - 1).innerText;
-                let lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0].day === null ? "" : metadataList[0].day) : $(".dayTaken").get(dayTakenCount - 1).innerText;
-                lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-                lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-                lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
-
-                const autoplayVideo = $("#autoplayVideo").val();
                 const videoData = '{"source": [{"src":"' + encodeURI(metadata.videoUrl).replace(";", "%3B") + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": '+autoplayVideo+'}}';
 
                 let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata, videoData:videoData, uuid:Util.getMetadataLocalStorage(), isMobile:Util.isMobile(), thumbnailType:timelineSettings.thumbnailType, thumbnailHeight:timelineSettings.thumbnailHeight, index: countSoFar});
@@ -1745,6 +1715,8 @@
 
                             if (metadataList.length > 0) {
                                 ret = updateTimeline(date, mediaTypeFilter, action, attachToId, metadataList, data.placeNameHeaders);
+                                if (!timelineSettings._firstCallCache) timelineSettings._firstCallCache = new Map();
+                                timelineSettings._firstCallCache.set(date, { metadataList, favorites: data.favorites || {} });
                             } else {
                                 $(".attachMetadataPhotos").last().text("EOL").css("display", "none");
                                 ret = timelineSettings.success;
