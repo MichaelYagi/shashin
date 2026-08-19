@@ -342,7 +342,7 @@
             if ($("#" + prefetchDate).length === 0) {
                 timelineSettings._prefetchCache.set(prefetchDate, $.ajax({
                     type: 'get',
-                    url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + prefetchDate + (prefetchVersion === "" ? "" : "?v=" + prefetchVersion),
+                    url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + prefetchDate + "/metadata" + (prefetchVersion === "" ? "" : "?v=" + prefetchVersion),
                     contentType: 'application/json; charset=utf-8',
                     async: true,
                     retries: shashin.ajaxRetries
@@ -1675,7 +1675,7 @@
 
         const ajaxParams = {
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version),
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries

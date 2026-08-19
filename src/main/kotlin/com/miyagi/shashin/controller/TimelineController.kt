@@ -864,22 +864,6 @@ class TimelineController(
                     if (metadataList.isNotEmpty()) {
                         response["metadataList"] = metadataList
                         response["message"] = ""
-
-                        val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
-
-                        if (favoriteCounts.count() > 0) {
-                            for (favoriteCount in favoriteCounts) {
-                                favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
-                                    "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteCount.getCount() as Any
-                                )
-
-                                if (favoriteCount.getUserId() == currentUserObj?.getId()) {
-                                    break
-                                }
-                            }
-                        }
-
                         response["favorites"] = favoritesMap
                     }
                 } else {
