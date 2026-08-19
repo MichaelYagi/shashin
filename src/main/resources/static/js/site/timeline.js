@@ -1458,15 +1458,14 @@
                         const favoritesMap = data.favorites;
 
                         if (metadataList.length > 0) {
-                            for (const index in metadataList) {
-                                const metadata = metadataList[index];
-
-                                setTimeout(function () {
+                            requestAnimationFrame(function () {
+                                for (const index in metadataList) {
+                                    const metadata = metadataList[index];
                                     if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
                                         timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
                                     }
-                                }, 0);
-                            }
+                                }
+                            });
                         }
                     }
                 }
@@ -1482,14 +1481,14 @@
             const metadataList = cached.metadataList;
             const favoritesMap = cached.favorites;
             if (metadataList.length > 0) {
-                for (const index in metadataList) {
-                    const metadata = metadataList[index];
-                    setTimeout(function () {
+                requestAnimationFrame(function () {
+                    for (const index in metadataList) {
+                        const metadata = metadataList[index];
                         if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
                             timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
                         }
-                    }, 0);
-                }
+                    }
+                });
             }
         } else {
             renderPreviewsUsingBackend(date, mediaTypeFilter);
