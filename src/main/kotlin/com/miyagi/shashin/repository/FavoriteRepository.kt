@@ -2,6 +2,7 @@ package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.FavoriteCount
+import com.miyagi.shashin.model.FavoriteSummary
 import com.miyagi.shashin.model.Metadata
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -40,6 +41,8 @@ interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     fun findAllByMetadataId(metadataId: String?): MutableIterable<Favorite?>?
     @Query("SELECT f.id,f.metadata_id as metadataId,f.user_id as userId,f.created_at as createdAt,f.modified_at as modifiedAt,(SELECT COUNT(*) FROM favorite f2 WHERE f.metadata_id = f2.metadata_id) AS count FROM favorite f WHERE f.metadata_id IN :metadataIds", nativeQuery = true)
     fun countByMetadataIdIn(metadataIds: List<String>): MutableIterable<FavoriteCount>
+    @Query("SELECT f.metadata_id as metadataId, COUNT(*) as count, MAX(CASE WHEN f.user_id = :userId THEN 1 ELSE 0 END) as userFavorited FROM favorite f WHERE f.metadata_id IN :metadataIds GROUP BY f.metadata_id", nativeQuery = true)
+    fun countByMetadataIdInGrouped(@Param("metadataIds") metadataIds: List<String>, @Param("userId") userId: Int): MutableIterable<FavoriteSummary>
     fun countAllByMetadataId(metadataId: String): Int
     fun deleteByMetadataIdAndUserId(metadataId: String?, userId: Int?): Long
     fun deleteByUserId(userId: Int?): Long

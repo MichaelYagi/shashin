@@ -891,19 +891,13 @@ class TimelineController(
                         response["message"] = ""
                         response["favorites"] = favoritesMap
 
-                        val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
+                        val favoriteCounts = favoriteRepository.countByMetadataIdInGrouped(metadataList.map { it.getId() }.toList(), currentUserObj?.getId() ?: 0)
 
-                        if (favoriteCounts.count() > 0) {
-                            for (favoriteCount in favoriteCounts) {
-                                favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
-                                    "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteCount.getCount() as Any
-                                )
-
-                                if (favoriteCount.getUserId() == currentUserObj?.getId()) {
-                                    break
-                                }
-                            }
+                        for (favoriteCount in favoriteCounts) {
+                            favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
+                                "favorite" to (favoriteCount.getUserFavorited() == 1),
+                                "count" to favoriteCount.getCount() as Any
+                            )
                         }
 
                         response["favorites"] = favoritesMap
