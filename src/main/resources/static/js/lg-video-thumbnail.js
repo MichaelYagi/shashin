@@ -54,15 +54,11 @@
                 }
             });
 
+            btn.appendChild(spinner);
             var removeBtn = ctx.ui.toolbar('right', btn);
-
-            var outer = ctx.ui.outer();
-            var slot = outer.querySelector('.shoji-toolbar-right');
-            if (slot) slot.appendChild(spinner);
 
             return function() {
                 removeBtn();
-                if (spinner.parentNode) spinner.parentNode.removeChild(spinner);
             };
         }
     };
