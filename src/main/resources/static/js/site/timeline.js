@@ -617,9 +617,14 @@
                         Util.isInViewport($("#container_" + element.id)) === false &&
                         Util.isInViewport($("#amp_" + element.id)) === false
                     ) {
-                        topHeight += Util.getDateGalleryHeight(element.id);
-                        Util.removeDateGallery(element.id);
-                        removedElements.push(element.id);
+                        // Defer DOM removal until scroll stops — removing above-viewport
+                        // content during active scroll triggers Chrome scroll anchoring,
+                        // which adjusts scrollTop and kills inertia
+                        if (timelineSettings.isScrolling === false) {
+                            topHeight += Util.getDateGalleryHeight(element.id);
+                            Util.removeDateGallery(element.id);
+                            removedElements.push(element.id);
+                        }
                         sectionArray.pop();
                     } else if (section[index + 1] !== undefined &&
                         Util.isInViewport($("#br" + section[index + 1].id)) === false &&
@@ -758,7 +763,7 @@
                             let sectionHeight = 0;
 
                             if (numberOfPhotos !== null && numberOfPhotos > 0) {
-                                sectionHeight = Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5) + 6000;
+                                sectionHeight = Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5);
                             }
 
                             let action = "below";
