@@ -543,14 +543,9 @@
         return timelineSettings.successMidMsg;
     };
 
-    let lastDesktopRenderTime = 0;
     timelineSettings.renderThumbnails = async function(elements,mediaTypeFilter,timelineDates,initiatedFromToc) {
         if (initiatedFromToc === undefined) {
             initiatedFromToc = false;
-        }
-
-        if (initiatedFromToc === false && (Date.now() - lastDesktopRenderTime) < 250) {
-            return timelineSettings.success;
         }
 
         timelineSettings.enableScrollSpy = false;
@@ -763,7 +758,7 @@
                             let sectionHeight = 0;
 
                             if (numberOfPhotos !== null && numberOfPhotos > 0) {
-                                sectionHeight = Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5);
+                                sectionHeight = Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5) + 6000;
                             }
 
                             let action = "below";
@@ -815,7 +810,6 @@
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
 
-        lastDesktopRenderTime = Date.now();
         timelineSettings.enableScrollSpy = true;
 
         if (timelineSettings.initialized === false) {
