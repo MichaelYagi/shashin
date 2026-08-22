@@ -329,6 +329,7 @@
         let lastOffset = $container.scrollTop();
         let lastDate = new Date().getTime();
         let finalDate = metadataDates[metadataDates.length-1];
+        let scrollTicking = false;
 
         const scrollHandler = function (e) {
             if (timelineSettings.lastDateMarker !== null) {
@@ -344,101 +345,109 @@
             }
             scrollTimer = setTimeout(triggerScrollStop, 200);
 
-            timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
             timelineSettings.isScrolling = true;
-            let st = $(e.target).scrollTop();
 
+            const st = $(e.target).scrollTop();
             if (st === 0) {
                 topScroll = true;
-            }
-
-            if (timelineSettings.dbOperationComplete === true) {
-                timelineSettings.rescanElements();
-            } else {
-                let delayInMs = e.timeStamp - lastDate;
-                let offset = st - lastOffset;
-                let speedInpxPerMs = offset / delayInMs;
-                if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
-                    timelineSettings.rescanElements();
-                }
-            }
-
-            if (shashin.lastSelectedMetadataId !== "" && shashin.multiSelected === true && shashin.getMetadataIdList().length > 0) {
-                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border border-3 border-primary");
-                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-            }
-
-            const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
-            let showSlider = true;
-
-            if (!Util.isMobile()) {
-                if (!Util.isInViewport($footer) &&
-                    timelineSettings.elementTracking.length > 0 &&
-                    elementsInViewPort.length === timelineSettings.elementTracking.length &&
-                    timelineSettings.elementTracking[0].isSameNode(elementsInViewPort[0]) &&
-                    timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1].isSameNode(elementsInViewPort[elementsInViewPort.length - 1])
-                ) {
-                    timelineSettings.isScrolling = false;
-                }
-                timelineSettings.elementTracking = elementsInViewPort;
             }
 
             lastDate = e.timeStamp;
             lastOffset = st;
 
-            if ($attachMetadataPhotos.last().text() !== "EOL" && $spinnerBottom.css("display") === "block") {
-                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-            }
+            if (scrollTicking) return;
+            scrollTicking = true;
 
-            if (timelineSettings.isScrolling === true || showSlider === true) {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+            requestAnimationFrame(() => {
+                scrollTicking = false;
 
-                document.querySelectorAll('.dropdown-toggle').forEach(dropdownToggleEl => {
-                    const dropDown = new bootstrap.Dropdown(dropdownToggleEl);
-                    dropDown.hide();
-                });
-            }
+                timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
 
-            if (topScroll === true && topOfPage === false && !Util.isMobile()) {
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                    timelineSettings.isScrolling = true;
+                if (timelineSettings.dbOperationComplete === true) {
+                    timelineSettings.rescanElements();
+                } else {
+                    const delayInMs = e.timeStamp - lastDate;
+                    const offset = st - lastOffset;
+                    const speedInpxPerMs = offset / delayInMs;
+                    if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
+                        timelineSettings.rescanElements();
+                    }
                 }
-            }
 
-            const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
-            topOfPage = $(elementsInViewPort[0]).attr("id") === firstDate;
+                if (shashin.lastSelectedMetadataId !== "" && shashin.multiSelected === true && shashin.getMetadataIdList().length > 0) {
+                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border border-3 border-primary");
+                    $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                }
 
-            if ($offcanvasToc.css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
-                timelineSettings.scrollToTimelineToc(elementsInViewPort);
-            }
+                const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
+                const showSlider = true;
 
-            if (timelineSettings.enableScrollSpy === true) {
-                if (timelineSettings.didJumpFromTimelineToc === true) {
-                    let prevClass = "";
-                    let deleteElements = false;
-                    $gallery.children().each(function () {
-                        const currClass = $(this).attr("class");
-                        if (prevClass === currClass || deleteElements === true) {
-                            $(this).css("display", "none");
-                            deleteElements = true;
-                            shashin.printMessageToConsole("Cleaning up IDs after jump:" + $(this).attr("id"), {tag: "timeline"});
-                        }
-                        prevClass = currClass;
+                if (!Util.isMobile()) {
+                    if (!Util.isInViewport($footer) &&
+                        timelineSettings.elementTracking.length > 0 &&
+                        elementsInViewPort.length === timelineSettings.elementTracking.length &&
+                        timelineSettings.elementTracking[0].isSameNode(elementsInViewPort[0]) &&
+                        timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1].isSameNode(elementsInViewPort[elementsInViewPort.length - 1])
+                    ) {
+                        timelineSettings.isScrolling = false;
+                    }
+                    timelineSettings.elementTracking = elementsInViewPort;
+                }
+
+                if ($attachMetadataPhotos.last().text() !== "EOL" && $spinnerBottom.css("display") === "block") {
+                    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                }
+
+                if (timelineSettings.isScrolling === true || showSlider === true) {
+                    $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+
+                    document.querySelectorAll('.dropdown-toggle').forEach(dropdownToggleEl => {
+                        const dropDown = new bootstrap.Dropdown(dropdownToggleEl);
+                        dropDown.hide();
                     });
-                    timelineSettings.didJumpFromTimelineToc = false;
                 }
 
-                topScroll = false;
-                timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
-            }
-
-            // Nudge if bottoms out and not the end
-            setTimeout(function () {
-                let checkViewPort = Util.elementsInViewport($(".scrollspy"));
-                if (Util.isInViewport($footer) && $(checkViewPort[checkViewPort.length-1]).length > 0 && $(checkViewPort[checkViewPort.length-1])[0].hasAttribute("id") && $(checkViewPort[checkViewPort.length-1]).attr("id").replace("tail_", "") !== (finalDate.year + "-" + finalDate.month + "-" + finalDate.day)) {
-                    timelineSettings.scrollByN(-1);
+                if (topScroll === true && topOfPage === false && !Util.isMobile()) {
+                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                        timelineSettings.isScrolling = true;
+                    }
                 }
-            }, 2000);
+
+                const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
+                topOfPage = $(elementsInViewPort[0]).attr("id") === firstDate;
+
+                if ($offcanvasToc.css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
+                    timelineSettings.scrollToTimelineToc(elementsInViewPort);
+                }
+
+                if (timelineSettings.enableScrollSpy === true) {
+                    if (timelineSettings.didJumpFromTimelineToc === true) {
+                        let prevClass = "";
+                        let deleteElements = false;
+                        $gallery.children().each(function () {
+                            const currClass = $(this).attr("class");
+                            if (prevClass === currClass || deleteElements === true) {
+                                $(this).css("display", "none");
+                                deleteElements = true;
+                                shashin.printMessageToConsole("Cleaning up IDs after jump:" + $(this).attr("id"), {tag: "timeline"});
+                            }
+                            prevClass = currClass;
+                        });
+                        timelineSettings.didJumpFromTimelineToc = false;
+                    }
+
+                    topScroll = false;
+                    timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
+                }
+
+                // Nudge if bottoms out and not the end
+                setTimeout(function () {
+                    let checkViewPort = Util.elementsInViewport($(".scrollspy"));
+                    if (Util.isInViewport($footer) && $(checkViewPort[checkViewPort.length-1]).length > 0 && $(checkViewPort[checkViewPort.length-1])[0].hasAttribute("id") && $(checkViewPort[checkViewPort.length-1]).attr("id").replace("tail_", "") !== (finalDate.year + "-" + finalDate.month + "-" + finalDate.day)) {
+                        timelineSettings.scrollByN(-1);
+                    }
+                }, 2000);
+            });
         };
         document.getElementById("container").addEventListener('scroll', scrollHandler, { passive: true });
 
