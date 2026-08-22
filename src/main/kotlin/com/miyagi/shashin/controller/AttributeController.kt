@@ -196,59 +196,58 @@ class AttributeController(
 //        val totalTimingStart = Date()
 //        var timingStart = Date()
         val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
+        val isHtmlRequest = request.getHeader("Accept")?.startsWith("text/html") == true
 
-        val browserDetails = request.getHeader("User-Agent")
         var browser = ""
         var os = ""
         var isMobile = false
-        if (browserDetails != null) {
-            val user = browserDetails.lowercase(Locale.getDefault())
+        if (isHtmlRequest) {
+            val browserDetails = request.getHeader("User-Agent")
+            if (browserDetails != null) {
+                val user = browserDetails.lowercase(Locale.getDefault())
 
-            //===============Platform===========================
-            os = if (user.lowercase().contains("windows")) {
-                "Windows";
-            } else if(user.lowercase().contains("mac")) {
-                "Mac";
-            } else if(user.lowercase().contains("x11")) {
-                "Unix";
-            } else if(user.lowercase().contains("android")) {
-                "Android";
-            } else if(user.lowercase().contains("iphone")) {
-                "IPhone";
-            } else {
-                "UnKnown, More-Info: " + user.lowercase();
+                //===============Platform===========================
+                os = if (user.contains("windows")) {
+                    "Windows"
+                } else if (user.contains("mac")) {
+                    "Mac"
+                } else if (user.contains("x11")) {
+                    "Unix"
+                } else if (user.contains("android")) {
+                    "Android"
+                } else if (user.contains("iphone")) {
+                    "IPhone"
+                } else {
+                    "UnKnown, More-Info: $user"
+                }
+
+                //===============Browser===========================
+                browser = if (user.contains("msie")) {
+                    "IE"
+                } else if (user.contains("safari") && user.contains("version")) {
+                    "Safari"
+                } else if (user.contains("opr") || user.contains("opera")) {
+                    "Opera"
+                } else if (user.contains("chrome")) {
+                    "Chrome"
+                } else if (user.indexOf("mozilla/7.0") > -1 || user.indexOf("netscape6") != -1 || user.indexOf("mozilla/4.7") != -1 || user.indexOf("mozilla/4.78") != -1 || user.indexOf("mozilla/4.08") != -1 || user.indexOf("mozilla/3") != -1) {
+                    "Netscape"
+                } else if (user.contains("firefox")) {
+                    "Firefox"
+                } else if (user.contains("rv")) {
+                    "IE"
+                } else {
+                    "Unknown browser: $browserDetails"
+                }
+
+                isMobile = TextUtils.isMobile(browserDetails)
+
+                logger.log(Level.INFO, "UA: $browserDetails")
+                logger.log(Level.INFO, "isMobile: $isMobile")
+                logger.log(Level.INFO, "browser/agentName: $browser")
+                logger.log(Level.INFO, "os/agentOS: $os")
             }
-
-//            logger.log(Level.INFO, "User Agent: $browserDetails")
-            //===============Browser===========================
-            if (user.contains("msie")) {
-                browser = "IE"
-            } else if (user.contains("safari") && user.contains("version")) {
-                browser = "Safari"
-            } else if (user.contains("opr") || user.contains("opera")) {
-                browser = "Opera"
-            } else if (user.contains("chrome")) {
-                browser = "Chrome"
-            } else if (user.indexOf("mozilla/7.0") > -1 || user.indexOf("netscape6") != -1 || user.indexOf("mozilla/4.7") != -1 || user.indexOf(
-                    "mozilla/4.78"
-                ) != -1 || user.indexOf("mozilla/4.08") != -1 || user.indexOf("mozilla/3") != -1
-            ) {
-                browser = "Netscape"
-            } else if (user.contains("firefox")) {
-                browser = "Firefox"
-            } else if (user.contains("rv")) {
-                browser = "IE"
-            } else {
-                browser = "Unknown browser: $browserDetails"
-            }
-
-            isMobile = TextUtils.isMobile(browserDetails)
         }
-
-        logger.log(Level.INFO,"UA: $browserDetails")
-        logger.log(Level.INFO,"isMobile: $isMobile")
-        logger.log(Level.INFO,"browser/agentName: $browser")
-        logger.log(Level.INFO,"os/agentOS: $os")
 
         model["isMobile"] = isMobile
         var thumbnailType = "225"
@@ -328,7 +327,6 @@ class AttributeController(
 
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
-        val isHtmlRequest = request.getHeader("Accept")?.startsWith("text/html") == true
         model["recognitionLabelNames"] = if (isHtmlRequest) {
             recognitionLabelRepository
                 ?.findAllByNameNotContaining(TextUtils.getObjectName())
@@ -371,11 +369,11 @@ class AttributeController(
 
         model["hasImageMedia"] = false
         model["albumImageCount"] = 0
-        val currentUser: User?
+        var currentUser: User? = null
         var currentUserId = 0
         val cookieUser: User? = TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)
 
-        model["userCount"] = userRepository.count()
+        if (isHtmlRequest) model["userCount"] = userRepository.count()
 
         model["requestResourceType"] = "web"
         if (!request.getHeader("X-API-KEY").isNullOrBlank()) {
@@ -418,24 +416,26 @@ class AttributeController(
                     currentUser.setSlideshowFillScreen(false)
                 }
 
-                val mediaImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                    metadataRepository?.countAllByTypeContains("image")
-                } else {
-                    metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
-                })
+                if (isHtmlRequest) {
+                    val mediaImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                        metadataRepository?.countAllByTypeContains("image")
+                    } else {
+                        metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+                    })
 
-                val albumImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                    metadataRepository?.countAlbumByMediaAsAdmin("image")
-                } else {
-                    metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
-                })
+                    val albumImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                        metadataRepository?.countAlbumByMediaAsAdmin("image")
+                    } else {
+                        metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+                    })
 
-                if (albumImageCount != null) {
-                    model["albumImageCount"] = albumImageCount
-                }
+                    if (albumImageCount != null) {
+                        model["albumImageCount"] = albumImageCount
+                    }
 
-                if (mediaImageCount != null) {
-                    model["hasImageMedia"] = mediaImageCount > 0
+                    if (mediaImageCount != null) {
+                        model["hasImageMedia"] = mediaImageCount > 0
+                    }
                 }
             } else {
                 logger.log(Level.INFO, "{\"message\":\"Invalid API Key\"}")
@@ -510,24 +510,26 @@ class AttributeController(
                 locale = currentUser.getLanguage()!!
             }
 
-            val mediaImageCount = (if (currentUser?.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                metadataRepository?.countAllByTypeContains("image")
-            } else {
-                metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
-            })
+            if (isHtmlRequest) {
+                val mediaImageCount = (if (currentUser?.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                    metadataRepository?.countAllByTypeContains("image")
+                } else {
+                    metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+                })
 
-            val albumImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                metadataRepository?.countAlbumByMediaAsAdmin("image")
-            } else {
-                metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
-            })
+                val albumImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                    metadataRepository?.countAlbumByMediaAsAdmin("image")
+                } else {
+                    metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+                })
 
-            if (albumImageCount != null) {
-                model["albumImageCount"] = albumImageCount
-            }
+                if (albumImageCount != null) {
+                    model["albumImageCount"] = albumImageCount
+                }
 
-            if (mediaImageCount != null) {
-                model["hasImageMedia"] = mediaImageCount > 0
+                if (mediaImageCount != null) {
+                    model["hasImageMedia"] = mediaImageCount > 0
+                }
             }
         } else if (cookieUser != null) {
             currentUser = cookieUser

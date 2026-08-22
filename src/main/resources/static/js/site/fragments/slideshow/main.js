@@ -157,11 +157,14 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         forceReflow(progressBar);
     }
 
+    let cachedSlideshowAlbums = null;
+
     const http = new Http("getAlbums");
     http.ajax("get", "/slideshowalbums").then(function (data) {
         if (data.hasOwnProperty("albumsList") && data.hasOwnProperty("slideshowAlbum")  && data.slideshowAlbum.hasOwnProperty("albums") && data.slideshowAlbum.albums.length > 0) {
             const albumsArray = data.albumsList;
             const slideshowAlbumArray = data.slideshowAlbum.albums;
+            cachedSlideshowAlbums = slideshowAlbumArray;
 
             let html = "";
             if (slideshowAlbumArray.length > 0) {
@@ -229,6 +232,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                                 autohide: true
                             }
                         );
+                    } else {
+                        cachedSlideshowAlbums = checkedValues;
                     }
                 });
             });
@@ -236,21 +241,15 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
     });
 
     $('#slideshowAlbumSelection').on('hidden.bs.modal', function (e) {
-        const http = new Http("getAlbums");
-        http.ajax("get", "/slideshowalbums").then(function (data) {
-            if (data.hasOwnProperty("slideshowAlbum")  && data.slideshowAlbum.hasOwnProperty("albums") && data.slideshowAlbum.albums.length > 0) {
-                $(".slideshowAlbum").prop('checked', false);
-
-                const slideshowAlbumArray = data.slideshowAlbum.albums;
-                for (let index in slideshowAlbumArray) {
-                    if (slideshowAlbumArray.hasOwnProperty(index)) {
-                        const slideshowId = (slideshowAlbumArray[index] === "all" ? 0 : parseInt(slideshowAlbumArray[index]));
-                        $('#album-'+slideshowId).prop('checked', true);
-                    }
+        if (cachedSlideshowAlbums !== null && cachedSlideshowAlbums.length > 0) {
+            $(".slideshowAlbum").prop('checked', false);
+            for (let index in cachedSlideshowAlbums) {
+                if (cachedSlideshowAlbums.hasOwnProperty(index)) {
+                    const slideshowId = (cachedSlideshowAlbums[index] === "all" ? 0 : parseInt(cachedSlideshowAlbums[index]));
+                    $('#album-'+slideshowId).prop('checked', true);
                 }
             }
-
-        });
+        }
     });
 
     function getSlideshowImage(callback) {

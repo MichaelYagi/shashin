@@ -747,12 +747,12 @@
                             timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 &&
                             ((index - 2) > -1) &&
                             (!caps.useSmoothElementScroll || $.inArray(currentDate, removedElements) === -1)) {
-                            const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
+                            const numberOfPhotos = timelineDate.count || timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
                             let sectionHeight = 0;
 
                             if (numberOfPhotos !== null && numberOfPhotos > 0) {
-                                sectionHeight = Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5);
+                                sectionHeight = Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * (parseInt(timelineSettings.thumbnailHeight) + 5) + 6000;
                             }
 
                             let action = "below";
@@ -1488,7 +1488,10 @@
             const month = dateArray[1];
             const day = dateArray[2];
 
-            $('<span class="dateContainer" id="container_'+year+'-'+month+'-'+day+'" style="display: block;height: '+height+'px;"></span>').insertAfter($("#amp_" + attachToId));
+            const anchor = $("#amp_" + attachToId).length > 0
+                ? $("#amp_" + attachToId)
+                : $(".attachMetadataPhotos").last();
+            $('<span class="dateContainer" id="container_'+year+'-'+month+'-'+day+'" style="display: block;height: '+height+'px;"></span>').insertAfter(anchor);
             ret = timelineSettings.success;
         }
 
