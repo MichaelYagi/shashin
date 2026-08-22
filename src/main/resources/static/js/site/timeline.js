@@ -484,7 +484,7 @@
                     attachPoint = currentId;
                     attachBelowArray.push(currentId);
 
-                    if (rendered === false && $("#amp_" + currentId).withinviewport().length === 0) {
+                    if (rendered === false && Util.isInViewport($("#amp_" + currentId)) === false) {
                         rendered = true;
                         continue;
                     }
