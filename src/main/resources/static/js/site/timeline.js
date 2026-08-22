@@ -203,8 +203,12 @@
 
     // Render only what's needed
     let isRenderingAlt = false;
+    let lastAltRenderedId = null;
+    let lastAltRenderTime = 0;
     timelineSettings.renderThumbnailsAlt = async function(id,mediaTypeFilter) {
+        const now = Date.now();
         if (isRenderingAlt) return timelineSettings.successMidMsg;
+        if (id === lastAltRenderedId && (now - lastAltRenderTime) < 500) return timelineSettings.successMidMsg;
         isRenderingAlt = true;
         if (timelineSettings.initialized === false) {
             timelineSettings.initialized = true;
@@ -531,6 +535,8 @@
         shashin.printMessageToConsole("==============================================",{tag:"timeline"});
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
+        lastAltRenderedId = id;
+        lastAltRenderTime = Date.now();
         isRenderingAlt = false;
         timelineSettings.enableScrollSpy = true;
 
