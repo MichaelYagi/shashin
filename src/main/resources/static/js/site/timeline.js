@@ -582,6 +582,11 @@
             initiatedFromToc = false;
         }
 
+        // Snapshot isScrolling at entry — async awaits in the Render-above loop can allow
+        // scrollStop to fire and set isScrolling=false before the Render-below block (Stage 1)
+        // is reached, preventing the placeholder from ever being created.
+        const wasScrolling = timelineSettings.isScrolling;
+
         timelineSettings.enableScrollSpy = false;
 
         if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
@@ -701,7 +706,7 @@
 
             section.visible();
 
-            if (timelineSettings.isScrolling === true &&
+            if (wasScrolling === true &&
                 firstVisibleContainer !== null) {
 
                 // Divide dates into 2
