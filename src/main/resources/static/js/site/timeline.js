@@ -205,18 +205,29 @@
     let isRenderingAlt = false;
     let lastAltRenderedId = null;
     let lastAltRenderTime = 0;
+    let pendingAltRender = null;
     timelineSettings.renderThumbnailsAlt = async function(id,mediaTypeFilter) {
         const now = Date.now();
-        if (isRenderingAlt) return timelineSettings.successMidMsg;
+        if (isRenderingAlt) {
+            // Fix 5: track the latest requested anchor so we can catch up after this render
+            pendingAltRender = { id, mediaTypeFilter };
+            return timelineSettings.successMidMsg;
+        }
         if (id === lastAltRenderedId && (now - lastAltRenderTime) < 500) return timelineSettings.successMidMsg;
         isRenderingAlt = true;
         if (timelineSettings.initialized === false) {
             timelineSettings.initialized = true;
         } else {
-            $("#spinner_top").css("display", "block");
+            // Fix 4: suppress spinner flash during active mobile scroll
+            if (!Util.isMobile() || timelineSettings.isScrolling === false) {
+                $("#spinner_top").css("display", "block");
+            }
         }
         if ($(".attachMetadataPhotos").last().text() !== "EOL") {
-            $("#spinner_bottom").css("display", "block");
+            // Fix 4: suppress spinner flash during active mobile scroll
+            if (!Util.isMobile() || timelineSettings.isScrolling === false) {
+                $("#spinner_bottom").css("display", "block");
+            }
         }
 
         timelineSettings.enableScrollSpy = false;
@@ -313,8 +324,12 @@
                     topHeight += Util.getDateGalleryHeight(element.id);
                 }
 
-                shashin.printMessageToConsole(element.id + " removed end",{tag:"timeline"});
-                Util.removeDateGallery(element.id);
+                // Fix 1: defer DOM removal until scroll stops — same principle as renderThumbnails;
+                // removing sections mid-scroll triggers layout reflows that cause blinking on mobile
+                if (timelineSettings.isScrolling === false) {
+                    shashin.printMessageToConsole(element.id + " removed end",{tag:"timeline"});
+                    Util.removeDateGallery(element.id);
+                }
             }
 
             // Remove elements out of order
@@ -322,7 +337,10 @@
 
             if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
                 shashin.printMessageToConsole("Removing from timeline " + element.id,{tag:"timeline"});
-                Util.removeDateGallery(element.id);
+                // Fix 1: defer out-of-order removal until scroll stops
+                if (timelineSettings.isScrolling === false) {
+                    Util.removeDateGallery(element.id);
+                }
             }
 
             prevIndex = currentTimelineIndex;
@@ -373,7 +391,11 @@
                 }
             }
             if (estimatedAboveHeight > 0) {
-                $('<span id="above-placeholder" style="display:block;height:' + estimatedAboveHeight + 'px"></span>').prependTo($("#infinite-scroll-gallery"));
+                // Fix 3: hide placeholder on mobile so the blank span doesn't paint before content arrives
+                const abovePlaceholderStyle = Util.isMobile()
+                    ? 'display:block;height:' + estimatedAboveHeight + 'px;visibility:hidden;'
+                    : 'display:block;height:' + estimatedAboveHeight + 'px';
+                $('<span id="above-placeholder" style="' + abovePlaceholderStyle + '"></span>').prependTo($("#infinite-scroll-gallery"));
                 if (caps.needsScrollCompensation) {
                     document.getElementById("container").scrollTop += estimatedAboveHeight;
                 }
@@ -447,7 +469,10 @@
                         : 0;
                     if (sectionHeight > 0) {
                         await timelineSettings.createEmptyContainer(currentId, attachPoint, sectionHeight);
-                        await new Promise(r => requestAnimationFrame(r));
+                        // Fix 2: skip the rAF paint on mobile — empty container is hidden so there's nothing to paint
+                        if (!Util.isMobile()) {
+                            await new Promise(r => requestAnimationFrame(r));
+                        }
                         currentAction = "emptyContainer";
                     }
                 }
@@ -539,6 +564,15 @@
         lastAltRenderTime = Date.now();
         isRenderingAlt = false;
         timelineSettings.enableScrollSpy = true;
+
+        // Fix 5: if scroll moved to a different anchor while this render was locked, catch up once
+        if (pendingAltRender !== null && pendingAltRender.id !== id) {
+            const pending = pendingAltRender;
+            pendingAltRender = null;
+            await timelineSettings.renderThumbnailsAlt(pending.id, pending.mediaTypeFilter);
+        } else {
+            pendingAltRender = null;
+        }
 
         return timelineSettings.successMidMsg;
     };
@@ -1502,7 +1536,12 @@
             const anchor = $("#amp_" + attachToId).length > 0
                 ? $("#amp_" + attachToId)
                 : $(".attachMetadataPhotos").last();
-            $('<span class="dateContainer" id="container_'+year+'-'+month+'-'+day+'" style="display: block;height: '+height+'px;"></span>').insertAfter(anchor);
+            // Fix 2: hide empty placeholder on mobile so the blank block doesn't blink before content fills it;
+            // visibility:hidden preserves scroll space while keeping it invisible
+            const containerStyle = Util.isMobile()
+                ? 'display: block;height: ' + height + 'px;visibility:hidden;'
+                : 'display: block;height: ' + height + 'px;';
+            $('<span class="dateContainer" id="container_'+year+'-'+month+'-'+day+'" style="'+containerStyle+'"></span>').insertAfter(anchor);
             ret = timelineSettings.success;
         }
 
