@@ -392,6 +392,10 @@ CREATE INDEX `idx_kp_keyword_id` ON keywordphoto (`keywordId`);
 CREATE INDEX `idx_kp_metadata_id` ON keywordphoto (`metadata_id`);
 CREATE INDEX `idx_ua_album_id` ON useralbum (`albumId`);
 CREATE INDEX `idx_metadata_hidden_ymdt` ON metadata (`hidden`, `year` DESC, `month` DESC, `day` DESC, `time` DESC);
+DROP INDEX IF EXISTS `idx_metadata_type`;
+CREATE INDEX `idx_metadata_type` ON metadata (`type`);
+DROP INDEX IF EXISTS `idx_metadata_lat_lng`;
+CREATE INDEX `idx_metadata_lat_lng` ON metadata (`lat`, `lng`);
 
 PRAGMA journal_mode = WAL;
 PRAGMA synchronous = NORMAL;

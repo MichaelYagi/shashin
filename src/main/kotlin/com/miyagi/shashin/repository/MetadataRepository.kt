@@ -229,6 +229,14 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    fun countAllByLatIsNullAndLngIsNull(): Int
 
+   @Query("SELECT " +
+           "SUM(CASE WHEN type LIKE 'image/%' THEN 1 ELSE 0 END) AS photoCount, " +
+           "SUM(CASE WHEN type LIKE 'video/%' THEN 1 ELSE 0 END) AS videoCount, " +
+           "SUM(CASE WHEN lat IS NULL AND lng IS NULL THEN 1 ELSE 0 END) AS notLocatedCount, " +
+           "SUM(CASE WHEN hidden = 1 THEN 1 ELSE 0 END) AS hiddenCount " +
+           "FROM metadata", nativeQuery = true)
+   fun getMediaCounts(): MediaStats
+
    @Query("SELECT" +
            "    TRIM(SUBSTR(" +
            "            place_name," +

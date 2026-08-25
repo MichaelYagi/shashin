@@ -368,15 +368,12 @@ class DashboardController(
         }
 
         metricsUtil.start("media stats")
-        // Media stats
-        val photoCount = metadataRepository.countAllByTypeContains("image")
-        val videoCount = metadataRepository.countAllByTypeContains("video")
-        val notLocatedCount = metadataRepository.countAllByLatIsNullAndLngIsNull()
-        val hiddenCount = metadataRepository.countAllByHiddenIsTrue()
-        response["photoCount"] = photoCount
-        response["videoCount"] = videoCount
-        response["notLocatedCount"] = notLocatedCount
-        response["hiddenCount"] = hiddenCount
+        // Media stats — single query instead of four separate table scans
+        val mediaCounts = metadataRepository.getMediaCounts()
+        response["photoCount"] = mediaCounts.getPhotoCount() ?: 0
+        response["videoCount"] = mediaCounts.getVideoCount() ?: 0
+        response["notLocatedCount"] = mediaCounts.getNotLocatedCount() ?: 0
+        response["hiddenCount"] = mediaCounts.getHiddenCount() ?: 0
         metricsUtil.end()
 
         response["endpointSlowestProcessingTimeMS"] = metricsUtil.getMaxTime()
