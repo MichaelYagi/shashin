@@ -15,7 +15,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE id = :metadataId", nativeQuery = true)
    fun findByMetadataId(@Param("metadataId") metadataId: String): Metadata?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%'", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type%", nativeQuery = true)
    fun findAllByMediaType(@Param("type") type: String): MutableIterable<Metadata>?
 
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
@@ -53,28 +53,28 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAddedAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
    fun findMetadataIdBetweenTakenAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
    fun findMetadataIdBetweenTakenAtWithMediaType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAccessedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAccessedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenModifiedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenModifiedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAddedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAddedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
@@ -119,7 +119,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllWithCoordOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND (duplicate_hash IS NULL OR duplicate_hash = \"\") AND type LIKE 'image/%' ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND (duplicate_hash IS NULL OR duplicate_hash = \"\") AND type LIKE '%image%' ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllNoDupeHashOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
@@ -140,13 +140,13 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllDescriptionOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND (description IS NULL OR description = \"\") AND type LIKE :type || '/%' ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND (description IS NULL OR description = \"\") AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingDescriptionByTypeOffsetAndLimit(@Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND m.type LIKE :type || '/%' AND NOT EXISTS (SELECT 1 FROM keywordphoto mk WHERE mk.metadata_id = m.id) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata m WHERE m.hidden = 0 AND m.type LIKE %:type% AND NOT EXISTS (SELECT 1 FROM keywordphoto mk WHERE mk.metadata_id = m.id) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC, m.id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingKeywordsByTypeOffsetAndLimit(@Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND type LIKE :type || '/%' ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingLocationByTypeOffsetAndLimit(@Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
@@ -172,7 +172,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    fun findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDescTimeDesc(): Metadata?
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
    fun findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(@Param("type") type: String): Metadata?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
@@ -208,7 +208,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    fun findAllYearMonthDayByOffsetAndLimit(@Param("limit") limit: Int): MutableIterable<MetadataDate>?
 
    @Cacheable(value = ["metadataDates"], key = "{#type}")
-   @Query("SELECT year,month,day,COUNT(*) AS count FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' GROUP BY year,month,day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT year,month,day,COUNT(*) AS count FROM metadata WHERE hidden = 0 AND type LIKE %:type% GROUP BY year,month,day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByMediaType(@Param("type") type: String): MutableIterable<MetadataDate>?
 
    @Cacheable(value = ["metadataDates"], key = "'noCoord'")
@@ -308,10 +308,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY taken_at DESC", nativeQuery = true)
    fun findTakenByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' ORDER BY modified_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY modified_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findModifiedByMediaTypeAndDate(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY modified_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -326,16 +326,16 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND modified_at >= :startDate AND modified_at <= :endDate ORDER BY modified_at DESC", nativeQuery = true)
    fun findModifiedByDescriptionAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' ORDER BY added_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY added_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND added_at >= :startDate AND added_at <= :endDate ORDER BY added_at DESC", nativeQuery = true)
    fun findRecentByMediaTypeAndDate(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY taken_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND taken_at >= :startDate AND taken_at <= :endDate ORDER BY taken_at DESC", nativeQuery = true)
    fun findTakenByMediaTypeAndDate(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
-   @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%'", nativeQuery = true)
+   @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND type LIKE %:type%", nativeQuery = true)
    fun countByMediaTypeAndOffsetAndLimit(@Param("type") type: String?): Int
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY added_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -362,7 +362,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\"", nativeQuery = true)
    fun countByDescriptionAndOffsetAndLimit(): Int
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTakenByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -371,10 +371,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTakenByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' ORDER BY last_accessed_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY last_accessed_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findLastAccessedByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE :type || '/%' AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND last_accessed_at >= :startDate AND last_accessed_at <= :endDate ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findLastAccessedByMediaTypeAndDate(@Param("type") type: String, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY last_accessed_at DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -397,13 +397,13 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = 0 AND place_name IS NOT NULL ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelinePlaceByDate(year: Int?, month: Int?, day: Int?): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND type LIKE :type || '/%' AND hidden = 0 AND place_name IS NOT NULL ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND type LIKE %:type% AND hidden = 0 AND place_name IS NOT NULL ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelinePlaceByDateAndType(year: Int?, month: Int?, day: Int?, @Param("type") type: String?): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE :type || '/%' AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC, id DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByTypeOffsetAndLimit(@Param("type") type: String?,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE :type || '/%' AND year = :year AND month = :month AND day = :day AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND year = :year AND month = :month AND day = :day AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllByTypeAndYearAndMonthAndDay(@Param("type") type: String?,@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND year = :year AND month = :month AND day = :day AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
@@ -492,22 +492,22 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.id as metadataId,m.type,m.path,m.thumbnail_path_small as thumbnailPathSmall,m.thumbnail_url_original as thumbnailUrlOriginal,rlp.recognition_label_id as recognitionLabelId,rl.name as recognitionLabelName FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id LEFT JOIN recognitionlabel rl ON rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rlp.id IN (SELECT rlp2.id FROM recognitionlabelphoto rlp2 WHERE rlp.recognition_label_id = rlp2.recognition_label_id LIMIT :trainingDataLimit) ORDER BY rlp.recognition_label_id, RANDOM()",nativeQuery = true)
    fun findTrainingData(@Param("trainingDataLimit") trainingDataLimit: Int): MutableIterable<TrainingData>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE :type || '/%' AND hidden = 0 AND original_image_width <= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width <= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaPortrait(@Param("type") type: String): Metadata?
 
-   @Query("SELECT * FROM metadata WHERE type LIKE :type || '/%' AND hidden = 0 AND original_image_width >= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width >= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaLandscape(@Param("type") type: String): Metadata?
 
-   @Query("SELECT * FROM metadata WHERE type LIKE :type || '/%' AND hidden = 0 ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
    fun findRandomMetadatasMedia(@Param("type") type: String, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE :type || '/%' AND hidden = 0 AND original_image_width >= original_image_height ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width >= original_image_height ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
    fun findRandomMetadatasMediaLandscape(@Param("type") type: String, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE :type || '/%' AND hidden = 0 AND original_image_width <= original_image_height ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width <= original_image_height ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
    fun findRandomMetadatasMediaPortrait(@Param("type") type: String, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE :type || '/%' AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMedia(@Param("type") type: String): Metadata?
 
    @Query("SELECT * FROM metadata ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
@@ -522,31 +522,31 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE file_name LIKE %:filename% AND hidden = 0 AND original_image_width <= original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaAndFilterPortrait(@Param("filename") filename: String): Metadata?
 
-   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE :type || '/%' AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserPortrait(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE :type || '/%' AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserLandscape(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE :type || '/%' AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUser(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE :type || '/%' AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserAndAlbumLandscape(@Param("userId") userId: Int, @Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE :type || '/%' AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserAndAlbumPortrait(@Param("userId") userId: Int, @Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE :type || '/%' AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserAndAlbum(@Param("userId") userId: Int, @Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE :type || '/%' AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width >= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByAlbumLandscape(@Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE :type || '/%' AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByAlbumPortrait(@Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE :type || '/%' AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByAlbum(@Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
    @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
@@ -558,10 +558,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 AND m.original_image_width <= m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaAndFilterByUserPortrait(@Param("userId") userId: Int, @Param("filename") filename: String): Metadata?
 
-   @Query("SELECT COUNT(*) FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE :type || '/%' AND m.hidden = 0", nativeQuery = true)
+   @Query("SELECT COUNT(*) FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)
    fun countAlbumByMedia(@Param("userId") userId: Int, @Param("type") type: String): Int
 
-   @Query("SELECT COUNT(*) FROM album a INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE :type || '/%' AND m.hidden = 0", nativeQuery = true)
+   @Query("SELECT COUNT(*) FROM album a INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)
    fun countAlbumByMediaAsAdmin(@Param("type") type: String): Int
 
    @Modifying
