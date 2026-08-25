@@ -67,6 +67,10 @@ class TextUtils {
 
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
 
+        @Volatile private var releasesCache: MutableList<Map<String, Any>>? = null
+        @Volatile private var releasesCacheTime: Long = 0
+        private const val RELEASES_CACHE_TTL_MS = 3_600_000L // 1 hour
+
         fun createBase64EncodedUuid(uuidStr: String): String {
             val uuid = try {
                 when {
@@ -1523,34 +1527,41 @@ class TextUtils {
 
         // https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repository-tags
         fun getReleases(): MutableList<Map<String, Any>>? {
-            var url = "https://api.github.com/repos/michaelyagi/shashin/releases"
-            var array: MutableList<Map<String, Any>>? = mutableListOf<Map<String, Any>>()
+            val now = System.currentTimeMillis()
+            val cached = releasesCache
+            if (cached != null && cached.isNotEmpty() && (now - releasesCacheTime) < RELEASES_CACHE_TTL_MS) {
+                return cached
+            }
+
+            val url = "https://api.github.com/repos/michaelyagi/shashin/releases"
+            var array: MutableList<Map<String, Any>>? = mutableListOf()
 
             try {
                 val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
-                connection.connectTimeout = 1000
-                connection.readTimeout = 1000
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
                 connection.requestMethod = "GET"
 
                 connection.setRequestProperty("Accept", "application/vnd.github+json")
 
-                BufferedReader(
-                    InputStreamReader(connection.inputStream, "utf-8")
-                ).use { br ->
-                    val responseBuilder = StringBuilder()
-                    var responseLine: String?
-                    while (br.readLine().also { responseLine = it } != null) {
-                        responseBuilder.append(responseLine!!.trim { it <= ' ' })
-                    }
-
-                    val jsonString = responseBuilder.toString()
-                    array = Gson().fromJson(jsonString, array?.javaClass)
-                }
-
                 val responseCode: Int = connection.responseCode
-
-                if (responseCode != 200) {
-                    logger.log(Level.WARNING, "Could not process GitHub request.")
+                if (responseCode == 200) {
+                    BufferedReader(
+                        InputStreamReader(connection.inputStream, "utf-8")
+                    ).use { br ->
+                        val responseBuilder = StringBuilder()
+                        var responseLine: String?
+                        while (br.readLine().also { responseLine = it } != null) {
+                            responseBuilder.append(responseLine!!.trim { it <= ' ' })
+                        }
+                        array = Gson().fromJson(responseBuilder.toString(), array?.javaClass)
+                    }
+                    if (!array.isNullOrEmpty()) {
+                        releasesCache = array
+                        releasesCacheTime = now
+                    }
+                } else {
+                    logger.log(Level.WARNING, "Could not process GitHub request: HTTP $responseCode")
                 }
             } catch (e: IOException) {
                 logger.log(Level.WARNING, "Could not process GitHub request: " + e.message)
