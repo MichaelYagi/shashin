@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.26.1] - 2026-08-25
+### Fixed
+- Timeline: added concurrency guard to `renderThumbnails` (same pattern as `renderThumbnailsAlt`) — fast scrolling on wireless was spawning multiple concurrent instances, each making overlapping network requests and flooding the connection; now only one runs at a time and catches up with the latest scroll position when done
+- Timeline: `renderViewport` (called on scroll-stop) now resets `prevElements` and forces a full render pass on desktop, fixing sections that refuse to render or only half-render when scroll stops on a slow connection
+- Timeline: deduplicated in-flight per-thumbnail metadata requests in `renderMetadata` — the three `rescanElements` calls on scroll-stop could flood the server with duplicate requests for the same thumbnail
+
 ## [2.26.0] - 2026-08-25
 ### Fixed
 - Tests: `recentImageAPITest` no longer fails with `ConcurrentModificationException` — scan completion is now detected by polling the thread file instead of a fixed-duration sleep, ensuring the background scan thread has fully finished before API tests run
