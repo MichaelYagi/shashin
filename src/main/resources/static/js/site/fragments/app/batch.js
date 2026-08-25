@@ -430,6 +430,7 @@
                     sectionId = $("#dateTaken"+metadataId).val();
                 } else {
                     const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
+                    if (!rowId) return;
                     sectionId = rowId.replace("row", "").replace("dateBody", "");
                 }
 
