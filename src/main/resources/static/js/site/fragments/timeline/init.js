@@ -354,6 +354,17 @@
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+                // On scroll-stop, force a full render pass: reset prevElements so
+                // renderThumbnailsInViewport always enters, and set isScrolling=true
+                // on desktop so renderThumbnails runs its section-loading loops.
+                // wasScrolling (captured at renderThumbnails entry) will be true,
+                // enabling the section-loading code even though scroll has stopped.
+                // This fixes "refuses to render" and "half page renders" on wireless
+                // where sections may not have loaded during active scroll.
+                timelineSettings.resetPrevElements();
+                if (!Util.isMobile()) {
+                    timelineSettings.isScrolling = true;
+                }
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
                 timelineSettings.isScrolling = false;
             }

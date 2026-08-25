@@ -77,9 +77,15 @@
 
             const imageIdentifier = "#image" + metadataId;
             if ($(imageIdentifier).length > 0 && $(imageIdentifier).src === undefined) {
+                // Deduplicate in-flight requests — rescanElements fires 3× on scrollStop so
+                // the same thumbnail ID can arrive concurrently; skip if already fetching.
+                if (!timelineSettings._pendingMetadataFetch) timelineSettings._pendingMetadataFetch = new Set();
+                if (timelineSettings._pendingMetadataFetch.has(metadataId)) return;
+                timelineSettings._pendingMetadataFetch.add(metadataId);
                 const http = new Http("attaching associated metadata in viewport");
                 const version = Util.getMetadataLocalStorage();
                 http.ajax("get", "/metadata/" + metadataId + (version === "" ? "" : "?v=" + version)).then(function (data) {
+                    timelineSettings._pendingMetadataFetch.delete(metadataId);
                     if (data !== undefined && data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         const metadata = data.metadata;
                         const favoritesMap = data.favorites;
@@ -99,6 +105,7 @@
     let reinitGalleryFlag = true;
 
     let prevElements = null;
+    timelineSettings.resetPrevElements = function() { prevElements = null; };
     timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter) {
         const timelineDates = timelineSettings.timelineDates;
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
