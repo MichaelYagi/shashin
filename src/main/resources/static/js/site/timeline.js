@@ -173,7 +173,7 @@
 
                 if (Util.isMobile() === false) {
                     // Scrolling behavior different on Chrome iOS
-                    if (!caps.useAltRender) {
+                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && !caps.useAltRender) {
                         timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                             if (msg === timelineSettings.success) {
                                 // Set TOC active element
@@ -636,7 +636,8 @@
             section.each(function (index, element) {
                 sectionArray.push(element);
 
-                if ($('#infinite-scroll-gallery .dateContainer').length > 1 &&
+                if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) &&
+                    $('#infinite-scroll-gallery .dateContainer').length > 1 &&
                     Util.isInViewport($("#" + element.id)) === false &&
                     Util.isInViewport($("#br" + element.id)) === false &&
                     Util.isInViewport($("#row" + element.id)) === false &&
@@ -671,11 +672,8 @@
                         Util.isInViewport($("#container_" + section[index + 1].id)) === false &&
                         Util.isInViewport($("#amp_" + section[index + 1].id)) === false
                     ) {
-                        // Defer until scroll stops — same reason as DOWN branch above
-                        if (timelineSettings.isScrolling === false) {
-                            Util.removeDateGallery(element.id);
-                            sectionArray.pop();
-                        }
+                        Util.removeDateGallery(element.id);
+                        sectionArray.pop();
                     }
                 }
 

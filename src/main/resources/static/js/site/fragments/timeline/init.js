@@ -194,6 +194,28 @@
             firsthovered = true;
             timelineSettings.isScrolling = false;
 
+            // Remove above-viewport sections after scrolling down stops.
+            // renderThumbnails only runs this removal path when direction===up (original
+            // behaviour), so we handle the down case here directly to avoid disrupting
+            // the existing scroll render pipeline.
+            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down &&
+                !Util.isMobile() &&
+                $('#infinite-scroll-gallery .dateContainer').length > 1
+            ) {
+                $('section').each(function(_, element) {
+                    if (Util.isInViewport($("#" + element.id)) === false &&
+                        Util.isInViewport($("#br" + element.id)) === false &&
+                        Util.isInViewport($("#row" + element.id)) === false &&
+                        Util.isInViewport($("#tail_" + element.id)) === false &&
+                        Util.isInViewport($("#container_" + element.id)) === false &&
+                        Util.isInViewport($("#amp_" + element.id)) === false &&
+                        Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
+                    ) {
+                        Util.removeDateGallery(element.id);
+                    }
+                });
+            }
+
             if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
                 timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
 
