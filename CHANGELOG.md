@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.24.0] - 2026-08-24
+### Added
+- Ask tab in media details modal now renders markdown and LaTeX in AI responses
+### Changed
+- Updated Shoji
+### Fixed
+- Timeline: infinite scroll placeholder (Stage 1) now appears correctly on desktop Chrome/Brave — `isScrolling` state snapshotted at scroll start instead of re-checked after async thumbnail rendering completes
+
 ## [2.23.2] - 2026-08-15
 ### Changed
 - Updated Shoji
