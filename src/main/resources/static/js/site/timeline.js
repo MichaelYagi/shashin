@@ -636,8 +636,7 @@
             section.each(function (index, element) {
                 sectionArray.push(element);
 
-                if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) &&
-                    $('#infinite-scroll-gallery .dateContainer').length > 1 &&
+                if ($('#infinite-scroll-gallery .dateContainer').length > 1 &&
                     Util.isInViewport($("#" + element.id)) === false &&
                     Util.isInViewport($("#br" + element.id)) === false &&
                     Util.isInViewport($("#row" + element.id)) === false &&
