@@ -38,7 +38,24 @@
         <script src="/js/stomp.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/sockjs.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/cast.min.js" th:nonce="${cspNonce}"></script>
-        <script src="https://michaelyagi.github.io/js/md_to_html.js" type="text/javascript"></script>
+        <script th:nonce="${cspNonce}">
+        (function(){
+            var url='https://michaelyagi.github.io/js/md_to_html.js';
+            var cacheKey='md_to_html_js_cache', tsKey='md_to_html_js_ts';
+            var TTL=86400000; // 24 hours
+            var cached=null, ts=0;
+            try { cached=localStorage.getItem(cacheKey); ts=parseInt(localStorage.getItem(tsKey)||'0',10); } catch(e){}
+            if (cached && (Date.now()-ts)<TTL) {
+                var s=document.createElement('script'); s.textContent=cached; document.head.appendChild(s);
+            } else {
+                var xhr=new XMLHttpRequest(); xhr.open('GET',url,false); xhr.send();
+                if (xhr.status===200) {
+                    try { localStorage.setItem(cacheKey,xhr.responseText); localStorage.setItem(tsKey,Date.now().toString()); } catch(e){}
+                    var s=document.createElement('script'); s.textContent=xhr.responseText; document.head.appendChild(s);
+                }
+            }
+        })();
+        </script>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
             <script src="/js/site/notificationutil.js" th:nonce="${cspNonce}"></script>
