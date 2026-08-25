@@ -60,6 +60,11 @@
             $(window).trigger("scrollStop");
         });
     };
+    // Prevents the browser's scroll-anchor compensation (scrollTop adjustment after
+    // removing above-viewport sections) from re-triggering the scroll handler and
+    // creating an infinite scrollStop loop.
+    let suppressScrollHandler = false;
+    let removingAboveSections = false;
     const debounce = (func, delay) => {
         let timer;
         return function(...args) {
@@ -198,10 +203,19 @@
             // renderThumbnails only runs this removal path when direction===up (original
             // behaviour), so we handle the down case here directly to avoid disrupting
             // the existing scroll render pipeline.
+            //
+            // Guard: removing above-viewport sections causes the browser's scroll-anchor
+            // to adjust scrollTop, firing a new scroll event that would re-trigger
+            // scrollStop → infinite loop of queries. suppressScrollHandler silences
+            // init.js's own scroll handler; removingAboveSections guards this block
+            // against re-entry via app.js's independent scroll handler.
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down &&
                 !Util.isMobile() &&
+                !removingAboveSections &&
                 $('#infinite-scroll-gallery .dateContainer').length > 1
             ) {
+                removingAboveSections = true;
+                suppressScrollHandler = true;
                 $('section').each(function(_, element) {
                     if (Util.isInViewport($("#" + element.id)) === false &&
                         Util.isInViewport($("#br" + element.id)) === false &&
@@ -214,6 +228,10 @@
                         Util.removeDateGallery(element.id);
                     }
                 });
+                setTimeout(() => {
+                    suppressScrollHandler = false;
+                    removingAboveSections = false;
+                }, 400);
             }
 
             if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
@@ -354,6 +372,11 @@
         let finalDate = metadataDates[metadataDates.length-1];
 
         const scrollHandler = function (e) {
+            // Ignore scroll events triggered by our own above-section removal
+            // (browser scroll-anchor adjusts scrollTop after DOM removal, which
+            // would otherwise re-trigger scrollStop and create an infinite loop).
+            if (suppressScrollHandler) return;
+
             if (timelineSettings.lastDateMarker !== null) {
                 const lastDateMarker = timelineSettings.lastDateMarker;
                 $("#lastDateMarker" + lastDateMarker.year + '-' + lastDateMarker.month + '-' + lastDateMarker.day).remove();
