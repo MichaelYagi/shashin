@@ -679,7 +679,7 @@ function askAppendMessage(role, content, createdAt) {
         );
     } else if (role === "assistant") {
         const timeStr = createdAt || new Date().toLocaleString();
-        const $bubble = $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).html(typeof formatMessage === "function" ? formatMessage(content) : $('<span>').text(content).html());
+        const $bubble = $('<div class="p-3 rounded">').css({"background":"var(--bs-secondary-bg)","word-break":"break-word"}).html(formatMessage(content));
         $bubble.append($('<div class="text-muted small mt-2">').text(timeStr + " · " + (askOllamaModel || "")));
         const $msg = $('<div class="mb-2">').append($bubble);
         $chat.append($msg);
@@ -765,8 +765,7 @@ async function askSend() {
                     if (data.token) {
                         fullText += data.token;
                         if (firstToken) { $content.empty(); firstToken = false; }
-                        const rendered = typeof formatMessage === "function" ? formatMessage(fullText) : $("<span>").text(fullText).html();
-                        $content.html(rendered).append($cursor);
+                        $content.html(formatMessage(fullText)).append($cursor);
                         $chat[0].scrollTop = $chat[0].scrollHeight;
                     }
                 } catch (_) {}
