@@ -671,8 +671,11 @@
                         Util.isInViewport($("#container_" + section[index + 1].id)) === false &&
                         Util.isInViewport($("#amp_" + section[index + 1].id)) === false
                     ) {
-                        Util.removeDateGallery(element.id);
-                        sectionArray.pop();
+                        // Defer until scroll stops — same reason as DOWN branch above
+                        if (timelineSettings.isScrolling === false) {
+                            Util.removeDateGallery(element.id);
+                            sectionArray.pop();
+                        }
                     }
                 }
 
