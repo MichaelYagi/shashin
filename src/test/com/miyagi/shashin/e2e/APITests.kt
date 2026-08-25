@@ -8,6 +8,7 @@ import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.Assertions
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
-import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
@@ -155,18 +155,18 @@ class APITests: BaseSeleniumTests() {
 
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan")
-        val scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         val scanPhotos = this.driver!!.findElement(By.id("scanPhotos"))
         scanPhotos.click()
 
-        // Indicates scanning something
-        var scanBeforeAfter: WebElement? = null
-        var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        // Wait for scan to complete by polling the thread file
+        Thread.sleep(2000) // brief pause for scan thread to initialize
+        val maxWaitMs = 120_000L
+        val pollIntervalMs = 500L
+        val scanStart = System.currentTimeMillis()
+        while (FileUtils.checkThreadFileAlive("shashinscan")) {
+            if (System.currentTimeMillis() - scanStart > maxWaitMs) break
+            Thread.sleep(pollIntervalMs)
         }
-
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "APITests - Photos scanned.")
     }
 
