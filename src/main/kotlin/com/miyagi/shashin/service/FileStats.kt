@@ -21,7 +21,7 @@ import kotlin.math.pow
 class FileStats {
     private var logger: Logger = Logger.getLogger(FileStats::class.simpleName)
 
-    @Cacheable("getFileStats")
+    @Cacheable(value = ["getFileStats"], key = "'sidecar'")
     fun getFileStats(model: Model, settings: Settings?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
