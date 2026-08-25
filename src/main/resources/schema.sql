@@ -398,6 +398,8 @@ DROP INDEX IF EXISTS `idx_metadata_lat_lng`;
 CREATE INDEX `idx_metadata_lat_lng` ON metadata (`lat`, `lng`);
 DROP INDEX IF EXISTS `idx_metadata_stats`;
 CREATE INDEX `idx_metadata_stats` ON metadata (`type`, `hidden`, `lat`, `lng`);
+DROP INDEX IF EXISTS `idx_metadata_hidden_ymd_type`;
+CREATE INDEX `idx_metadata_hidden_ymd_type` ON metadata (`hidden`, `year`, `month`, `day`, `type`);
 
 PRAGMA journal_mode = WAL;
 PRAGMA synchronous = NORMAL;

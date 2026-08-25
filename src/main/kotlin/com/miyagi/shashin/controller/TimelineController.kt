@@ -556,7 +556,6 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
     fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String,locale: Locale): ResponseEntity<String> {
         val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false,locale))
         return ResponseEntity
@@ -614,7 +613,6 @@ class TimelineController(
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
     fun getTimelineByDateApi(model: Model, @PathVariable date: String,@PathVariable mediaType: String,locale: Locale): String {
         return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false,locale))
     }
