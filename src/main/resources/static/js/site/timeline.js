@@ -173,7 +173,7 @@
 
                 if (Util.isMobile() === false) {
                     // Scrolling behavior different on Chrome iOS
-                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && !caps.useAltRender) {
+                    if (!caps.useAltRender) {
                         timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                             if (msg === timelineSettings.success) {
                                 // Set TOC active element
