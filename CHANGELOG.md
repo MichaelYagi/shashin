@@ -9,6 +9,10 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.26.0] - 2026-08-25
+### Fixed
+- Tests: `recentImageAPITest` no longer fails with `ConcurrentModificationException` — scan completion is now detected by polling the thread file instead of a fixed-duration sleep, ensuring the background scan thread has fully finished before API tests run
+
 ## [2.25.0] - 2026-08-25
 ### Changed
 - Optimized timeline queries: type filters now use prefix LIKE (`image/%`, `video/%`) enabling index use; added covering index on `(hidden, year, month, day, type)`
