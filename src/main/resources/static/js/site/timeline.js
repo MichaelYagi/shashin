@@ -209,6 +209,8 @@
     };
 
     // Render only what's needed
+    let isRenderingThumbnails = false;
+    let pendingThumbnailRender = null;
     let isRenderingAlt = false;
     let lastAltRenderedId = null;
     let lastAltRenderTime = 0;
@@ -589,6 +591,17 @@
             initiatedFromToc = false;
         }
 
+        // Concurrency guard: on wireless, slow network calls mean multiple scroll events
+        // can each trigger a concurrent renderThumbnails, flooding the connection with
+        // duplicate updateTimeline + attachAssociatedMetadata requests. Track the latest
+        // requested render and execute it after the current run finishes (same pattern as
+        // renderThumbnailsAlt's isRenderingAlt guard).
+        if (!initiatedFromToc && isRenderingThumbnails) {
+            pendingThumbnailRender = { elements, mediaTypeFilter, timelineDates };
+            return timelineSettings.successMidMsg;
+        }
+        if (!initiatedFromToc) isRenderingThumbnails = true;
+
         // Snapshot isScrolling at entry — async awaits in the Render-above loop can allow
         // scrollStop to fire and set isScrolling=false before the Render-below block (Stage 1)
         // is reached, preventing the placeholder from ever being created.
@@ -609,6 +622,10 @@
                 timelineSettings.initialized = true;
             }
 
+            if (!initiatedFromToc) {
+                isRenderingThumbnails = false;
+                pendingThumbnailRender = null;
+            }
             return timelineSettings.success;
         }
 
@@ -865,6 +882,15 @@
 
         if (timelineSettings.initialized === false) {
             timelineSettings.initialized = true;
+        }
+
+        if (!initiatedFromToc) {
+            isRenderingThumbnails = false;
+            if (pendingThumbnailRender !== null) {
+                const pending = pendingThumbnailRender;
+                pendingThumbnailRender = null;
+                return timelineSettings.renderThumbnails(pending.elements, pending.mediaTypeFilter, pending.timelineDates, false);
+            }
         }
 
         return timelineSettings.success;
