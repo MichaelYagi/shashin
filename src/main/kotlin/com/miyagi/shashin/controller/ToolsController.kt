@@ -289,51 +289,26 @@ class ToolsController(
         response["uptimeText"] = TextUtils.getServerUptimeFormatted()
         response["uptimeMS"] = TextUtils.getServerUptimeMS()
 
-        metricsUtil.start("nominatim endpoint")
-        val nominatimTimingStart = Date()
-        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
-        if (reachable) {
-            response["nominatimAvailable"] = "OK"
-        } else {
-            response["nominatimAvailable"] = "FAIL"
-            status = "FAIL"
-        }
-        val nominatimTimingEnd = Date()
-        val nominatimTimingDiff: Long = nominatimTimingEnd.time - nominatimTimingStart.time
-//        response["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
-        logger.log(Level.INFO, "HealthEP - Nominatim connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))}")
-        metricsUtil.end()
-
-        metricsUtil.start("argus endpoint")
-        // If enabled - status fail if not available
+        // Start Nominatim and Argus checks in parallel so their timeouts overlap
         val settings = model.getAttribute("settings") as Settings?
-        if (!settings?.getArgusServer().isNullOrBlank() &&
-            !settings?.getArgusKey().isNullOrBlank())
-        {
-            val argusTimingStart = Date()
-            val faceRecogServicesAvailable = NetworkUtils.checkArgusConnection(
-                settings.getArgusServer(),
-                settings.getArgusKey()
-            )
-            if (faceRecogServicesAvailable) {
-                response["argusAvailable"] = "OK"
-            } else {
-                response["argusAvailable"] = "FAIL"
-                status = "FAIL"
-            }
-            val argusTimingEnd = Date()
-            val argusTimingDiff: Long = argusTimingEnd.time - argusTimingStart.time
-            logger.log(Level.INFO, "HealthEP - Argus connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(argusTimingDiff))}")
+        val nominatimFuture = java.util.concurrent.CompletableFuture.supplyAsync {
+            NetworkUtils.checkNominatimConnection(geocodeUrl + "status.php?format=json")
         }
-        metricsUtil.end()
+        val argusFuture = if (!settings?.getArgusServer().isNullOrBlank() && !settings?.getArgusKey().isNullOrBlank()) {
+            java.util.concurrent.CompletableFuture.supplyAsync {
+                NetworkUtils.checkArgusConnection(settings.getArgusServer(), settings.getArgusKey())
+            }
+        } else null
 
         val dbTimingStart = Date()
         var sqlLiteQueryCount = 0
+        var firstMetadata: com.miyagi.shashin.model.Metadata? = null
 
         metricsUtil.start("SQL check")
         try {
-            val metadataResult = metaRepository.findAllByOffsetAndLimit(0, 500)
-            sqlLiteQueryCount = metadataResult.count()
+            val metadataResult = metaRepository.findAllByOffsetAndLimit(0, 1)
+            firstMetadata = metadataResult.firstOrNull()
+            sqlLiteQueryCount = if (firstMetadata != null) 1 else 0
             response["sqlLiteAvailable"] = "OK"
             response["sqlLiteQueryCount"] = sqlLiteQueryCount
         } catch (e: Exception) {
@@ -347,18 +322,43 @@ class ToolsController(
 
         metricsUtil.start("Image check")
         response["mediaCheck"] = "OK"
-        if (metaRepository.count() > 0) {
-            val metadataResult = metaRepository.findRandomMetadata()
-            if (metadataResult != null && !File(metadataResult.getPath().toString()).exists()) {
-                response["mediaCheck"] = "FAIL"
-                status = "FAIL"
-            }
+        if (firstMetadata != null && !File(firstMetadata.getPath().toString()).exists()) {
+            response["mediaCheck"] = "FAIL"
+            status = "FAIL"
         }
         metricsUtil.end()
 
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
-//        response["sqlLiteQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
         logger.log(Level.INFO, "HealthEP - SQLite query time for $sqlLiteQueryCount records: ${SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))}")
+
+        // Collect network check results (both ran concurrently above)
+        metricsUtil.start("nominatim endpoint")
+        val nominatimTimingStart = Date()
+        val reachable = nominatimFuture.get()
+        if (reachable) {
+            response["nominatimAvailable"] = "OK"
+        } else {
+            response["nominatimAvailable"] = "FAIL"
+            status = "FAIL"
+        }
+        val nominatimTimingDiff = Date().time - nominatimTimingStart.time
+        logger.log(Level.INFO, "HealthEP - Nominatim connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))}")
+        metricsUtil.end()
+
+        metricsUtil.start("argus endpoint")
+        if (argusFuture != null) {
+            val argusTimingStart = Date()
+            val faceRecogServicesAvailable = argusFuture.get()
+            if (faceRecogServicesAvailable) {
+                response["argusAvailable"] = "OK"
+            } else {
+                response["argusAvailable"] = "FAIL"
+                status = "FAIL"
+            }
+            val argusTimingDiff = Date().time - argusTimingStart.time
+            logger.log(Level.INFO, "HealthEP - Argus connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(argusTimingDiff))}")
+        }
+        metricsUtil.end()
 
         response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 
