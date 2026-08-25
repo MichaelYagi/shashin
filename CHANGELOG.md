@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.25.0] - 2026-08-25
+### Changed
+- Optimized timeline queries: type filters now use prefix LIKE (`image/%`, `video/%`) enabling index use; added covering index on `(hidden, year, month, day, type)`
+- Timeline full-view endpoints no longer cache favorites (fixes per-user favorites being served to all users)
+### Fixed
+- Timeline: sections now correctly removed from viewport when scrolling down, not only when scrolling up
+- Timeline scroll handler crash (`Cannot read properties of undefined (reading 'replace')`) when a section is removed before its deferred `setDateSection` callback fires
+
 ## [2.24.0] - 2026-08-24
 ### Added
 - Ask tab in media details modal now renders markdown and LaTeX in AI responses
