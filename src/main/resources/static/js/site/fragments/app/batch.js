@@ -561,11 +561,12 @@
 
                         for (let i = 0; i < ids.length; i++) {
                             const metadataId = ids[i];
-                            const $icon = $("#tlicon" + metadataId);
-                            if ($icon.length > 0) {
-                                const needsUpdate = isSelecting
-                                    ? $icon.attr("class") === "bi-circle"
-                                    : $icon.attr("class") === "bi-circle-fill";
+                            const $container = $("#photoThumbnailContainer" + metadataId);
+                            if ($container.length > 0) {
+                                const $icon = $("#tlicon" + metadataId);
+                                const needsUpdate = $icon.length > 0
+                                    ? (isSelecting ? $icon.attr("class") === "bi-circle" : $icon.attr("class") === "bi-circle-fill")
+                                    : isSelecting;
                                 if (needsUpdate) {
                                     shashin.updateSelectionUI(metadataId, isSelecting, opaque, transparent, false);
                                     if (!Util.isMobile()) {
@@ -573,7 +574,7 @@
                                         if ($img.length > 0) {
                                             if (isSelecting) {
                                                 $img.attr("src", $img.attr("src").replace("/gif/" + metadataId, "/225/" + metadataId));
-                                            } else if ($("#photoThumbnailContainer" + metadataId).hasClass("is-video")) {
+                                            } else if ($container.hasClass("is-video")) {
                                                 $img.attr("src", $img.attr("src").replace("/225/" + metadataId, "/gif/" + metadataId));
                                             }
                                         }
