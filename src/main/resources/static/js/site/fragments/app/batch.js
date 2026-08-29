@@ -591,19 +591,30 @@
                         shashin.lastSelectedMetadataSelected = isSelecting;
                     }
 
-                    if (activePage === "timeline") {
-                        const ids = [];
-                        $("#row" + date + " .mediaLink[data-metadata-id]").each(function() {
-                            ids.push($(this).attr("data-metadata-id"));
-                        });
-                        applyDaySelection(ids);
+                    if (!shashin._daySelectionCache) shashin._daySelectionCache = {};
+                    const queryDate = shashin.getDateFromSectionId(date);
+                    if (shashin._daySelectionCache[queryDate]) {
+                        applyDaySelection(shashin._daySelectionCache[queryDate]);
                     } else {
-                        // All items in a visible explore section are already in the DOM — no AJAX needed
-                        const ids = [];
-                        $("#dateBody" + date + " .mediaLink[data-metadata-id]").each(function() {
-                            ids.push($(this).attr("data-metadata-id"));
+                        const http = new Http("get day metadata ids");
+                        let url;
+                        if (activePage === "timeline") {
+                            url = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/metadata";
+                        } else if (activePage === "album") {
+                            const albumId = $("#albumId").val();
+                            url = "/album/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/" + albumId;
+                        } else {
+                            url = "/browse/mediatype/" + mediaTypeFilter + "/date/" + queryDate + "/" + activePage;
+                        }
+                        http.ajax("get", url).then(function (data) {
+                            if (data.hasOwnProperty("status")) {
+                                const metadataList = data.metadataList;
+                                if (!metadataList || metadataList.length === 0) return;
+                                const ids = metadataList.map(function(m) { return m.id; });
+                                shashin._daySelectionCache[queryDate] = ids;
+                                applyDaySelection(ids);
+                            }
                         });
-                        applyDaySelection(ids);
                     }
 
                 }, 0);
