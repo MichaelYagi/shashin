@@ -9,6 +9,10 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.26.2] - 2026-08-28
+### Fixed
+- Batch date select: restores server-side ID lookup for all page types (timeline, taken, recent, modified, accessed, album) — the DOM-only approach introduced earlier missed tiles not yet rendered (off-screen evicted sections on timeline; unpaginated items on browse pages); results are cached per date to avoid repeat requests
+
 ## [2.26.1] - 2026-08-25
 ### Fixed
 - Timeline: added concurrency guard to `renderThumbnails` (same pattern as `renderThumbnailsAlt`) — fast scrolling on wireless was spawning multiple concurrent instances, each making overlapping network requests and flooding the connection; now only one runs at a time and catches up with the latest scroll position when done
