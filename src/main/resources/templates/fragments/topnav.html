@@ -8,7 +8,6 @@
 
 <div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>
 
-<div th:replace="~{fragments/slideshow :: slideshow()}"></div>
 
 <div th:replace="~{fragments/editor :: editor()}"></div>
 
@@ -211,8 +210,7 @@
 
     <link rel="stylesheet" href="/css/site/editor.css">
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-        <script src="/js/site/fragments/slideshow/main.js" type="text/javascript" th:nonce="${cspNonce}"></script>
-        <script src="/js/site/fragments/slideshow/globals.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/slideshow/slideshow.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/fragments/editor/carousel.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/fragments/editor/main.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/fragments/editor/imageprocessing.js" type="text/javascript" th:nonce="${cspNonce}"></script>
@@ -221,8 +219,7 @@
         <script src="/js/site/fragments/topnav.js" type="text/javascript" th:nonce="${cspNonce}"></script>
     </th:block>
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-        <script src="/js/site/min/fragments/slideshow/main.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
-        <script src="/js/site/min/fragments/slideshow/globals.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/slideshow/slideshow.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/fragments/editor/carousel.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/fragments/editor/main.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/fragments/editor/imageprocessing.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
