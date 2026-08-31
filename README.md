@@ -75,7 +75,7 @@ Tech Stack
 * [Kotlin](https://kotlinlang.org/)
 * Javascript
 
-3rd Party Libraries used:
+Libraries used:
 * [Shoji](https://github.com/MichaelYagi/shoji) - Image and video lightbox
 * [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor) - Extracts Exif, IPTC, XMP, ICC and other metadata from image, video and audio files
 * [JQuery](https://jquery.com/) - JavaScript library
