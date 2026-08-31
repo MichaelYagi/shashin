@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.27.0] - 2026-08-31
+### Added
+- Slideshow: replaced custom slideshow with a real Shoji lightbox instance — autoplay with configurable interval and progress bar, keyboard/touch shortcuts (Space to pause, arrow keys to navigate, `f` fill-screen, `d` caption, `i` instructions, `[`/`]` orientation, `-`/`=` interval, `a` album), Wake Lock API to keep screen on, cast and download in toolbar, infinite random-feed with preloading, fullscreen on open
+### Changed
+- Profile picture cropper: replaced Croppie with [Kiri](https://michaelyagi.github.io/kiri) — same circle-crop UX, file passed directly without FileReader, actively maintained first-party library
+
 ## [2.26.2] - 2026-08-28
 ### Fixed
 - Batch date select: restores server-side ID lookup for all page types (timeline, taken, recent, modified, accessed, album) — the DOM-only approach introduced earlier missed tiles not yet rendered (off-screen evicted sections on timeline; unpaginated items on browse pages); results are cached per date to avoid repeat requests

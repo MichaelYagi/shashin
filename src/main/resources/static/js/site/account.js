@@ -245,7 +245,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
     let randomString = Util.getMetadataLocalStorage();
 
-    let croppieObject = null;
+    let cropperObject = null;
 
     if (profileUrl === null || profileUrl === "") {
         profileUrl = "#";
@@ -257,13 +257,19 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         $("#removeProfileConfirmationModal").modal('show');
     });
 
-    function resetProfile() {
-        if (croppieObject !== null) {
-            $("#profilePictureEdit").croppie('destroy');
-            croppieObject = null;
+    function destroyCropper() {
+        if (cropperObject !== null) {
+            cropperObject.destroy();
+            cropperObject = null;
         }
+    }
 
-        $("#profilePictureEdit").attr("src", profileUrl);
+    function resetProfile() {
+        destroyCropper();
+
+        $("#profilePictureEdit").css("display", "none");
+        $("#profilePictureView").attr("src", profileUrl);
+        $("#profilePictureView").css("display", "");
         $("#profilePictureEditWrapper").css("width", "16em");
         if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
             $("#profilePictureEditWrapper").css("display", "none");
@@ -273,8 +279,6 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
             $("#removeProfile").css("display", "block");
         }
 
-        $("#profilePictureEdit").croppie('destroy');
-        croppieObject = null;
         $("#profileInfo").css("padding-left", "");
         $("#saveProfile").css("display", "none");
         $("#cancelProfile").css("display", "none");
@@ -372,43 +376,32 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
     }
 
     $("#chooseProfilePhoto").on("change", function () {
-        if (croppieObject !== null) {
-            $("#profilePictureEdit").croppie('destroy');
-            croppieObject = null;
-        }
+        destroyCropper();
 
         if ($("#chooseProfilePhoto").attr("type") === "file") {
             processImage(this);
         }
     });
 
-    function processImageMode(event) {
-        if ($("#chooseProfilePhoto").attr("type") === "file") {
-            $("#profilePictureEdit").attr('src', event.target.result);
-        } else {
-            // $("#profilePictureEdit").attr("referrerPolicy", "no-referrer");
-            // $("#profilePictureEdit").attr("crossorigin", "anonymous");
-            $("#profilePictureEdit").attr('src', $("#chooseProfilePhoto").val());
-        }
+    function processImageMode(source) {
+        destroyCropper();
+
+        $("#profilePictureView").css("display", "none");
+        $("#profilePictureEdit").css("display", "block");
         $("#profilePictureEditWrapper").css("width", "23em");
         $("#profilePictureEditWrapper").css("display", "block");
         $("#removeProfile").css("display", "none");
         $("#saveProfile").css("display", "block");
         $("#cancelProfile").css("display", "block");
 
-        croppieObject = $("#profilePictureEdit").croppie({
-            customClass: "croppieContainer",
-            enableExif: true,
-            viewport: {
-                width: 200,
-                height: 200,
-                type: 'circle'
-            },
-            boundary: {
-                width: 300,
-                height: 300
-            }
+        const editEl = document.getElementById("profilePictureEdit");
+        cropperObject = new Kiri(editEl, {
+            frame: { shape: "circle", width: 200, height: 200 },
+            useExifOrientation: true,
+            showZoomer: true,
+            zoomerPosition: "bottom"
         });
+        cropperObject.load(source);
 
         $("#cancelProfile").on("click", async function (e) {
             e.preventDefault();
@@ -420,7 +413,8 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
         $("#saveProfile").on("click", async function (e) {
             e.preventDefault();
-            croppieObject.croppie('result', 'base64').then(function (base64Result) {
+            cropperObject.export({ type: "base64", format: "image/png" }).then(function (base64Result) {
+                destroyCropper();
                 // send to server
                 const http = new Http("upload profile picture");
                 http.setAdditionalParameters({cache: false});
@@ -450,24 +444,15 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                         });
                     }
                 });
-
-                $("#profilePictureEdit").croppie('destroy');
-                croppieObject = null;
             });
         });
     }
 
     function processImage(input) {
         if ($("#chooseProfilePhoto").attr("type") === "url") {
-            processImageMode();
+            processImageMode($("#chooseProfilePhoto").val());
         } else if ($("#chooseProfilePhoto").attr("type") === "file" && input.files && input.files[0]) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                processImageMode(e);
-            };
-
-            reader.readAsDataURL(input.files[0]);
+            processImageMode(input.files[0]);
         } else {
             // File dialog cancel pressed
             if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
@@ -475,18 +460,17 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                 $("#profilePictureEditWrapper").css("display", "none");
                 $("#removeProfile").css("display", "none");
 
-                $("#profilePictureEdit").attr('src', "#");
+                $("#profilePictureView").attr('src', "#");
                 $("#profileImage").attr('src', "#");
                 $("#profileImage").css({"display": "none", "width": "32px", "height": "32px"});
                 $("#profileImagePlaceholder").css({"display": "block", "font-size": "37px"});
                 $("#removeProfile").css("display", "none");
-                $("#profileCard").css("width", "300px");
             } else {
                 $("#profileInfo").css("padding-left", "8em");
                 $("#profilePictureEditWrapper").css("display", "block");
                 $("#removeProfile").css("display", "block");
 
-                $("#profilePictureEdit").attr('src', profileUrl + '?' + randomString);
+                $("#profilePictureView").attr('src', profileUrl + '?' + randomString);
                 $("#profileImage").attr('src', profileUrl + '?' + randomString);
                 $("#profileImage").css({"display": "inline-block", "width": "39px", "height": "39px"});
                 $("#profileImagePlaceholder").css("display", "none");

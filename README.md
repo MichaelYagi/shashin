@@ -83,7 +83,7 @@ Tech Stack
 * [Nominatim](https://nominatim.org/) - Open-source geocoding with OpenStreetMap data
 * [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
 * [Argus](https://github.com/MichaelYagi/argus) - Self hosted REST API for face and object recognition
-* [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin
+* [Kiri](https://michaelyagi.github.io/kiri) - Image cropping Javascript plugin
 * [Chart.js](https://www.chartjs.org/) - Javascript charting library
 
 # License

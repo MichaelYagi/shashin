@@ -169,7 +169,7 @@
             <link href="/css/loginreg.css" rel="stylesheet" type="text/css">
         </th:block>
         <th:block th:if="${activePageLower == 'account'}">
-            <link rel="stylesheet" href="/css/croppie.css">
+            <link rel="stylesheet" href="/css/kiri.min.css">
         </th:block>
         <th:block th:if="${activePageLower == 'person' or
         activePageLower == 'matches' or
@@ -244,7 +244,7 @@
             <script src="/js/chartjs-plugin-datalabels.min.js" th:nonce="${cspNonce}"></script>
         </th:block>
         <th:block th:if="${activePageLower == 'account'}">
-            <script src="/js/croppie.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/kiri.min.js" th:nonce="${cspNonce}"></script>
         </th:block>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
