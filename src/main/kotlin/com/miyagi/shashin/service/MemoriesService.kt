@@ -91,6 +91,9 @@ class MemoriesService(
         try {
             logger.log(Level.INFO, "Memories generation started")
 
+            // Capture existing memories before deletion so we can filter exact repeats
+            val previousFingerprints = buildExistingFingerprints()
+
             val allClusters = buildClusters()
             logger.log(Level.INFO, "Found ${allClusters.size} candidate clusters")
 
@@ -171,7 +174,7 @@ class MemoriesService(
 
             val deduplicated = deduplicateByPhotoOverlap(
                 generated.distinctBy { it.title.trim().lowercase() }
-            )
+            ).filterNot { isExactRepeat(it, previousFingerprints) }
             swapMemories(deduplicated)
             logger.log(Level.INFO, "Memories generation complete — ${deduplicated.size} memories stored")
         } finally {
@@ -471,8 +474,30 @@ class MemoriesService(
 
     private fun sampleIds(ids: List<String>, n: Int): List<String> {
         if (ids.size <= n) return ids
-        if (n <= 1) return listOf(ids[0])
-        return (0 until n).map { i -> ids[(i * (ids.size - 1)) / (n - 1)] }.distinct()
+        return ids.shuffled().take(n)
+    }
+
+    private fun buildExistingFingerprints(): List<Pair<String, Set<String>>> =
+        memoryRepository.findAllOrderById().mapNotNull { memory ->
+            val title = memory.getTitle()?.trim()?.lowercase() ?: return@mapNotNull null
+            val photos = jdbcTemplate.queryForList(
+                "SELECT metadata_id FROM memoryphoto WHERE memory_id = ?",
+                String::class.java, memory.getId()
+            ).toSet()
+            if (photos.isEmpty()) null else title to photos
+        }
+
+    private fun isExactRepeat(
+        candidate: GeneratedMemory,
+        previous: List<Pair<String, Set<String>>>,
+        overlapThreshold: Float = 0.6f
+    ): Boolean {
+        val title = candidate.title.trim().lowercase()
+        val photos = candidate.photoIds.toSet()
+        return previous.any { (prevTitle, prevPhotos) ->
+            title == prevTitle &&
+            prevPhotos.intersect(photos).size.toFloat() / minOf(prevPhotos.size, photos.size).coerceAtLeast(1) >= overlapThreshold
+        }
     }
 
     private fun monthName(month: Int) = listOf(
