@@ -93,8 +93,16 @@
 
         const memoryPhotos = JSON.parse(memoriesJsonStr).map(function(m) { return m.photos || []; });
 
-        var galleryInitialised = false;
         var galleryOpen = false;
+        var galleryLoadVersion = 0;
+
+        // Pause autoplay when the metadata modal opens (registered once)
+        $('#propMetadata').on('show.bs.modal', function() {
+            if (galleryOpen) {
+                var btn = document.querySelector('.shoji-autoplay-toggle');
+                if (btn) btn.click();
+            }
+        });
 
         // View slideshow
         $(document).on('click', '.memories-view-btn', function() {
@@ -116,38 +124,39 @@
                 return item;
             });
 
-            if (!galleryInitialised) {
-                var plugins = [Shoji.Zoom, Shoji.Fullscreen, Shoji.Autoplay];
-                if (typeof lgMetadataDetail !== 'undefined') {
-                    plugins.push(lgMetadataDetail);
-                }
-                shashin.setLightGalleryElement('memories-gallery');
-                shashin.setLightGallery({
-                    overrideBaseConfigs: true,
-                    plugins: plugins,
-                    counter: true,
-                    mode: 'fade',
-                    preload: 1,
-                    autoplay: { interval: 7000, autoStart: true },
-                    autoHideDelay: 5000,
-                    metadataDetail: (typeof lgMetadataDetail !== 'undefined'),
-                    metadataDetailFun: shashin.openEditMetadataModal,
-                    download: false,
-                    shashinEditor: false
-                });
-                galleryInitialised = true;
-
-                shashin.getLightGallery().on('close', function() {
-                    galleryOpen = false;
-                });
-
-                $('#propMetadata').on('show.bs.modal', function() {
-                    if (galleryOpen) {
-                        var btn = document.querySelector('.shoji-autoplay-toggle');
-                        if (btn) btn.click();
-                    }
-                });
+            // Destroy any existing gallery so Shoji creates fresh slide slots.
+            // Reusing the gallery via updateSlides causes Shoji to match new items
+            // by slot index and skip re-rendering, showing the previous memory.
+            var existingGallery = shashin.getLightGallery();
+            if (existingGallery) {
+                existingGallery.destroy();
             }
+            galleryOpen = false;
+            galleryLoadVersion++;
+            var myVersion = galleryLoadVersion;
+
+            var plugins = [Shoji.Zoom, Shoji.Fullscreen, Shoji.Autoplay];
+            if (typeof lgMetadataDetail !== 'undefined') {
+                plugins.push(lgMetadataDetail);
+            }
+            shashin.setLightGalleryElement('memories-gallery');
+            shashin.setLightGallery({
+                overrideBaseConfigs: true,
+                plugins: plugins,
+                counter: true,
+                mode: 'fade',
+                preload: 1,
+                autoplay: { interval: 7000, autoStart: true },
+                autoHideDelay: 5000,
+                metadataDetail: (typeof lgMetadataDetail !== 'undefined'),
+                metadataDetailFun: shashin.openEditMetadataModal,
+                download: false,
+                shashinEditor: false
+            });
+
+            shashin.getLightGallery().on('close', function() {
+                galleryOpen = false;
+            });
 
             // Preload image items into browser cache before opening
             var viewBtn = $('button.memories-view-btn[data-memory-index="' + idx + '"]');
@@ -163,16 +172,10 @@
                 });
             })).then(function() {
                 viewBtn.prop('disabled', false).html('<span class="bi-play-circle"></span> View');
+                if (myVersion !== galleryLoadVersion) return;
                 shashin.refreshAndActivateLgListener(items);
-                var gallery = shashin.getLightGallery();
-                if (!galleryOpen) {
-                    gallery.open(0);
-                    galleryOpen = true;
-                } else {
-                    gallery.goTo(0);
-                    var btn = document.querySelector('.shoji-autoplay-toggle');
-                    if (btn && btn.getAttribute('aria-label') !== 'Pause slideshow') btn.click();
-                }
+                galleryOpen = true;
+                shashin.getLightGallery().open(0);
             });
         });
 
