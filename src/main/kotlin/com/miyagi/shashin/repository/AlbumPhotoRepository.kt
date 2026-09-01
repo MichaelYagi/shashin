@@ -1,5 +1,6 @@
 package com.miyagi.shashin.repository
 
+import com.miyagi.shashin.model.AlbumCounts
 import com.miyagi.shashin.model.AlbumPhoto
 import com.miyagi.shashin.model.Metadata
 import org.springframework.data.jpa.repository.Query
@@ -21,6 +22,8 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun findAllMetadataByAlbumIdAndDescription(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
 
     fun countByAlbumId(albumId: Int?): Int?
+    @Query("SELECT ap.album_id as albumId, COUNT(ap.metadata_id) as totalCount, COUNT(DISTINCT CASE WHEN m.type NOT LIKE 'video/%' AND m.hidden = 0 THEN ap.metadata_id END) as photoCount, COUNT(DISTINCT CASE WHEN m.type LIKE 'video/%' AND m.hidden = 0 THEN ap.metadata_id END) as videoCount FROM albumphoto ap LEFT JOIN metadata m ON ap.metadata_id = m.id WHERE ap.album_id IN :albumIds GROUP BY ap.album_id", nativeQuery = true)
+    fun findAlbumCountsByAlbumIds(@Param("albumIds") albumIds: List<Int>): List<AlbumCounts>
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE :type || '/%' AND m.hidden = 0", nativeQuery = true)
     fun countAlbumIdAndMediaType(@Param("albumId") albumId: Int, @Param("type") type: String): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) AND m.hidden = 0", nativeQuery = true)

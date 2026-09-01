@@ -406,24 +406,25 @@ class AlbumsController(
                 val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
 
                 val albums = ArrayList<HashMap<String, Any>>()
-                var albumVideoCount: Int?
-                var albumPhotoCount: Int?
-                var albumPhotoOnlyCount: Int?
 
+                // Batch-fetch all albums and counts up front
+                val albumIds = userAlbums.mapNotNull { it?.getAlbumId() }
+                val albumObjMap = albumRepository.findAllById(albumIds).filterNotNull().associateBy { it.getId() }
+                val countsMap = albumPhotoRepository.findAlbumCountsByAlbumIds(albumIds).associateBy { it.getAlbumId() }
+
+                // First pass: delete empty albums, collect surviving IDs
+                val survivingIds = ArrayList<Int>()
                 for (userAlbum in userAlbums) {
-                    // Cleanup if DNE
+                    val albumId = userAlbum?.getAlbumId() ?: continue
+                    val album = albumObjMap[albumId]
+                    val totalCount = countsMap[albumId]?.getTotalCount() ?: 0
 
-                    albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum?.getAlbumId())
-                    albumPhotoOnlyCount = albumPhotoRepository.countPhotosByAlbumId(userAlbum?.getAlbumId())
-                    val album = albumRepository.findAlbumById(userAlbum?.getAlbumId())
+                    if (album != null && totalCount == 0 && album.getId() > 0) {
+                        userAlbumRepository.deleteByAlbumId(albumId)
+                        albumPhotoRepository.deleteByAlbumId(albumId)
+                        albumRepository.deleteById(albumId)
 
-                    if (albumPhotoCount != null && album != null && albumPhotoCount == 0 && album.getId() > 0 && userAlbum != null) {
-                        userAlbumRepository.deleteByAlbumId(userAlbum.getAlbumId())
-                        albumPhotoRepository.deleteByAlbumId(userAlbum.getAlbumId())
-                        albumRepository.deleteById(userAlbum.getAlbumId()!!)
-
-                        // Delete comments
-                        val albumComments = albumCommentRepository.findAllByAlbumId(userAlbum.getAlbumId()!!)
+                        val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
                         if (albumComments != null) {
                             val commentIdList = ArrayList<Int>()
                             for (albumComment in albumComments) {
@@ -431,66 +432,69 @@ class AlbumsController(
                                     commentIdList.add(albumComment.getCommentId()!!)
                                 }
                             }
-
                             if (commentIdList.count() > 0) {
                                 commentRepository.deleteAllById(commentIdList)
-                                albumCommentRepository.deleteByAlbumId(userAlbum.getAlbumId()!!)
-                                albumPhotoCommentRepository.deleteByAlbumId(userAlbum.getAlbumId()!!)
+                                albumCommentRepository.deleteByAlbumId(albumId)
+                                albumPhotoCommentRepository.deleteByAlbumId(albumId)
                             }
                         }
-                    } else {
-                        val albumCommentsList = ArrayList<HashMap<String, Any>>()
-                        if (userAlbum?.getAlbumId() != null) {
-                            val albumMap = HashMap<String, Any>()
-                            val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
+                    } else if (album != null) {
+                        survivingIds.add(albumId)
+                    }
+                }
 
-                            if (albumPhotoOnlyCount == null) {
-                                albumPhotoOnlyCount = 0
-                            }
-                            totalImageCount += albumPhotoOnlyCount
-                            albumVideoCount = albumPhotoRepository.countVideosByAlbumId(userAlbum.getAlbumId()!!)
-                            if (albumVideoCount == null) {
-                                albumVideoCount = 0
-                            }
+                if (survivingIds.isNotEmpty()) {
+                    // Batch-fetch cover URL → metadata ID mapping
+                    val coverUrls = survivingIds.mapNotNull { albumObjMap[it]?.getCoverUrl() }.filter { it.isNotEmpty() }
+                    val coverUrlToMetadataId = if (coverUrls.isNotEmpty()) {
+                        metadataRepository.findAllByThumbnailCenteredIn(coverUrls)
+                            .associate { it.getThumbnailUrlCentered()!! to it.getId() }
+                    } else emptyMap()
 
-                            albumMap["id"] = albumObj.get().getId()
-                            albumMap["name"] = if (albumObj.get().getName() == null) "" else albumObj.get().getName()!!
-                            var coverUrl = ""
-                            if (albumObj.get().getCoverUrl() != null) {
-                                val metadata =
-                                    metadataRepository.findByThumbnailCentered(albumObj.get().getCoverUrl().toString())
-                                if (metadata != null) {
-                                    coverUrl = "/api/v1/thumbnails/centered/" + metadata.getId()
-                                }
-                            }
-                            albumMap["coverUrl"] = coverUrl
-                            albumMap["shareUrl"] =
-                                if (albumObj.get().getShareUrl() == null) "" else albumObj.get().getShareUrl()!!
-                            albumMap["albumPhotoCount"] = albumPhotoOnlyCount
-                            albumMap["albumVideoCount"] = albumVideoCount
-                            albums.add(albumMap)
+                    // Batch-fetch all comments for surviving albums
+                    val commentsById = HashMap<Int, ArrayList<HashMap<String, Any>>>()
+                    for (albumComment in commentRepository.findCommentsByAlbumIds(survivingIds)) {
+                        val aId = albumComment.getAlbumId() ?: continue
+                        val albumCommentMap = HashMap<String, Any>()
+                        albumCommentMap["comment"] = albumComment.getComment().toString()
+                        albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
+                        albumCommentMap["albumId"] = aId
+                        albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
+                        albumCommentMap["userProfile"] =
+                            if (albumComment.getUserProfile() == null) "" else albumComment.getUserProfile().toString()
+                        albumCommentMap["username"] = albumComment.getUsername().toString()
+                        albumCommentMap["createdAt"] =
+                            TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString(), locale.toString())
+                        commentsById.getOrPut(aId) { ArrayList() }.add(albumCommentMap)
+                    }
 
-                            // Get comments for this album
-                            val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
-                            for (albumComment in albumComments) {
-                                val albumCommentMap = HashMap<String, Any>()
-                                albumCommentMap["comment"] = albumComment.getComment().toString()
-                                albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
-                                albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
-                                albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
-                                albumCommentMap["userProfile"] =
-                                    if (albumComment.getUserProfile() == null) "" else albumComment.getUserProfile()
-                                        .toString()
-                                albumCommentMap["username"] = albumComment.getUsername().toString()
-                                albumCommentMap["createdAt"] =
-                                    TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString(),
-                                        locale.toString()
-                                    )
-                                albumCommentsList.add(albumCommentMap)
-                            }
-                            if (albumCommentsList.isNotEmpty()) {
-                                albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
-                            }
+                    // Second pass: build album data preserving original order
+                    for (userAlbum in userAlbums) {
+                        val albumId = userAlbum?.getAlbumId() ?: continue
+                        if (!survivingIds.contains(albumId)) continue
+                        val album = albumObjMap[albumId] ?: continue
+                        val counts = countsMap[albumId]
+                        val photoCount = counts?.getPhotoCount() ?: 0
+                        val videoCount = counts?.getVideoCount() ?: 0
+
+                        totalImageCount += photoCount
+
+                        val aMap = HashMap<String, Any>()
+                        aMap["id"] = album.getId()
+                        aMap["name"] = if (album.getName() == null) "" else album.getName()!!
+                        val rawCoverUrl = album.getCoverUrl()
+                        aMap["coverUrl"] = if (!rawCoverUrl.isNullOrEmpty()) {
+                            val metaId = coverUrlToMetadataId[rawCoverUrl]
+                            if (metaId != null) "/api/v1/thumbnails/centered/$metaId" else ""
+                        } else ""
+                        aMap["shareUrl"] = if (album.getShareUrl() == null) "" else album.getShareUrl()!!
+                        aMap["albumPhotoCount"] = photoCount
+                        aMap["albumVideoCount"] = videoCount
+                        albums.add(aMap)
+
+                        val commentsList = commentsById[album.getId()]
+                        if (!commentsList.isNullOrEmpty()) {
+                            albumsCommentsMap[album.getId()] = commentsList
                         }
                     }
                 }
