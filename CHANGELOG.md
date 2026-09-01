@@ -9,6 +9,11 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.28.1] - 2026-09-01
+### Fixed
+- Memories: viewing a second memory slideshow always played the first one — Shoji's slide cache matched slots by index rather than item identity, so slots from the previous memory were reused; fixed by reinitialising the gallery for each memory open
+- Albums: batch DB queries in buildAlbums replace per-album N+1 queries (224+ queries for 32 albums reduced to ~5)
+
 ## [2.28.0] - 2026-09-01
 ### Added
 - Profile picture: "Pick from gallery" button on the account page — opens a modal to pick a photo directly from Shashin; admins/supers see an infinite-scroll grid of all photos via `/api/v1/taken`; users see their shared albums and can drill into an album to browse its photos; clicking a thumbnail loads it into the Kiri cropper
