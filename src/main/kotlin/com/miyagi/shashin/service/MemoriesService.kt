@@ -147,7 +147,7 @@ class MemoriesService(
                     title = cluster.precomputedTitle
                     caption = ""
                 } else {
-                    val ollamaPhotos = memoryPhotos.take(3)
+                    val ollamaPhotos = memoryPhotos.take(6)
                     val description = ollamaVisionService.describeCluster(
                         ollamaPhotos,
                         cluster.hint,
