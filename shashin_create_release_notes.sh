@@ -20,8 +20,9 @@ release_notes=$(cat shashin_release_notes.txt)
 release_notes="${release_notes//$'\r'/\\n}"
 release_notes="${release_notes//$'\n'}"
 
-# Create json payload
-echo "{\"tag_name\":\"v$version\",\"body\":\"$release_notes\"}" > shashin_release_data.json
+# Create json payload (using jq to safely escape special characters)
+jq -n --arg tag_name "v$version" --arg body "$release_notes" \
+  '{tag_name: $tag_name, body: $body}' > shashin_release_data.json
 
 # Check if a release already exists for this tag
 existing_id=$(curl --silent \
