@@ -147,7 +147,7 @@ class MemoriesService(
                     title = cluster.precomputedTitle
                     caption = ""
                 } else {
-                    val ollamaPhotos = memoryPhotos.take(6)
+                    val ollamaPhotos = memoryPhotos.take(3)
                     val description = ollamaVisionService.describeCluster(
                         ollamaPhotos,
                         cluster.hint,
@@ -164,7 +164,7 @@ class MemoriesService(
                 logger.log(Level.INFO, "Memory \"$title\" (${cluster.type}): ${memoryPhotos.size} photos")
                 usedTitles.add(title)
                 generated.add(GeneratedMemory(cluster, memoryPhotos, title, caption))
-                if (cluster.precomputedTitle == null) try { Thread.sleep(1000) } catch (_: InterruptedException) {}
+                if (cluster.precomputedTitle == null) try { Thread.sleep(250) } catch (_: InterruptedException) {}
             }
 
             if (generated.isEmpty()) {
@@ -328,7 +328,7 @@ class MemoriesService(
                 String::class.java, labelId
             ).filter { it !in excludeIds }
             if (ids.size < 5) return@mapNotNull null
-            PhotoCluster("person", "$name over the years", ids)
+            PhotoCluster("person", "$name over the years", ids, precomputedTitle = "$name Over the Years")
         }
     }
 
@@ -364,7 +364,7 @@ class MemoriesService(
                 String::class.java, id1, id2
             ).filter { it !in excludeIds }
             if (ids.size < 5) return@mapNotNull null
-            PhotoCluster("pair", "$name1 and $name2 over the years", ids)
+            PhotoCluster("pair", "$name1 and $name2 over the years", ids, precomputedTitle = "$name1 & $name2")
         }
     }
 
