@@ -322,10 +322,11 @@
 
         var downloadPlugin = (typeof lgDownload !== 'undefined') ? [lgDownload] : [];
         var castPlugin = (typeof lgCastMedia !== 'undefined') ? [lgCastMedia] : [];
+        var progressPlugin = (typeof lgAutoplayProgress !== 'undefined') ? [lgAutoplayProgress] : [];
 
         var configs = shashin.getLightGalleryConfigs({
             overrideBaseConfigs: true,
-            plugins: [Shoji.Autoplay, Shoji.Fullscreen].concat(downloadPlugin).concat(castPlugin).concat([makeSlideshowPlugin()]),
+            plugins: [Shoji.Autoplay, Shoji.Fullscreen].concat(downloadPlugin).concat(castPlugin).concat(progressPlugin).concat([makeSlideshowPlugin()]),
             items: items,
             counter: false,
             mode: 'fade',
@@ -334,9 +335,10 @@
             autoplay: {
                 autoStart: true,
                 interval: _interval * 1000,
-                showProgress: _showProgress,
+                showProgress: true,
                 stopOnManualNavigate: false
             },
+            autoplayProgress: true,
             preload: 2
         });
 

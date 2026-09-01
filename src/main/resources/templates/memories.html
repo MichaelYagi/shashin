@@ -139,6 +139,9 @@
             if (typeof lgMetadataDetail !== 'undefined') {
                 plugins.push(lgMetadataDetail);
             }
+            if (typeof lgAutoplayProgress !== 'undefined') {
+                plugins.push(lgAutoplayProgress);
+            }
             shashin.setLightGalleryElement('memories-gallery');
             shashin.setLightGallery({
                 overrideBaseConfigs: true,
@@ -146,12 +149,13 @@
                 counter: true,
                 mode: 'fade',
                 preload: 1,
-                autoplay: { interval: 7000, autoStart: true },
+                autoplay: { interval: 7000, autoStart: true, showProgress: true },
                 autoHideDelay: 5000,
                 metadataDetail: (typeof lgMetadataDetail !== 'undefined'),
                 metadataDetailFun: shashin.openEditMetadataModal,
                 download: false,
-                shashinEditor: false
+                shashinEditor: false,
+                autoplayProgress: true
             });
 
             shashin.getLightGallery().on('close', function() {

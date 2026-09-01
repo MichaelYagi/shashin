@@ -211,6 +211,7 @@
     <link rel="stylesheet" href="/css/site/editor.css">
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
         <script src="/js/site/fragments/slideshow/slideshow.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+        <script src="/js/lg-autoplay-progress.js" th:nonce="${cspNonce}"></script>
         <script src="/js/site/fragments/editor/carousel.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/fragments/editor/main.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/fragments/editor/imageprocessing.js" type="text/javascript" th:nonce="${cspNonce}"></script>
@@ -220,6 +221,7 @@
     </th:block>
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
         <script src="/js/site/min/fragments/slideshow/slideshow.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+        <script src="/js/lg-autoplay-progress.js" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/fragments/editor/carousel.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/fragments/editor/main.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/fragments/editor/imageprocessing.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
