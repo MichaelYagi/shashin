@@ -1,14 +1,16 @@
 package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.*
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
 interface KeywordRepository : CrudRepository<Keyword?, Int?> {
+    @Cacheable(value = ["dashboardKeywordStats"], key = "'keywords'")
     @Query("SELECT k.keyword, COUNT(kp.keyword_id) as count FROM keyword k INNER JOIN keywordphoto kp on k.id = kp.keyword_id WHERE k.keyword != 'unidentified objects' GROUP BY kp.keyword_id ORDER BY count DESC", nativeQuery = true)
-    fun countByKeyword(): MutableIterable<KeywordCount>
+    fun countByKeyword(): List<KeywordCount>
     fun countByKeywordIgnoreCase(keyword: String?): Int
     fun findByKeywordIgnoreCase(keyword: String?): Keyword?
     @Query("SELECT k.* FROM keyword k INNER JOIN keywordphoto kp on kp.keyword_id = k.id WHERE kp.metadata_id = :metadataId", nativeQuery = true)

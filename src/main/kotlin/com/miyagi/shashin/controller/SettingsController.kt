@@ -667,7 +667,7 @@ class SettingsController(
 
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/content/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts", "dashboardCameraStats", "dashboardLocationStats", "dashboardKeywordStats", "dashboardPeopleCount"], allEntries = true)
     @ResponseBody
     @Transactional
     fun deleteContent(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
@@ -939,7 +939,7 @@ class SettingsController(
     }
 
     @Secured("ROLE_SUPER")
-    @CacheEvict(value = ["allMetadata", "getFileStats", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "getFileStats", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts", "dashboardCameraStats", "dashboardLocationStats", "dashboardKeywordStats", "dashboardPeopleCount"], allEntries = true)
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -1214,7 +1214,7 @@ class SettingsController(
     }
 
     @Secured("ROLE_SUPER")
-    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts"], allEntries = true)
+    @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates", "metadataDates", "cameraLens", "peopleTagCounts", "dashboardCameraStats", "dashboardLocationStats", "dashboardKeywordStats", "dashboardPeopleCount"], allEntries = true)
     @PostMapping("/settings/snapshot")
     @Transactional
     fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam importDatabase: Optional<String>, @RequestParam snapshotFile: MultipartFile, locale: Locale): String {

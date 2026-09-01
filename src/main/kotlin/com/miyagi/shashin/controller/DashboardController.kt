@@ -218,16 +218,12 @@ class DashboardController(
 
             metricsUtil.start("site stats")
             // Site stats
-//        val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
-            val peopleList = metadataRepository.findMetadataByPeople(
-                TextUtils.getObjectName()
-            )
             val favoritesCount = favoriteRepository.count()
             val commentsCount = commentRepository.count()
             val albumCount = albumRepository.count()
+            val photosWithPeopleTaggedCount = metadataRepository.countDistinctPeopleTagged(TextUtils.getObjectName())
 
-//        response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
-            response["photosWithPeopleTaggedCount"] = peopleList.count()
+            response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
             response["favoritesCount"] = favoritesCount
             response["commentsCount"] = commentsCount
             response["albumCount"] = albumCount
@@ -237,50 +233,38 @@ class DashboardController(
             // Browser stats
             val browserCounts = useragentRepository.countByAgentName()
             val browserCountList = ArrayList<HashMap<String, Any>>()
-
             for (agentNameCount in browserCounts) {
                 val agentNameCountMap = HashMap<String, Any>()
-                var agentName = agentNameCount.getAgentName().toString()
-                if (agentNameCount.getAgentName() == null) {
-                    agentName = "Unknown"
-                }
-                agentNameCountMap["y"] = agentName
-                agentNameCountMap["x"] = agentNameCount.getCount().toString().toInt()
+                agentNameCountMap["y"] = agentNameCount.getAgentName() ?: "Unknown"
+                agentNameCountMap["x"] = agentNameCount.getCount() ?: 0
                 browserCountList.add(agentNameCountMap)
             }
             response["agentNameCountJson"] = mapper.writeValueAsString(browserCountList)
+            response["browserTotalCount"] = browserCountList.size
 
             // OS name stats
             val osNameCounts = useragentRepository.countByOsName()
             val osNameCountList = ArrayList<HashMap<String, Any>>()
-
             for (osNameCount in osNameCounts) {
                 val osNameCountMap = HashMap<String, Any>()
-                var osName = osNameCount.getOsName().toString()
-                if (osNameCount.getOsName() == null) {
-                    osName = "Unknown"
-                }
-                osNameCountMap["y"] = osName
-                osNameCountMap["x"] = osNameCount.getCount().toString().toInt()
+                osNameCountMap["y"] = osNameCount.getOsName() ?: "Unknown"
+                osNameCountMap["x"] = osNameCount.getCount() ?: 0
                 osNameCountList.add(osNameCountMap)
             }
             response["osNameCountJson"] = mapper.writeValueAsString(osNameCountList)
+            response["osTotalCount"] = osNameCountList.size
 
             // Camera stats
             val cameraCounts = metadataRepository.countByCameraType()
             val cameraCountList = ArrayList<HashMap<String, Any>>()
             var cameraTotals = 0
-            if (cameraCounts.count() > 0) {
-                val maxCameraCount = cameraCounts.toList()[0].getCount()
-                for (cameraCount in cameraCounts) {
-                    cameraTotals++
-                    if (cameraCount.getCamera() != null && cameraCount.getCount() != null && (cameraTotals <= 10 || cameraCount.getCount()!! >= showLimit) /*cameraTotals <= 15*/ /*cameraCount.getCount()!! > maxCameraCount!! * 0.05*/) {
-                        val cameraCountMap = HashMap<String, Any>()
-                        var cameraName = cameraCount.getCamera().toString()
-                        cameraCountMap["y"] = cameraName
-                        cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
-                        cameraCountList.add(cameraCountMap)
-                    }
+            for (cameraCount in cameraCounts) {
+                cameraTotals++
+                if (cameraCount.getCamera() != null && cameraCount.getCount() != null && (cameraTotals <= 10 || cameraCount.getCount()!! >= showLimit)) {
+                    val cameraCountMap = HashMap<String, Any>()
+                    cameraCountMap["y"] = cameraCount.getCamera().toString()
+                    cameraCountMap["x"] = cameraCount.getCount()!!
+                    cameraCountList.add(cameraCountMap)
                 }
             }
             response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
@@ -290,32 +274,23 @@ class DashboardController(
             val placenameCounts = metadataRepository.countByLocation()
             val placenameCountList = ArrayList<HashMap<String, Any>>()
             var placenameTotals = 0
-            if (placenameCounts.count() > 0) {
-                val maxPlacenameCount = placenameCounts.toList()[0].getCount()
-                for (placenameCount in placenameCounts) {
-                    placenameTotals++
-                    if (placenameCount.getCity() != null && placenameCount.getCity()!!.isNotEmpty() &&
-                        placenameCount.getProvince() != null && placenameCount.getProvince()!!.isNotEmpty() &&
-                        placenameCount.getCountry() != null && placenameCount.getCountry()!!.isNotEmpty()
-                    ) {
-                        val placeName =
-                            placenameCount.getCity() + ", " + placenameCount.getProvince() + ", " + placenameCount.getCountry()
-                        if (placenameCount.getCount() != null && (placenameTotals <= 10 || placenameCount.getCount()!! >= showLimit) /*placenameTotals <= 20*/ /*placenameCount.getCount()!! > maxPlacenameCount!! * 0.05*/) {
-                            val placenameCountMap = HashMap<String, Any>()
-                            placenameCountMap["y"] = placeName
-                            placenameCountMap["x"] = placenameCount.getCount().toString().toInt()
-                            placenameCountList.add(placenameCountMap)
-                        }
+            for (placenameCount in placenameCounts) {
+                placenameTotals++
+                if (!placenameCount.getCity().isNullOrEmpty() &&
+                    !placenameCount.getProvince().isNullOrEmpty() &&
+                    !placenameCount.getCountry().isNullOrEmpty()
+                ) {
+                    val placeName = "${placenameCount.getCity()}, ${placenameCount.getProvince()}, ${placenameCount.getCountry()}"
+                    if (placenameCount.getCount() != null && (placenameTotals <= 10 || placenameCount.getCount()!! >= showLimit)) {
+                        val placenameCountMap = HashMap<String, Any>()
+                        placenameCountMap["y"] = placeName
+                        placenameCountMap["x"] = placenameCount.getCount()!!
+                        placenameCountList.add(placenameCountMap)
                     }
                 }
             }
             response["placenameCountJson"] = mapper.writeValueAsString(placenameCountList)
             response["placenameTotalCount"] = placenameTotals
-
-            val browserCount = useragentRepository.countDistinctAgentName()
-            val osCount = useragentRepository.countDistinctOsName()
-            response["browserTotalCount"] = browserCount
-            response["osTotalCount"] = osCount
             metricsUtil.end()
 
             // Keyword stats
@@ -323,17 +298,13 @@ class DashboardController(
             val keywordCounts = keywordRepository.countByKeyword()
             val keywordCountList = ArrayList<HashMap<String, Any>>()
             var keywordCount = 0
-            if (keywordCounts.count() > 0) {
-                val maxKwCount = keywordCounts.toList()[0].getCount()
-                for (kwCount in keywordCounts) {
-                    keywordCount++
-                    if (kwCount.getCount() != null && (keywordCount <= 10 || kwCount.getCount()!! >= showLimit) /*keywordCount <= 15*/ /*kwCount.getCount()!! > maxKwCount!! * showLimit*/) {
-                        val keywordCountMap = HashMap<String, Any>()
-                        val keyword = kwCount.getKeyword().toString()
-                        keywordCountMap["y"] = keyword
-                        keywordCountMap["x"] = kwCount.getCount().toString().toInt()
-                        keywordCountList.add(keywordCountMap)
-                    }
+            for (kwCount in keywordCounts) {
+                keywordCount++
+                if (kwCount.getCount() != null && (keywordCount <= 10 || kwCount.getCount()!! >= showLimit)) {
+                    val keywordCountMap = HashMap<String, Any>()
+                    keywordCountMap["y"] = kwCount.getKeyword().toString()
+                    keywordCountMap["x"] = kwCount.getCount()!!
+                    keywordCountList.add(keywordCountMap)
                 }
             }
             response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
@@ -342,18 +313,14 @@ class DashboardController(
 
             // User stats
             metricsUtil.start("user stats")
-            val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
-            val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
-            val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
-            val notAllowedAdminCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(adminRole!!)
-            val allowedSuperCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(superRole!!)
-            val notAllowedSuperCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(superRole!!)
-            response["allowedUserCount"] = allowedUserCount
-            response["notAllowedUserCount"] = notAllowedUserCount
-            response["allowedAdminCount"] = allowedAdminCount
-            response["notAllowedAdminCount"] = notAllowedAdminCount
-            response["allowedSuperCount"] = allowedSuperCount
-            response["notAllowedSuperCount"] = notAllowedSuperCount
+            val roleCounts = userRepository.getUserRoleCounts(listOf(userRole!!, adminRole!!, superRole!!))
+            val roleMap = roleCounts.associateBy { it.getAuthority() }
+            response["allowedUserCount"] = roleMap[userRole]?.getAllowedCount() ?: 0
+            response["notAllowedUserCount"] = roleMap[userRole]?.getNotAllowedCount() ?: 0
+            response["allowedAdminCount"] = roleMap[adminRole]?.getAllowedCount() ?: 0
+            response["notAllowedAdminCount"] = roleMap[adminRole]?.getNotAllowedCount() ?: 0
+            response["allowedSuperCount"] = roleMap[superRole]?.getAllowedCount() ?: 0
+            response["notAllowedSuperCount"] = roleMap[superRole]?.getNotAllowedCount() ?: 0
             metricsUtil.end()
 
             metricsUtil.start("image status check")

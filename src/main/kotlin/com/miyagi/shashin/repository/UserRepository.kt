@@ -1,6 +1,7 @@
 package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.model.UserRoleCount
 import com.miyagi.shashin.model.UserSharedAlbums
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
@@ -34,4 +35,6 @@ interface UserRepository : CrudRepository<User?, Int?> {
     fun findAllByAuthorized(authorized: Boolean): MutableIterable<User>
     fun countAllByIsAuthorizedIsFalseAndAuthorityEquals(authority: String): Int
     fun countAllByIsAuthorizedIsTrueAndAuthorityEquals(authority: String): Int
+    @Query("SELECT authority, SUM(CASE WHEN is_authorized = 1 THEN 1 ELSE 0 END) AS allowedCount, SUM(CASE WHEN is_authorized = 0 THEN 1 ELSE 0 END) AS notAllowedCount FROM user WHERE authority IN (:roles) GROUP BY authority", nativeQuery = true)
+    fun getUserRoleCounts(@Param("roles") roles: List<String>): List<UserRoleCount>
 }

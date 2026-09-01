@@ -400,6 +400,10 @@ DROP INDEX IF EXISTS `idx_metadata_stats`;
 CREATE INDEX `idx_metadata_stats` ON metadata (`type`, `hidden`, `lat`, `lng`);
 DROP INDEX IF EXISTS `idx_metadata_hidden_ymd_type`;
 CREATE INDEX `idx_metadata_hidden_ymd_type` ON metadata (`hidden`, `year`, `month`, `day`, `type`);
+DROP INDEX IF EXISTS `idx_metadata_camera`;
+CREATE INDEX `idx_metadata_camera` ON metadata (`camera`);
+DROP INDEX IF EXISTS `idx_rlp_recognition_label_id`;
+CREATE INDEX `idx_rlp_recognition_label_id` ON recognitionlabelphoto (`recognition_label_id`);
 
 PRAGMA journal_mode = WAL;
 PRAGMA synchronous = NORMAL;

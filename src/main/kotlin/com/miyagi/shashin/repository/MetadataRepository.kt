@@ -237,6 +237,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
            "FROM metadata", nativeQuery = true)
    fun getMediaCounts(): MediaStats
 
+   @Cacheable(value = ["dashboardLocationStats"], key = "'locations'")
    @Query("SELECT" +
            "    TRIM(SUBSTR(" +
            "            place_name," +
@@ -265,10 +266,11 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
            "WHERE place_name IS NOT NULL AND city != \"\" AND city != \",\" " +
            "GROUP BY country, province, city " +
            "ORDER BY count DESC", nativeQuery = true)
-   fun countByLocation(): MutableIterable<LocationCount>
+   fun countByLocation(): List<LocationCount>
 
+   @Cacheable(value = ["dashboardCameraStats"], key = "'cameras'")
    @Query("SELECT camera, COUNT(*) AS count FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY count DESC", nativeQuery = true)
-   fun countByCameraType(): MutableIterable<CameraTypeCount>
+   fun countByCameraType(): List<CameraTypeCount>
 
    @Cacheable(value = ["cameraLens"], key = "'cameras'")
    @Query("SELECT camera FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY camera COLLATE NOCASE ASC", nativeQuery = true)
@@ -414,6 +416,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(DISTINCT m.id) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != :objectName AND m.hidden = 0 GROUP BY rl.id", nativeQuery = true)
    fun findMetadataByPeople(@Param("objectName") objectName: String): MutableIterable<MetadataPeople>
+
+   @Cacheable(value = ["dashboardPeopleCount"], key = "{#objectName}")
+   @Query("SELECT COUNT(DISTINCT rl.id) FROM recognitionlabelphoto rlp INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id INNER JOIN metadata m ON m.id = rlp.metadata_id WHERE rl.name != :objectName AND m.hidden = 0", nativeQuery = true)
+   fun countDistinctPeopleTagged(@Param("objectName") objectName: String): Int
 
    @Cacheable(value = ["peopleTagCounts"], key = "{#objectName}")
    @Query("SELECT rl.id, rl.name, rl.cover_url as coverUrl, COUNT(DISTINCT rlp.metadata_id) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM recognitionlabel rl LEFT JOIN recognitionlabelphoto rlp ON rl.id = rlp.recognition_label_id AND (rlp.auto_tagged = 0 OR rlp.auto_tagged IS NULL) LEFT JOIN metadata m ON m.id = rlp.metadata_id AND m.hidden = 0 WHERE rl.name != :objectName GROUP BY rl.id ORDER BY rl.name COLLATE NOCASE ASC", nativeQuery = true)
