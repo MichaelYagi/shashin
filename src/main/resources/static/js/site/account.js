@@ -1,4 +1,4 @@
-function initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody) {
+function initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody, showGalleryPicker, isAdminOrSuper, apiKey) {
     // API management
     $("#copyapikey").on("click", function (e) {
         e.preventDefault();
@@ -479,6 +479,150 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
             $("#saveProfile").css("display", "none");
             $("#cancelProfile").css("display", "none");
         }
+    }
+
+    // Gallery picker
+    if (showGalleryPicker) {
+        let galleryPage = 0;
+        let galleryAlbumId = null;
+        let galleryLoading = false;
+        let galleryDone = false;
+
+        function resetGallery() {
+            galleryPage = 0;
+            galleryAlbumId = null;
+            galleryLoading = false;
+            galleryDone = false;
+        }
+
+        function appendPhotoThumbnail(item) {
+            const thumbUrl = window.location.origin + item.thumbnailUrlCentered;
+            const img = $('<img>')
+                .attr('src', thumbUrl)
+                .css({ width: '80px', height: '80px', 'object-fit': 'cover', cursor: 'pointer', margin: '2px', 'border-radius': '3px' });
+            img.on('click', function () {
+                processImageMode(thumbUrl);
+                $('#galleryPickerModal').modal('hide');
+            });
+            $('#galleryPhotoGrid').append(img);
+        }
+
+        function checkFill() {
+            const el = document.getElementById('galleryPickerBody');
+            if (el && !galleryDone && !galleryLoading && el.scrollHeight <= el.clientHeight + 150) {
+                if (isAdminOrSuper) {
+                    loadMorePhotos();
+                } else if (galleryAlbumId !== null) {
+                    loadMoreAlbumPhotos();
+                }
+            }
+        }
+
+        function loadMorePhotos() {
+            if (galleryLoading || galleryDone) return;
+            galleryLoading = true;
+            const http = new Http("gallery picker photos");
+            http.setAdditionalParameters({headers: {'x-api-key': apiKey}});
+            http.ajax("get", `/api/v1/taken?page=${galleryPage}&size=30`).then(function (data) {
+                galleryLoading = false;
+                const items = data.metadataList || [];
+                for (const item of items) { appendPhotoThumbnail(item); }
+                galleryPage++;
+                if (galleryPage >= (data.totalPages || 1) || items.length === 0) { galleryDone = true; }
+                checkFill();
+            }).catch(function () { galleryLoading = false; });
+        }
+
+        function loadMoreAlbumPhotos() {
+            if (galleryLoading || galleryDone) return;
+            galleryLoading = true;
+            const http = new Http("gallery album photos");
+            http.setAdditionalParameters({headers: {'x-api-key': apiKey}});
+            http.ajax("get", `/api/v1/album/${galleryAlbumId}?page=${galleryPage}&size=30`).then(function (data) {
+                galleryLoading = false;
+                const items = data.albumMetadataList || [];
+                for (const item of items) { appendPhotoThumbnail(item); }
+                galleryPage++;
+                if (galleryPage >= (data.totalPages || 1) || items.length === 0) { galleryDone = true; }
+                checkFill();
+            }).catch(function () { galleryLoading = false; });
+        }
+
+        function showAlbumPhotos(albumId, albumName) {
+            galleryAlbumId = albumId;
+            galleryPage = 0;
+            galleryDone = false;
+            const body = $('#galleryPickerBody');
+            const header = $('<div class="d-flex align-items-center p-2 border-bottom"></div>');
+            const backBtn = $('<button type="button" class="btn btn-sm btn-secondary me-2">&#8592; Back</button>');
+            backBtn.on('click', loadAlbumList);
+            header.append(backBtn).append($('<strong></strong>').text(albumName));
+            const grid = $('<div id="galleryPhotoGrid" class="d-flex flex-wrap p-2"></div>');
+            body.empty().append(header).append(grid);
+            loadMoreAlbumPhotos();
+        }
+
+        function loadAlbumList() {
+            resetGallery();
+            const body = $('#galleryPickerBody');
+            body.html('<div class="text-center p-4"><div class="spinner-border"></div></div>');
+            const http = new Http("gallery album list");
+            http.setAdditionalParameters({headers: {'x-api-key': apiKey}});
+            http.ajax("get", "/api/v1/albums").then(function (data) {
+                const albums = data.albumsList || [];
+                body.empty();
+                if (albums.length === 0) {
+                    body.html('<div class="text-center p-4">No albums available.</div>');
+                    return;
+                }
+                const grid = $('<div class="d-flex flex-wrap p-2"></div>');
+                for (const album of albums) {
+                    const wrapper = $('<div class="text-center" style="width:100px;margin:4px;cursor:pointer;"></div>');
+                    const thumb = $('<div style="width:92px;height:92px;overflow:hidden;background:#444;border-radius:4px;"></div>');
+                    if (album.coverUrl) {
+                        thumb.html(`<img src="${window.location.origin + album.coverUrl}" style="width:100%;height:100%;object-fit:cover;">`);
+                    }
+                    const name = $('<div style="font-size:0.75rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:92px;margin-top:3px;"></div>').text(album.name);
+                    wrapper.append(thumb).append(name);
+                    wrapper.on('click', function () { showAlbumPhotos(album.id, album.name); });
+                    grid.append(wrapper);
+                }
+                body.append(grid);
+            }).catch(function () {
+                body.html('<div class="text-center p-4">Could not load albums.</div>');
+            });
+        }
+
+        $('#pickFromGallery').on('click', function (e) {
+            e.preventDefault();
+            resetGallery();
+            const body = $('#galleryPickerBody');
+            if (isAdminOrSuper) {
+                body.empty().append('<div id="galleryPhotoGrid" class="d-flex flex-wrap p-2"></div>');
+                loadMorePhotos();
+            } else {
+                loadAlbumList();
+            }
+            $('#galleryPickerModal').modal('show');
+        });
+
+        $('#galleryPickerModal').on('shown.bs.modal', function () {
+            checkFill();
+            $('#galleryPickerBody').on('scroll.galleryPicker', function () {
+                const el = this;
+                if (el.scrollTop + el.clientHeight >= el.scrollHeight - 150) {
+                    if (isAdminOrSuper) {
+                        loadMorePhotos();
+                    } else if (galleryAlbumId !== null) {
+                        loadMoreAlbumPhotos();
+                    }
+                }
+            });
+        });
+
+        $('#galleryPickerModal').on('hide.bs.modal', function () {
+            $('#galleryPickerBody').off('scroll.galleryPicker');
+        });
     }
 
     // Delete account

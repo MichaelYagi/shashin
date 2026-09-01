@@ -48,6 +48,9 @@
 
                     <div class="input-group mb-2">
                         <a style="text-decoration: none;" href="#" id="profileMode"></a>
+                        <th:block th:if="${showGalleryPicker}">
+                            &nbsp;&nbsp;&nbsp;<a style="text-decoration: none;" href="#" id="pickFromGallery">Pick from gallery</a>
+                        </th:block>
                     </div>
                 </div>
             </div>
@@ -234,6 +237,18 @@
     </div>
 </div>
 
+<div class="modal fade" id="galleryPickerModal" tabindex="-1" role="dialog" aria-labelledby="galleryPickerModal">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pick from gallery</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="galleryPickerBody" style="min-height:300px;"></div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="apikeyUpdateConfirmation" tabindex="-1" role="dialog" aria-labelledby="apikey">
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
@@ -263,9 +278,12 @@
         const toastTitle = /*[[${toastTitle}]]*/ '';
         const toastBody = /*[[${toastBody}]]*/ '';
         const username = /*[[${currentUser.username}]]*/ '';
+        const showGalleryPicker = /*[[${showGalleryPicker}]]*/ false;
+        const isAdminOrSuper = /*[[${currentUser.authority == 'ROLE_ADMIN' or currentUser.authority == 'ROLE_SUPER'}]]*/ false;
+        const apiKey = /*[[${user.apikey}]]*/ '';
         /*]]>*/
 
-        initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody);
+        initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody, showGalleryPicker, isAdminOrSuper, apiKey);
     });
 </script>
 

@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.28.0] - 2026-09-01
+### Added
+- Profile picture: "Pick from gallery" button on the account page — opens a modal to pick a photo directly from Shashin; admins/supers see an infinite-scroll grid of all photos via `/api/v1/taken`; users see their shared albums and can drill into an album to browse its photos; clicking a thumbnail loads it into the Kiri cropper
+- Dashboard: combined user-role query, `@Cacheable` on location/camera/keyword/people stats, two new indexes (`idx_metadata_camera`, `idx_rlp_recognition_label_id`), removed redundant distinct-count queries
+
+### Changed
+- Dashboard: removed Page Metrics panel
+
 ## [2.27.0] - 2026-08-31
 ### Added
 - Slideshow: replaced custom slideshow with a real Shoji lightbox instance — autoplay with configurable interval and progress bar, keyboard/touch shortcuts (Space to pause, arrow keys to navigate, `f` fill-screen, `d` caption, `i` instructions, `[`/`]` orientation, `-`/`=` interval, `a` album), Wake Lock API to keep screen on, cast and download in toolbar, infinite random-feed with preloading, fullscreen on open

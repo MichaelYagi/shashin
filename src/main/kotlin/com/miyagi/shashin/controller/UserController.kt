@@ -95,6 +95,13 @@ class UserController(
         }
         val model = getUserInfo(model, currentUserObj, request, locale)
 
+        val showGalleryPicker: Boolean = when (currentUserObj?.getAuthority()) {
+            "ROLE_ADMIN", "ROLE_SUPER" -> true
+            "ROLE_USER" -> (userAlbumRepository?.countUserAlbumsByUserId(currentUserObj!!.getId()) ?: 0) > 0
+            else -> false
+        }
+        model["showGalleryPicker"] = showGalleryPicker
+
         val module = "account"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -126,6 +133,13 @@ class UserController(
             model["canDeleteAccount"] = true
         }
         val model = getUserInfo(model, currentUserObj, request, locale)
+
+        val showGalleryPicker: Boolean = when (currentUserObj?.getAuthority()) {
+            "ROLE_ADMIN", "ROLE_SUPER" -> true
+            "ROLE_USER" -> (userAlbumRepository?.countUserAlbumsByUserId(currentUserObj!!.getId()) ?: 0) > 0
+            else -> false
+        }
+        model["showGalleryPicker"] = showGalleryPicker
 
         if (request.getParameter("oldpassword") != null && request.getParameter("newpassword") != null && request.getParameter("newpasswordconfirm") != null) {
             val oldPassword = java.lang.String.valueOf(request.getParameter("oldpassword")).trim()
