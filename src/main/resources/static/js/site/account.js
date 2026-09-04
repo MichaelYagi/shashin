@@ -497,11 +497,12 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
         function appendPhotoThumbnail(item) {
             const thumbUrl = window.location.origin + item.thumbnailUrlCentered;
+            const originalUrl = window.location.origin + '/api/v1/image/original/' + item.id;
             const img = $('<img>')
                 .attr('src', thumbUrl)
                 .css({ width: '80px', height: '80px', 'object-fit': 'cover', cursor: 'pointer', margin: '2px', 'border-radius': '3px' });
             img.on('click', function () {
-                processImageMode(thumbUrl);
+                processImageMode(originalUrl);
                 $('#galleryPickerModal').modal('hide');
             });
             $('#galleryPhotoGrid').append(img);
