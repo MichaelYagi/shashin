@@ -194,7 +194,6 @@
                 <script src="/js/lg-video-thumbnail.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <script src="/js/lg-cast-media.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/kiri.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-shashin-editor.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-download.js" th:nonce="${cspNonce}"></script>
 
@@ -204,7 +203,6 @@
             <th:block th:if="${currentUser.authority == 'ROLE_ADMIN' || currentUser.authority == 'ROLE_SUPER'}">
                 <link rel="stylesheet" href="/css/lg-video-thumbnail.css">
             </th:block>
-            <link rel="stylesheet" href="/css/kiri.min.css">
             <link rel="stylesheet" href="/css/lg-cast-media.css">
 
             <!--  TODO: Adapt multi date row justification with smooth scrolling on timeline -->
