@@ -664,9 +664,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         if (isSpinnerHidden()) {
             if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
-                isFlippedVertically = !isFlippedVertically;
-            } else {
                 isFlippedHorizontally = !isFlippedHorizontally;
+            } else {
+                isFlippedVertically = !isFlippedVertically;
             }
             updateTransform();
         }
@@ -679,9 +679,9 @@ function initializeEditor(editMetadataObj, lgIndex) {
 
         if (isSpinnerHidden()) {
             if (normalizedRotation(rotation) === 90 || normalizedRotation(rotation) === 270) {
-                isFlippedHorizontally = !isFlippedHorizontally;
-            } else {
                 isFlippedVertically = !isFlippedVertically;
+            } else {
+                isFlippedHorizontally = !isFlippedHorizontally;
             }
             updateTransform();
         }
