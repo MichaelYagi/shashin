@@ -18,13 +18,19 @@
 }
 
 /* --- Gallery Containers --- */
-/* Multiple sections in a row when there's space */
 :is(#scroll-gallery, #infinite-scroll-gallery) {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 0;
     padding: 24px 0 24px 0;
     align-items: flex-start;
+}
+
+/* Cancel Bootstrap's negative row margins so the row fills exactly the container */
+:is(#scroll-gallery, #infinite-scroll-gallery) > .row {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
 }
 
 /* --- Each Date Group --- */
@@ -32,8 +38,8 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    flex: 0 0 auto;        /* keep sections side-by-side when there's room */
-    max-width: fit-content; /* shrink-wrap to photo row width */
+    flex: 0 0 100%;  /* full-width, stacked rows */
+    min-width: 0;
 }
 
 /* ensure the date-body row collapses inline-block whitespace so tiny gaps don't push items */
