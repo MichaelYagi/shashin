@@ -75,6 +75,12 @@
                 mediaContent.width = parseInt(shojiW, 10);
                 mediaContent.height = parseInt(shojiH, 10);
             }
+            const shojiTW = $(this).attr("data-shoji-thumbnail-width");
+            const shojiTH = $(this).attr("data-shoji-thumbnail-height");
+            if (shojiTW && shojiTH) {
+                mediaContent.thumbnailWidth = parseInt(shojiTW, 10);
+                mediaContent.thumbnailHeight = parseInt(shojiTH, 10);
+            }
             mediaContentList.push(mediaContent);
         });
 
