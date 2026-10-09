@@ -21,6 +21,97 @@ class ArgusReconcile(
     private val logger: Logger = Logger.getLogger(ArgusReconcile::class.simpleName)
     private val mapper = ObjectMapper()
 
+    fun syncIdentityGallery(argusId: Int, person: RecognitionLabel, settings: Settings) {
+        if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return
+        val webClient = WebClient.create(settings.getArgusServer()!!)
+        val apiKey = settings.getArgusKey()!!
+        val argusServer = settings.getArgusServer()!!.trimEnd('/')
+        doSyncIdentityGallery(argusId, person, webClient, argusServer, apiKey)
+    }
+
+    private fun doSyncIdentityGallery(argusId: Int, person: RecognitionLabel, webClient: WebClient, argusServer: String, apiKey: String) {
+        try {
+            var galleryCursor: String? = null
+            var firstCropUrl: String? = null
+            do {
+                val galleryUri = buildString {
+                    append("api/identities/$argusId/gallery?limit=200")
+                    if (galleryCursor != null) append("&cursor=$galleryCursor")
+                }
+                val galleryJson = webClient.get()
+                    .uri(galleryUri)
+                    .header("X-API-Key", apiKey)
+                    .retrieve().bodyToMono(String::class.java).block() ?: break
+
+                val galleryObj = mapper.readTree(galleryJson)
+                val galleryHasMore = galleryObj["has_more"]?.asBoolean() ?: false
+                galleryCursor = if (galleryHasMore) galleryObj["next_cursor"]?.textValue() else null
+                val items = galleryObj["items"] ?: break
+
+                for (item in items) {
+                    val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
+                    val enrolled = item["enrolled"]?.asBoolean() ?: false
+                    val reviewStatus = item["review_status"]?.asText()
+                    val isConfirmed = enrolled || reviewStatus == "confirmed" || reviewStatus == "reassigned"
+
+                    var record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
+                    if (record == null) {
+                        val sourceExternalRef = item["source_external_ref"]
+                            ?.takeUnless { it.isNull }?.asText()?.takeIf { it.isNotBlank() }
+                        if (sourceExternalRef != null) {
+                            val metadata = metadataRepository?.findById(sourceExternalRef)
+                                ?.takeIf { it.isPresent }?.get()
+                            if (metadata != null) {
+                                val stub = RecognitionLabelPhoto()
+                                stub.setMetadataId(metadata.getId())
+                                stub.setArgusDetectionId(detectionId)
+                                stub.setConfidence("0.0")
+                                try { record = recognitionLabelPhotoRepository?.save(stub) } catch (_: Exception) {}
+                            }
+                        }
+                        if (record == null) continue
+                    }
+
+                    var recordChanged = false
+                    if (record.getRecognitionLabelId() != person.getId()) {
+                        record.setRecognitionLabelId(person.getId())
+                        recordChanged = true
+                    }
+                    if (isConfirmed && record.getAutoTagged() != false) {
+                        record.setAutoTagged(false)
+                        recordChanged = true
+                    } else if (!isConfirmed && record.getAutoTagged() == null) {
+                        record.setAutoTagged(true)
+                        recordChanged = true
+                    }
+                    if (recordChanged) {
+                        try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
+                    }
+
+                    if (firstCropUrl == null) {
+                        firstCropUrl = item["crop_url"]?.takeUnless { it.isNull }?.asText()
+                            ?.let { argusServer + it }
+                    }
+                }
+            } while (galleryCursor != null)
+
+            if (person.getCoverUrl() == null) {
+                val firstMatch = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
+                val metadataCover = if (firstMatch?.getMetadataId() != null)
+                    metadataRepository?.findByMetadataId(firstMatch.getMetadataId()!!)?.getThumbnailUrlCentered()
+                else null
+
+                val cover = metadataCover ?: firstCropUrl
+                if (cover != null) {
+                    person.setCoverUrl(cover)
+                    recognitionLabelRepository?.save(person)
+                }
+            }
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Gallery sync failed for identity $argusId (${person.getName()}): ${e.localizedMessage}")
+        }
+    }
+
     fun run(settings: Settings) {
         if (settings.getArgusServer().isNullOrBlank() || settings.getArgusKey().isNullOrBlank()) return
 
@@ -156,91 +247,7 @@ class ArgusReconcile(
                         } catch (_: Exception) {}
                     }
 
-                    // Gallery sync: reconcile enrolled/pending status for each detection
-                    try {
-                        var galleryCursor: String? = null
-                        var firstCropUrl: String? = null
-                        do {
-                            val galleryUri = buildString {
-                                append("api/identities/$argusId/gallery?limit=200")
-                                if (galleryCursor != null) append("&cursor=$galleryCursor")
-                            }
-                            val galleryJson = webClient.get()
-                                .uri(galleryUri)
-                                .header("X-API-Key", apiKey)
-                                .retrieve().bodyToMono(String::class.java).block() ?: break
-
-                            val galleryObj = mapper.readTree(galleryJson)
-                            val galleryHasMore = galleryObj["has_more"]?.asBoolean() ?: false
-                            galleryCursor = if (galleryHasMore) galleryObj["next_cursor"]?.textValue() else null
-                            val items = galleryObj["items"] ?: break
-
-                            for (item in items) {
-                                val detectionId = item["detection_id"]?.asInt()?.toString() ?: continue
-                                val enrolled = item["enrolled"]?.asBoolean() ?: false
-                                val reviewStatus = item["review_status"]?.asText()
-                                val isConfirmed = enrolled || reviewStatus == "confirmed" || reviewStatus == "reassigned"
-
-                                var record = recognitionLabelPhotoRepository?.findFirstByArgusDetectionId(detectionId)
-                                if (record == null) {
-                                    // Gallery item has no Shashin record — create one if source_external_ref
-                                    // (the Shashin metadata ID stored by Argus at detection time) is available
-                                    val sourceExternalRef = item["source_external_ref"]
-                                        ?.takeUnless { it.isNull }?.asText()?.takeIf { it.isNotBlank() }
-                                    if (sourceExternalRef != null) {
-                                        val metadata = metadataRepository?.findById(sourceExternalRef)
-                                            ?.takeIf { it.isPresent }?.get()
-                                        if (metadata != null) {
-                                            val stub = RecognitionLabelPhoto()
-                                            stub.setMetadataId(metadata.getId())
-                                            stub.setArgusDetectionId(detectionId)
-                                            stub.setConfidence("0.0")
-                                            try { record = recognitionLabelPhotoRepository?.save(stub) } catch (_: Exception) {}
-                                        }
-                                    }
-                                    if (record == null) continue
-                                }
-
-                                var recordChanged = false
-                                if (record.getRecognitionLabelId() != person.getId()) {
-                                    record.setRecognitionLabelId(person.getId())
-                                    recordChanged = true
-                                }
-                                // confirmed/reassigned/enrolled → auto_tagged=false (manually confirmed)
-                                // never downgrade a manual tag (auto_tagged=false) to auto-tagged
-                                if (isConfirmed && record.getAutoTagged() != false) {
-                                    record.setAutoTagged(false)
-                                    recordChanged = true
-                                } else if (!isConfirmed && record.getAutoTagged() == null) {
-                                    record.setAutoTagged(true)
-                                    recordChanged = true
-                                }
-                                if (recordChanged) {
-                                    try { recognitionLabelPhotoRepository?.save(record) } catch (_: Exception) {}
-                                }
-
-                                if (firstCropUrl == null) {
-                                    firstCropUrl = item["crop_url"]?.takeUnless { it.isNull }?.asText()
-                                        ?.let { argusServer + it }
-                                }
-                            }
-                        } while (galleryCursor != null)
-
-                        if (person.getCoverUrl() == null) {
-                            val firstMatch = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
-                            val metadataCover = if (firstMatch?.getMetadataId() != null)
-                                metadataRepository?.findByMetadataId(firstMatch.getMetadataId()!!)?.getThumbnailUrlCentered()
-                            else null
-
-                            val cover = metadataCover ?: firstCropUrl
-                            if (cover != null) {
-                                person.setCoverUrl(cover)
-                                recognitionLabelRepository?.save(person)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        logger.log(Level.WARNING, "Gallery sync failed for identity $argusId (${person.getName()}): ${e.localizedMessage}")
-                    }
+                    doSyncIdentityGallery(argusId, person, webClient, argusServer, apiKey)
 
                     Thread.sleep(100)
                 }

@@ -2,6 +2,7 @@ package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.ArgusReconcile
 import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.model.RecognitionLabelPhoto
 import com.miyagi.shashin.repository.MetadataRepository
@@ -22,7 +23,8 @@ class ArgusWebhookController(
     private var recognitionLabelRepository: RecognitionLabelRepository? = null,
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null,
     private var settingsRepository: SettingsRepository? = null,
-    private var metadataRepository: MetadataRepository? = null
+    private var metadataRepository: MetadataRepository? = null,
+    private var argusReconcile: ArgusReconcile? = null
 ) {
     private val logger = Logger.getLogger(ArgusWebhookController::class.simpleName)
     private val mapper = ObjectMapper()
@@ -87,6 +89,11 @@ class ArgusWebhookController(
         }
 
         stampExternalRef(argusId, person.getId())
+
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        if (settings != null) {
+            try { argusReconcile?.syncIdentityGallery(argusId, person, settings) } catch (_: Exception) {}
+        }
     }
 
     private fun handleIdentityUpdated(data: JsonNode) {
