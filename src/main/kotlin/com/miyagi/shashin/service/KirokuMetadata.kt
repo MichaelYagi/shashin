@@ -203,7 +203,9 @@ object KirokuMetadata {
         return null
     }
 
-    // The names metadata-extractor used for the JPEG start-of-frame markers.
+    // The names metadata-extractor used for the JPEG start-of-frame markers, so stored values keep their old form.
+    // Source: metadata-extractor by Drew Noakes (https://github.com/drewnoakes/metadata-extractor, Apache-2.0),
+    // JpegDescriptor compression-type descriptions. Only the strings are reused; no code is copied.
     private val JPEG_PROCESS =
         mapOf(
             0 to "Baseline",
@@ -228,6 +230,8 @@ object KirokuMetadata {
             ?.value?.toString()?.trim()?.ifBlank { null }
 
     // Major brands whose metadata-extractor description contained "MPEG", which MediaServiceController checks.
+    // Source: metadata-extractor by Drew Noakes (https://github.com/drewnoakes/metadata-extractor, Apache-2.0),
+    // QuickTime/MP4 major-brand descriptions. Only the brand codes are listed; no code is copied.
     private val MPEG_MAJOR_BRANDS =
         setOf("mmp4", "mp21", "mp71", "MSNV", "NDSC", "NDSH", "NDSM", "NDSP", "NDSS", "NDXC", "NDXH", "NDXM", "NDXP", "NDXS", "dvt1", "da0a")
 
