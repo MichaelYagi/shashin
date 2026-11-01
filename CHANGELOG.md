@@ -9,6 +9,13 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.29.1] - 2026-11-01
+### Changed
+- Metadata: Kiroku updated from v0.1.0 to v0.1.2. The EXIF tab shows readable vendor maker-note values (for example Pentax f-number `13.0` instead of `130`) and more detail for CR3, RAF, GIF, JPEG, Panasonic RAW, PSD, EPS and MP3 files
+- README links Kiroku; `KirokuMetadata.kt` credits metadata-extractor for two lookup tables
+### Fixed
+- EXIF tab: some vendor maker-note values had the wrong description (for example Casio white balance "Manual" for Auto)
+
 ## [2.29.0] - 2026-10-31
 ### Changed
 - Metadata: replaced metadata-extractor with Kiroku (`com.github.MichaelYagi.kiroku:kiroku-core`, from JitPack). All calls go through `service/KirokuMetadata.kt`, which keeps stored values in the existing formats. No ExifTool or ffprobe is needed
