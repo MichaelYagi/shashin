@@ -418,6 +418,8 @@ class SettingsController(
         } else {
             mediaDirRepository?.deleteByExclude(false)
         }
+        // The media directories changed, so the "No directories configured" status must be recomputed
+        hasMediaDirsCache = null
 
         if (!mediaExcludeDirs.isNullOrEmpty()) {
             val allMediaExcludeDirs = mediaDirRepository?.findByExclude(true)

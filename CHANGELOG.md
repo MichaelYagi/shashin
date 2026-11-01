@@ -9,6 +9,24 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 * Fixed for any bug fixes 
 * Security in case of vulnerabilities
 
+## [2.29.0] - 2026-10-31
+### Changed
+- Metadata: replaced metadata-extractor with Kiroku (`com.github.MichaelYagi.kiroku:kiroku-core`, from JitPack). All calls go through `service/KirokuMetadata.kt`, which keeps stored values in the existing formats. No ExifTool or ffprobe is needed
+- EXIF tab: the `.exif.yaml` sidecar now groups tags by Kiroku directory names (for example `EXIF:IFD0`, `MakerNotes:Nikon`, `QuickTime:Track1`). Media scanned earlier keep the old names until re-processed
+- Video taken time: when the file records a time zone (iPhone `creationdate`), the local time at the place of capture is stored, matching photos taken at the same moment. Previously it was converted to the server's time zone
+- Files without an embedded date: the taken time falls back to the file time instead of the scan time
+### Fixed
+- Canon exposure times were stored as maker-note numbers (for example `384`) instead of shutter speeds (`1/125`)
+- Placeholder values (f/0.0, ISO 0, 0 mm, lens `----`) are no longer stored
+- Wrong focal length for some Pentax files (100 mm instead of 10 mm)
+- GPS coordinates are now exact. The old conversion from the text form could be off in the last digits
+- iPhone and Android videos now get GPS coordinates
+- Mirrored EXIF orientations (2, 4, 5, 7) are now applied to thumbnails, which were shown mirrored or sideways before
+- AVI, WAV, WebM and raw HEVC files now get a MIME type, taken time, duration and size
+- Camera names no longer contain padding spaces from the file (for example `OLYMPUS IMAGING CORP. E-3`)
+- Media Indexing showed "No directories configured" after the first media directory was added, until a restart
+- Docker: build and run on Java 17 (`maven:3.9-eclipse-temurin-17`, `eclipse-temurin:17-jre`); the old images (JDK 8 and 11) could not build or run Shashin
+
 ## [2.28.1] - 2026-09-01
 ### Fixed
 - Memories: viewing a second memory slideshow always played the first one — Shoji's slide cache matched slots by index rather than item identity, so slots from the previous memory were reused; fixed by reinitialising the gallery for each memory open

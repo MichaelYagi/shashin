@@ -1,11 +1,8 @@
 package com.miyagi.shashin.controller
 
-import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.service.DuplicateImageDetection
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.MetadataDate
@@ -14,6 +11,7 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.service.ImageProcessing
+import com.miyagi.shashin.service.KirokuMetadata
 import com.miyagi.shashin.service.MetadataProcessing
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
@@ -531,34 +529,8 @@ class TestController(
                             println("file $file doesn't exist")
                             continue
                         } else {
-                            val metadata = ImageMetadataReader.readMetadata(file)
-                            val exifMap = hashMapOf<String, HashMap<String, String>>()
-
-                            for (directory in metadata.directories) {
-                                val subExifMap = hashMapOf<String, String>()
-                                val directoryName = directory.name
-
-                                for (tag in directory.tags) {
-                                    if (tag.description != null) {
-                                        val tagName = tag.tagName
-
-                                        if ("unknowntag" !in tagName.lowercase()) {
-                                            subExifMap["$tagName"] = tag.description
-                                        }
-                                    }
-
-                                    exifMap["$directoryName"] = subExifMap
-                                }
-                            }
-
-                            if (exifMap.isNotEmpty()) {
-                                val yamlFactory: YAMLFactory = YAMLFactory.builder()
-                                    .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                                    .disable(YAMLGenerator.Feature.SPLIT_LINES)
-                                    .build()
-                                val om = ObjectMapper(yamlFactory)
-                                om.writeValue(exifFile, exifMap)
-                            }
+                            // Same sidecar content as a scan writes
+                            KirokuMetadata.writeExifSidecar(KirokuMetadata.exifMap(KirokuMetadata.read(file)), exifFile)
 
 
                             localIndex++

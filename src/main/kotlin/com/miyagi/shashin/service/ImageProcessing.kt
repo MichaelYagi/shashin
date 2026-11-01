@@ -1,6 +1,5 @@
 package com.miyagi.shashin.service
 
-import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -67,87 +66,22 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
     fun createThumbnails(): Metadata? {
         var _metadataObj = metadataObj
 
-        // Check rotation
-        var rotation = 0
-        val fileMetadata: com.drew.metadata.Metadata
-        try {
-            fileMetadata = ImageMetadataReader.readMetadata(file)
-        } catch (e: Exception) {
+        // Orientation and stored pixel size from the file's metadata (Kiroku)
+        val mediaMetadata = KirokuMetadata.read(file)
+        if (mediaMetadata == null) {
             logger.log(
                 Level.SEVERE,
-                "Error reading Metadata for " + file.name + ": " + e.message
+                "Error reading Metadata for " + file.name
             )
 
             return _metadataObj
         }
-        var jpegImageWidth = false
-        var jpegImageHeight = false
-        var rotationFromExif = false
-        var originalPixelWidth: Int? = null
-        var originalPixelHeight: Int? = null
-        try {
-            for (directory in fileMetadata.directories) {
-                for (tag in directory.tags) {
-                    when (tag.tagName) {
-                        "Orientation", "Rotation" -> {
-                            if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4" || directory.name == "QuickTime") {
-                                val digit = tag.description.filter { it.isDigit() }
-                                if (TextUtils.Companion.isInteger(digit)) {
-                                    rotation = digit.toInt()
-                                    rotationFromExif = true
-                                }
-                            }
-                        }
-
-                        "Exif Image Height", "Height", "Image Height" -> {
-                            val heightValue = tag.description.filter { it.isDigit() }
-
-                            if (jpegImageHeight) {
-                                continue
-                            }
-
-                            if (directory.name == "JPEG" && tag.tagName == "Image Height") {
-                                jpegImageHeight = true
-                            }
-
-                            if (jpegImageHeight) {
-                                continue
-                            }
-
-                            if (directory.name == "JPEG" && tag.tagName == "Image Height") {
-                                jpegImageHeight = true
-                            }
-
-                            if ((originalPixelHeight == null && heightValue != "") || (originalPixelHeight != null && heightValue.toInt() > originalPixelHeight)) {
-                                originalPixelHeight = heightValue.toInt()
-                            }
-                        }
-
-                        "Exif Image Width", "Width", "Image Width" -> {
-                            val widthValue = tag.description.filter { it.isDigit() }
-
-                            if (jpegImageWidth) {
-                                continue
-                            }
-
-                            if (directory.name == "JPEG" && tag.tagName == "Image Width") {
-                                jpegImageWidth = true
-                            }
-
-                            if ((originalPixelWidth == null && widthValue != "") || (originalPixelWidth != null && widthValue.toInt() > originalPixelWidth)) {
-                                originalPixelWidth = widthValue.toInt()
-                            }
-                        }
-                    }
-                }
-            }
-//        println("rotation:$rotation")
-        } catch (e: Exception) {
-            logger.log(
-                Level.WARNING,
-                "Could not get rotation when reading metadata for " + file.name + ": " + e.message
-            )
-        }
+        // Clockwise degrees, plus a left-right mirror applied first for EXIF orientations 2, 4, 5 and 7
+        var rotation = KirokuMetadata.rotation(mediaMetadata)
+        val mirrored = KirokuMetadata.mirrored(mediaMetadata)
+        val rotationFromExif = KirokuMetadata.hasOrientation(mediaMetadata)
+        var originalPixelWidth: Int? = mediaMetadata.gallery.dimensions?.storedWidth
+        var originalPixelHeight: Int? = mediaMetadata.gallery.dimensions?.storedHeight
 
         // Map path to sidecar file
         val fileRootDir: String = FileUtils.Companion.getRootDir(file)
@@ -160,6 +94,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         if (FileUtils.Companion.isRaw(mediaExtension)) {
             try {
                 img = ImageIO.read(file)
+                if (mirrored) {
+                    img = flipVertically(img) // flipVertically mirrors left to right
+                }
                 if (rotation != 0) {
                     img = rotateImage(img, rotation.toDouble())
                 }
@@ -176,6 +113,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     tempImg.createGraphics().drawImage(img, 0, 0, img.width, img.height, Color.WHITE, null)
                     img = tempImg
 //                }
+                if (mirrored) {
+                    img = flipVertically(img) // flipVertically mirrors left to right
+                }
                 if (rotation != 0) {
                     img = rotateImage(img, rotation.toDouble())
                 }

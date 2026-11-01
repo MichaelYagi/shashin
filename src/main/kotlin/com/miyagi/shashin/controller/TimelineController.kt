@@ -3207,7 +3207,7 @@ class TimelineController(
         Operation(
             operationId = "getExifData",
             summary = "Get EXIF data.",
-            description = "<strong>Get EXIF data extracted using <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a>.</strong><br>" +
+            description = "<strong>Get the EXIF and other embedded metadata extracted with Kiroku.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/exif/metadata/{id}\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
@@ -3219,7 +3219,8 @@ class TimelineController(
                     "<tr><td>id</td><td>param</td><td>string</td><td>required</td><td>The metadata ID</td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
-                    "Different outputs depending on media. See <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a> for more details."
+                    "Different outputs depending on media: one object per metadata directory (for example <code>EXIF:IFD0</code>, <code>MakerNotes:Nikon</code> or <code>QuickTime:Track1</code>), mapping tag names to values. " +
+                    "Media scanned before the switch to Kiroku keep the metadata-extractor directory names until they are re-processed."
         )
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN")

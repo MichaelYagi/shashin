@@ -77,7 +77,7 @@ Tech Stack
 
 Libraries used:
 * [Shoji](https://github.com/MichaelYagi/shoji) - Image and video lightbox
-* [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor) - Extracts Exif, IPTC, XMP, ICC and other metadata from image, video and audio files
+* Kiroku - Extracts EXIF, MakerNotes, XMP, IPTC, ICC, QuickTime/MP4 and other metadata from photos, RAW files, video and audio
 * [JQuery](https://jquery.com/) - JavaScript library
 * [OpenLayers](https://openlayers.org/) - Display map tiles, vector data and markers loaded from multiple map sources, like [OpenStreetMap](https://www.openstreetmap.org/), [ArcGIS](https://www.arcgis.com/index.html) and [MapTiler](https://www.maptiler.com/)
 * [Nominatim](https://nominatim.org/) - Open-source geocoding with OpenStreetMap data

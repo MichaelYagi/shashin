@@ -1,6 +1,5 @@
 package com.miyagi.shashin.controller
 
-import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
@@ -11,6 +10,7 @@ import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.service.ImageProcessing
+import com.miyagi.shashin.service.KirokuMetadata
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -225,7 +225,12 @@ class MediaServiceController(
             if (jsonNode != null && jsonNode.has("MP4-MajorBrand")) {
                 mp4MajorBrand = jsonNode.get("MP4-MajorBrand").textValue()
             } else if (jsonNode != null && jsonNode.has("MP4") == true && jsonNode["MP4"].has("Major Brand")) {
+                // Sidecar written by metadata-extractor: the brand description
                 mp4MajorBrand = jsonNode["MP4"].get("Major Brand").textValue()
+            } else if (jsonNode != null && jsonNode.has(KirokuMetadata.SIDECAR_FILE_TYPE_GROUP) && jsonNode[KirokuMetadata.SIDECAR_FILE_TYPE_GROUP].has("MajorBrand")) {
+                // Sidecar written by Kiroku: the brand code (for example "mp42"). Keep the old "description mentions MPEG" test.
+                val code = jsonNode[KirokuMetadata.SIDECAR_FILE_TYPE_GROUP].get("MajorBrand").textValue()
+                mp4MajorBrand = if (KirokuMetadata.isMpegMajorBrand(code)) "MPEG ($code)" else code.orEmpty()
             }
 
             logger.log(Level.INFO, "MP4 Major Brand: " + mp4MajorBrand)
@@ -706,31 +711,8 @@ class MediaServiceController(
 
                     val file = File(randomMetadata.getPath()!!)
 
-                    var rotation = 0
-                    val fileMetadata: com.drew.metadata.Metadata
-                    try {
-                        fileMetadata = ImageMetadataReader.readMetadata(file)
-
-                        for (directory in fileMetadata.directories) {
-                            for (tag in directory.tags) {
-                                when (tag.tagName) {
-                                    "Orientation", "Rotation" -> {
-                                        if (tag.description.contains("Rotate")) {
-                                            val digit = tag.description.filter { it.isDigit() }
-                                            if (TextUtils.isInteger(digit)) {
-                                                rotation = digit.toInt()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (e: Exception) {
-                        logger.log(
-                            Level.SEVERE,
-                            "Error reading Metadata for " + file.name + ": " + e.message
-                        )
-                    }
+                    // Clockwise degrees from the file's orientation (used by the rotation code below when enabled)
+                    var rotation = KirokuMetadata.rotation(KirokuMetadata.read(file))
 
                     if (file.exists()) {
                         val img = ImageIO.read(file)

@@ -37,7 +37,7 @@ The app runs on port **6624** by default. The dev profile loads `shashin_dev.db`
 
 **Layers:**
 - `controller/` — Spring MVC `@Controller` classes handling HTTP endpoints and Thymeleaf model binding. `BaseController` is a shared base. `SettingsController` is the heaviest controller; it also owns the media scan logic (`scanMediaDirectories`).
-- `service/` — Business logic not tied to HTTP: `MetadataProcessing` (EXIF extraction via metadata-extractor), `ImageProcessing` (thumbnails, filters, face/object recognition), `VideoProcessing`, `DuplicateImageDetection` (perceptual hash + BK-tree).
+- `service/` — Business logic not tied to HTTP: `MetadataProcessing` (photo/RAW/video metadata via Kiroku, wrapped by `KirokuMetadata`), `ImageProcessing` (thumbnails, filters, face/object recognition), `VideoProcessing`, `DuplicateImageDetection` (perceptual hash + BK-tree).
 - `repository/` — Spring Data JPA repositories backed by SQLite.
 - `model/` — JPA entities.
 - `component/` — Spring-managed beans for cross-cutting concerns: `DataLoader` (seeds `Settings` on first run), `ScheduledTasks` (cron-based face/object scanning), `ShashinFileChangeListener` (triggers re-scan when media files change on disk), WebSocket message POJOs.
